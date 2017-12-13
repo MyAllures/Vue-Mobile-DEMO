@@ -26,9 +26,42 @@ Vue.config.productionTip = false
 
 const store = createStore()
 
-router.beforeEach(function (to, from, next) {
+const toLogin = function (router) {
+  router.push({
+    path: '/login'
+  })
+}
+
+router.beforeEach((to, from, next) => {
   store.commit(types.UPDATE_LOADING, {isLoading: true})
   next()
+})
+
+router.beforeEach((to, from, next) => {
+  // fisrMacthed might be the top-level parent route of others
+  const firstMatched = to.matched.length ? to.matched[0] : null
+  if ((firstMatched || to).meta.requiresAuth) {
+    if (from && from.matched[0] && from.matched[0].path === to.matched[0].path) {
+      next()
+    } else {
+      store.dispatch('fetchUser')
+        .then(res => {
+          // got user info
+          if (res.account_type === 0 && to.matched[0].path === '/account') {
+            toLogin(router)
+          } else {
+            next()
+          }
+        })
+        .catch(error => {
+          // can't get user info
+          toLogin(router)
+          return Promise.resolve(error)
+        })
+    }
+  } else {
+    next()
+  }
 })
 
 router.afterEach(function (to) {
