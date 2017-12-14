@@ -1,13 +1,16 @@
 import Vue from 'vue'
+import axios from 'axios'
 import App from './App'
 import router from './router'
 import VueI18n from 'vue-i18n'
+import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
 import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
 import * as types from './store/mutations/mutation-types'
 
 Vue.use(VueI18n)
+Vue.use(VueCookie)
 
 let navLang = navigator.language || navigator.userLanguage
 if (navLang === 'zh-CN' || navLang === 'zh-cn') {
@@ -20,6 +23,26 @@ if (navLang === 'zh-CN' || navLang === 'zh-cn') {
 const i18n = new VueI18n({
   locale: Vue.config.lang,
   messages: locales
+})
+
+const token = Vue.cookie.get('access_token')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+}
+axios.interceptors.response.use(res => {
+  let responseData = res.data
+  if (responseData.code === 2000) {
+    return responseData.data
+  } else {
+    if (responseData.code === 9007) {
+      router.push({
+        path: '/login'
+      })
+    }
+    return Promise.reject(responseData.msg)
+  }
+}, (error) => {
+  return Promise.reject(error)
 })
 
 Vue.config.productionTip = false

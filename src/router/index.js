@@ -19,7 +19,6 @@ export default new Router({
       path: '/',
       name: 'Home',
       meta: {
-        title: '首页'
       },
       component: resolve => { require(['../screens/Home.vue'], resolve) }
     },
