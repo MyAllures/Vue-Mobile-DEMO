@@ -2,7 +2,8 @@
 
 export default {
   home: {
-    name: 'Home'
+    name: 'Home',
+    announcement: 'Announcement'
   },
   game: {
     name: 'Game'

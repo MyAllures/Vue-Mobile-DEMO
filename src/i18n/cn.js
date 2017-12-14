@@ -2,7 +2,8 @@
 
 export default {
   home: {
-    name: '首页'
+    name: '首页',
+    announcement: '公告'
   },
   game: {
     name: '游戏'
@@ -12,5 +13,13 @@ export default {
   },
   my: {
     name: '我的'
+  },
+  login: {
+    welcome: '欢迎登录',
+    username: '用户名',
+    password: '密码',
+    login: '登录',
+    register: '注册',
+    try: '试玩'
   }
 }

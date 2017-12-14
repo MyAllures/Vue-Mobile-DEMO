@@ -1,0 +1,9 @@
+html, body {
+  background: #f0f0f0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+.m-t {
+  margin-top: 1em;
+}
