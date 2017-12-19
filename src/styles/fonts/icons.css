@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('iconfont/icomoon.eot?19pknd');
+  src:  url('iconfont/icomoon.eot?19pknd#iefix') format('embedded-opentype'),
+    url('iconfont/icomoon.ttf?19pknd') format('truetype'),
+    url('iconfont/icomoon.woff?19pknd') format('woff'),
+    url('iconfont/icomoon.svg?19pknd#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-withdraw:before {
+  content: "\e900";
+  /* color: #1b82d2; */
+  font-size: 23px;
+}
+.icon-wechat:before {
+  content: "\e901";
+  color: #8edf11;
+  font-size: 26px;
+}
+.icon-user:before {
+  content: "\e902";
+  color: #1b82d2;
+  font-size: 21px;
+}
+.icon-sum:before {
+  content: "\e903";
+  color: #1b82d2;
+  font-size: 24px;
+}
+.icon-QQ:before {
+  content: "\e904";
+  color: #fc0;
+  font-size: 24px;
+}
+.icon-phone:before {
+  content: "\e905";
+  color: #29ab91;
+  font-size: 21px;
+
+}
+.icon-password:before {
+  content: "\e906";
+  color: #fc992d;
+  font-size: 24px;
+
+}
+.icon-pass:before {
+  content: "\e907";
+  color: #fc992d;
+  font-size: 24px;
+}
+.icon-name:before {
+  content: "\e908";
+  color: #1b82d2;
+  font-size: 24px;
+}
+.icon-my:before {
+  content: "\e909";
+  font-size: 23px;
+}
+.icon-msg:before {
+  content: "\e90a";
+  color: #f15a4a;
+  font-size: 24px;
+
+}
+.icon-member:before {
+  content: "\e90b";
+  color: #fc992d;
+  font-size: 19px;
+}
+.icon-home:before {
+  content: "\e90c";
+  font-size: 20px;
+  /* color: #8a8a8a; */
+}
+.icon-email:before {
+  content: "\e90d";
+  color: #1b82d2;
+  font-size: 27px;
+}
+.icon-deposit:before {
+  content: "\e90e";
+  font-size: 24px;
+}
+.icon-betrecord:before {
+  content: "\e90f";
+  font-size: 20px;
+}
+.icon-bank:before {
+  content: "\e910";
+  color: #7586d8;
+  font-size: 24px;
+}
+.icon-balance:before {
+  content: "\e911";
+  color: #1b82d2;
+  font-size: 24px;
+}
+
