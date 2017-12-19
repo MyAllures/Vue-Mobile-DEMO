@@ -3,7 +3,7 @@
     <group>
       <cell :title="$t('my.balance')" >
         <i class="icon-sum icon" slot="icon"></i>
-        <span class="balance text-green">￥{{user.balance.toFixed(1)}}</span>
+        <span class="balance text-green" v-if="user.balance">￥{{user.balance.toFixed(1)}}</span>
       </cell>
       <cell :title="$t('misc.bank')" :is-link="true">
         <i class="icon-bank icon" slot="icon"></i>
@@ -61,18 +61,32 @@
         <i class="icon-pass icon" slot="icon"></i>
       </cell>
     </group>
+
+    <group>
+      <cell @click.native="logoutDialogShow = true">
+        <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
+      </cell>
+    </group>
+    <confirm 
+      v-model="logoutDialogShow" 
+      :confirm-text="$t('misc.logout')" 
+      :cancel-text="$t('misc.cancel')" 
+      @on-confirm="logout">
+      <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
+    </confirm>
   </div>
 </template>
 
 <script>
 import '../styles/fonts/icons.css'
 import { mapGetters } from 'vuex'
-import { Group, Cell } from 'vux'
+import { Group, Cell, Confirm } from 'vux'
 
 export default {
   name: 'Home',
   data () {
     return {
+      logoutDialogShow: false
     }
   },
   computed: {
@@ -89,9 +103,15 @@ export default {
       return ''
     }
   },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+    }
+  },
   components: {
     Group,
-    Cell
+    Cell,
+    Confirm
   }
 }
 </script>
@@ -103,5 +123,10 @@ export default {
   font-size: 20px;
   display: inline-block;
   vertical-align: middle;
+}
+.logout {
+  display: block;
+  text-align: center;
+  color: #FE3824;
 }
 </style>

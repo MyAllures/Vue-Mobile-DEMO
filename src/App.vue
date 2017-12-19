@@ -27,7 +27,7 @@
         :link="menu.link" 
         :selected="$route.name === menu.route"
         :key="'tabbar' + index">
-        <icon :name="menu.icon" slot="icon" scale="1.3"></icon>
+        <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
@@ -41,6 +41,7 @@ import { mapState, mapGetters } from 'vuex'
 import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
 import 'vue-awesome/icons'
+import { setIndicator } from './utils'
 
 export default {
   name: 'app',
@@ -48,22 +49,22 @@ export default {
     return {
       menus: [{
         label: this.$t('home.name'),
-        icon: 'home',
+        icon: 'icon-home',
         link: '/',
         route: 'Home'
       }, {
         label: this.$t('game.name'),
-        icon: 'th',
+        icon: 'icon-list',
         link: '/game',
         route: 'Game'
       }, {
         label: this.$t('fin.name'),
-        icon: 'th-list',
+        icon: 'icon-fin',
         link: '/fin',
         route: 'Fin'
       }, {
         label: this.$t('my.name'),
-        icon: 'user-o',
+        icon: 'icon-my',
         link: '/my',
         route: 'My'
       }],
@@ -91,6 +92,19 @@ export default {
       .then(res => {
         this.userLoading = false
       })
+
+    let refreshTokenInterval
+    setIndicator(() => {
+      refreshTokenInterval = window.setInterval(() => {
+        this.replaceToken().then(() => {
+          this.getMessageCount()
+        }).catch(error => {
+          Promise.resolve(error)
+        })
+      }, 300000)
+    }, () => {
+      window.clearInterval(refreshTokenInterval)
+    })
   },
   components: {
     XHeader,

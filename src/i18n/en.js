@@ -11,7 +11,12 @@ export default {
     phone: 'Phone number',
     email: 'Email',
     qq: 'QQ',
-    wechat: 'Wechat'
+    wechat: 'Wechat',
+    reset_password: 'Reset password',
+    reset_withdraw_password: 'Reset withdrawal password',
+    logout: 'Logout',
+    confirm_logout: 'Are you sure want to logout?',
+    cancel: 'Cancel'
   },
   home: {
     name: 'Home',
