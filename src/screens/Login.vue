@@ -6,7 +6,7 @@
         show-clear
         ref="username""
         @on-change="validate"
-        :title="$t('login.username')" 
+        :title="$t('misc.username')" 
         label-width="100" 
         v-model="user.username">
       </x-input>
@@ -17,7 +17,7 @@
         ref="password"
         autocomplete="off"
         @on-change="validate"
-        :title="$t('login.password')" 
+        :title="$t('misc.password')" 
         label-width="100" 
         v-model="user.password">
       </x-input>
@@ -27,13 +27,13 @@
       <div v-if="error" class="error">{{error}}</div>
       <x-button type="primary" 
         :show-loading="loading"
-        :disabled="!valid" @click.native="submit">{{$t('login.login')}}</x-button>
+        :disabled="!valid" @click.native="submit">{{$t('misc.login')}}</x-button>
       <flexbox class="m-t">
         <flexbox-item>
-          <x-button type="default" link="/register">{{$t('login.register')}}</x-button>
+          <x-button type="default" link="/register">{{$t('misc.register')}}</x-button>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="default" link="/try">{{$t('login.try')}}</x-button>
+          <x-button type="default" link="/try">{{$t('misc.try')}}</x-button>
         </flexbox-item>
       </flexbox>
     </div>
