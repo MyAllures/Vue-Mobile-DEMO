@@ -21,7 +21,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-withdraw:before {
+.icon-fin:before {
   content: "\e900";
   /* color: #1b82d2; */
   font-size: 23px;
@@ -97,7 +97,7 @@
   content: "\e90e";
   font-size: 24px;
 }
-.icon-betrecord:before {
+.icon-list:before {
   content: "\e90f";
   font-size: 20px;
 }

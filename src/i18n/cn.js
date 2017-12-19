@@ -13,7 +13,10 @@ export default {
     qq: 'QQ',
     wechat: '微信',
     reset_password: '重置密码',
-    reset_withdraw_password: '重置取款密码'
+    reset_withdraw_password: '重置取款密码',
+    logout: '退出登录',
+    confirm_logout: '确定退出登录吗？',
+    cancel: '取消'
   },
   home: {
     name: '首页',
