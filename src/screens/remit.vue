@@ -96,7 +96,6 @@
     Cell
   } from 'vux'
   import axios from 'axios'
-  import { msgFormatter } from '../utils/error_handler'
   import moment from 'moment'
   import urls from '../api/urls'
 
@@ -186,7 +185,7 @@
           }, (response) => {
             console.log(response)
             this.loading = false
-            this.errorMsg = msgFormatter(response)
+            this.errorMsg = response[0].replace(':', ',')
           })
         }
       },
