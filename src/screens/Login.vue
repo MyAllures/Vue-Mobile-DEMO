@@ -4,7 +4,7 @@
       <x-input
         required
         show-clear
-        ref="username"
+        ref="username""
       @on-change="validate"
       :title="$t('misc.username')"
       label-width="100"
