@@ -1,6 +1,10 @@
 'use strict'
 
 export default {
+  message: {
+    min: '最小金额 ',
+    max: '最大金额 '
+  },
   misc: {
     username: '用户名',
     password: '密码',
@@ -31,9 +35,30 @@ export default {
   my: {
     name: '我的',
     balance: '余额',
-    message: '未读消息'
+    message: '未读消息',
+    cancel: '取消',
+    ok: '确定',
+    depositor: '存款人',
+    deposited_at: '存款日期',
+    memo: '备注',
+    amount: '金额'
   },
   login: {
     welcome: '欢迎登录'
+  },
+  deposit: {
+    title: '在线存款',
+    process: '充值',
+    online_pay: '在线支付',
+    remit: '公司入款'
+  },
+  remit: {
+    noremitpayee: '当前暂无可用的公司入款账号',
+    bank_remit_title: '收款银行信息，请仔细核对',
+    bank_account: '入款银行账号',
+    bank_address: '开户行',
+    bank_name: '银行',
+    payee_name: '银行开户名',
+    remit_success: '入款成功，请等待审核'
   }
 }
