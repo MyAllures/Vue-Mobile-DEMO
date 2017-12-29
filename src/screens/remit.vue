@@ -260,6 +260,7 @@
 
   .m-a-md {
     margin: 15px;
+    margin-bottom: 70px;
   }
 
   .text-center {
