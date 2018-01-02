@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <x-header 
+    <x-header
       :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
@@ -11,7 +11,7 @@
         >
         <img :src="logo" v-if="logo" height="32" />
       </div>
-      <div 
+      <div
         v-if="!this.userLoading && showActions && !user.username"
         class="actions"
         slot="right">
@@ -22,9 +22,9 @@
     </x-header>
     <router-view></router-view>
     <tabbar v-show="!$route.meta.tabbarHidden" class="tabbar">
-      <tabbar-item 
+      <tabbar-item
         v-for="(menu, index) in menus"
-        :link="menu.link" 
+        :link="menu.link"
         :selected="$route.name === menu.route"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
@@ -132,7 +132,7 @@ export default {
 .container {
   .vux-header .vux-header-right {
     .actions {
-      position: relative;  
+      position: relative;
       top: -5px;
       right: -5px;
       a{
@@ -140,7 +140,7 @@ export default {
         color: #666;
         padding: 4px 10px;
         border-radius: 2px;
-      } 
+      }
     }
   }
 }
