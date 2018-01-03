@@ -117,9 +117,6 @@
     margin-top: 1em;
     padding: 0 1em;
   }
-  .actions >>> .weui-cells {
-    background: #f0f0f0;
-  }
   .login-button {
     background-color:#1AAD19;
     width: 100%;

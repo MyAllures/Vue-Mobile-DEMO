@@ -77,7 +77,9 @@ export default {
   methods: {
     initFetchTransactionRecord () {
       this.loading = true
-      fetchTransactionRecord({ transaction_type: this.transactionType, offset: 0, limit: this.chunkSize}).then(data => {
+      fetchTransactionRecord({
+        transaction_type: this.transactionType, offset: 0, limit: this.chunkSize
+      }).then(data => {
         this.totalCount = data.count
         this.transactionRecords = data.results
         this.loading = false
@@ -137,7 +139,7 @@ export default {
   },
   filters: {
     dateFilter (value) {
-      return dateFormat(new Date(value), 'YYYY-MM-DD HH:mm:ss')
+      return dateFormat(new Date(value), 'YYYY-MM-DD')
     }
   },
   created () {
