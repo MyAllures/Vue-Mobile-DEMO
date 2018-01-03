@@ -4,7 +4,7 @@
       <x-input
         required
         show-clear
-        ref="username""
+        ref="username"
       @on-change="validate"
       :title="$t('misc.username')"
       label-width="100"
@@ -26,8 +26,11 @@
     <div class="actions">
       <div v-if="error" class="error">{{error}}</div>
       <x-button type="primary"
+                action-type ="button"
                 :show-loading="loading"
-                :disabled="!valid" @click.native="submit">{{$t('misc.login')}}</x-button>
+                :disabled="!valid"
+                @click.native="submit">{{$t('misc.login')}}
+      </x-button>
       <flexbox class="m-t">
         <flexbox-item>
           <x-button type="default" link="/register">{{$t('misc.register')}}</x-button>
@@ -116,5 +119,9 @@
   }
   .actions >>> .weui-cells {
     background: #f0f0f0;
+  }
+  .login-button {
+    background-color:#1AAD19;
+    width: 100%;
   }
 </style>
