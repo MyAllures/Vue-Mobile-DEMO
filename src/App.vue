@@ -130,6 +130,7 @@ export default {
   top: -8px;
 }
 .container {
+  padding-bottom: 55px;
   .vux-header .vux-header-right {
     .actions {
       position: relative;

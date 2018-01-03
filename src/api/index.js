@@ -30,3 +30,7 @@ export function gethomePage () {
 export function getCaptcha () {
   return axios.get(urls.agent_captcha)
 }
+
+export function fetchTransactionRecord (option) {
+  return axios.get(`${urls.transaction_record}?transaction_type=${option.transaction_type}&limit=${option.limit}&offset=${option.offset}`)
+}
