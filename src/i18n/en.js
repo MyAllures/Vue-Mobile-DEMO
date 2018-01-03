@@ -16,7 +16,15 @@ export default {
     reset_withdraw_password: 'Reset withdrawal password',
     logout: 'Logout',
     confirm_logout: 'Are you sure want to logout?',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    loading: 'Loading',
+    load_more: 'Load More',
+    success: 'Success',
+    failed: 'Failed',
+    ongoing: 'Ongoing',
+    cancelled: 'Canceled',
+    denied: 'Denied',
+    no_data_yet: 'No information yet'
   },
   home: {
     name: 'Home',
@@ -26,11 +34,14 @@ export default {
     name: 'Game'
   },
   fin: {
-    name: 'Finance'
+    name: 'Finance',
+    time: 'Time',
+    transaction_way: 'Transaction Way',
+    status: 'Status'
   },
   my: {
     name: 'My',
-    balance: '余额',
+    balance: 'Balance',
     message: 'Unread Message'
   },
   login: {

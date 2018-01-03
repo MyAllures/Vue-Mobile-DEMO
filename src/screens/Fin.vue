@@ -1,39 +1,68 @@
 <template>
   <div>
     <tab>
-      <tab-item selected @on-item-click="initRegrets">充值</tab-item>
-      <tab-item @on-item-click="switchTab">注单</tab-item>
-      <tab-item @on-item-click="switchTab">充值记录</tab-item>
-      <tab-item @on-item-click="switchTab">取款记录</tab-item>
+      <tab-item
+        v-for="(tab,index) in tabs"
+        :key="index"
+        @on-item-click="switchTab(tab.name)"
+        :selected="tab.name === activeTab">
+          {{tab.label}}
+        </tab-item>
     </tab>
     <transition  name="component-fade" mode="out-in">
-      <component v-bind:is="view"></component>
-    </transition>  
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
 import { Tab, TabItem } from 'vux'
-import regrets from './regrets.vue'
+
 export default {
   name: 'Home',
   data () {
     return {
-      view: regrets
+      activeTab: this.$route.name,
+      tabs: [
+        {
+          label: '充值',
+          name: 'Recharge'
+        },
+        {
+          label: '注单',
+          name: 'BetRecord'
+        },
+        {
+          label: '充值记录',
+          name: 'PaymentRecord'
+        },
+        {
+          label: '取款记录',
+          name: 'WithdrawRecord'
+        }
+      ]
     }
   },
   methods: {
-    initRegrets () {
-      this.view = regrets
-    },
-    switchTab () {}
+    switchTab (name) {
+      this.$router.push({name: name})
+    }
+  },
+  watch: {
+    '$route.name': function () {
+      this.activeTab = this.$route.name
+    }
   },
   components: {
     Tab,
     TabItem
+  },
+  beforeRouteEnter (to, from, next) {
+    if (to.name === 'Fin') {
+      next({ name: 'Recharge' })
+    } else {
+      next()
+    }
   }
 }
 </script>
-
-<style scoped>
-</style>
