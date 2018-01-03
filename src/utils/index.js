@@ -54,3 +54,27 @@ export function filtAmount (evt) {
     evt.preventDefault()
   }
 }
+
+export function msgFormatter (msgs) {
+  let formatMsg
+  if (Array.isArray(msgs)) {
+    let arr = []
+    msgs.forEach(msg => {
+      if (typeof msg === 'string') {
+        arr.push(msg)
+      } else {
+        Object.keys(msg).forEach(key => {
+          arr.push(msg[key])
+        })
+      }
+    })
+    formatMsg = arr.join(', ')
+  } else {
+    if (msgs.message) {
+      formatMsg = msgs.message
+      return formatMsg
+    }
+    formatMsg = msgs
+  }
+  return formatMsg
+}

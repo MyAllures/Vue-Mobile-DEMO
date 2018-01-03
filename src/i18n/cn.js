@@ -20,7 +20,15 @@ export default {
     reset_withdraw_password: '重置取款密码',
     logout: '退出登录',
     confirm_logout: '确定退出登录吗？',
-    cancel: '取消'
+    cancel: '取消',
+    loading: '加载中',
+    load_more: '加载更多',
+    success: '成功',
+    failed: '失败',
+    ongoing: '处理中',
+    cancelled: '取消',
+    denied: '拒绝'
+
   },
   home: {
     name: '首页',
@@ -30,7 +38,10 @@ export default {
     name: '游戏'
   },
   fin: {
-    name: '财务'
+    name: '财务',
+    time: '时间',
+    transaction_way: '交易方式',
+    status: '状态'
   },
   my: {
     name: '我的',
