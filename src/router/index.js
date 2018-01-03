@@ -66,15 +66,6 @@ export default new Router({
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
-        },
-        {
-          path: 'bet_record',
-          name: 'BetRecord',
-          meta: {
-            title: '注单',
-            requiresAuth: true
-          },
-          component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
         }
       ]
     },
