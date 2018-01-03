@@ -89,8 +89,8 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchTransactionRecord({ transaction_type: this.transactionType, offset: this.currentChunk * this.chunkSize, limit: 5}).then(data => {
-        this.currentChunk = this.currentChunk + 1
+      fetchTransactionRecord({ transaction_type: this.transactionType, offset: this.transactionRecords.length, limit: 5 }).then(data => {
+        this.currentChunk += 1
         this.transactionRecords.push(...data.results)
         this.loadingMore = false
       }, () => {
