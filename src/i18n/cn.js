@@ -8,16 +8,20 @@ export default {
   misc: {
     username: '用户名',
     password: '密码',
+    confirm_password: '确认密码',
     login: '登录',
     register: '注册',
     try: '试玩',
     bank: '取款账号',
+    real_name: '真实姓名',
     phone: '手机号码',
     email: '邮箱',
     qq: 'QQ',
     wechat: '微信',
     reset_password: '重置密码',
     reset_withdraw_password: '重置取款密码',
+    withdraw_password: '取款密码',
+    captcha: '验证码',
     logout: '退出登录',
     confirm_logout: '确定退出登录吗？',
     cancel: '取消',
@@ -27,8 +31,9 @@ export default {
     failed: '失败',
     ongoing: '处理中',
     cancelled: '取消',
-    denied: '拒绝'
-
+    denied: '拒绝',
+    next_step: '下一步',
+    submit: '送出'
   },
   home: {
     name: '首页',
@@ -53,6 +58,17 @@ export default {
     deposited_at: '存款日期',
     memo: '备注',
     amount: '金额'
+  },
+  validate: {
+    username_validate: '6~15位英数字',
+    password_validate: '8~15字元，含大写字母及数字',
+    withdraw_password_validate: '请输6位纯数字',
+    phone_validate: '手机号码格式无效',
+    account_validate: '该帐号格式无效',
+    password_again: '请再次输入密码',
+    password_diff: '两次密码不一致',
+    username_exist: '该帐号已存在',
+    validate_error: '要符合格式唷'
   },
   login: {
     welcome: '欢迎登录'
