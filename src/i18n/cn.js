@@ -24,7 +24,9 @@ export default {
   },
   home: {
     name: '首页',
-    announcement: '公告'
+    announcement: '公告',
+    hot: '热门游戏',
+    recentgame: '最近玩过'
   },
   game: {
     name: '游戏'
