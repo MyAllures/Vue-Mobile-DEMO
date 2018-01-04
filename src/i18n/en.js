@@ -58,7 +58,8 @@ export default {
     account_validate: 'This Account number is invalid',
     password_again: 'Please enter password again',
     password_diff: 'twice password are different',
-    username_exist: 'This usernam has existed'
+    username_exist: 'This usernam has existed',
+    validate_error: 'Please comply with the format'
   },
   login: {
     welcome: 'Welcome'
