@@ -9,7 +9,6 @@ export static_container=static
 
 # Needed to avoid piling up of data in image and Azure file storage
 rm -rf dist
-/root/bin/az storage blob delete-batch --source $mobile_container
 
 npm install
 npm run build
@@ -19,6 +18,7 @@ npm run build
 
 
 # Upload the changes
+/root/bin/az storage blob delete-batch --source $mobile_container
 /root/bin/az storage blob upload-batch --content-cache-control "public, max-age=$MAX_AGE" --destination $mobile_container/$static_container --source dist/mobile/static
 /root/bin/az storage blob upload --file dist/index.html --container-name $mobile_container --name index.html
 

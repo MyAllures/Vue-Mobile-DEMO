@@ -16,10 +16,17 @@ export default new Router({
       component: resolve => { require(['../screens/Login.vue'], resolve) }
     },
     {
+      path: '/register',
+      name: 'Register',
+      meta: {
+        tabbarHidden: true,
+        title: '注册'
+      },
+      component: resolve => { require(['../screens/Register.vue'], resolve) }
+    },
+    {
       path: '/',
       name: 'Home',
-      meta: {
-      },
       component: resolve => { require(['../screens/Home.vue'], resolve) }
     },
     {
@@ -38,7 +45,36 @@ export default new Router({
         title: '财务',
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/Fin.vue'], resolve) }
+      component: resolve => { require(['../screens/Fin.vue'], resolve) },
+      children: [
+        {
+          path: 'recharge',
+          name: 'Recharge',
+          meta: {
+            title: '充值',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/Recharge.vue'], resolve) }
+        },
+        {
+          path: 'payment_record',
+          name: 'PaymentRecord',
+          meta: {
+            title: '充值记录',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+        },
+        {
+          path: 'withdraw_record',
+          name: 'WithdrawRecord',
+          meta: {
+            title: '取款记录',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+        }
+      ]
     },
     {
       path: '/my',
