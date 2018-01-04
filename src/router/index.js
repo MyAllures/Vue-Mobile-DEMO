@@ -16,10 +16,17 @@ export default new Router({
       component: resolve => { require(['../screens/Login.vue'], resolve) }
     },
     {
+      path: '/register',
+      name: 'Register',
+      meta: {
+        tabbarHidden: true,
+        title: '注册'
+      },
+      component: resolve => { require(['../screens/Register.vue'], resolve) }
+    },
+    {
       path: '/',
       name: 'Home',
-      meta: {
-      },
       component: resolve => { require(['../screens/Home.vue'], resolve) }
     },
     {

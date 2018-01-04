@@ -33,10 +33,18 @@
       </x-button>
       <flexbox class="m-t">
         <flexbox-item>
-          <x-button type="default" link="/register">{{$t('misc.register')}}</x-button>
+          <x-button type="default"
+                    action-type ="button"
+                    link="/register">
+                    {{$t('misc.register')}}
+          </x-button>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="default" link="/try">{{$t('misc.try')}}</x-button>
+          <x-button type="default"
+                    action-type ="button"
+                    link="/try">
+                    {{$t('misc.try')}}
+          </x-button>
         </flexbox-item>
       </flexbox>
     </div>
