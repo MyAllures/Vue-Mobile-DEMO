@@ -116,7 +116,6 @@ export default {
     })
     getPromotions().then(response => {
       this.promotions = response
-      console.log(this.promotions);
     })
   },
   methods: {
