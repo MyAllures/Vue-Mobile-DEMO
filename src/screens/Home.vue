@@ -40,19 +40,11 @@
       </div>
     </x-dialog>
     <div class="gamelist">
-      <div class="title">
-        <img src="../images/icon-game.png" alt="">
-        热门游戏
-      </div>
       <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="game.icon">
-          <div class="blur">
-            <img :src="game.icon" alt="">
-          </div>
+        <div class="col" v-for="(game, index) in category" v-if="(game.icon && game.bg_icon)" v-bind:style="{background: 'url(' + game.bg_icon + ') 100% 100% no-repeat'}">
           <div class="gamebox">
             <a href="">
               <img :src="game.icon" alt="">
-              <p>{{game.display_name}}</p>
             </a>
           </div>
         </div>
@@ -69,9 +61,9 @@
       </div>
 
       <div class="activity-list">
-        <a v-for="(p, i) in promotions" @click="handleClick(p.name,p.start_date, p.end_date)">
+        <a v-for="(p, i) in promotions" v-if="p.image_mobile" @click="handleClick(p.name,p.start_date, p.end_date)">
           <p>{{p.name}}</p>
-          <img :src="p.image" alt="">
+          <img :src="p.image_mobile" alt="">
         </a>
       </div>
     </div>
@@ -87,9 +79,7 @@
 
 <script>
 import { Group, Cell, Swiper, SwiperItem, Marquee, MarqueeItem, XDialog, Masker, Alert } from 'vux'
-import { fetchBanner, fetchAnnouncements } from '../api'
-import axios from 'axios'
-import urls from '../api/urls'
+import { fetchBanner, fetchAnnouncements, getGameCategory, getPromotions } from '../api'
 
 export default {
   name: 'Home',
@@ -107,8 +97,6 @@ export default {
     }
   },
   created () {
-    this.getGameCategory()
-    this.getPromotions()
     fetchBanner()
       .then(res => {
         this.banners = res.map(banner => {
@@ -123,19 +111,16 @@ export default {
       .then(res => {
         this.announcements = res
       })
+    getGameCategory().then(response => {
+      this.category = response
+    })
+    getPromotions().then(response => {
+      this.promotions = response
+      console.log(this.promotions);
+    })
   },
   methods: {
-    getGameCategory () {
-      axios.get(urls.games).then(response => {
-        this.category = response
-      })
-    },
-    getPromotions () {
-      axios.get(urls.promotions).then(response => {
-        this.promotions = response
-      })
-    },
-    handleClick (title,start,end) {
+    handleClick (title, start, end) {
       this.show = true
       this.title = title
       this.start_date = start
@@ -193,17 +178,6 @@ export default {
       position: relative;
       text-align: center;
       overflow: hidden;
-      .blur {
-        width:100%;
-        filter:blur(5px);
-        position: absolute;
-        top: -20%;
-        left: -20%;
-        img {
-          width: 150%;
-          height: 150%;
-        }
-      }
       .gamebox {
         text-align: center;
         font-size: 15px;
@@ -223,7 +197,7 @@ export default {
           display: block;
           img {
             display: block;
-            width: 60%;
+            width: 80%;
             margin: 0 auto;
           }
           p {
