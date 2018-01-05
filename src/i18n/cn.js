@@ -33,7 +33,8 @@ export default {
     cancelled: '取消',
     denied: '拒绝',
     next_step: '下一步',
-    submit: '送出'
+    submit: '送出',
+    nomore_data: '没有资料啰'
   },
   home: {
     name: '首页',
