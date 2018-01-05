@@ -41,7 +41,7 @@
     </x-dialog>
     <div class="gamelist">
       <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="(game.icon && game.bg_icon)" v-bind:style="{background: 'url(' + game.bg_icon + ') 100% 100% no-repeat'}">
+        <div class="col" v-for="(game, index) in category" v-if="(game.icon && game.bg_icon)" :style="{backgroundImage:`url(${game.bg_icon})`}">
           <div class="gamebox">
             <a href="">
               <img :src="game.icon" alt="">
@@ -177,6 +177,8 @@ export default {
       position: relative;
       text-align: center;
       overflow: hidden;
+      background-size: cover;
+      background-position: center center;
       .gamebox {
         text-align: center;
         font-size: 15px;
