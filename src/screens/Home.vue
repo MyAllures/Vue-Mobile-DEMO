@@ -41,7 +41,7 @@
     </x-dialog>
     <div class="gamelist">
       <div class="title">
-        <img src="./icon-game.png" alt="">
+        <img src="../images/icon-game.png" alt="">
         热门游戏
       </div>
       <div class="row" v-if="category" >
@@ -62,7 +62,7 @@
     <div class="activity">
       <div class="head">
         <div class="title">
-          <img src="./icon-activity.png" alt="">
+          <img src="../images/icon-activity.png" alt="">
           优惠活动
         </div>
         <a href="">更多>></a>
