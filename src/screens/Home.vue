@@ -88,7 +88,6 @@
 <script>
 import { Group, Cell, Swiper, SwiperItem, Marquee, MarqueeItem, XDialog, Masker, Alert } from 'vux'
 import { fetchBanner, fetchAnnouncements } from '../api'
-import { chunk } from '../utils/array'
 import axios from 'axios'
 import urls from '../api/urls'
 
@@ -99,7 +98,6 @@ export default {
       banners: [],
       announcements: [],
       showDialog: false,
-      categoryChunk: [],
       category: [],
       show: false,
       promotions: '',
@@ -130,9 +128,6 @@ export default {
     getGameCategory () {
       axios.get(urls.games).then(response => {
         this.category = response
-        this.categoryChunk = chunk(this.category, 4, null, {
-          last: false
-        })
       })
     },
     getPromotions () {
@@ -163,7 +158,11 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+.anmt-title {
+  display: inline-block;
+  width: 50px;
+  color: red;
+}
 .gamelist {
   margin: 0;
   padding: 5px;
