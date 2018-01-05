@@ -46,7 +46,6 @@
   </div>
 </template>
 
-
 <script>
 import { fetchTransactionRecord } from '../../api'
 import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
@@ -175,5 +174,3 @@ export default {
   width: 100%;
 }
 </style>
-
-

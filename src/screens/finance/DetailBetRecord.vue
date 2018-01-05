@@ -63,7 +63,7 @@ export default {
     return {
       betRecords: [],
       totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 140) / 40), // clientHeight minus the height of top and bottom / height of each tr
+      chunkSize: ~~((document.documentElement.clientHeight - 340) / 40), // clientHeight minus the height of top and bottom / height of each tr
       currentChunk: 1,
       loading: false,
       error: {
@@ -126,6 +126,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 @import '../../styles/vars.scss';
 .betrecord-table {
@@ -146,5 +147,3 @@ export default {
   color: $red;
 }
 </style>
-
-
