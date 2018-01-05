@@ -25,7 +25,10 @@
             <span>{{record.time | weekdayFilter}}</span>
           </td>
           <td>
-            <span>{{record.betrecord_count}}</span>
+            <countup :tag="'span'"
+              :start-val="0"
+              :end-val="record.betrecord_count"
+              :duration="2"></countup>
           </td>
           <td>
             <div>
@@ -57,7 +60,7 @@
 
 <script>
 import { fetchDateBetRecords } from '../../api'
-import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider, Icon } from 'vux'
+import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider, Icon, Countup } from 'vux'
 import { msgFormatter } from '../../utils'
 
 export default {
@@ -89,7 +92,8 @@ export default {
     Loading,
     XButton,
     Divider,
-    Icon
+    Icon,
+    Countup
   },
   methods: {
     initfetchDateBetRecords () {
