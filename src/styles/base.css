@@ -9,6 +9,9 @@ html, body {
 .m-t {
   margin-top: 1em;
 }
+.m-b {
+  margin-bottom: 1em;
+}
 
 .text-left {
   text-align: left;
