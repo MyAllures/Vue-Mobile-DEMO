@@ -33,10 +33,13 @@
       </tbody>
     </x-table>
     <box gap="10px 10px">
-      <x-button v-if="totalCount > transactionRecords.length" type="primary" @click.native="loadMore(currentChunk)">
-        <inline-loading v-if="loadingMore"></inline-loading>
-        <span v-else>{{$t('misc.load_more')}}</span>
+      <x-button v-if="totalCount > transactionRecords.length"
+                type="primary"
+                @click.native="loadMore(currentChunk)"
+                :show-loading="loadingMore">
+        <span>{{$t('misc.load_more')}}</span>
       </x-button>
+      <divider v-else>{{$t('misc.nomore_data')}}</divider>
     </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
@@ -46,7 +49,7 @@
 
 <script>
 import { fetchTransactionRecord } from '../../api'
-import { XTable, XButton, dateFormat, Box, Toast, Loading, InlineLoading } from 'vux'
+import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
 
 export default {
@@ -55,7 +58,7 @@ export default {
     return {
       transactionRecords: [],
       totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 140) / 40), // clientHeight minus the height of top and bottom / height of each tr
+      chunkSize: ~~((document.documentElement.clientHeight - 340) / 40), // clientHeight minus the height of top and bottom / height of each tr
       currentChunk: 1,
       loading: false,
       error: {
@@ -72,7 +75,7 @@ export default {
     Toast,
     Loading,
     XButton,
-    InlineLoading
+    Divider
   },
   methods: {
     initFetchTransactionRecord () {
@@ -91,7 +94,7 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchTransactionRecord({ transaction_type: this.transactionType, offset: this.transactionRecords.length, limit: 5 }).then(data => {
+      fetchTransactionRecord({ transaction_type: this.transactionType, offset: this.transactionRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.transactionRecords.push(...data.results)
         this.loadingMore = false

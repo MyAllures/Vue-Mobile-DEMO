@@ -30,7 +30,8 @@ export default {
     denied: 'Denied',
     no_data_yet: 'No information yet',
     next_step: 'Next Step',
-    submit: 'Submit'
+    submit: 'Submit',
+    nomore_data: "There's no data currently"
   },
   home: {
     name: 'Home',
