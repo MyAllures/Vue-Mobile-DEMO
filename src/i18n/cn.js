@@ -47,7 +47,12 @@ export default {
     name: '财务',
     time: '时间',
     transaction_way: '交易方式',
-    status: '状态'
+    status: '状态',
+    records_count: '笔数',
+    win_lose: '输赢',
+    issue_number: '期号',
+    play: '玩法',
+    amount: '金额'
   },
   my: {
     name: '我的',
