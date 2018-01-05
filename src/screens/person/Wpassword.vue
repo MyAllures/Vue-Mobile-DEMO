@@ -1,6 +1,6 @@
 <template>
     <div>
-        <group label-width="'120px'">
+        <group>
             <div v-if="!valid" :class="{'hidden': valid}"> 
                 <ul slot="after-title" class="text-warning input-errors">
                     <li v-for="error in inputErrors">{{error}}</li>
@@ -8,51 +8,50 @@
             </div>
             <x-input
             autocapitalize="off" 
-            :title="$t('change_password.old')"
+            :title="$t('change_password.w_old')"
             :show-clear=true 
             required
             type="password"
-            ref="oldPassword"
+            ref="currentpassword"
             @on-change="validate"
             @on-blur="validate"
-            v-model="password.prev_password">   
+            v-model="password.current_password">   
             </x-input>
 
             <x-input
             autocapitalize="off" 
-            :title="$t('change_password.new')"
+            :title="$t('change_password.w_new')"
             :show-clear=true 
             required
-            :min="8"
-            :max="16"
             type="password"
-            ref="newPassword"
+            ref="newpassword"
             @on-change="validate"
             @on-blur="validate"
-            v-model="password.new_password">   
+            v-model="password.new_password"
+            :min="6"
+            :max="12">   
             </x-input>
 
             <x-input
             autocapitalize="off" 
-            :title="$t('change_password.repeat')"
+            :title="$t('change_password.w_repeat')"
             :show-clear=true 
             type="password"
-            :equal-with="password.new_password"
-            :min="8"
-            :max="16"
-            ref="confirmPassword"
+            ref="repeatpassword"
             @on-change="validate"
             @on-blur="validate"
+            v-model="password.repeat_password"
             :required=false
-            v-model="password.repeat_password">   
-            </x-input>
-
+            :min="6"
+            :max="12"
+            :equal-with="password.new_password">   
+            </x-input>    
         </group>
         <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
         <div class="m-a-md">
             <x-button type="primary" :disabled="!valid" @click.native="submit">
                 <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-                <span v-else>{{$t('change_password.submit')}}</span>
+                <span v-else>{{$t('profile.submit')}}</span>
             </x-button>
             <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
         </div>
@@ -62,15 +61,13 @@
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import urls from '../../api/urls'
 import axios from 'axios'
-
 export default {
-  name: 'changepassword',
   data () {
     return {
       errorMsg: '',
       loading: false,
       password: {
-        prev_password: '',
+        current_password: '',
         repeat_password: '',
         new_password: ''
       },
@@ -107,11 +104,11 @@ export default {
       this.loading = true
       this.errorMsg = ''
       if (this.valid) {
-        axios.post(urls.password, this.password, {emulateJSON: true}).then((response) => {
+        axios.post(urls.withdraw_password, this.password).then((response) => {
           this.loading = false
           this.changed = true
           setTimeout(() => {
-            this.$router.push({name: 'Login'})
+            this.$router.push({name: 'My'})
           }, 2000)
         }, (response) => {
           this.loading = false
@@ -130,19 +127,12 @@ export default {
 }
 </script>
 <style lang='less'>
-    .m-a-md {
-        padding: 10px 20px;
-    } 
-    .vux-group-tip {
-        color: #ff9800;
-        text-align: center;
-    }
     .input-errors {
         font-size: 14px;
         margin-left: 10px;
+        color: #ff9800;
         li {
             list-style: circle inside;
-            color: #ff9800;
         }
         li:first-child {
             padding-top: 10px;
@@ -151,8 +141,18 @@ export default {
             padding-bottom: 10px;
         }
     }
+    .text-danger {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #f44336;
+    }
     .hidden {
         display: none;
         visibility: hidden;
+    }
+    .m-a-md {
+        padding: 0px 15px;
+        text-align: center;
+        color: #1AAD19;
     }
 </style>

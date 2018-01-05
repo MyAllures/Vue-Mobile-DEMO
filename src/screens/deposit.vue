@@ -191,9 +191,6 @@
         text-align: center;
         border-bottom: 3px solid #04BE02;
     }
-    .m-a-md {
-        padding: 10px 15px;
-    }
 }
     
 </style>

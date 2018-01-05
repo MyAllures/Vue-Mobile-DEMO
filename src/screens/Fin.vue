@@ -17,7 +17,6 @@
 
 <script>
 import { Tab, TabItem } from 'vux'
-
 export default {
   name: 'Home',
   data () {
