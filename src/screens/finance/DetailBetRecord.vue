@@ -1,6 +1,6 @@
 <template>
   <div>
-    <x-table :cell-bordered="false" :content-bordered="false" class="betrecord-table">
+    <x-table full-bordered class="betrecord-table">
       <thead>
         <tr class="betrecord-thead">
           <th>{{$t('fin.issue_number')}}</th>
@@ -10,12 +10,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="betrecord-tr"
+        <tr class="text-sm"
             v-if="betRecords.length"
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
-            <span>{{record.issue_number}}</span>
+            <p>{{record.game.display_name}}</p>
+            <p>{{record.issue_number}}</p>
           </td>
           <td>
             <p>{{record.play.display_name}}</p>
@@ -127,23 +128,20 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../../styles/vars.scss';
+<style lang="less" scoped>
+@import '../../styles/vars.less';
 .betrecord-table {
   background-color: #fff;
 }
-.betrecord-tr {
-  border-bottom: 1px solid #ddd;
-}
 .betrecord-thead {
-  background-color: #eee;
+  background-color: #fbf9fe;
 }
 
 .green {
-  color: $green;
+  color: @green;
 }
 
 .red {
-  color: $red;
+  color: @red;
 }
 </style>

@@ -1,16 +1,24 @@
 <template>
   <div>
-    <x-table :cell-bordered="false" :content-bordered="false" class="betrecord-table">
+    <x-table :cell-bordered="false" class="betrecord-table">
       <thead>
         <tr class="betrecord-thead">
           <th>{{$t('fin.time')}}</th>
           <th>{{$t('fin.records_count')}}</th>
-          <th>{{$t('fin.win_lose')}}</th>
+          <th>
+            <div>
+              <span class="profit-text">
+                {{$t('fin.win_lose')}}
+              </span>
+              <span class="direction"></span>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="betRecords.length"
             v-for="(record, index) in betRecords" :key="index"
+            class="text-sm"
             @click="$router.push(`bet_record/${fotmattedDate(record.time)}`)">
           <td>
             <span>{{record.time | dateFilter}}</span>
@@ -19,7 +27,7 @@
           <td>
             <span>{{record.betrecord_count}}</span>
           </td>
-          <td class="profit">
+          <td>
             <div>
               <span :class="['profit-text', statusColor(record.profit)]">
                 {{record.profit | profitFilter}}
@@ -141,31 +149,34 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-@import '../../styles/vars.scss';
+
+<style lang="less" scoped>
+@import '../../styles/vars.less';
 .betrecord-table {
   background-color: #fff;
 }
+
 .betrecord-thead {
-  background-color: #eee;
+  background-color: #fbf9fe;
 }
 
 .green {
-  color: $green;
+  color: @green;
 }
 
 .red {
-  color: $red;
+  color: @red;
 }
-.profit {
-  display: inline-block;
-  width: 100%;
-}
+
 .direction {
   display: inline-block;
   width: 15%;
   color: #999;
   transform: rotate(-135deg);
+  &:before {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .profit-text {
@@ -173,5 +184,3 @@ export default {
   width: 80%;
 }
 </style>
-
-
