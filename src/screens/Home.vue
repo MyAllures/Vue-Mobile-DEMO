@@ -133,7 +133,6 @@ export default {
     getPromotions () {
       axios.get(urls.promotions).then(response => {
         this.promotions = response
-        console.log(this.promotions)
       })
     },
     handleClick (title,start,end) {
@@ -196,10 +195,6 @@ export default {
       overflow: hidden;
       .blur {
         width:100%;
-        -webkit-filter:blur(5px);
-        -moz-filter:blur(5px);
-        -o-filter:blur(5px);
-        -ms-filter:blur(5px);
         filter:blur(5px);
         position: absolute;
         top: -20%;
