@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-bottom: 60px">
+  <div>
     <swiper
       :list="banners"
       :aspect-ratio="400/1200"
@@ -45,10 +45,13 @@
         热门游戏
       </div>
       <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="game.icon" >
+        <div class="col" v-for="(game, index) in category" v-if="game.icon">
+          <div class="blur">
+            <img :src="game.icon" alt="">
+          </div>
           <div class="gamebox">
             <a href="">
-              <img :src="game.icon" alt="game.id">
+              <img :src="game.icon" alt="">
               <p>{{game.display_name}}</p>
             </a>
           </div>
@@ -189,17 +192,34 @@ export default {
       padding: 5px 0;
       flex: 0 0 33.33%;
       max-width: 33.33%;
+      position: relative;
       text-align: center;
+      overflow: hidden;
+      .blur {
+        width:100%;
+        -webkit-filter:blur(5px);
+        -moz-filter:blur(5px);
+        -o-filter:blur(5px);
+        -ms-filter:blur(5px);
+        filter:blur(5px);
+        position: absolute;
+        top: -20%;
+        left: -20%;
+        img {
+          width: 150%;
+          height: 150%;
+        }
+      }
       .gamebox {
         text-align: center;
         font-size: 15px;
         padding: 10px 4px;
-        border: 1px solid #fff;
+        /*border: 1px solid #fff;*/
         -moz-border-radius: 10px;
         -webkit-border-radius: 10px;
         border-radius: 10px;
-        margin: 0 5px;
-        background: rgba(255,255,255,.5);
+        /*margin: 0 5px;*/
+        /*background: rgba(255,255,255,.5);*/
         position: relative;
         a {
           width: 100%;
