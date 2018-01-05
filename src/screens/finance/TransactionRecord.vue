@@ -49,7 +49,7 @@
 
 <script>
 import { fetchTransactionRecord } from '../../api'
-import { XTable, XButton, dateFormat, Box, Toast, Loading, InlineLoading, Divider } from 'vux'
+import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
 
 export default {
@@ -75,7 +75,6 @@ export default {
     Toast,
     Loading,
     XButton,
-    InlineLoading,
     Divider
   },
   methods: {
