@@ -60,7 +60,7 @@
         <a href="">更多>></a>
       </div>
 
-      <div class="activity-list">
+      <div class="activity-list" v-if="promotions">
         <a v-for="(p, i) in promotions" v-if="p.image_mobile" @click="handleClick(p.name,p.start_date, p.end_date)">
           <p>{{p.name}}</p>
           <img :src="p.image_mobile" alt="">
@@ -177,7 +177,7 @@ export default {
       position: relative;
       text-align: center;
       overflow: hidden;
-      background-size: cover;
+      background-size: cover;l
       background-position: center center;
       .gamebox {
         text-align: center;
