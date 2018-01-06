@@ -36,6 +36,7 @@
     <box gap="10px 10px">
       <x-button v-if="totalCount > transactionRecords.length"
                 type="primary"
+                :disabled="loadingMore"
                 @click.native="loadMore(currentChunk)"
                 :show-loading="loadingMore">
         <span>{{$t('misc.load_more')}}</span>
