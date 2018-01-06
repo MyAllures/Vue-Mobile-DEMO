@@ -105,8 +105,6 @@ export default {
     ]),
     bankAccount () {
       let bank = this.user.bank
-      console.log('=======')
-      console.log(this.user)
       if (bank) {
         let bankName = this.user.bank.bank
         let bankNo = this.user.bank.account.slice(-4)

@@ -124,16 +124,6 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/person/Wpassword.vue'], resolve) }
-    },
-    {
-      path: '/person/Massage',
-      name: 'massage',
-      meta: {
-        title: '会员消息',
-        showBack: true,
-        requiresAuth: true
-      },
-      component: resolve => { require(['../screens/person/Massage.vue'], resolve) }
     }
   ]
 })

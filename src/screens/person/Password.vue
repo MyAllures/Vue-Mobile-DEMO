@@ -1,67 +1,66 @@
 <template>
-    <div>
-        <group label-width="'120px'">
-            <div v-if="!valid" :class="{'hidden': valid}"> 
-                <ul slot="after-title" class="text-warning input-errors">
-                    <li v-for="error in inputErrors">{{error}}</li>
-                </ul>
-            </div>
-            <x-input
-            autocapitalize="off" 
-            :title="$t('change_password.old')"
-            :show-clear=true 
-            required
-            type="password"
-            ref="oldPassword"
-            @on-change="validate"
-            @on-blur="validate"
-            v-model="password.prev_password">   
-            </x-input>
-
-            <x-input
-            autocapitalize="off" 
-            :title="$t('change_password.new')"
-            :show-clear=true 
-            required
-            :min="8"
-            :max="16"
-            type="password"
-            ref="newPassword"
-            @on-change="validate"
-            @on-blur="validate"
-            v-model="password.new_password">   
-            </x-input>
-
-            <x-input
-            autocapitalize="off" 
-            :title="$t('change_password.repeat')"
-            :show-clear=true 
-            type="password"
-            :equal-with="password.new_password"
-            :min="8"
-            :max="16"
-            ref="confirmPassword"
-            @on-change="validate"
-            @on-blur="validate"
-            :required=false
-            v-model="password.repeat_password">   
-            </x-input>
-
-        </group>
-        <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
-        <div class="m-a-md">
-            <x-button type="primary" :disabled="!valid" @click.native="submit">
-                <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-                <span v-else>{{$t('change_password.submit')}}</span>
-            </x-button>
-            <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
+  <div>
+    <group label-width="'120px'">
+        <div v-if="!valid" :class="{'hidden': valid}"> 
+          <ul slot="after-title" class="text-warning input-errors">
+            <li v-for="error in inputErrors">{{error}}</li>
+          </ul>
         </div>
+        <x-input
+          autocapitalize="off" 
+          :title="$t('change_password.old')"
+          :show-clear=true 
+          required
+          type="password"
+          ref="oldPassword"
+          @on-change="validate"
+          @on-blur="validate"
+          v-model="password.prev_password">   
+        </x-input>
+
+        <x-input
+          autocapitalize="off" 
+          :title="$t('change_password.new')"
+          :show-clear=true 
+          required
+          :min="8"
+          :max="16"
+          type="password"
+          ref="newPassword"
+          @on-change="validate"
+          @on-blur="validate"
+          v-model="password.new_password">   
+          </x-input>
+
+        <x-input
+          autocapitalize="off" 
+          :title="$t('change_password.repeat')"
+          :show-clear=true 
+          type="password"
+          :equal-with="password.new_password"
+          :min="8"
+          :max="16"
+          ref="confirmPassword"
+          @on-change="validate"
+          @on-blur="validate"
+          :required=false
+          v-model="password.repeat_password">   
+        </x-input>
+
+    </group>
+    <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
+    <div class="m-a-md">
+      <x-button type="primary" :disabled="!valid" @click.native="submit">
+        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+        <span v-else>{{$t('change_password.submit')}}</span>
+      </x-button>
+      <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
     </div>
+  </div>
 </template>
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
-import urls from '../../api/urls'
-import axios from 'axios'
+import { changePassword } from '../../api'
 
 export default {
   name: 'changepassword',
@@ -107,7 +106,7 @@ export default {
       this.loading = true
       this.errorMsg = ''
       if (this.valid) {
-        axios.post(urls.password, this.password, {emulateJSON: true}).then((response) => {
+        changePassword(this.password).then((response) => {
           this.loading = false
           this.changed = true
           setTimeout(() => {

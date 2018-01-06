@@ -59,8 +59,7 @@
 </template>
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
-import urls from '../../api/urls'
-import axios from 'axios'
+import { changeWpassword } from '../../api'
 export default {
   data () {
     return {
@@ -104,7 +103,7 @@ export default {
       this.loading = true
       this.errorMsg = ''
       if (this.valid) {
-        axios.post(urls.withdraw_password, this.password).then((response) => {
+        changeWpassword(this.password).then((response) => {
           this.loading = false
           this.changed = true
           setTimeout(() => {

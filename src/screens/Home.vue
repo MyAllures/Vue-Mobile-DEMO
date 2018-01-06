@@ -136,7 +136,7 @@ export default {
         console.log(this.promotions)
       })
     },
-    handleClick (title,start,end) {
+    handleClick (title, start, end) {
       this.show = true
       this.title = title
       this.start_date = start
