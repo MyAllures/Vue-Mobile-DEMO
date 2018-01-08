@@ -29,7 +29,6 @@
     </group>
     <group>
       <cell 
-        @click.native="$router.push('/person/Profile')"
         :title="$t('misc.phone')">
         <i class="icon-phone icon" slot="icon"></i>
         <span>{{user.phone || '未填写'}}</span>
@@ -105,8 +104,6 @@ export default {
     ]),
     bankAccount () {
       let bank = this.user.bank
-      console.log('=======')
-      console.log(this.user)
       if (bank) {
         let bankName = this.user.bank.bank
         let bankNo = this.user.bank.account.slice(-4)
