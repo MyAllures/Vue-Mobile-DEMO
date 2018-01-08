@@ -7,14 +7,14 @@
       dots-position="center" auto loop
     ></swiper>
     <group>
-      <cell>
+      <cell class="tt">
         <span slot="icon" class="anmt-title">{{$t('home.announcement')}}</span>
         <marquee :interval="5000">
           <marquee-item
             v-for="(a, index) in announcements"
             :key="'announcement' + index"
             @click.native="showDialog = true"
-          style="text-align: left">
+            class="walk-item">
             <span class="maq-txt">{{ index + 1 }}: {{ a.announcement }}</span>
           </marquee-item>
         </marquee>
@@ -40,19 +40,11 @@
       </div>
     </x-dialog>
     <div class="gamelist">
-      <div class="title">
-        <img src="./icon-game.png" alt="">
-        热门游戏
-      </div>
       <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="game.icon">
-          <div class="blur">
-            <img :src="game.icon" alt="">
-          </div>
+        <div class="col" v-for="(game, index) in category" v-if="(game.icon && game.bg_icon)" :style="{backgroundImage:`url(${game.bg_icon})`}">
           <div class="gamebox">
             <a href="">
               <img :src="game.icon" alt="">
-              <p>{{game.display_name}}</p>
             </a>
           </div>
         </div>
@@ -62,16 +54,16 @@
     <div class="activity">
       <div class="head">
         <div class="title">
-          <img src="./icon-activity.png" alt="">
+          <img src="../images/icon-activity.png" alt="">
           优惠活动
         </div>
         <a href="">更多>></a>
       </div>
 
-      <div class="activity-list">
-        <a v-for="(p, i) in promotions" @click="handleClick(p.name,p.start_date, p.end_date)">
+      <div class="activity-list" v-if="promotions">
+        <a v-for="(p, i) in promotions" v-if="p.image_mobile" @click="handleClick(p.name,p.start_date, p.end_date)">
           <p>{{p.name}}</p>
-          <img :src="p.image" alt="">
+          <img :src="p.image_mobile" alt="">
         </a>
       </div>
     </div>
@@ -87,9 +79,7 @@
 
 <script>
 import { Group, Cell, Swiper, SwiperItem, Marquee, MarqueeItem, XDialog, Masker, Alert } from 'vux'
-import { fetchBanner, fetchAnnouncements } from '../api'
-import axios from 'axios'
-import urls from '../api/urls'
+import { fetchBanner, fetchAnnouncements, getGameCategory, getPromotions } from '../api'
 
 export default {
   name: 'Home',
@@ -107,8 +97,6 @@ export default {
     }
   },
   created () {
-    this.getGameCategory()
-    this.getPromotions()
     fetchBanner()
       .then(res => {
         this.banners = res.map(banner => {
@@ -123,19 +111,14 @@ export default {
       .then(res => {
         this.announcements = res
       })
+    getGameCategory().then(response => {
+      this.category = response
+    })
+    getPromotions().then(response => {
+      this.promotions = response
+    })
   },
   methods: {
-    getGameCategory () {
-      axios.get(urls.games).then(response => {
-        this.category = response
-      })
-    },
-    getPromotions () {
-      axios.get(urls.promotions).then(response => {
-        this.promotions = response
-        console.log(this.promotions)
-      })
-    },
     handleClick (title, start, end) {
       this.show = true
       this.title = title
@@ -157,15 +140,31 @@ export default {
 }
 </script>
 
+<style lang="less">
+  .weui-cells {
+    margin-top: 0 !important;
+    &:after {
+      border-bottom: none !important;
+    }
+  }
+</style>
 <style scoped lang="less">
 .anmt-title {
   display: inline-block;
   width: 50px;
   color: red;
 }
+.walk-item {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tt {
+  background-color: #f0f0f0;
+}
 .gamelist {
   margin: 0;
-  padding: 5px;
   border: 0;
   vertical-align: baseline;
   font: inherit;
@@ -194,21 +193,8 @@ export default {
       position: relative;
       text-align: center;
       overflow: hidden;
-      .blur {
-        width:100%;
-        -webkit-filter:blur(5px);
-        -moz-filter:blur(5px);
-        -o-filter:blur(5px);
-        -ms-filter:blur(5px);
-        filter:blur(5px);
-        position: absolute;
-        top: -20%;
-        left: -20%;
-        img {
-          width: 150%;
-          height: 150%;
-        }
-      }
+      background-size: cover;l
+      background-position: center center;
       .gamebox {
         text-align: center;
         font-size: 15px;
@@ -228,7 +214,7 @@ export default {
           display: block;
           img {
             display: block;
-            width: 60%;
+            width: 80%;
             margin: 0 auto;
           }
           p {
