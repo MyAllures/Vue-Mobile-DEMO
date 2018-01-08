@@ -4,6 +4,8 @@ html, body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
+  /* font-size: 62.5%;  */
+  /* xxx: (the px you want)/10 rem */
 }
 
 .m-t {
@@ -16,6 +18,9 @@ html, body {
 
 .text-left {
   text-align: left;
+}
+.text-center {
+  text-align: center;
 }
 
 .text-sm {

@@ -63,3 +63,11 @@ export function fetchBetHistory (option) {
 export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}`)
 }
+
+export function fetchGames () {
+  return axios.get(urls.games)
+}
+
+export function fetchGameResult (gameId) {
+  return axios.get(`${urls.game_result}?game=${gameId}&opt_expand=next`)
+}

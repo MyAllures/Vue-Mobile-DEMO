@@ -32,11 +32,27 @@ export default new Router({
     {
       path: '/game',
       name: 'Game',
+      component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
-        title: '游戏',
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
-      component: resolve => { require(['../screens/Game.vue'], resolve) }
+      children: [
+        {
+          path: ':gameId',
+          component: resolve => { require(['../screens/games/Game.vue'], resolve) },
+          meta: {
+            requiresAuth: true,
+            tabbarHidden: true
+          },
+          children: [
+            {
+              path: ':categoryId',
+              component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) }
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/fin',
