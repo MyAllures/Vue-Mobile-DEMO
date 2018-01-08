@@ -27,6 +27,14 @@ export function gethomePage () {
   return axios.get(urls.homePage)
 }
 
+export function getGameCategory () {
+  return axios.get(urls.games)
+}
+
+export function getPromotions () {
+  return axios.get(urls.promotions)
+}
+
 export function getCaptcha () {
   return axios.get(urls.agent_captcha)
 }
