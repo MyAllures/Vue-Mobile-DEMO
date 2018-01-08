@@ -32,11 +32,11 @@ export default new Router({
     {
       path: '/game',
       name: 'Game',
+      component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
-        title: '游戏',
-        requiresAuth: true
-      },
-      component: resolve => { require(['../screens/Game.vue'], resolve) }
+        requiresAuth: true,
+        tabbarHidden: true
+      }
     },
     {
       path: '/fin',
@@ -73,6 +73,24 @@ export default new Router({
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+        },
+        {
+          path: 'bet_record/:date',
+          name: 'DetailBetRecord',
+          meta: {
+            title: '注單',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
+        },
+        {
+          path: 'bet_record',
+          name: 'BetRecord',
+          meta: {
+            title: '注單',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
         }
       ]
     },

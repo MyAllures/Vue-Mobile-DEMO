@@ -48,7 +48,12 @@ export default {
     name: 'Finance',
     time: 'Time',
     transaction_way: 'Transaction Way',
-    status: 'Status'
+    status: 'Status',
+    records＿count: 'Count',
+    win_lose: 'Win/Lose',
+    issue_number: 'Issue',
+    play: 'Play',
+    amount: 'Amount'
   },
   my: {
     name: 'My',

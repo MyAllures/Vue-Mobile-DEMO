@@ -1,11 +1,11 @@
 <template>
   <div>
     <div>
-      <blur :blur-amount="20" :url="user.avatar ? user.avatar: url" class="personal-info">
+      <blur :blur-amount="20" :url="charactarUrl" class="personal-info">
         <div  slot="default" class="center">
-          <img class="profile-img" :src="user.avatar ? user.avatar: url">
+          <img class="profile-img" :src="charactarUrl">
           <p>{{user.username}}</p>
-          <p class="balance">用戶餘額: <span>{{user.balance}}</span> RMB</p>
+          <p class="balance">{{$t('my.name')}}{{$t('my.balance')}}: <span>{{user.balance}}</span> RMB</p>
         </div>
       </blur>
     </div>
@@ -50,7 +50,7 @@ export default {
         }
       ],
       // Temporarily for display
-      url: 'https://eggdropsoupfly.thisistap.com/wp-content/uploads/2017/04/%E9%87%91%E6%AD%A3%E6%81%A9.jpeg'
+      charactarUrl: 'https://orig00.deviantart.net/4298/f/2007/035/d/9/starry_night_snoopy_by_knoxcat.png'
     }
   },
   methods: {
@@ -87,15 +87,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../styles/vars.scss';
+<style lang="less" scoped>
+@import '../styles/vars.less';
+
 .personal-info {
   z-index: 0;
-  text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
+  text-shadow: 0px 0px 1px #999;
   .balance {
     font-weight: 200;
     span {
-      color: lighten($green, 10%)
+      color: lighten(@green, 10%)
     }
   }
   .center {
@@ -109,8 +110,9 @@ export default {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 4px solid #ececec;
+    border: 4px solid #ddd;
   }
 }
+
 </style>
 
