@@ -16,3 +16,7 @@ html, body {
 .text-left {
   text-align: left;
 }
+
+.m-a-md {
+  padding: 10px 15px;
+}

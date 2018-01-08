@@ -84,6 +84,46 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/My.vue'], resolve) }
+    },
+    {
+      path: '/person/Password',
+      name: 'changepassword',
+      meta: {
+        title: '修改密码',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Password.vue'], resolve) }
+    },
+    {
+      path: '/person/Profile',
+      name: 'profile',
+      meta: {
+        title: '修改账户资料',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Profile.vue'], resolve) }
+    },
+    {
+      path: '/person/Bankinfo',
+      name: 'bankinfo',
+      meta: {
+        title: '银行资讯',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Bankinfo.vue'], resolve) }
+    },
+    {
+      path: '/person/Wpassword',
+      name: 'wpassword',
+      meta: {
+        title: '重置取款密码',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Wpassword.vue'], resolve) }
     }
   ]
 })
