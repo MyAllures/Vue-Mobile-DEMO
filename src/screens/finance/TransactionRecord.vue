@@ -13,6 +13,7 @@
       </thead>
       <tbody>
         <tr v-if="transactionRecords.length"
+          class="text-sm"
           v-for="(record, index) in transactionRecords" :key="index">
           <td>
             <span>{{record.created_at | dateFilter}}</span>
@@ -35,6 +36,7 @@
     <box gap="10px 10px">
       <x-button v-if="totalCount > transactionRecords.length"
                 type="primary"
+                :disabled="loadingMore"
                 @click.native="loadMore(currentChunk)"
                 :show-loading="loadingMore">
         <span>{{$t('misc.load_more')}}</span>
@@ -45,7 +47,6 @@
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
 </template>
-
 
 <script>
 import { fetchTransactionRecord } from '../../api'
@@ -150,24 +151,22 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-@import '../../styles/vars.scss';
+<style lang="less" scoped>
+@import '../../styles/vars.less';
 .transaction-table {
   background-color: #fff;
 }
+
 .transaction-thead {
-  background-color: #eee;
-}
-.green, .red, .normal {
-  font-size: 0.9em;
+  background-color: #fbf9fe;
 }
 
 .green {
-  color: $green;
+  color: @green;
 }
 
 .red {
-  color: $red;
+  color: @red;
 }
 
 .amount {
@@ -175,5 +174,3 @@ export default {
   width: 100%;
 }
 </style>
-
-
