@@ -7,14 +7,14 @@
       dots-position="center" auto loop
     ></swiper>
     <group>
-      <cell>
+      <cell class="tt">
         <span slot="icon" class="anmt-title">{{$t('home.announcement')}}</span>
         <marquee :interval="5000">
           <marquee-item
             v-for="(a, index) in announcements"
             :key="'announcement' + index"
             @click.native="showDialog = true"
-          style="text-align: left">
+            class="walk-item">
             <span class="maq-txt">{{ index + 1 }}: {{ a.announcement }}</span>
           </marquee-item>
         </marquee>
@@ -140,15 +140,31 @@ export default {
 }
 </script>
 
+<style lang="less">
+  .weui-cells {
+    margin-top: 0 !important;
+    &:after {
+      border-bottom: none !important;
+    }
+  }
+</style>
 <style scoped lang="less">
 .anmt-title {
   display: inline-block;
   width: 50px;
   color: red;
 }
+.walk-item {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tt {
+  background-color: #f0f0f0;
+}
 .gamelist {
   margin: 0;
-  padding: 5px;
   border: 0;
   vertical-align: baseline;
   font: inherit;
