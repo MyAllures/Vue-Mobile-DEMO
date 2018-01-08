@@ -67,3 +67,27 @@ export function fetchBetHistory (option) {
   })
   return axios.get(url)
 }
+
+export function getOnlinepayees () {
+  return axios.get(urls.paymentType)
+}
+
+export function addUserBank (user, member) {
+  return axios.put(urls.user + user.id + '/', member)
+}
+
+export function fetchBank () {
+  return axios.get(urls.bank)
+}
+
+export function changePassword (password) {
+  return axios.post(urls.password, password, {emulateJSON: true})
+}
+
+export function changeWpassword (password) {
+  return axios.post(urls.withdraw_password, password)
+}
+
+export function changeUserInformation (id, member) {
+  return axios.put(urls.user + member.id + '/', member)
+}

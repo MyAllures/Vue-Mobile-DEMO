@@ -26,7 +26,6 @@
 
 <script>
 import { Tab, TabItem, Blur } from 'vux'
-
 export default {
   name: 'Home',
   data () {
