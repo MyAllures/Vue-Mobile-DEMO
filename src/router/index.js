@@ -36,23 +36,7 @@ export default new Router({
       meta: {
         requiresAuth: true,
         tabbarHidden: true
-      },
-      children: [
-        {
-          path: ':gameId',
-          component: resolve => { require(['../screens/games/Game.vue'], resolve) },
-          meta: {
-            requiresAuth: true,
-            tabbarHidden: true
-          },
-          children: [
-            {
-              path: ':categoryId',
-              component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) }
-            }
-          ]
-        }
-      ]
+      }
     },
     {
       path: '/fin',

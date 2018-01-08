@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <x-header
-      v-if="$route.path.split('/')[1] !== 'game'"
       :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
