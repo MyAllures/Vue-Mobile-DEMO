@@ -1,6 +1,10 @@
 'use strict'
 
 export default {
+  message: {
+    min: 'Min amount',
+    max: 'Max amount'
+  },
   misc: {
     username: 'Username',
     password: 'Password',
@@ -54,7 +58,13 @@ export default {
   my: {
     name: 'My',
     balance: 'Balance',
-    message: 'Unread Message'
+    message: 'Unread Message',
+    cancel: 'Cancel',
+    ok: 'OK',
+    depositor: 'Depositor',
+    deposited_at: 'Deposited at',
+    memo: 'Memo',
+    amount: 'Amount'
   },
   validate: {
     username_validate: 'User name should be 6-15 digit or character',
@@ -69,5 +79,85 @@ export default {
   },
   login: {
     welcome: 'Welcome'
+  },
+  deposit: {
+    title: 'Deposit',
+    process: 'Process',
+    online_pay: 'Online Pay',
+    remit: 'Remit'
+  },
+  remit: {
+    noremitpayee: 'No available remit payee.',
+    bank_remit_title: 'Please check our bank infomations carefully',
+    bank_account: 'Bank Account Number',
+    bank_address: 'Bank Address',
+    bank_name: 'Bank Name',
+    payee_name: 'Account Owner',
+    remit_success: 'Remit successfully'
+  },
+  change_password: {
+    title: 'Change Password',
+    old: 'Old password',
+    new: 'New password',
+    repeat: 'Repeat password',
+    success: 'Password reset successfully!',
+    withdraw: 'Withdraw Password',
+    change_withdraw: 'Change Withdraw Password',
+    w_old: 'Old withdraw password',
+    w_new: 'New withdraw password',
+    w_repeat: 'Repeat withdraw password'
+  },
+  profile: {
+    title: 'My Account',
+    letter: 'Member messages',
+    messages: 'unread messages',
+    basic_info: 'Basic Info',
+    balance: 'Total Balance',
+    balance_here: 'Balance in our side',
+    balance_providers: 'Sum of the providers',
+    level: 'Member Level',
+    username: 'Username',
+    real_name: 'Real Name',
+    phone: 'Phone Number',
+    email: 'Email',
+    bank_info: 'Bank Info',
+    bank_name: 'Bank',
+    bank_account: 'Account',
+    bank_address: 'Address',
+    bank_province: 'Province',
+    bank_city: 'City',
+    receiver: 'Receiver',
+    bank_sucess: 'Bank Info successfully created.',
+    no_bank: 'No Bank Info',
+    no_bank_hint: 'Required for withdrawal request',
+    submit_bank: 'Submit Bank Info',
+    safety: 'Account Safety',
+    reset_password: 'Reset Account Password',
+    reset_withdraw_password: 'Reset Withdrawal Password',
+    profile: 'Profile',
+    modify_profile: 'Update profile',
+    birthday: 'Birthday',
+    wechat: 'WeChat',
+    qq: 'QQ',
+    gender: 'Gender',
+    male: 'Male',
+    female: 'Female',
+    select_bank: 'Select Bank',
+    logout: 'Logout',
+    confirm_logout: 'Confirm Logout?',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    ok: 'Ok',
+    submit: 'Submit',
+    remit: 'Remit Info',
+    memo: 'Memo',
+    amount: 'Amount',
+    depositor: 'Depositor',
+    deposited_at: 'Deposited at',
+    remit_success: 'Remit Info successfully created.',
+    bankinfo_hint: 'You can\'t update bank info yourself once saved',
+    bankinfo_confirm: 'Are you sure？If you want to update bank info, please contact custom service',
+    bankinfo_update_tip: 'Please contact our custom service to update your bank info',
+    profile_hint: 'If you need to modify your real name or mobile phone number, please contact customer service'
   }
 }
