@@ -142,6 +142,25 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/person/Wpassword.vue'], resolve) }
+    },
+    {
+      path: '/person/Message',
+      name: 'message',
+      meta: {
+        title: '会员消息',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Message.vue'], resolve) }
+    },
+    {
+      path: '/depositSuccess',
+      name: 'depositSuccess',
+      meta: {
+        title: '支付成功',
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
     }
   ]
 })
