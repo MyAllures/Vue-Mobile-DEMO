@@ -8,7 +8,12 @@
     ></swiper>
     <group>
       <cell class="tt">
-        <span slot="icon" class="anmt-title">{{$t('home.announcement')}}</span>
+        <span slot="icon" class="anmt-title">
+          <svg  version="1.1" role="presentation" width="20" height="20" viewBox="0 0 1792 1792" class="speaker m-l-xlg fa-icon" style="font-size: 1.25em;">
+            <path d="M1664 640q53 0 90.5 37.5t37.5 90.5-37.5 90.5-90.5 37.5v384q0 52-38 90t-90 38q-417-347-812-380-58 19-91 66t-31 100.5 40 92.5q-20 33-23 65.5t6 58 33.5 55 48 50 61.5 50.5q-29 58-111.5 83t-168.5 11.5-132-55.5q-7-23-29.5-87.5t-32-94.5-23-89-15-101 3.5-98.5 22-110.5h-122q-66 0-113-47t-47-113v-192q0-66 47-113t113-47h480q435 0 896-384 52 0 90 38t38 90v384zM1536 1244v-954q-394 302-768 343v270q377 42 768 341z"></path> 
+          </svg>&nbsp;
+          {{$t('home.announcement')}}
+        </span>
         <marquee :interval="5000">
           <marquee-item
             v-for="(a, index) in announcements"
@@ -41,12 +46,14 @@
     </x-dialog>
     <div class="gamelist">
       <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="(game.icon && game.bg_icon)" :style="{backgroundImage:`url(${game.bg_icon})`}">
+        <div class="col" v-for="(game, index) in category" v-if="index < 11" :style="{backgroundImage:`url(${game.bg_icon})`}">
           <div class="gamebox">
-            <a href="">
+            <a>
               <img :src="game.icon" alt="">
             </a>
           </div>
+        </div>
+        <div class="col zxkf">
         </div>
       </div>
     </div>
@@ -57,7 +64,6 @@
           <img src="../images/icon-activity.png" alt="">
           优惠活动
         </div>
-        <a href="">更多>></a>
       </div>
 
       <div class="activity-list" v-if="promotions">
@@ -147,12 +153,18 @@ export default {
       border-bottom: none !important;
     }
   }
+  .vux-swiper {
+    height: 160px!important;
+  }
 </style>
 <style scoped lang="less">
+
 .anmt-title {
   display: inline-block;
-  width: 50px;
-  color: red;
+  width: 80px;
+  .speaker {
+    transform: translateY(2px);
+  }
 }
 .walk-item {
   text-align: left;
@@ -186,6 +198,9 @@ export default {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
+    .zxkf {
+      background-image: url('../images/zxkf.png')
+    }
     .col {
       padding: 5px 0;
       flex: 0 0 33.33%;
@@ -199,12 +214,9 @@ export default {
         text-align: center;
         font-size: 15px;
         padding: 10px 4px;
-        /*border: 1px solid #fff;*/
         -moz-border-radius: 10px;
         -webkit-border-radius: 10px;
         border-radius: 10px;
-        /*margin: 0 5px;*/
-        /*background: rgba(255,255,255,.5);*/
         position: relative;
         a {
           width: 100%;
@@ -214,11 +226,8 @@ export default {
           display: block;
           img {
             display: block;
-            width: 80%;
+            width: 80px;
             margin: 0 auto;
-          }
-          p {
-            margin: 10px 0 0;
           }
         }
       }

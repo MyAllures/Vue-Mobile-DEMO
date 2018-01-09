@@ -68,7 +68,7 @@
       <div class="m-a-md" v-else>
         <div class="vux-group-tip text-success m-b">{{$t('remit.remit_success')}}</div>
         <x-button type="primary" @click.native="remitSuccess=false">继续充值</x-button>
-        <x-button @click.native="$router.push('/finance?active=deposit')">查看充值记录</x-button>
+        <x-button @click.native="$router.push('/fin/payment_record')">查看充值记录</x-button>
       </div>
 
     </div>
@@ -183,7 +183,6 @@
             this.remit.amount = ''
             this.remit.memo = ''
           }, (response) => {
-            console.log(response)
             this.loading = false
             this.errorMsg = response[0].replace(':', ',')
           })
@@ -193,7 +192,6 @@
         axios.get(urls.remitpayee + '?opt_expand=1')
           .then(response => {
             this.remitpayees = response
-            console.log(this.remitpayees)
             this.responseLoading = false
             this.togglePayee(this.remitpayees[0])
           })

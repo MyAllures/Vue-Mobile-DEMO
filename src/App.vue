@@ -2,6 +2,7 @@
   <div class="container">
     <x-header
       :right-options="{showMore: !!user.username}"
+      :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <div
@@ -17,7 +18,7 @@
         slot="right">
         <router-link to="/login">登录</router-link>
         <router-link to="/register">注册</router-link>
-        <a>试玩</a>
+        <a style="background-color: deepskyblue">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
@@ -81,6 +82,9 @@ export default {
     }),
     showActions () {
       return !['Login'].includes(this.$route.name)
+    },
+    pageName: function () {
+      return this.$route.name
     }
   },
   created () {
@@ -96,11 +100,13 @@ export default {
     let refreshTokenInterval
     setIndicator(() => {
       refreshTokenInterval = window.setInterval(() => {
-        this.replaceToken().then(() => {
-          this.getMessageCount()
-        }).catch(error => {
-          Promise.resolve(error)
-        })
+        if (this.replaceToken) {
+          this.replaceToken().then(() => {
+            this.getMessageCount()
+          }).catch(error => {
+            Promise.resolve(error)
+          })
+        }
       }, 300000)
     }, () => {
       window.clearInterval(refreshTokenInterval)
@@ -128,6 +134,9 @@ export default {
 .logo {
   position: absolute;
   top: -8px;
+}
+.bg {
+  background-color: inherit!important;
 }
 .container {
   padding-bottom: 55px;
