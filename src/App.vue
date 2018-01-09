@@ -18,7 +18,7 @@
         slot="right">
         <router-link to="/login">登录</router-link>
         <router-link to="/register">注册</router-link>
-        <a style="background-color: deepskyblue">试玩</a>
+        <a style="color: deepskyblue">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
