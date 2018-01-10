@@ -136,20 +136,17 @@ export default {
 }
 </script>
 <style @lang="less">
-    .fix-arrow > .weui_cell_ft.with_arrow::after {
-        content: " ";
-        display: inline-block;
-        transform: rotate(45deg) translateY(-50%);
-        height: 6px;
-        width: 6px;
-        border-width: 2px 2px 0 0;
-        border-color: #C8C8CD;
-        border-style: solid;
-        position: absolute;
-        top: 50%;
-        right: 15px;
-    }
-    .m-a-md {
-        padding: 10px 10px;
-    }
+.fix-arrow > .weui_cell_ft.with_arrow::after {
+  content: " ";
+  display: inline-block;
+  transform: rotate(45deg) translateY(-50%);
+  height: 6px;
+  width: 6px;
+  border-width: 2px 2px 0 0;
+  border-color: #C8C8CD;
+  border-style: solid;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+}
 </style>
