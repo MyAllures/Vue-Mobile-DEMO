@@ -68,7 +68,7 @@
       <div class="m-a-md" v-else>
         <div class="vux-group-tip text-success m-b">{{$t('remit.remit_success')}}</div>
         <x-button type="primary" @click.native="remitSuccess=false">继续充值</x-button>
-        <x-button @click.native="$router.push('/finance?active=deposit')">查看充值记录</x-button>
+        <x-button @click.native="$router.push('/fin/payment_record')">查看充值记录</x-button>
       </div>
 
     </div>
@@ -95,10 +95,8 @@
     FlexboxItem,
     Cell
   } from 'vux'
-  import axios from 'axios'
   import moment from 'moment'
-  import urls from '../api/urls'
-
+  import { getRemitPayees, postRemit } from '../api'
   export default {
     data () {
       return {
@@ -134,7 +132,12 @@
       }
     },
     created () {
-      this.getRemitPayees()
+      getRemitPayees()
+        .then(response => {
+          this.remitpayees = response
+          this.responseLoading = false
+          this.togglePayee(this.remitpayees[0])
+        })
     },
     components: {
       Group,
@@ -176,27 +179,17 @@
         if (this.valid) {
           this.errorMsg = ''
           this.loading = true
-          axios.post(urls.remit, this.remit).then((response) => {
+          postRemit(this.remit).then(response => {
             this.loading = false
             this.remitSuccess = true
             this.remit.remit_info.depositor = ''
             this.remit.amount = ''
             this.remit.memo = ''
           }, (response) => {
-            console.log(response)
             this.loading = false
             this.errorMsg = response[0].replace(':', ',')
           })
         }
-      },
-      getRemitPayees () {
-        axios.get(urls.remitpayee + '?opt_expand=1')
-          .then(response => {
-            this.remitpayees = response
-            console.log(this.remitpayees)
-            this.responseLoading = false
-            this.togglePayee(this.remitpayees[0])
-          })
       }
     }
   }
