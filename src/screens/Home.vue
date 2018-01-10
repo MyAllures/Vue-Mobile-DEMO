@@ -149,14 +149,11 @@ export default {
 <style lang="less">
   .announcement {
     .weui-cells {
-      margin-top: 0 !important;
-      &:after {
-        border-bottom: none !important;
-      }
+      margin-top: 0;
     }
-    .vux-swiper {
-      height: 160px!important;
-    }
+  }
+  .vux-swiper {
+    height: 160px!important;
   }
 </style>
 <style scoped lang="less">
