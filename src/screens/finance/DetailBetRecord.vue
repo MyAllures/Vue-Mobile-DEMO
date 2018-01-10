@@ -25,12 +25,12 @@
           </td>
           <td>
             <span>
-              {{record.bet_amount}}
+              ￥{{record.bet_amount}}
             </span>
           </td>
           <td>
             <span :class="statusColor(record.profit)">
-              {{record.profit | profitFilter}}
+              ￥{{record.profit | profitFilter}}
             </span>
           </td>
         </tr>
@@ -120,7 +120,7 @@ export default {
   },
   filters: {
     profitFilter (val) {
-      return ('' + val).replace('-', '')
+      return val.toFixed(2).replace('-', '')
     }
   },
   created () {

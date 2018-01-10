@@ -146,7 +146,6 @@ export default {
       top: -5px;
       right: -5px;
       a{
-        background: #fff;
         color: #666;
         padding: 4px 10px;
         border-radius: 2px;
