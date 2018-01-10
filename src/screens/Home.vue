@@ -6,7 +6,7 @@
       :interval=4000
       dots-position="center" auto loop
     ></swiper>
-    <group>
+    <group class="announcement">
       <cell class="tt">
         <span slot="icon" class="anmt-title">
           <svg  version="1.1" role="presentation" width="20" height="20" viewBox="0 0 1792 1792" class="speaker m-l-xlg fa-icon" style="font-size: 1.25em;">
@@ -147,14 +147,16 @@ export default {
 </script>
 
 <style lang="less">
-  .weui-cells {
-    margin-top: 0 !important;
-    &:after {
-      border-bottom: none !important;
+  .announcement {
+    .weui-cells {
+      margin-top: 0 !important;
+      &:after {
+        border-bottom: none !important;
+      }
     }
-  }
-  .vux-swiper {
-    height: 160px!important;
+    .vux-swiper {
+      height: 160px!important;
+    }
   }
 </style>
 <style scoped lang="less">
