@@ -126,32 +126,31 @@ export default {
 }
 </script>
 <style lang='less'>
-    .input-errors {
-        font-size: 14px;
-        margin-left: 10px;
-        color: #ff9800;
-        li {
-            list-style: circle inside;
-        }
-        li:first-child {
-            padding-top: 10px;
-        }
-        li:last-child {
-            padding-bottom: 10px;
-        }
-    }
-    .text-danger {
-        text-align: center;
-        margin-bottom: 10px;
-        color: #f44336;
-    }
-    .hidden {
-        display: none;
-        visibility: hidden;
-    }
-    .m-a-md {
-        padding: 0px 15px;
-        text-align: center;
-        color: #1AAD19;
-    }
+.input-errors {
+  font-size: 14px;
+  margin-left: 10px;
+  color: #ff9800;
+  li {
+    list-style: circle inside;
+  }
+  li:first-child {
+    padding-top: 10px;
+  }
+  li:last-child {
+    padding-bottom: 10px;
+  }
+}
+.text-danger {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #f44336;
+}
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+.m-a-md {
+  text-align: center;
+  color: #1AAD19;
+}
 </style>

@@ -4,6 +4,7 @@
       <cell :title="$t('my.balance')" >
         <i class="icon-sum icon" slot="icon"></i>
         <span class="balance text-green" v-if="user.balance">￥{{user.balance.toFixed(1)}}</span>
+        <span class="balance text-green" v-if="!user.balance">￥0.00</span>
       </cell>
       <cell 
         @click.native="$router.push('/person/Bankinfo')"
@@ -15,11 +16,11 @@
     </group>
     <group>
       <cell 
-        @click.native="$router.push('/person/Massage')"
+        @click.native="$router.push('/person/Message')"
         :title="$t('my.message')"
         :is-link="true">
         <i class="icon-msg icon" slot="icon"></i>
-        <span>x 未读</span>
+        <span>{{ unRead }} 条</span>
       </cell>
       <cell 
         :title="$t('misc.username')">
@@ -29,7 +30,6 @@
     </group>
     <group>
       <cell 
-        @click.native="$router.push('/person/Profile')"
         :title="$t('misc.phone')">
         <i class="icon-phone icon" slot="icon"></i>
         <span>{{user.phone || '未填写'}}</span>
@@ -91,13 +91,18 @@
 import '../styles/fonts/icons.css'
 import { mapGetters } from 'vuex'
 import { Group, Cell, Confirm } from 'vux'
+import { unRead } from '../api'
 
 export default {
   name: 'Home',
   data () {
     return {
-      logoutDialogShow: false
+      logoutDialogShow: false,
+      unRead: ''
     }
+  },
+  created () {
+    this.getNumber()
   },
   computed: {
     ...mapGetters([
@@ -116,6 +121,11 @@ export default {
   methods: {
     logout () {
       this.$store.dispatch('logout')
+    },
+    getNumber () {
+      unRead().then((response) => {
+        this.unRead = response.message_count
+      })
     }
   },
   components: {

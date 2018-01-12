@@ -145,13 +145,10 @@ export default {
 }
 </script>
 <style lang='less'>
-    .text-muted {
-        display: block;
-        width: 100%;
-        height: 100;
-        text-align: center;
-    }
-    .m-a-md {
-        padding: 10px 10px;
-    }
+.text-muted {
+  display: block;
+  width: 100%;
+  height: 100;
+  text-align: center;
+}
 </style>

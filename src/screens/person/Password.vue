@@ -129,29 +129,26 @@ export default {
 }
 </script>
 <style lang='less'>
-    .m-a-md {
-        padding: 10px 20px;
-    } 
-    .vux-group-tip {
-        color: #ff9800;
-        text-align: center;
-    }
-    .input-errors {
-        font-size: 14px;
-        margin-left: 10px;
-        li {
-            list-style: circle inside;
-            color: #ff9800;
-        }
-        li:first-child {
-            padding-top: 10px;
-        }
-        li:last-child {
-            padding-bottom: 10px;
-        }
-    }
-    .hidden {
-        display: none;
-        visibility: hidden;
-    }
+.vux-group-tip {
+  color: #ff9800;
+  text-align: center;
+}
+.input-errors {
+  font-size: 14px;
+  margin-left: 10px;
+  li {
+    list-style: circle inside;
+    color: #ff9800;
+  }
+  li:first-child {
+    padding-top: 10px;
+  }
+  li:last-child {
+    padding-bottom: 10px;
+  }
+}
+.hidden {
+  display: none;
+  visibility: hidden;
+}
 </style>

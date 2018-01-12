@@ -57,7 +57,7 @@ export default {
         'display_name': '',
         'amount': '',
         'token': '',
-        'notifyPage': window.location.href.replace(this.$route.path, '/deposit/success/')
+        'notifyPage': window.location.href.replace(this.$route.path, '/depositSuccess/')
       },
       payDetail: {},
       errorMsg: '',
