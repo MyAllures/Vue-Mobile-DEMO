@@ -22,7 +22,6 @@
             @click="$router.push(`bet_record/${fotmattedDate(record.time)}`)">
           <td>
             <span>{{record.time | dateFilter}}</span>
-            <span>{{record.time | weekdayFilter}}</span>
           </td>
           <td>
             <countup :tag="'span'"
@@ -33,7 +32,7 @@
           <td>
             <div>
               <span :class="['profit-text', statusColor(record.profit)]">
-                {{record.profit | profitFilter}}
+                ¥ {{record.profit | profitFilter}}
               </span>
               <icon type="waiting-circle" class="direction"></icon>
             </div>
@@ -145,8 +144,9 @@ export default {
       return weekdayMap[(String(new Date(value)).split(' '))[0]]
     },
     profitFilter (val) {
-      let rounding = val.toFixed(2).replace('-', '')
-      return ('' + rounding).split('.').pop() === '00' ? ('' + rounding).split('.')[0] : '' + rounding
+      if (val && typeof val === 'number') {
+        return val.toFixed(2).replace('-', '')
+      }
     }
   },
   created () {

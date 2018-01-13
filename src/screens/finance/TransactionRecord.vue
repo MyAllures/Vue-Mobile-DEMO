@@ -19,7 +19,7 @@
             <span>{{record.created_at | dateFilter}}</span>
           </td>
           <td>
-            <span class="amount text-left">{{record.amount}}</span>
+            <span class="amount text-left">¥ {{record.amount | profitFilter }}</span>
           </td>
           <td>
             <span>{{record.transaction_type.display_name}}</span>
@@ -144,6 +144,11 @@ export default {
   filters: {
     dateFilter (value) {
       return dateFormat(new Date(value), 'YYYY-MM-DD')
+    },
+    profitFilter (val) {
+      if (val && typeof val === 'number') {
+        return val.toFixed(2).replace('-', '')
+      }
     }
   },
   created () {

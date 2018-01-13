@@ -120,7 +120,9 @@ export default {
   },
   filters: {
     profitFilter (val) {
-      return val.toFixed(2).replace('-', '')
+      if (val && typeof val === 'number') {
+        return val.toFixed(2).replace('-', '')
+      }
     }
   },
   created () {
