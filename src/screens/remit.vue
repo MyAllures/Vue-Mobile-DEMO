@@ -182,8 +182,8 @@
           postRemit(this.remit).then(response => {
             this.loading = false
             this.remitSuccess = true
-            this.remit.remit_info.depositor = ''
-            this.remit.amount = ''
+            this.remit.remit_info.depositor = ' '
+            this.remit.amount = ' '
             this.remit.memo = ''
           }, (response) => {
             this.loading = false

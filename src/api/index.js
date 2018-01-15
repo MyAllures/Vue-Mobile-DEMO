@@ -51,6 +51,10 @@ export function fetchTransactionRecord (option) {
   return axios.get(`${urls.transaction_record}?transaction_type=${option.transaction_type}&limit=${option.limit}&offset=${option.offset}`)
 }
 
+export function postWithdraw (option) {
+  return axios.post(urls.withdraw, qs.stringify(option))
+}
+
 export function register (user) {
   return axios.post(urls.register, qs.stringify(user))
 }

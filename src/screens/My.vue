@@ -6,49 +6,55 @@
         <span class="balance text-green" v-if="user.balance">￥{{user.balance.toFixed(1)}}</span>
         <span class="balance text-green" v-if="!user.balance">￥0.00</span>
       </cell>
-      <cell 
+      <cell
+        :title="$t('withdraw.apply')"
+        @click.native="$router.push('/person/Withdraw')">
+        <i class="icon-withdraw icon" slot="icon"></i>
+      </cell>
+      <cell
         @click.native="$router.push('/person/Bankinfo')"
-        :title="$t('misc.bank')" 
+        :title="$t('misc.bank')"
         :is-link="true">
         <i class="icon-bank icon" slot="icon"></i>
         <span>{{bankAccount}}</span>
       </cell>
     </group>
     <group>
-      <cell 
+      <cell
         @click.native="$router.push('/person/Message')"
         :title="$t('my.message')"
         :is-link="true">
         <i class="icon-msg icon" slot="icon"></i>
         <span>{{ unRead }} 条</span>
       </cell>
-      <cell 
+      <cell
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
         <span>{{user.username}}</span>
       </cell>
     </group>
     <group>
-      <cell 
+      <cell
+        @click.native="$router.push('/person/Profile')"
         :title="$t('misc.phone')">
         <i class="icon-phone icon" slot="icon"></i>
         <span>{{user.phone || '未填写'}}</span>
       </cell>
-      <cell 
+      <cell
         @click.native="$router.push('/person/Profile')"
         :title="$t('misc.email')"
         :is-link="true">
         <i class="icon-email icon" slot="icon"></i>
         <span>{{user.email || '未填写'}}</span>
       </cell>
-      <cell 
+      <cell
         @click.native="$router.push('/person/Profile')"
         :title="$t('misc.qq')"
         :is-link="true">
         <i class="icon-QQ icon" slot="icon"></i>
         <span>{{user.qq || '未填写'}}</span>
       </cell>
-      <cell 
+      <cell
         @click.native="$router.push('/person/Profile')"
         :title="$t('misc.wechat')"
         :is-link="true">
@@ -64,7 +70,7 @@
         :is-link="true">
         <i class="icon-password icon" slot="icon"></i>
       </cell>
-      <cell 
+      <cell
         @click.native="$router.push('/person/Wpassword')"
         :title="$t('misc.reset_withdraw_password')"
         :is-link="true">
@@ -77,10 +83,10 @@
         <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
     </group>
-    <confirm 
-      v-model="logoutDialogShow" 
-      :confirm-text="$t('misc.logout')" 
-      :cancel-text="$t('misc.cancel')" 
+    <confirm
+      v-model="logoutDialogShow"
+      :confirm-text="$t('misc.logout')"
+      :cancel-text="$t('misc.cancel')"
       @on-confirm="logout">
       <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
     </confirm>
