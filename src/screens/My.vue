@@ -21,7 +21,7 @@
     </group>
     <group>
       <cell
-        @click.native="$router.push('/person/Massage')"
+        @click.native="$router.push('/person/Message')"
         :title="$t('my.message')"
         :is-link="true">
         <i class="icon-msg icon" slot="icon"></i>
