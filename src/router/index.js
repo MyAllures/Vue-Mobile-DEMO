@@ -134,6 +134,16 @@ export default new Router({
       component: resolve => { require(['../screens/person/Bankinfo.vue'], resolve) }
     },
     {
+      path: '/person/Withdraw',
+      name: 'withdraw',
+      meta: {
+        title: '取款',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/person/Withdraw.vue'], resolve) }
+    },
+    {
       path: '/person/Wpassword',
       name: 'wpassword',
       meta: {

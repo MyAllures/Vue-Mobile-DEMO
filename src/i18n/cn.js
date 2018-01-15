@@ -65,7 +65,11 @@ export default {
     depositor: '存款人',
     deposited_at: '存款日期',
     memo: '备注',
-    amount: '金额'
+    amount: '金额',
+    withdraw: '取款',
+    bank_name: '银行',
+    bank_account: '银行账号',
+    receiver: '收款人'
   },
   validate: {
     username_validate: '6~15位英数字',
@@ -127,6 +131,21 @@ export default {
     w_new: '新的取款密码',
     w_repeat: '确认新的密码',
     submit: '提交'
+  },
+  withdraw: {
+    title: '取款',
+    submit: '提交',
+    amount: '取款金额',
+    amount_hint: '请输入取款金额',
+    password: '取款密码',
+    password_hint: '请输入密码',
+    limit: '取款限额',
+    fee: '手续费',
+    balance_after: '账户余额剩余预计',
+    bank_required: '请先创建取款银行资料',
+    balance_not_enough: '余额不足',
+    success: '取款已提交',
+    apply: '申请取款'
   },
   profile: {
     title: '我的账号',
