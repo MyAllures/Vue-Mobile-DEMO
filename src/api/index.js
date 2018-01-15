@@ -27,6 +27,22 @@ export function gethomePage () {
   return axios.get(urls.homePage)
 }
 
+export function getGameCategory () {
+  return axios.get(urls.games)
+}
+
+export function getPromotions () {
+  return axios.get(urls.promotions)
+}
+
+export function getRemitPayees () {
+  return axios.get(urls.remitpayee + '?opt_expand=1')
+}
+
+export function postRemit (remit) {
+  return axios.post(urls.remit, remit)
+}
+
 export function getCaptcha () {
   return axios.get(urls.agent_captcha)
 }
@@ -94,4 +110,16 @@ export function changeWpassword (password) {
 
 export function changeUserInformation (id, member) {
   return axios.put(urls.user + member.id + '/', member)
+}
+
+export function noMessages (message) {
+  return axios.put(urls.messages + '' + message.id + '/')
+}
+
+export function unRead () {
+  return axios.get(urls.messageCount)
+}
+
+export function onlinepaySuccess (transactionId) {
+  return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }

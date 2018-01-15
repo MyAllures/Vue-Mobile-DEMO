@@ -1,7 +1,7 @@
 <template>
   <div class="deposit-box">
     <tab :line-width="2" :animate="false">
-      <tab-item v-for="payee in onlinepayees" :selected="payee.display_name === currentPay.display_name" @click.native="toggleTab(payee)">{{payee.display_name}}</tab-item>
+      <tab-item v-for="(payee,idx) in onlinepayees" :key="idx" :selected="payee.display_name === currentPay.display_name" @click.native="toggleTab(payee)">{{payee.display_name}}</tab-item>
     </tab>
     <div v-if="description" class="text-danger m-l-md m-t m-r">
       {{description}}
@@ -57,7 +57,7 @@ export default {
         'display_name': '',
         'amount': '',
         'token': '',
-        'notifyPage': window.location.href.replace(this.$route.path, '/deposit/success/')
+        'notifyPage': window.location.href.replace(this.$route.path, '/depositSuccess/')
       },
       payDetail: {},
       errorMsg: '',
