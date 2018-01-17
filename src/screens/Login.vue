@@ -42,7 +42,7 @@
         <flexbox-item>
           <x-button type="default"
                     action-type ="button"
-                    link="/try">
+                    @click.native="tryplay">
                     {{$t('misc.try')}}
           </x-button>
         </flexbox-item>
@@ -54,6 +54,7 @@
 <script>
   import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
   import urls from '../api/urls'
+  import { register } from '../api'
 
   export default {
     name: 'Home',
@@ -100,6 +101,18 @@
             this.error = error
           })
         }
+      },
+      tryplay () {
+        this.$store.commit('UPDATE_LOADING', {isLoading: true})
+        register({ account_type: 0 }).then(user => {
+          return this.$store.dispatch('login', { user })
+        }).then(result => {
+          this.$store.commit('UPDATE_LOADING', {isLoading: false})
+          this.$router.push({ name: 'Home' })
+        }, errorMsg => {
+            this.$store.commit('UPDATE_LOADING', {isLoading: false})
+            this.error = error
+        })
       }
     },
     components: {

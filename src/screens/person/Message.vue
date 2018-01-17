@@ -1,34 +1,32 @@
 <template>
   <div>
-    <div class="vux-group-tip text-danger">{{errorMsg}}</div>
-    <div v-for="message in messages" class="messages vux-1px-b">
-    <cell
-      :title="message.title"
-      :border-intent="false"  
-      arrow-direction="up"
-      :class="['cell-box', message.status ? '' : 'unread']"
-      @click.native="read(message)">
-      <div slot>
-        <span :class="['sent-at', message.status ? '' : 'unread-line']">{{message.sent_at}}</span>
-        &nbsp;&nbsp;
-        <b class="arrow-down"></b>
+    <group>
+      <div class="vux-group-tip text-danger">{{errorMsg}}</div>
+      <div v-for="message in messages" class="messages vux-1px-b">
+        <cell :class="['cell-box', message.status ? '' : 'unread']"
+              :title="message.title"
+              :border-intent="false"  
+              arrow-direction="up"
+              @click.native="read(message)">
+          <div slot>
+            <span :class="['sent-at', message.status ? '' : 'unread-line']">{{message.sent_at}}</span>
+            <b class="arrow-down"></b>
+          </div>
+        </cell>
+        <p class="slide" :class="message.show?'animate':''">{{message.content}}</p>
       </div>
-    </cell>
-    <p class="slide" :class="message.show?'animate':''">{{message.content}}</p>
-    </div>
-    <div class="pulling-container">
-      <pulling
-        :queryset="queryset"
-        v-on:updateQueryset="updateQueryset"
-        v-on:updateQuery="updateQuery"
-        :api="api"
-        :query="query"
-        :limit="limit"
-        :extra="extraParam"
-        ref="pulling"
-        >
-      </pulling>
-    </div>
+      <div class="pulling-container">
+        <pulling :queryset="queryset"
+                 v-on:updateQueryset="updateQueryset"
+                 v-on:updateQuery="updateQuery"
+                 :api="api"
+                 :query="query"
+                 :limit="limit"
+                 :extra="extraParam"
+                 ref="pulling">
+        </pulling>
+      </div>
+    </group>
   </div>
 </template>
 <script>
@@ -74,7 +72,7 @@ export default {
             return this.$router.push('/login?next=' + this.$route.path)
           }
           this.$root.showToast = true
-          this.$root.toastText = response.data.error || '发生错误，请重试'
+          this.$root.toastText = response.error || '发生错误，请重试'
         })
       }
     },
@@ -143,6 +141,7 @@ export default {
 }
 .sent-at {
   font-size: 13px;
+  margin-right: 14px;
 }
 .cell-box p {
   font-size: 14px;
