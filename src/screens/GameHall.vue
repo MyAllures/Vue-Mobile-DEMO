@@ -54,12 +54,10 @@
       // 显示 侧滑菜单
       showSide () {
         this.sidebarShow = true
-        this.$refs.mean.style.marginLeft = '42%'
       },
       // 接收 Sidebar组件的返回值 隐藏 侧滑菜单
       setSidebar () {
         this.sidebarShow = false
-        this.$refs.mean.style.marginLeft = '0'
       }
     }
   }
