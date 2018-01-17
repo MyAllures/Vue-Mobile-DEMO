@@ -3,6 +3,7 @@
     <x-header
       :right-options="{showMore: !!user.username}"
       :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
+      v-show="pageName && pageName.indexOf('Game') === -1"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <div
@@ -139,6 +140,7 @@ export default {
   background-color: inherit!important;
 }
 .container {
+  height: 100%;
   padding-bottom: 55px;
   .vux-header .vux-header-right {
     .actions {
