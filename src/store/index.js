@@ -12,7 +12,8 @@ export function createStore () {
       user: {
         logined: ''
       },
-      isLoading: false
+      isLoading: false,
+      games: []
     },
     actions,
     mutations,

@@ -1,6 +1,15 @@
 <template>
-  <div class="container">
+    <view-box ref="viewBox">
     <x-header
+      :style="{
+        width: '100%',
+        position: $route.name === 'RoadBeads'? 'fixed':'absolute',
+        left:'0',
+        top:'0',
+        'z-index':'100',
+        backgroundColor: $route.name === 'RoadBeads' ? '#0069b1' : ''
+        }"
+      slot="header"
       :right-options="{showMore: !!user.username}"
       :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
@@ -21,8 +30,10 @@
         <a style="color: deepskyblue">试玩</a>
       </div>
     </x-header>
-    <router-view></router-view>
-    <tabbar v-show="!$route.meta.tabbarHidden" class="tabbar">
+    <div class="content m-b">
+      <router-view></router-view>
+    </div>
+    <tabbar slot="bottom" v-show="!$route.meta.tabbarHidden" class="tabbar">
       <tabbar-item
         v-for="(menu, index) in menus"
         :link="menu.link"
@@ -33,11 +44,11 @@
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-  </div>
+    </view-box>
 </template>
 
 <script>
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading } from 'vux'
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
@@ -119,7 +130,8 @@ export default {
     Group,
     Cell,
     Loading,
-    Icon
+    Icon,
+    ViewBox
   }
 }
 </script>
@@ -135,21 +147,20 @@ export default {
   position: absolute;
   top: -8px;
 }
-.bg {
-  background-color: inherit!important;
+
+.content {
+  margin-top: 45px;
 }
-.container {
-  padding-bottom: 55px;
-  .vux-header .vux-header-right {
-    .actions {
-      position: relative;
-      top: -5px;
-      right: -5px;
-      a{
-        color: #666;
-        padding: 4px 10px;
-        border-radius: 2px;
-      }
+
+.vux-header .vux-header-right {
+  .actions {
+    position: relative;
+    top: -5px;
+    right: -5px;
+    a {
+      color: #666;
+      padding: 4px 10px;
+      border-radius: 2px;
     }
   }
 }

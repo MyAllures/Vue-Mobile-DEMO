@@ -171,6 +171,16 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
+    },
+    {
+      path: '/game/stastics',
+      name: 'RoadBeads',
+      meta: {
+        title: '路珠',
+        requiresAuth: true,
+        tabbarHidden: true
+      },
+      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
     }
   ]
 })

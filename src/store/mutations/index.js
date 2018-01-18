@@ -17,5 +17,8 @@ export default {
   },
   [types.UPDATE_LOADING]: (state, payload) => {
     state.isLoading = payload.isLoading
+  },
+  [types.SET_GAMES]: (state, { games }) => {
+    state.games = games
   }
 }

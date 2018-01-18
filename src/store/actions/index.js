@@ -6,7 +6,8 @@ import axios from 'axios'
 import {
   fetchUser,
   login,
-  logout
+  logout,
+  fetchGames
 } from '../../api'
 
 export default {
@@ -64,6 +65,13 @@ export default {
         }
       })
       return Promise.reject(error)
+    })
+  },
+  fetchGames: ({ commit, state }) => {
+    return fetchGames().then(res => {
+      commit(types.SET_GAMES, {
+        games: res
+      })
     })
   }
 }
