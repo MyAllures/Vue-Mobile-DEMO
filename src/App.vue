@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <x-header
+      v-show="!$route.meta.headerHidden"
       :right-options="{showMore: !!user.username}"
       :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
@@ -126,6 +127,7 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
+@import './styles/theme.less';
 @import './styles/base.css';
 
 .tabbar {
@@ -139,7 +141,6 @@ export default {
   background-color: inherit!important;
 }
 .container {
-  padding-bottom: 55px;
   .vux-header .vux-header-right {
     .actions {
       position: relative;

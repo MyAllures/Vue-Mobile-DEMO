@@ -1,3 +1,83 @@
+import _ from 'lodash'
+
+/**
+ * 1. Get chunks from original list using 'size' as chunk's length
+ * 2. Regroup the 'keyUnion' inside the list
+ *
+ *    For example: unionChunked(playgroups, 'display_name', 'plays', 4)
+ *
+ * @param      {<Array>}  raw      The playgroups
+ * @param      {<Int>}  size      The chunk size
+ * @return     {<Array>}  Regrouped lists
+ */
+
+export function unionChunked (raw, size, groupCodes) {
+  const playgroups = []
+  // sort groups in raw by the orders in groupCodes
+  groupCodes.forEach(code => {
+    const matchedGroup = _.find(raw, group => group.code === code)
+    if (matchedGroup) {
+      let aliases = _.uniqBy(matchedGroup.plays, 'alias').map(play => play.alias)
+      if (aliases[0]) {
+        aliases.forEach(alias => {
+          playgroups.push({
+            ...matchedGroup,
+            alias,
+            plays: _.filter(matchedGroup.plays, play => {
+              return play.alias === alias
+            })
+          })
+        })
+      } else {
+        playgroups.push(matchedGroup)
+      }
+    }
+  })
+  // turn plays in playgroups into chunks
+  playgroups.forEach(playgroup => {
+    playgroup['plays'] = _.chunk(playgroup['plays'], size)
+  })
+  if (playgroups.length < 2) {
+    return playgroups
+  }
+
+  let groupResult = {}
+
+  playgroups.forEach(item => {
+    const key = item['alias'] || item['display_name']
+    if (!groupResult[key]) {
+      groupResult[key] = item
+    } else {
+      groupResult[key]['plays'] = groupResult[key]['plays'].concat(item['plays'])
+    }
+  })
+
+  let result = _.map(groupResult, playgroup => playgroup)
+  result[0]['active'] = true
+
+  return result
+}
+
+export function formatPlayGroup (raw, formatting) {
+  let sections = []
+  formatting.forEach(format => {
+    let chunkedRawGroups = unionChunked(raw, format.play_col, format.grp_code)
+    let playgroups = []
+    format.grp_code.forEach(code => {
+      let targetGroup = _.filter(chunkedRawGroups, x => x.code === code)
+      if (targetGroup) {
+        playgroups = playgroups.concat(targetGroup)
+      }
+    })
+    sections.push({
+      groupCol: format.grp_col,
+      playCol: format.play_col,
+      playgroups: playgroups
+    })
+  })
+  return sections
+}
+
 export function setIndicator (onActivate, onInactivate) {
   let hidden = 'hidden'
 

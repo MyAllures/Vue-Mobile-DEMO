@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Vue from 'vue'
 import * as types from './mutation-types'
 
@@ -17,5 +18,11 @@ export default {
   },
   [types.UPDATE_LOADING]: (state, payload) => {
     state.isLoading = payload.isLoading
+  },
+  [types.SET_GAMES]: (state, { games }) => {
+    state.games = games
+  },
+  [types.SET_CATEGORIES]: (state, { categories }) => {
+    state.categories = _.xorBy(state.categories, categories, 'id').filter(item => !!item)
   }
 }

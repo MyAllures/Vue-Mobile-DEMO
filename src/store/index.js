@@ -12,6 +12,8 @@ export function createStore () {
       user: {
         logined: ''
       },
+      games: [],
+      categories: [],
       isLoading: false
     },
     actions,

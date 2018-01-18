@@ -85,7 +85,7 @@
 
 <script>
 import { Group, Cell, Swiper, SwiperItem, Marquee, MarqueeItem, XDialog, Masker, Alert } from 'vux'
-import { fetchBanner, fetchAnnouncements, getGameCategory, getPromotions } from '../api'
+import { fetchBanner, fetchAnnouncements, fetchGames, getPromotions } from '../api'
 
 export default {
   name: 'Home',
@@ -117,7 +117,7 @@ export default {
       .then(res => {
         this.announcements = res
       })
-    getGameCategory().then(response => {
+    fetchGames().then(response => {
       this.category = response
     })
     getPromotions().then(response => {

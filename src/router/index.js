@@ -35,8 +35,25 @@ export default new Router({
       component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
-        tabbarHidden: true
-      }
+        tabbarHidden: true,
+        headerHidden: true
+      },
+      children: [
+        {
+          path: ':gameId',
+          component: resolve => { require(['../screens/games/Game.vue'], resolve) },
+          children: [
+            {
+              path: ':categoryId',
+              component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
+              meta: {
+                tabbarHidden: true,
+                headerHidden: true
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/fin',
