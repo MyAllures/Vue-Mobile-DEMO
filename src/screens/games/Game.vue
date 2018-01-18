@@ -157,6 +157,7 @@ export default {
   display: flex;
   height: calc(~"100vh" - 125px);
   .aside {
+    overflow-y: auto;
     height: 100%;
     width: 81px;
     display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div :class="['container',{'no-tabbar':$route.meta.tabbarHidden}]">
     <x-header
       v-show="!$route.meta.headerHidden"
       :right-options="{showMore: !!user.username}"
@@ -141,6 +141,9 @@ export default {
 .container {
   height: 100%;
   padding-bottom: 55px;
+  &.no-tabbar{
+    padding-bottom: 0;
+  }
   .vux-header .vux-header-right {
     .actions {
       position: relative;

@@ -6,24 +6,22 @@ $ssc_length: length($results_ssc);
 
 @for $index from 1 through $ssc_length {
   .result-#{nth($results_ssc, $index)} {
-    background: url("../assets/ball_2.png") no-repeat;
-    background-size: 27px * .8 270px * .8;
-    height: 27px * .8;
-
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px #fff;
+    border: 1px solid #2065B6;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
     b {
+      font-size: 12px;
+      color: #000;
       display: inline-block;
-      text-indent: -9999px;
-      width: 20px * .8;
-      margin-left: 5px * .8;
-    }
-
-    @for $num from 1 through 10 {
-      &.resultnum-#{$num} {
-        background-position: 0 (-27px * .8 * $num);
-      }
     }
   }
 }
+
+
 
 /*specific: racing games, common: ball-pk.png*/
 $results_racing: jspk10, bcr, mlaft, er75ft;
@@ -50,25 +48,28 @@ $racing_length: length($results_racing);
 }
 
 /*specific: guandong region games, common: ball_1.png*/
-$results_gd: gd11x5, gdklsf;
+$results_gd: gd11x5, gdklsf, fc3d;
 $gd_length: length($results_gd);
 
 @for $index from 1 through $gd_length {
   .result-#{nth($results_gd, $index)} {
-    background: url("../assets/ball_1.png") no-repeat;
-    background-size: 27px * .8 540px * .8;
-    height: 27px * .8;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px #fff;
+    border: 1px solid #2065B6;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
     b {
+      font-size: 12px;
+      color: #000;
       display: inline-block;
-      text-indent: -9999px;
-      width: 20px * .8;
-      margin-left: 5px * .8;
     }
-
-    @for $num from 1 through 20 {
-      &.resultnum-#{$num} {
-        background-position: 0 (-27px * .8 * ($num - 1));
-      }
+    &.resultnum-19 {
+      border: 1px solid #CA4C49;
+    }
+    &.resultnum-20 {
+      border: 1px solid #CA4C49;
     }
   }
 }
@@ -132,27 +133,30 @@ $gd_length: length($results_gd);
 }
 
 .result-pcdd {
-  background: url("../assets/ball-sprites.png") no-repeat -117px * .8 -26px * .8;
-  background-size: 214px * .8 430px * .8;
-  height: 27px * .8;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 1px #fff;
+  border: 1px solid #2065B6;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
   text-align: center;
   + .ball-sum {
-    margin-left: 5px * .8;
-    margin-top: 3px * .8;
+    margin-left: 5px;
     span {
-      background: url("../assets/ball-sprites.png") no-repeat -117px * .8 -26px * .8;
-      background-size: 214px * .8 430px * .8;
-      height: 27px * .8;
+      background: #FFFFFF;
+      box-shadow: 0 0 0 1px #fff;
+      border: 1px solid #2065B6;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      margin-left: 5px;
+      line-height: 20px;
       position: relative;
       vertical-align: middle;
       b {
-        position: relative;
-        display: inline-block;
-        width: 24px * .8;
-        text-align: center;
-        top: -3px;
-        color: black;
         font-size: 12px;
+        color: #000;
       }
     }
   }
@@ -168,18 +172,17 @@ $gd_length: length($results_gd);
 }
 
 .result-jnd28 {
-  background: url("../assets/ball-sprites.png") no-repeat -117px * .8 -26px * .8;
-  background-size: 214px * .8 430px * .8;
-  height: 27px * .8;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 1px #fff;
+  border: 1px solid #2065B6;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
   text-align: center;
-
   b {
-    display: inline-block;
-    position: relative;
-    top: -3px;
-    width: 24px * .8;
     font-size: 12px;
-    color: black;
+    color: #000;
   }
 }
 

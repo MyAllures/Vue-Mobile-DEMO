@@ -159,13 +159,13 @@ export default {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     text-align: center;
     height: 100%;
   }
   span {
     display: inline-block;
-    margin: 1px 5px 1px 0;
-    vertical-align: middle;
+    margin-right: 5px;
   }
   .ball-sum {
     display: inline-block;

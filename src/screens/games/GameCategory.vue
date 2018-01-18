@@ -32,7 +32,7 @@
 <script>
 import _ from 'lodash'
 import { fetchPlaygroup, placeBet } from '../../api'
-import { formatPlayGroup, filtAmount } from '../../utils'
+import { filtAmount } from '../../utils'
 import { Grid, GridItem } from 'vux'
 
 export default {
@@ -81,14 +81,6 @@ export default {
         }
       })
     },
-    formatting () {
-      let category = this.$store.getters.categoriesById(this.$route.params.categoryId)
-      return category ? category.formatting : null
-    },
-    // just to trigger watcher below
-    rawAndFormatting () {
-      return this.raw && this.formatting && (this.raw.length + this.formatting.length)
-    },
     formattedCombinations () {
       let formattedDetails = {}
       _.each(this.activePlays, (activePlay) => {
@@ -115,11 +107,6 @@ export default {
       this.totalAmount = _.reduce(plays, (sum, play) => {
         return sum + parseFloat(play.bet_amount)
       }, 0)
-    },
-    'rawAndFormatting': function () {
-      if (this.raw.length && this.formatting.length) {
-        this.playSections = formatPlayGroup(this.raw, this.formatting)
-      }
     }
   },
   created () {
