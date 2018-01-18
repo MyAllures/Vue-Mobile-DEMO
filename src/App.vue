@@ -11,7 +11,7 @@
         class="logo"
         slot="overwrite-left"
         >
-        <img :src="logo" v-if="logo" height="32" />
+        <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
         v-if="!this.userLoading && showActions && !user.username"
@@ -40,7 +40,6 @@
 <script>
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
@@ -86,13 +85,12 @@ export default {
     },
     pageName: function () {
       return this.$route.name
+    },
+    logoSrc () {
+      return this.$store.state.systemConfig.homePageLogo
     }
   },
   created () {
-    gethomePage()
-      .then(res => {
-        this.logo = res.icon
-      })
     this.$store.dispatch('fetchUser')
       .then(res => {
         this.userLoading = false
@@ -141,6 +139,8 @@ export default {
   background-color: inherit!important;
 }
 .container {
+  height: 100%;
+  padding-bottom: 55px;
   .vux-header .vux-header-right {
     .actions {
       position: relative;

@@ -31,7 +31,6 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
 import { fetchSchedule } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
@@ -73,35 +72,24 @@ export default {
     },
     activeCategory () {
       return parseInt(this.$route.params.categoryId)
-    },
-    ...mapGetters([
-      'allGames'
-    ])
-  },
-  watch: {
-    'allGames': function () {
-      let currentGameId = this.$route.params.gameId
-      if (!currentGameId) {
-        currentGameId = localStorage.getItem('lastGame') || this.allGames[0].id
-      }
-      this.categories = this.$store.getters.categoriesByGameId(currentGameId)
-      if (!this.categories.length) {
-        this.$store.dispatch('fetchCategories', currentGameId)
-          .then((res) => {
-            if (res) {
-              this.categories = res
-              this.$router.push(`/game/${currentGameId}/${this.categories[0].id}`)
-            } else {
-              this.performLogin()
-            }
-          })
-      } else {
-        this.$router.push(`/game/${currentGameId}/${this.categories[0].id}`)
-      }
     }
   },
   created () {
     this.updateSchedule()
+    this.categories = this.$store.getters.categoriesByGameId(this.gameId)
+    if (!this.categories.length) {
+      this.$store.dispatch('fetchCategories', this.gameId)
+        .then((res) => {
+          if (res) {
+            this.categories = res
+            this.$router.push(`/game/${this.gameId}/${this.categories[0].id}`)
+          } else {
+            this.performLogin()
+          }
+        })
+    } else {
+      this.$router.push(`/game/${this.gameId}/${this.categories[0].id}`)
+    }
   },
   methods: {
     updateSchedule () {
@@ -201,5 +189,4 @@ export default {
     background-color: #fff;
   }
 }
-
 </style>

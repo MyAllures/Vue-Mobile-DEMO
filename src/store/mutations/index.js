@@ -24,5 +24,8 @@ export default {
   },
   [types.SET_CATEGORIES]: (state, { categories }) => {
     state.categories = _.xorBy(state.categories, categories, 'id').filter(item => !!item)
+  },
+  [types.SET_SYSTEM_CONFIG]: (state, data) => {
+    state.systemConfig = data
   }
 }

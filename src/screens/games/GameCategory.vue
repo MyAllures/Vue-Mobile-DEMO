@@ -281,7 +281,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
+@import "../../styles/vars.less";
 .playgroup-title {
   height: 50px;
   line-height: 50px;

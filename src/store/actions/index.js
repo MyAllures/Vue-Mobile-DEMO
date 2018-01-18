@@ -87,5 +87,8 @@ export default {
       })
       return categories
     })
+  },
+  setSystemConfig: ({ commit }, data) => {
+    commit(types.SET_SYSTEM_CONFIG, data)
   }
 }
