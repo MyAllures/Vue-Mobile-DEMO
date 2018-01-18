@@ -35,8 +35,29 @@ export default new Router({
       component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
-        tabbarHidden: true
-      }
+        tabbarHidden: true,
+        headerHidden: true
+      },
+      children: [
+        {
+          path: ':gameId',
+          component: resolve => { require(['../screens/games/Game.vue'], resolve) },
+          meta: {
+            tabbarHidden: true,
+            headerHidden: true
+          },
+          children: [
+            {
+              path: ':categoryId',
+              component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
+              meta: {
+                tabbarHidden: true,
+                headerHidden: true
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/fin',
@@ -173,7 +194,7 @@ export default new Router({
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
     },
     {
-      path: '/game/stastics',
+      path: '/stastics/roadbeads',
       name: 'RoadBeads',
       meta: {
         title: '路珠',

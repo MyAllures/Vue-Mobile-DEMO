@@ -1,6 +1,7 @@
 <template>
-    <view-box ref="viewBox">
+  <view-box ref="viewBox">
     <x-header
+      v-show="!$route.meta.headerHidden"
       :style="{
         width: '100%',
         position: $route.name === 'RoadBeads'? 'fixed':'absolute',
@@ -19,7 +20,7 @@
         class="logo"
         slot="overwrite-left"
         >
-        <img :src="logo" v-if="logo" height="32" />
+        <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
         v-if="!this.userLoading && showActions && !user.username"
@@ -30,7 +31,7 @@
         <a style="color: deepskyblue">试玩</a>
       </div>
     </x-header>
-    <div class="content m-b">
+    <div class="content">
       <router-view></router-view>
     </div>
     <tabbar slot="bottom" v-show="!$route.meta.tabbarHidden" class="tabbar">
@@ -44,13 +45,12 @@
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-    </view-box>
+  </view-box>
 </template>
 
 <script>
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
@@ -96,13 +96,12 @@ export default {
     },
     pageName: function () {
       return this.$route.name
+    },
+    logoSrc () {
+      return this.$store.state.systemConfig.homePageLogo
     }
   },
   created () {
-    gethomePage()
-      .then(res => {
-        this.logo = res.icon
-      })
     this.$store.dispatch('fetchUser')
       .then(res => {
         this.userLoading = false
@@ -138,6 +137,7 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
+@import './styles/theme.less';
 @import './styles/base.css';
 
 .tabbar {
@@ -157,7 +157,7 @@ export default {
     position: relative;
     top: -5px;
     right: -5px;
-    a {
+    a{
       color: #666;
       padding: 4px 10px;
       border-radius: 2px;

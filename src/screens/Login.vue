@@ -110,8 +110,8 @@
           this.$store.commit('UPDATE_LOADING', {isLoading: false})
           this.$router.push({ name: 'Home' })
         }, errorMsg => {
-            this.$store.commit('UPDATE_LOADING', {isLoading: false})
-            this.error = error
+          this.$store.commit('UPDATE_LOADING', {isLoading: false})
+          this.error = errorMsg
         })
       }
     },

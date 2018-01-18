@@ -6,7 +6,7 @@
       <cell :title="$t('my.bank_account')" :value="user.bank.account"></cell>
       <cell :title="$t('my.receiver')" :value="user.real_name"></cell>
     </group>
-    <group label-width="'80px'" :title="limitHint + ', 当前余额：' + user.balance">
+    <group label-width="'80px'" :title="limitHint + ', 当前余额：￥' + user.balance">
       <x-input autocapitalize="off"
                name="withdraw-amount"
                :title="$t('withdraw.amount')"
@@ -86,7 +86,7 @@
       limitHint () {
         let lower = this.limit.lower
         let upper = this.limit.upper
-        let lowerHint = lower ? (this.$t('message.min') + ' ' + lower) : ''
+        let lowerHint = lower ? (this.$t('message.min') + '：￥' + lower) : ''
         let comma = (lower && upper ? ', ' : '')
         let upperHint = upper ? (this.$t('message.max') + ' ' + upper) : ''
         return lowerHint + comma + upperHint

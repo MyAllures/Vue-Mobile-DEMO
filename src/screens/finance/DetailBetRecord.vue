@@ -65,7 +65,7 @@ export default {
     return {
       betRecords: [],
       totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 340) / 40), // clientHeight minus the height of top and bottom / height of each tr
+      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40), // clientHeight minus the height of top and bottom / height of each tr
       currentChunk: 1,
       loading: false,
       error: {

@@ -7,8 +7,10 @@ import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
 import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
+import { gethomePage } from './api'
 import * as types from './store/mutations/mutation-types'
 
+Vue.use(require('vue-moment'))
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 
@@ -92,6 +94,32 @@ router.afterEach(function (to) {
 })
 
 sync(store, router)
+
+Vue.mixin({
+  methods: {
+    performLogin () {
+      toLogin(this.$router)
+    }
+  }
+})
+
+gethomePage().then(
+  response => {
+    let pref = response.global_preferences
+    store.dispatch('setSystemConfig',
+      {
+        homePageLogo: response.icon,
+        customerServiceUrl: pref.customer_service_url,
+        agentDashboardUrl: pref.agent_dashboard_url,
+        global_preferences: pref,
+        agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
+        contactEmail: pref.contact_email,
+        contactPhoneNumber: pref.contact_phone_number,
+        openAccountConsultingQQ: pref.open_account_consulting_qq,
+        siteName: response.name
+      })
+  }
+)
 
 /* eslint-disable no-new */
 new Vue({
