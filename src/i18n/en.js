@@ -64,7 +64,10 @@ export default {
     depositor: 'Depositor',
     deposited_at: 'Deposited at',
     memo: 'Memo',
-    amount: 'Amount'
+    amount: 'Amount',
+    bank_name: 'Bank name',
+    bank_account: 'Bank Account',
+    receiver: 'Payee'
   },
   validate: {
     username_validate: 'User name should be 6-15 digit or character',
@@ -122,6 +125,21 @@ export default {
     w_old: 'Old withdraw password',
     w_new: 'New withdraw password',
     w_repeat: 'Repeat withdraw password'
+  },
+  withdraw: {
+    title: 'Withdrawal',
+    submit: 'submit',
+    amount: 'Withdrawal amount',
+    amount_hint: 'Please enter the withdrawal amount',
+    password: 'Withdrawals password',
+    password_hint: 'Please enter the password',
+    limit: 'Withdrawal limit',
+    fee: 'Fee',
+    balance_after: 'Account balance remaining is expected',
+    bank_required: 'Please first create withdrawal bank information',
+    balance_not_enough: 'Insufficient balance',
+    success: 'Withdrawals have been submitted',
+    apply: 'Apply for withdrawal'
   },
   profile: {
     title: 'My Account',
