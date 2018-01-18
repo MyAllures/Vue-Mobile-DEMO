@@ -176,5 +176,9 @@ export default {
     bankinfo_confirm: 'Are you sure？If you want to update bank info, please contact custom service',
     bankinfo_update_tip: 'Please contact our custom service to update your bank info',
     profile_hint: 'If you need to modify your real name or mobile phone number, please contact customer service'
+  },
+  common: {
+    result_period: 'Period',
+    total: 'Total'
   }
 }

@@ -200,5 +200,9 @@ export default {
     bankinfo_confirm: '确认提交银行资讯吗？首次提交之后不可自行更改，如需更改，需联系客服',
     bankinfo_update_tip: '如需更改银行资讯请联系客服',
     profile_hint: '如需修改真实姓名或手机号码请联系客服'
+  },
+  common: {
+    result_period: '期',
+    total: '总和'
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <x-header
+      v-show="!$route.meta.headerHidden"
       :right-options="{showMore: !!user.username}"
       :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
-      v-show="pageName && pageName.indexOf('Game') === -1"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <div
@@ -11,7 +11,7 @@
         class="logo"
         slot="overwrite-left"
         >
-        <img :src="logo" v-if="logo" height="32" />
+        <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
         v-if="!this.userLoading && showActions && !user.username"
@@ -40,7 +40,6 @@
 <script>
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
@@ -86,13 +85,12 @@ export default {
     },
     pageName: function () {
       return this.$route.name
+    },
+    logoSrc () {
+      return this.$store.state.systemConfig.homePageLogo
     }
   },
   created () {
-    gethomePage()
-      .then(res => {
-        this.logo = res.icon
-      })
     this.$store.dispatch('fetchUser')
       .then(res => {
         this.userLoading = false
@@ -127,6 +125,7 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
+@import './styles/theme.less';
 @import './styles/base.css';
 
 .tabbar {

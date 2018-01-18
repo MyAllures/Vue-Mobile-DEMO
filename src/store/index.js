@@ -12,7 +12,18 @@ export function createStore () {
       user: {
         logined: ''
       },
-      isLoading: false
+      games: [],
+      categories: [],
+      isLoading: false,
+      systemConfig: {
+        customerServiceUrl: '',
+        agentDashboardUrl: '',
+        homePageLogo: '',
+        siteName: '',
+        global_preferences: {
+          send_chat_conditions: '{}'
+        }
+      }
     },
     actions,
     mutations,

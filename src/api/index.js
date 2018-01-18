@@ -27,8 +27,26 @@ export function gethomePage () {
   return axios.get(urls.homePage)
 }
 
-export function getGameCategory () {
+export function fetchGames () {
   return axios.get(urls.games)
+}
+
+export function fetchCategories (gameId) {
+  return axios.get(`${urls.category}?&game=${gameId}`)
+}
+
+export function fetchPlaygroup (categoryId) {
+  return axios.get(`${urls.playgroup}?&category=${categoryId}`)
+}
+
+export function fetchSchedule (gameId) {
+  return axios.get(`${urls.schedule}?&game=${gameId}`)
+}
+
+export function placeBet (data) {
+  return axios.post(urls.betrecord, data, {
+    'Content-Type': 'application/json'
+  })
 }
 
 export function getPromotions () {
@@ -82,10 +100,6 @@ export function fetchBetHistory (option) {
 
 export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}`)
-}
-
-export function fetchGames () {
-  return axios.get(urls.games)
 }
 
 export function fetchGameResult (gameId) {
