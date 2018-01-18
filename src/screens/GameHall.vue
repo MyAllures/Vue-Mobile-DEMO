@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <!-- 头部 -->
     <x-header class="gamehall" :right-options="{showMore: true}">
       <x-icon
