@@ -26,15 +26,15 @@
          @on-blur="validate"
          v-model="currentPay.amount"
          >
-         </x-input>
+        </x-input>
+        <div class="m-a-md">
+          <x-button type="primary" :disabled="!valid" @click.native="submit">
+            <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+            <span v-else>充值</span>
+          </x-button>
+        </div> 
       </form>
-    </group>
-    <div class="m-a-md">
-      <x-button type="primary" :disabled="!valid" @click.native="submit">
-        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>充值</span>
-      </x-button>
-    </div>   
+    </group>  
   </div>
 </template>
 <script>

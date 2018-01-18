@@ -27,7 +27,7 @@ export default {
   announcements: apiv1 + '/announcements/',
   check_username: apiv1 + '/username/',
   payment: apiv1 + '/payment/',
-  paymentType: apiv1 + '/paymenttype/?opt_expand=1&platform=0',
+  paymentType: apiv1 + '/paymenttype/?opt_expand=1&platform=mobile',
   betrecord: apiv1 + '/betrecord/',
   betrecord_byday: apiv1 + '/betrecord_dates/',
   transaction_record: apiv1 + '/transaction/',
