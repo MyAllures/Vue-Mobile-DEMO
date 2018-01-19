@@ -37,12 +37,11 @@
       </div>
     </div>
     <div class="aside" v-if="statistics.length > 0">
-      <div class="item text-left"
-        v-for="(item, index) in statistics"
-        :key="index"
-        @click="changeActiveName(item)">
-        <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
-      </div>
+      <grid :cols="1">
+        <grid-item v-for="(item, index) in statistics" :key="index" @click.native="changeActiveName(item)">
+          <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
+        </grid-item>
+      </grid>
     </div>
     <x-address style="display: none"
       title="请选择"
@@ -55,7 +54,7 @@
 </template>
 
 <script>
-import { Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress } from 'vux'
+import { Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress, GridItem, Grid } from 'vux'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
@@ -423,7 +422,7 @@ export default {
     deep: true
   },
   components: {
-    Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress
+    Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress, Grid, GridItem
   }
 }
 </script>
@@ -471,22 +470,15 @@ export default {
 }
 
 @asideWidth: 80px;
+
 .aside {
   position: fixed;
   bottom: 0;
   width: @asideWidth;
   height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
-  min-height: calc(~"100vh - @{headHeight}*2");
   overflow-y: auto;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-  .item {
-    display: inline-block;
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    border-bottom: 1px solid #ddd;
-  }
   .text {
     margin-left: 5px;
     font-size: 14px;
@@ -502,6 +494,8 @@ export default {
 }
 .statistics {
   position: absolute;
+  height: calc(~"100% - @{headHeight}*2");
+  overflow-y: auto;
   right: 0;
   padding-top: @headHeight * 2;
   width: calc(~"100% - @{asideWidth}");
