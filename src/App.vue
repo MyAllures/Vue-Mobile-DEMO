@@ -50,9 +50,13 @@
 </template>
 
 <script>
+import './styles/fonts/icons.css'
+
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox } from 'vux'
 import { mapState, mapGetters } from 'vuex'
+import { getToken } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
+import axios from 'axios'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
 
@@ -106,6 +110,27 @@ export default {
     },
     getHeaderBgColor () {
       return this.$route.name === 'Home' ? '#fff' : this.isStatisticPage ? '#0069b1' : ''
+    }
+  },
+  methods: {
+    replaceToken () {
+      return new Promise((resolve, reject) => {
+        let refreshToken = this.$cookie.get('refresh_token')
+        if (!refreshToken) {
+          return
+        }
+        getToken(refreshToken).then(res => {
+          let expires = new Date(res.expires_in)
+          this.$cookie.set('access_token', res.access_token, {
+            expires: expires
+          })
+          this.$cookie.set('refresh_token', res.refresh_token, {
+            expires: expires
+          })
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+          resolve()
+        })
+      })
     }
   },
   created () {

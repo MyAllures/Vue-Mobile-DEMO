@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import '../styles/fonts/icons.css'
 import { mapGetters } from 'vuex'
 import { Group, Cell, Confirm } from 'vux'
 import { unRead } from '../api'

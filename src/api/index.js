@@ -145,3 +145,16 @@ export function onlinepaySuccess (transactionId) {
 export function fetchStatistic (code) {
   return axios.get(`${urls.statistic}?game_code=${code}`)
 }
+
+export function getToken (oldToken) {
+  if (!oldToken) {
+    return
+  }
+  return axios.post(urls.refresh_token, {
+    refresh_token: oldToken
+  }).then(
+    res => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      return res
+    })
+}
