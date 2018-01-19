@@ -4,13 +4,14 @@
       v-show="!$route.meta.headerHidden"
       :style="{
         width: '100%',
-        position: isStatisticPage ? 'fixed':'absolute',
+        position: 'fixed', // lay over the default
         left:'0',
         top:'0',
         'z-index':'100',
         backgroundColor: isStatisticPage ? '#0069b1' : ''
         }"
       slot="header"
+      position="fixed"
       :right-options="{showMore: !!user.username}"
       :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
