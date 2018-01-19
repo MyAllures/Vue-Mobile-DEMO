@@ -1,7 +1,7 @@
 <template>
   <div>
     <road-beads
-      v-if="currentGame"
+      v-if="currentGame && $route.name === 'RoadBeads'"
       :gameCode="currentGame.code"
       :resultStatistic="resultStatistic">
     </road-beads>

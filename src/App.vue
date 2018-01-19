@@ -4,11 +4,11 @@
       v-show="!$route.meta.headerHidden"
       :style="{
         width: '100%',
-        position: $route.name === 'RoadBeads'? 'fixed':'absolute',
+        position: isStatisticPage ? 'fixed':'absolute',
         left:'0',
         top:'0',
         'z-index':'100',
-        backgroundColor: $route.name === 'RoadBeads' ? '#0069b1' : ''
+        backgroundColor: isStatisticPage ? '#0069b1' : ''
         }"
       slot="header"
       :right-options="{showMore: !!user.username}"
@@ -99,6 +99,9 @@ export default {
     },
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
+    },
+    isStatisticPage () {
+      return this.$route.path.split('/')[1] === 'stastics'
     }
   },
   created () {

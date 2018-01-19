@@ -21,7 +21,7 @@
       </group>
     </div>
     <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-      <tab v-if="currentHistoryTag.length > 0"
+      <tab v-if="currentHistoryTag.length&& currentHistoryTag.length < 6"
           bar-active-color="#156fd8"
           active-color="#156fd8" >
         <tab-item v-for="(item, index) in  currentHistoryTag"
@@ -29,6 +29,11 @@
           :key="index"
           :selected="item.key === activeHistoryTag">{{item.key}}</tab-item>
       </tab>
+      <div class="trigger text-center"
+        @click="showHistorySelector = true"
+        v-else>
+        <span :class="['option', {'active': activeHistoryTag}]">{{activeHistoryTag}}</span>
+      </div>
     </div>
     <div class="aside" v-if="statistics.length > 0">
       <div class="item text-left"
@@ -38,11 +43,18 @@
         <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
       </div>
     </div>
+    <x-address style="display: none"
+      title="请选择"
+      v-model="activeHistoryTagForXAddress"
+      :list="currentHistoryTagForXAddress"
+      @on-hide="changeActiveHistoryTagForXAddress"
+      :show.sync="showHistorySelector">
+    </x-address>
   </div>
 </template>
 
 <script>
-import { Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky } from 'vux'
+import { Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress } from 'vux'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
@@ -94,7 +106,9 @@ export default {
       },
       currentHistoryTag: [],
       currentHistory: [],
-      cumulative: ''
+      cumulative: '',
+      showHistorySelector: false,
+      activeHistoryTagForXAddress: [this.activeHistoryTagIndex + '']
     }
   },
   filters: {
@@ -160,6 +174,13 @@ export default {
       this.activeHistoryTag = item.key
       this.createHistoryData()
       this.createCumulative()
+    },
+    changeActiveHistoryTagForXAddress (checked) {
+      if (checked) {
+        this.activeHistoryTag = this.currentHistoryTag[this.activeHistoryTagForXAddress[0]].key
+        this.createHistoryData()
+        this.createCumulative()
+      }
     },
     createHistoryTag () {
       this.currentHistoryTag = _.filter(this.historyTag, (tag) => {
@@ -227,9 +248,25 @@ export default {
       } else {
         return this.tableSetting[this.gameCode]
       }
+    },
+    currentHistoryTagForXAddress () {
+      let formatted = []
+      _.each(this.currentHistoryTag, (item, index) => {
+        formatted.push({
+          name: item.key,
+          value: index + ''
+        })
+      })
+      return formatted
+    },
+    activeHistoryTagIndex () {
+      return this.activeHistoryTag ? _.findIndex(this.currentHistoryTag, o => o.key === this.activeHistoryTag) + '' : '0'
     }
   },
   watch: {
+    'activeHistoryTag': function () {
+      this.activeHistoryTagForXAddress[0] = this.activeHistoryTagIndex
+    },
     'resultStatistic': {
       handler: function (resultStatistic) {
         const resultSingleStatistic = resultStatistic.resultSingleStatistic
@@ -385,7 +422,7 @@ export default {
     deep: true
   },
   components: {
-    Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky
+    Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress
   }
 }
 </script>
@@ -398,29 +435,25 @@ export default {
     @media (min-width: 481px) { @rules(); }
 }
 
-.game-selector {
-  position: fixed;
-  width: 100%;
-  height: 45px;
-  line-height: 45px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  .option {
-    font-size: 14px;
-    color: #c8c8cd;
-    &.selected {
-      color: @azul;
-    }
-  }
-}
 .historydata-selector {
   position: fixed;
   right: 0;
   margin-top: @headHeight;
   width: calc(~"100% - @{asideWidth}");
-  overflow-x: auto;
   &.full-width {
     width: 100%;
+  }
+  .trigger {
+    background-color: #fff;
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
+    .option {
+      font-size: 14px;
+      &.active {
+        color: @azul;
+      }
+    }
   }
 }
 
