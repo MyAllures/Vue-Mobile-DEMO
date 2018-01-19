@@ -7,6 +7,7 @@
     </road-beads>
     <div class="game-selector text-center" @click="showGameMenu = true">
       <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
+      <span class="arrow"></span>
     </div>
     <x-address style="display: none"
       title="请选择"
@@ -109,6 +110,17 @@ export default {
     &.selected {
       color: @azul;
     }
+  }
+  .arrow {
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #C8C8CD;
+    border-style: solid;
+    transform: rotate(135deg);
+    margin-left: 3px;
+    margin-bottom: 2px;
   }
 }
 

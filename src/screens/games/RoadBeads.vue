@@ -33,6 +33,7 @@
         @click="showHistorySelector = true"
         v-else>
         <span :class="['option', {'active': activeHistoryTag}]">{{activeHistoryTag}}</span>
+        <span class="arrow"></span>
       </div>
     </div>
     <div class="aside" v-if="statistics.length > 0">
@@ -448,11 +449,23 @@ export default {
     width: 100%;
     height: 44px;
     line-height: 44px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
     .option {
       font-size: 14px;
       &.active {
         color: @azul;
       }
+    }
+    .arrow {
+      display: inline-block;
+      height: 6px;
+      width: 6px;
+      border-width: 2px 2px 0 0;
+      border-color: #C8C8CD;
+      border-style: solid;
+      transform: rotate(135deg);
+      margin-left: 5px;
+      margin-bottom: 3px;
     }
   }
 }
