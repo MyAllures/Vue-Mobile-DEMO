@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 45px">
+  <div>
     <swiper
       :list="banners"
       :aspect-ratio="400/1200"
