@@ -8,12 +8,10 @@
         left:'0',
         top:'0',
         'z-index':'100',
-        backgroundColor: isStatisticPage ? '#0069b1' : ''
+        backgroundColor: getHeaderBgColor
         }"
       slot="header"
-      position="fixed"
       :right-options="{showMore: !!user.username}"
-      :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <div
@@ -24,18 +22,20 @@
         <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
-        v-if="!this.userLoading && showActions && !user.username"
+        v-if="showActions"
         class="actions"
         slot="right">
-        <router-link to="/login">登录</router-link>
-        <router-link to="/register">注册</router-link>
-        <a style="color: deepskyblue">试玩</a>
+        <router-link class="link" to="/login">登录</router-link>
+        <router-link class="link" to="/register">注册</router-link>
+        <a class="link blue">试玩</a>
       </div>
     </x-header>
     <div class="content">
       <router-view></router-view>
     </div>
-    <tabbar slot="bottom" v-show="!$route.meta.tabbarHidden" class="tabbar">
+    <tabbar slot="bottom"
+      v-show="!$route.meta.tabbarHidden"
+      class="tabbar">
       <tabbar-item
         v-for="(menu, index) in menus"
         :link="menu.link"
@@ -93,7 +93,7 @@ export default {
       isLoading: state => state.isLoading
     }),
     showActions () {
-      return !['Login'].includes(this.$route.name)
+      return this.$route.name !== 'Login' && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
@@ -103,14 +103,20 @@ export default {
     },
     isStatisticPage () {
       return this.$route.path.split('/')[1] === 'stastics'
+    },
+    getHeaderBgColor () {
+      return this.$route.name === 'Home' ? '#fff' : this.isStatisticPage ? '#0069b1' : ''
     }
   },
   created () {
-    this.$store.dispatch('fetchUser')
-      .then(res => {
-        this.userLoading = false
+    if (this.$cookie.get('access_token')) {
+      this.$store.dispatch('fetchUser').then(() => {
+      }, errRes => {
+        this.performLogin()
+      }).catch(() => {
+        this.performLogin()
       })
-
+    }
     let refreshTokenInterval
     setIndicator(() => {
       refreshTokenInterval = window.setInterval(() => {
@@ -142,6 +148,7 @@ export default {
 <style lang="less">
 @import '~vux/src/styles/reset.less';
 @import './styles/theme.less';
+@import './styles/vars.less';
 @import './styles/base.css';
 
 .tabbar {
@@ -161,10 +168,13 @@ export default {
     position: relative;
     top: -5px;
     right: -5px;
-    a{
-      color: #666;
+    .link {
+      color: #9b9b9b;
       padding: 4px 10px;
       border-radius: 2px;
+      &.blue {
+        color: @azul
+      }
     }
   }
 }

@@ -1,92 +1,95 @@
 <template>
   <div>
     <swiper
+      v-if="banners.length"
       :list="banners"
-      :aspect-ratio="400/1200"
-      :interval="4000"
-      dots-position="center" auto loop
-    ></swiper>
-    <group class="announcement">
-      <cell class="tt">
-        <span slot="icon" class="anmt-title">
-          <svg  version="1.1" role="presentation" width="20" height="20" viewBox="0 0 1792 1792" class="speaker m-l-xlg fa-icon" style="font-size: 1.25em;">
-            <path d="M1664 640q53 0 90.5 37.5t37.5 90.5-37.5 90.5-90.5 37.5v384q0 52-38 90t-90 38q-417-347-812-380-58 19-91 66t-31 100.5 40 92.5q-20 33-23 65.5t6 58 33.5 55 48 50 61.5 50.5q-29 58-111.5 83t-168.5 11.5-132-55.5q-7-23-29.5-87.5t-32-94.5-23-89-15-101 3.5-98.5 22-110.5h-122q-66 0-113-47t-47-113v-192q0-66 47-113t113-47h480q435 0 896-384 52 0 90 38t38 90v384zM1536 1244v-954q-394 302-768 343v270q377 42 768 341z"></path> 
-          </svg>&nbsp;
-          {{$t('home.announcement')}}
-        </span>
+      :height="'160px'"
+      :show-dots="false"
+      dots-position="center"
+      auto
+      loop>
+    </swiper>
+    <flexbox class="announcement" v-if="announcements.length">
+      <flexbox-item :span="1">
+        <div class="speaker">
+          <icon class="icon" scale="1.5" name="bullhorn"></icon>
+        </div>
+      </flexbox-item>
+      <flexbox-item>
         <marquee :interval="5000">
           <marquee-item
-            v-for="(a, index) in announcements"
+            v-for="(item, index) in announcements"
             :key="'announcement' + index"
-            @click.native="showDialog = true"
-            class="walk-item">
-            <span class="maq-txt">{{ index + 1 }}: {{ a.announcement }}</span>
+            class="marquee-item">
+            <span>{{ item.announcement }}</span>
           </marquee-item>
         </marquee>
-      </cell>
-    </group>
+      </flexbox-item>
+    </flexbox>
+    <div class="gamelist" v-if="games.length">
+      <div class="row" >
+        <div class="col"
+          v-if="index < 8"
+          v-for="(game, index) in games"
+          :style="{backgroundImage:`url(${game.bg_icon})`}"
+          :key="index">
+          <div class="gamebox">
+            <router-link :to="`/game/${game.id}`">
+              <img :src="game.icon" :alt="game.code">
+            </router-link>
+          </div>
+        </div>
+        <div class="col service">
+          <div class="gamebox round">
+            <a :href="$store.state.systemConfig.customerServiceUrl">
+              <img src="../images/zxkf.png" alt="">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="activity m-b" v-if="promotions">
+      <div class="head">
+        <div class="title">
+          <img src="../images/icon-activity.png" alt="activity">
+          优惠活动
+        </div>
+      </div>
+      <div class="activity-list">
+        <div v-for="(promo, index) in promotions"
+          v-if="promo.image_mobile"
+          @click="handleClick(promo.name,promo.start_date, promo.end_date, promo.mobile_description)"
+          :key="index">
+          <p>{{promo.name}}</p>
+          <img :src="promo.image_mobile" :alt="index">
+        </div>
+      </div>
+    </div>
+    <alert :hide-on-blur="true" v-model="showpromoPopup" :title="promoPopup.title">
+      <p>开始时间：{{promoPopup.start_date}}</p>
+      <p>截止时间：{{promoPopup.end_date}}</p>
+      <p>{{promoPopup.mobile_description}}</p>
+    </alert>
     <x-dialog
       v-model="showDialog"
       :hide-on-blur="true">
-      <div class="dialog">
-        <div @click="showDialog = false" class="close">
-          <span class="vux-close">&times;</span>
-        </div>
         <swiper
-          class="swiper"
-          auto
           dots-position="center">
           <swiper-item
             :key="'swiper-anmt' + index"
             v-for="(a, index) in announcements">
-            <p class="anmt-txt">{{a.announcement}}</p>
+            <p class="m-t">{{a.announcement}}</p>
           </swiper-item>
         </swiper>
-      </div>
     </x-dialog>
-    <div class="gamelist">
-      <div class="row" v-if="category" >
-        <div class="col" v-for="(game, index) in category" v-if="index < 11" :style="{backgroundImage:`url(${game.bg_icon})`}">
-          <div class="gamebox">
-            <a>
-              <img :src="game.icon" alt="">
-            </a>
-          </div>
-        </div>
-        <div class="col zxkf">
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="head">
-        <div class="title">
-          <img src="../images/icon-activity.png" alt="">
-          优惠活动
-        </div>
-      </div>
-
-      <div class="activity-list" v-if="promotions">
-        <a v-for="(p, i) in promotions" v-if="p.image_mobile" @click="handleClick(p.name,p.start_date, p.end_date)">
-          <p>{{p.name}}</p>
-          <img :src="p.image_mobile" alt="">
-        </a>
-      </div>
-    </div>
-    <div class="box">
-      <alert :hide-on-blur="true" v-model="show" :title="title">
-        <p>开始时间：{{start_date}}</p>
-        <p>截止时间：{{end_date}}</p>
-      </alert>
-    </div>
-
   </div>
 </template>
 
 <script>
-import { Group, Cell, Swiper, SwiperItem, Marquee, MarqueeItem, XDialog, Masker, Alert } from 'vux'
+import { Swiper, SwiperItem, Marquee, MarqueeItem, Alert, XDialog, Flexbox, FlexboxItem } from 'vux'
 import { fetchBanner, fetchAnnouncements, fetchGames, getPromotions } from '../api'
-
+import Icon from 'vue-awesome/components/Icon'
+import 'vue-awesome/icons/bullhorn'
 export default {
   name: 'Home',
   data () {
@@ -94,12 +97,15 @@ export default {
       banners: [],
       announcements: [],
       showDialog: false,
-      category: [],
-      show: false,
+      games: [],
       promotions: '',
-      title: '',
-      start_date: '',
-      end_date: ''
+      showpromoPopup: false,
+      promoPopup: {
+        end_date: '',
+        start_date: '',
+        title: '',
+        description: ''
+      }
     }
   },
   created () {
@@ -118,59 +124,54 @@ export default {
         this.announcements = res
       })
     fetchGames().then(response => {
-      this.category = response
+      this.games = response
     })
     getPromotions().then(response => {
       this.promotions = response
     })
   },
   methods: {
-    handleClick (title, start, end) {
-      this.show = true
-      this.title = title
-      this.start_date = start
-      this.end_date = end
+    handleClick (title, start, end, description) {
+      this.showpromoPopup = true
+      this.promoPopup.title = title
+      this.promoPopup.start_date = start
+      this.promoPopup.end_date = end
+      this.promoPopup.description = description
     }
   },
   components: {
-    Group,
-    Cell,
     Swiper,
     SwiperItem,
     Marquee,
     MarqueeItem,
     XDialog,
-    Masker,
-    Alert
+    Alert,
+    Flexbox,
+    FlexboxItem,
+    Icon
   }
 }
 </script>
 
 <style scoped lang="less">
-  .announcement {
-    .weui-cells {
-      margin-top: 0;
-    }
-  }
-  .vux-swiper {
-    height: 160px;
-  }
-.anmt-title {
-  display: inline-block;
-  width: 80px;
+
+.announcement {
+  height: 40px;
   .speaker {
-    transform: translateY(2px);
+    margin-left: 10px;
+  }
+  .icon {
+    color: #4a4a4a;
   }
 }
-.walk-item {
+
+.marquee-item {
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.tt {
-  background-color: #f0f0f0;
-}
+
 .gamelist {
   margin: 0;
   border: 0;
@@ -194,26 +195,25 @@ export default {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
-    .zxkf {
-      background-image: url('../images/zxkf.png')
-    }
     .col {
       padding: 5px 0;
       flex: 0 0 33.33%;
-      max-width: 33.33%;
       position: relative;
       text-align: center;
       overflow: hidden;
-      background-size: cover;l
+      background-size: cover;
       background-position: center center;
       .gamebox {
         text-align: center;
         font-size: 15px;
         padding: 10px 4px;
-        -moz-border-radius: 10px;
-        -webkit-border-radius: 10px;
         border-radius: 10px;
         position: relative;
+        &.round {
+          img {
+            border-radius: 50%;
+          }
+        }
         a {
           width: 100%;
           font-weight: 600;
@@ -230,6 +230,11 @@ export default {
     }
   }
 }
+
+.service {
+  background-image: linear-gradient(to top, #4481eb 0%, #04befe 100%);
+}
+
   .activity {
     .head {
       display: -webkit-box;
@@ -269,9 +274,5 @@ export default {
         -webkit-user-drag: none;
       }
     }
-  }
-  .box {
-    position: relative;
-    clear: both;
   }
 </style>
