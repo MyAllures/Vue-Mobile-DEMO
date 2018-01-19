@@ -3,7 +3,7 @@
     <swiper
       :list="banners"
       :aspect-ratio="400/1200"
-      :interval=4000
+      :interval="4000"
       dots-position="center" auto loop
     ></swiper>
     <group class="announcement">
@@ -146,18 +146,15 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
   .announcement {
     .weui-cells {
       margin-top: 0;
     }
   }
   .vux-swiper {
-    height: 160px!important;
+    height: 160px;
   }
-</style>
-<style scoped lang="less">
-
 .anmt-title {
   display: inline-block;
   width: 80px;
@@ -234,7 +231,6 @@ export default {
   }
 }
   .activity {
-
     .head {
       display: -webkit-box;
       display: -webkit-flex;

@@ -1,14 +1,5 @@
 <template>
   <div>
-    <div>
-      <blur :blur-amount="20" :url="charactarUrl" class="personal-info">
-        <div  slot="default" class="center">
-          <img class="profile-img" :src="charactarUrl">
-          <p>{{user.username}}</p>
-          <p class="balance">{{$t('my.name')}}{{$t('my.balance')}}: <span>{{user.balance}}</span> RMB</p>
-        </div>
-      </blur>
-    </div>
     <tab>
       <tab-item
         v-for="(tab,index) in tabs"
@@ -25,7 +16,7 @@
 </template>
 
 <script>
-import { Tab, TabItem, Blur } from 'vux'
+import { Tab, TabItem } from 'vux'
 export default {
   name: 'Home',
   data () {
@@ -48,19 +39,12 @@ export default {
           label: '取款记录',
           name: 'WithdrawRecord'
         }
-      ],
-      // Temporarily for display
-      charactarUrl: 'https://orig00.deviantart.net/4298/f/2007/035/d/9/starry_night_snoopy_by_knoxcat.png'
+      ]
     }
   },
   methods: {
     switchTab (name) {
       this.$router.push({name: name})
-    }
-  },
-  computed: {
-    user () {
-      return this.$store.state.user
     }
   },
   watch: {
@@ -74,8 +58,7 @@ export default {
   },
   components: {
     Tab,
-    TabItem,
-    Blur
+    TabItem
   },
   beforeRouteEnter (to, from, next) {
     if (to.name === 'Fin') {

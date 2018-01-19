@@ -141,3 +141,7 @@ export function unRead () {
 export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }
+
+export function fetchStatistic (code) {
+  return axios.get(`${urls.statistic}?game_code=${code}`)
+}

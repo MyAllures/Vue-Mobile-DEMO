@@ -29,3 +29,11 @@ html, body {
 .m-a-md {
   padding: 10px 15px;
 }
+
+.clear-viewbox-default-top {
+  margin-top: -45px;
+}
+
+.clear-viewbox-default-bottom {
+  margin-bottom: -50px;
+}

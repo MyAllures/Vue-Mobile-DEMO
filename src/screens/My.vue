@@ -1,5 +1,5 @@
 <template>
-  <div class="my-box">
+  <div>
     <group>
       <cell :title="$t('my.balance')" >
         <i class="icon-sum icon" slot="icon"></i>
@@ -143,9 +143,7 @@ export default {
 </script>
 
 <style scoped >
-.my-box {
-  margin-bottom: 70px;
-}
+
 .icon {
   width: 24px;
   margin-right: 10px;
