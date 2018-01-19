@@ -47,7 +47,7 @@
       title="请选择"
       v-model="activeHistoryTagForXAddress"
       :list="currentHistoryTagForXAddress"
-      @on-hide="changeActiveHistoryTagForXAddress"
+      @on-hide="handleSelectorHide"
       :show.sync="showHistorySelector">
     </x-address>
   </div>
@@ -175,7 +175,7 @@ export default {
       this.createHistoryData()
       this.createCumulative()
     },
-    changeActiveHistoryTagForXAddress (checked) {
+    handleSelectorHide (checked) {
       if (checked) {
         this.activeHistoryTag = this.currentHistoryTag[this.activeHistoryTagForXAddress[0]].key
         this.createHistoryData()
