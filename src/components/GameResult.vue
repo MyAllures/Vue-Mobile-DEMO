@@ -142,21 +142,18 @@ export default {
 @import "../styles/resultsball.scss";
 
 .result-balls {
-  height: 55px;
   width: 100%;
   display: flex;
-  color: #fff;
+  color: #f0f0f0;
   background-image: linear-gradient(to bottom, #006bb3, #00397c);
   .balls-text {
-    width: 34%;
     font-size: 14px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    flex: 1;
+    align-self: center;
+    text-align: center;
   }
   .balls-number {
-    width: 66%;
-    display: flex;
+    flex: 2.5;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;

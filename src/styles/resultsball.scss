@@ -1,27 +1,30 @@
 /*game latest result balls*/
 
 /*specific: ssc type games, common: ball_2.png*/
-$results_ssc: tjssc, xjssc, cqssc, jsssc;
+$results_ssc: tjssc, xjssc, cqssc, jsssc, pcdd, bjkl8, auluck8, gd11x5, gdklsf, fc3d, jnd28, cqlf;
 $ssc_length: length($results_ssc);
 
-@for $index from 1 through $ssc_length {
-  .result-#{nth($results_ssc, $index)} {
-    background: #FFFFFF;
-    box-shadow: 0 0 0 1px #fff;
-    border: 1px solid #2065B6;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    line-height: 20px;
-    b {
-      font-size: 12px;
-      color: #000;
-      display: inline-block;
-    }
+%plain-ball {
+  border-radius: 100%;
+  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
+  height: 23px;
+  line-height: 23px;
+  text-align: center;
+  margin-bottom: 1px;
+  b {
+    display: inline-block;
+    width: 23px;
+    color: #333;
+    font-weight: normal;
+    font-size: 15px;
   }
 }
 
-
+@for $index from 1 through $ssc_length {
+  .result-#{nth($results_ssc, $index)} {
+    @extend %plain-ball;
+  }
+}
 
 /*specific: racing games, common: ball-pk.png*/
 $results_racing: jspk10, bcr, mlaft, er75ft;
@@ -30,90 +33,60 @@ $racing_length: length($results_racing);
 @for $index from 1 through $racing_length {
   .result-#{nth($results_racing, $index)} {
     background: url("../assets/ball-pk.png") no-repeat;
-    background-size: 20px * .8 209px * .8;
-    height: 20px * .8;
+    background-size: 20px 209px;
+    height: 20px;
     b {
       display: inline-block;
       text-indent: -9999px;
-      width: 16px * .8;
-      margin-left: 5px * .8;
+      width: 20px;
     }
 
     @for $num from 1 through 10 {
       &.resultnum-#{$num} {
-        background-position: 0 (-21px * .8 * ($num - 1));
+        background-position: 0 (-21px * ($num - 1));
       }
     }
   }
 }
 
-/*specific: guandong region games, common: ball_1.png*/
-$results_gd: gd11x5, gdklsf, fc3d;
-$gd_length: length($results_gd);
-
-@for $index from 1 through $gd_length {
-  .result-#{nth($results_gd, $index)} {
-    background: #FFFFFF;
-    box-shadow: 0 0 0 1px #fff;
-    border: 1px solid #2065B6;
-    border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    line-height: 20px;
-    b {
-      font-size: 12px;
-      color: #000;
-      display: inline-block;
-    }
-    &.resultnum-19 {
-      border: 1px solid #CA4C49;
-    }
-    &.resultnum-20 {
-      border: 1px solid #CA4C49;
-    }
-  }
-}
-
-
 /*each one below just has its own single ball png*/
-
 .result-jsk3 {
   background: url("../assets/ball_4.png") no-repeat;
-  background-size: 27px * .8 162px * .8;
-  height: 27px * .8;
+  background-size: 27px 162px;
+  height: 27px;
   b {
     display: inline-block;
     text-indent: -9999px;
-    width: 24px * .8;
-    margin-left: 7px * .8;
+    width: 24px;
+    margin-left: 7px;
   }
 
   @for $num from 1 through 6 {
     &.resultnum-#{$num} {
-      background-position: 0 (-27px * .8 * ($num - 1));
+      background-position: 0 (-27px * ($num - 1));
     }
   }
 }
 
 .result-hkl {
   background: url("../assets/ball_hk6.png") no-repeat;
-  background-size: 25px * .8 1321px * .8;
-  height: 26px * .8;
+  background-size: 25px 1321px;
+  height: 26px;
   .ball-zodiac {
     position: relative;
     text-align: left;
-    left: 5px * .8;
+    left: 5px;
     top: 0;
-    font-size: 12px;
-    margin-left: 1px * .8;
+    font-size: 13px;
+    margin-left: 1px;
   }
   &:nth-child(7) {
-    margin-left: 10px;
+    margin-left: 15px;
     &:before {
       content: '＋';
       color: #fff;
       position: relative;
-      right: 18px;
+      right: 20px;
       top: -2px;
     }
   }
@@ -121,122 +94,23 @@ $gd_length: length($results_gd);
   b {
     display: inline-block;
     text-indent: -9999px;
-    width: 24px * .8;
-    margin-left: 7px * .8;
+    width: 24px;
+    margin-left: 3px;
   }
 
   @for $num from 1 through 49 {
     &.resultnum-#{$num} {
-      background-position: 0 (-27px * .8 * ($num - 1));
+      background-position: 0 (-27px * ($num - 1));
     }
   }
 }
 
 .result-pcdd {
-  background: #FFFFFF;
-  box-shadow: 0 0 0 1px #fff;
-  border: 1px solid #2065B6;
-  border-radius: 50%;
-  height: 20px;
-  width: 20px;
-  line-height: 20px;
-  text-align: center;
   + .ball-sum {
     margin-left: 5px;
     span {
-      background: #FFFFFF;
-      box-shadow: 0 0 0 1px #fff;
-      border: 1px solid #2065B6;
-      border-radius: 50%;
-      height: 20px;
-      width: 20px;
-      margin-left: 5px;
-      line-height: 20px;
-      position: relative;
-      vertical-align: middle;
-      b {
-        font-size: 12px;
-        color: #000;
-      }
-    }
-  }
-
-  b {
-    display: inline-block;
-    position: relative;
-    top: -3px;
-    width: 24px * .8;
-    font-size: 12px;
-    color: black;
-  }
-}
-
-.result-jnd28 {
-  background: #FFFFFF;
-  box-shadow: 0 0 0 1px #fff;
-  border: 1px solid #2065B6;
-  border-radius: 50%;
-  height: 20px;
-  width: 20px;
-  line-height: 20px;
-  text-align: center;
-  b {
-    font-size: 12px;
-    color: #000;
-  }
-}
-
-.result-cqlf {
-  background: url("../assets/ball_nc_top.png") no-repeat;
-  background-size: 32px * .8 659px * .8;
-  height: 32px * .8;
-  position: relative;
-  b {
-    display: inline-block;
-    text-indent: -9999px;
-    width: 22px * .8;
-    margin-left: 9px * .8;
-  }
-
-  @for $num from 1 through 20 {
-    &.resultnum-#{$num} {
-      background-position: 0 (-33px * .8 * ($num - 1));
+      @extend %plain-ball;
     }
   }
 }
 
-.result-bjkl8 {
-  background: url("../assets/ball_5_small.png") no-repeat;
-  background-size: 21px * .8 1839px * .8;
-  height: 22px * .8;
-  width: 24px * .8;
-  margin-bottom: 1px;
-  b {
-    display: inline-block;
-    text-indent: -9999px;
-  }
-
-  @for $num from 1 through 80 {
-    &.resultnum-#{$num} {
-      background-position: 0 (-23px * .8 * ($num - 1));
-    }
-  }
-}
-
-.result-auluck8 {
-  background: url("../assets/ball_5_small.png") no-repeat;
-  background-size: 21px * .8 1839px * .8;
-  height: 22px * .8;
-  width: 24px * .8;
-  margin-bottom: 1px;
-  b {
-    display: inline-block;
-    text-indent: -9999px;
-  }
-
-  @for $num from 1 through 80 {
-    &.resultnum-#{$num} {
-      background-position: 0 (-23px * .8 * ($num - 1));
-    }
-  }
-}
