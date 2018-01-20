@@ -3,7 +3,7 @@
     <swiper
       v-if="banners.length"
       :list="banners"
-      :height="'160px'"
+      :aspect-ratio=".45"
       :show-dots="false"
       dots-position="center"
       auto
