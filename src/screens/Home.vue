@@ -173,57 +173,28 @@ export default {
 }
 
 .gamelist {
-  margin: 0;
-  border: 0;
-  vertical-align: baseline;
-  font: inherit;
-  font-size: 100%;
-  .title {
-    position: relative;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 10px 10px 0 38px;
-    img {
-      width: 21px;
-      position: absolute;
-      left: 10px;
-      top: 10px;
-    }
-  }
   .row {
-    display: -webkit-flex;
     display: flex;
     width: 100%;
     flex-wrap: wrap;
     .col {
-      padding: 5px 0;
+      padding: 1em 0;
       flex: 0 0 33.33%;
       position: relative;
-      text-align: center;
       overflow: hidden;
       background-size: cover;
       background-position: center center;
       .gamebox {
-        text-align: center;
-        font-size: 15px;
-        padding: 10px 4px;
         border-radius: 10px;
-        position: relative;
+        img {
+            display: block;
+            width: percentage(2 / 4);
+            height: auto;
+            margin: 0 auto;
+          }
         &.round {
           img {
             border-radius: 50%;
-          }
-        }
-        a {
-          width: 100%;
-          font-weight: 600;
-          color: #575e68;
-          text-decoration: none;
-          display: block;
-          img {
-            display: block;
-            width: 80px;
-            margin: 0 auto;
           }
         }
       }
@@ -235,44 +206,39 @@ export default {
   background-image: linear-gradient(to top, #4481eb 0%, #04befe 100%);
 }
 
-  .activity {
-    .head {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -moz-box;
-      display: -moz-flex;
-      display: -ms-flexbox;
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      font-size: 16px;
-      .title {
-        position: relative;
-        font-weight: 700;
-        padding-left: 28px;
-        img {
-          width: 21px;
-          position: absolute;
-          left: 0;
-          top: 1px;
-        }
-      }
-    }
-    .activity-list {
-      margin: 0 10px;
-      padding: 10px;
-      border: 1px solid #fff;
-      border-radius: 10px;
-      background: rgba(255,255,255,.5);
-      p {
-        font-size: 16px;
-        font-weight: 700;
-      }
+.activity {
+  .head {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 16px;
+    .title {
+      position: relative;
+      font-weight: 700;
+      padding-left: 28px;
       img {
-        width: 100%;
-        height: 80px;
-        -webkit-user-drag: none;
+        width: 21px;
+        position: absolute;
+        left: 0;
+        top: 1px;
       }
     }
   }
+  .activity-list {
+    margin: 0 10px;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    background: rgba(255,255,255,.5);
+    p {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    img {
+      width: 100%;
+      height: 80px;
+      -webkit-user-drag: none;
+    }
+  }
+}
 </style>
