@@ -5,10 +5,12 @@
       :gameCode="currentGame.code"
       :resultStatistic="resultStatistic">
     </road-beads>
-    <div class="game-selector text-center" @click="showGameMenu = true">
+    <div class="game-selector text-center" @click="selectGame()">
       <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
-      <span class="arrow"></span>
+      <inline-loading v-if="loading"></inline-loading>
+      <span class="arrow" v-else></span>
     </div>
+    <leaderboards :listItems="leaderboard" v-if="currentGame && $route.name === 'Leaderboards'"></leaderboards>
     <x-address style="display: none"
       title="请选择"
       v-model="currentGameId"
@@ -19,10 +21,12 @@
 </template>
 
 <script>
-import { XAddress } from 'vux'
+import { XAddress, InlineLoading } from 'vux'
 import { mapGetters } from 'vuex'
 import RoadBeads from './RoadBeads'
+import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
+import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
 export default {
@@ -32,22 +36,70 @@ export default {
       currentGameId: [],
       games: [],
       showGameMenu: false,
-      resultStatistic: {}
+      resultStatistic: {},
+      leaderboardData: [],
+      loading: false
     }
   },
   methods: {
+    selectGame () {
+      if (this.loading) {
+        return
+      }
+      this.showGameMenu = true
+    },
     fetchStatistic () {
       const code = this.currentGame.code
+      this.loading = true
       fetchStatistic(code).then(result => {
         this.resultStatistic = {
           resultSingleStatistic: result.result_single_statistic,
           historyStatistic: result.result_category_statistic
         }
+        this.loading = false
+      })
+    },
+    fetchLeaderboard () {
+      const code = this.currentGame.code
+      this.loading = true
+      fetchStatistic(code).then(result => {
+        const translator = gameTranslator[code]
+        const frequencyStats = result.frequency_stats
+        const keys = Object.keys(frequencyStats)
+        const statistic = []
+        _.each(keys, (key) => {
+          let item = frequencyStats[key]
+          let type = Object.keys(item)
+          if (type.length === 0) {
+            return
+          }
+          type = type[0]
+          if (item[type] < 3) { // 連續三期以上
+            return
+          }
+          let translated = translator(key)
+          if (!translated[0]) {
+            return
+          }
+          statistic.push({
+            title: translated[0],
+            type: translated[1] ? translated[1] + type : type,
+            num: item[type]
+          })
+        })
+
+        this.leaderboardData = statistic
+        this.loading = false
       })
     },
     pollStatistic () { // todo: use websocket
       this.interval = setInterval(() => {
         this.fetchStatistic()
+      }, 10000)
+    },
+    pollLeaderboard () {
+      this.interval = setInterval(() => {
+        this.fetchLeaderboard()
       }, 10000)
     }
   },
@@ -58,12 +110,23 @@ export default {
     currentGame () {
       let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
       return code || { display_name: '請選擇' }
+    },
+    leaderboard () {
+      return this.leaderboardData.sort((a, b) => {
+        return b.num - a.num
+      })
     }
   },
   watch: {
     'currentGame.code': function (to) {
-      this.fetchStatistic(to.code)
-      this.pollStatistic()
+      clearInterval(this.interval)
+      if (this.$route.name === 'Leaderboards') {
+        this.fetchLeaderboard()
+        this.pollLeaderboard()
+      } else {
+        this.fetchStatistic()
+        this.pollStatistic()
+      }
     },
     'allGames': function (allGames) {
       this.currentGameId = [allGames[0].id + '']
@@ -88,8 +151,7 @@ export default {
     clearInterval(this.interval)
   },
   components: {
-    XAddress,
-    RoadBeads
+    XAddress, RoadBeads, Leaderboards, InlineLoading
   }
 }
 </script>
