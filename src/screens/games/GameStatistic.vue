@@ -129,7 +129,8 @@ export default {
       }
     },
     'allGames': function (allGames) {
-      this.currentGameId = [allGames[0].id + '']
+      const played = localStorage.getItem('lastGame')
+      this.currentGameId = played ? [played] : [allGames[0].id + '']
       _.each(this.allGames, (game) => {
         if (game.code !== 'hkl' && game.code !== 'fc3d') {
           this.games.push(

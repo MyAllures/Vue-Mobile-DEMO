@@ -1,10 +1,16 @@
 <template>
   <div class="leaderbaord clear-viewbox-default-bottom">
     <div v-if="listItems.length">
-      <x-table full-bordered>
-        <tbody class="tbody">
-          <tr class="tr" v-for="(item, index) in listItems" :key="index">
-            <td class="play">
+      <x-table full-bordered class="table">
+        <thead>
+          <tr>
+            <td>彩种</td>
+            <td>期数</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in listItems" :key="index">
+            <td class="play text-center">
               {{item.title}} - {{item.type | typeFilter}}
             </td>
             <td class="issue">
@@ -141,32 +147,19 @@ export default {
 
 <style lang="less" scoped>
 @import '../../styles/vars.less';
-.larger480(@rules) {
-    @media (min-width: 481px) { @rules(); }
-}
 
 .leaderbaord {
   padding-top: 46px;
 }
 
-.tbody {
+.table {
   background-color: #fff;
-  .tr {
-    height: 40px;
-    line-height: 40px;
-  }
   .play, .issue {
     font-size: 18px;
   }
   .play {
-    text-align: left;
     width: 60%;
-    padding-left: 1em;
     color: #4a4a4a;
-    .larger480({
-      text-align: center;
-      padding: 0;
-    })
   }
   .issue {
     color: @red;
