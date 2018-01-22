@@ -18,7 +18,7 @@
                       v-for="(listItem, index) in allLists"
                       :key="index">
               <span class="display-name text-center" @click="$router.push(listItem.route)">
-                {{listItem.display_name || ''}}
+                {{listItem.display_name}}
               </span>
             </cell-box>
         </group>
