@@ -7,8 +7,8 @@
       :key="index">
       <img slot="header"  class="promo-image" :src="promotion.image_mobile" :alt="promotion.image_mobile">
       <div slot="content" class="caption text-right">
-        <span>{{promotion.name}}, {{promotion.start_date}} ~ {{promotion.end_date}}</span>
-        <span class="arrow"></span>
+        <span>{{promotion.name}}</span>
+        <icon class="click-icon" scale="1.2" name="hand-o-up"></icon>
       </div>
     </card>
     <alert :hide-on-blur="true" v-model="promoPopup.visible" :title="promoPopup.title">
@@ -26,7 +26,8 @@ import { Alert, Card } from 'vux'
 import { getPromotions } from '../api'
 import { mapGetters } from 'vuex'
 import Vue from 'vue'
-
+import Icon from 'vue-awesome/components/Icon'
+import 'vue-awesome/icons/hand-o-up'
 export default {
   data () {
     return {
@@ -64,7 +65,7 @@ export default {
     })
   },
   components: {
-    Alert, Card
+    Alert, Card, Icon
   }
 }
 </script>
@@ -79,11 +80,14 @@ export default {
   width: 100%;
   height: 130px;
 }
-
+.click-icon {
+  vertical-align: sub;
+}
 .caption {
   font-size: 12px;
   color: #999
 }
+
 .popup-content {
   overflow-y: auto;
   max-height: 40vh;

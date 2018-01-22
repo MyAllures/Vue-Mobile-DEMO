@@ -27,8 +27,8 @@
       </flexbox-item>
     </flexbox>
     <grid :cols="3">
-      <grid-item 
-        v-for="(game, index) in games" 
+      <grid-item
+        v-for="(game, index) in games"
         :key="'game' + index"
         v-if="index < 11">
         <img slot="icon" :src="game.icon">
@@ -37,8 +37,8 @@
     </grid>
     <div class="activity">
       <h3 class="title">优惠活动</h3>
-      <card 
-        v-for="(promotion, index) in promotions" 
+      <card
+        v-for="(promotion, index) in promotions"
         :header="{title: promotion.name}"
         :key="'card' + index"
         v-if="promotions && index < 5"
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     handleClick (promotion) {
-      // 跳转到详情页面
+      this.$router.push({name: 'Promotions'})
     }
   },
   components: {
