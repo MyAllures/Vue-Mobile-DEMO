@@ -11,7 +11,6 @@
       <span>{{currentGame.display_name}}</span>
     </x-header>
     <router-view :key="$route.name + ($route.params.gameId || '')"/>
-    <!-- 侧滑菜单 -->
     <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
   </div>
 </template>
@@ -50,4 +49,3 @@ export default {
 
 }
 </script>
-

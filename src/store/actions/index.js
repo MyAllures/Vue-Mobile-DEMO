@@ -1,9 +1,8 @@
-import _ from 'lodash'
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import router from '../../router'
 import axios from 'axios'
-
+import _ from 'lodash'
 import {
   fetchUser,
   login,
@@ -11,6 +10,21 @@ import {
   fetchGames,
   fetchCategories
 } from '../../api'
+
+const formatPlayInGroup = function (group) {
+  let formattedPlays = _.chunk(group.plays, group.col_num)
+  if (formattedPlays[formattedPlays.length - 1].length === 1) {
+    if (group.col_num === 2) {
+      // 將最後一組併入前一組
+      let last = formattedPlays.pop()
+      formattedPlays[formattedPlays.length - 1].push(last[0])
+    } else {
+      // 將最後一組與其前一組平分
+      formattedPlays[formattedPlays.length - 1].unshift(formattedPlays[formattedPlays.length - 2].pop())
+    }
+  }
+  return formattedPlays
+}
 
 export default {
   login: ({ commit, state }, { user }) => {
@@ -78,13 +92,15 @@ export default {
   },
   fetchCategories: ({ commit, state }, gameId) => {
     return fetchCategories(gameId).then(res => {
-      const categories = _.map(res, item => {
-        item['game_id'] = gameId
-        return item
+      const categories = res
+      categories.forEach(category => {
+        category.tabs.forEach(tab => {
+          tab.groups.forEach(group => {
+            group.plays = formatPlayInGroup(group)
+          })
+        })
       })
-      commit(types.SET_CATEGORIES, {
-        categories
-      })
+      commit(types.SET_CATEGORIES, categories)
       return categories
     })
   },

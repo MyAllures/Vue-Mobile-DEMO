@@ -12,33 +12,101 @@
       <div class="aside">
         <ul>
           <li
-            :class="['category-menu-item',activeCategory===category.id?'active':'']"
+            :class="['category-menu-item',activeCategory===category.name?'active':'']"
             v-for="(category, index) in categories"
-            :key="'category' + category.id"
-            @click="switchCategory(category)">{{category.display_name}}</li>
+            :key="'category' + category.name"
+            @click="switchCategory(category.name)">{{category.name}}</li>
         </ul>
       </div>
       <div class="main">
         <router-view
-        :key="$route.name + ($route.params.categoryId || '')"
+        :key="$route.name + ($route.params.categoryName || '')"
         :game="currentGame"
-        :scheduleId="schedule ? schedule.id : null"
-        :gameClosed="gameClosed" />
+        :gameClosed="gameClosed"
+        :amount="amount"
+        :playReset="playReset"
+        @updatePlays="updatePlays"
+        />
       </div>
     </div>
+    <div class="bet-input">
+      <group>
+        <flexbox>
+          <flexbox-item>
+            <div class="balance">{{user.balance||0 | currency('￥')}}</div>
+            <div class="playCount">已选中{{activePlays.length}}注</div>
+          </flexbox-item>
+          <flexbox-item>
+            <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
+            </x-input>
+          </flexbox-item>
+          <flexbox-item>
+            <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+          </flexbox-item>
+          <flexbox-item>
+            <x-button type="default">{{$t('action.reset')}}</x-button>
+          </flexbox-item>
+        </flexbox>
+      </group>
+      <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
+    </div>
+
+    <popup v-model="dialogVisible" is-transparent>
+      <div class="bet-content">
+        <div class="title">确认注单</div>
+        <ul>
+          <li
+            v-for="play in currentPlays"
+            :key="play.id">
+            {{`【${play.display_name}】 @${play.odds} X `}}<span class="amount">{{amount | currency('￥')}}</span></li>
+        </ul>
+        <div class="total">
+          【合计】总注数：{{currentPlays.length}}总金额：
+          <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
+        </div>
+        <div v-if="loading" class="loading">
+          <inline-loading></inline-loading>加载中
+        </div>
+        <flexbox v-else class="buttons">
+          <flexbox-item :span="1/4">
+          </flexbox-item>
+          <flexbox-item :span="1/4">
+            <x-button :disabled="!currentPlays.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+          </flexbox-item>
+          <flexbox-item :span="1/4">
+            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
+          </flexbox-item>
+          <flexbox-item :span="1/4">
+          </flexbox-item>
+        </flexbox>
+      </div>
+    </popup>
+    <toast v-model="showMessage" :type="msgType" :time="2000" :position="'middle'">{{errors||'成功下单'}}</toast>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { fetchSchedule } from '../../api'
+import { mapGetters } from 'vuex'
+import { fetchSchedule, placeBet } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
+import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading } from 'vux'
 export default {
   name: 'Game',
   components: {
     Countdown,
-    GameResult
+    GameResult,
+    XInput,
+    XButton,
+    Group,
+    Popup,
+    Grid,
+    GridItem,
+    Flexbox,
+    FlexboxItem,
+    Toast,
+    InlineLoading
   },
   data () {
     return {
@@ -59,7 +127,14 @@ export default {
         minutes: 0,
         seconds: 0
       },
-      categories: []
+      currentPlays: [],
+      dialogVisible: false,
+      amount: parseInt(localStorage.getItem('amount')) || 1,
+      activePlays: [],
+      playReset: false,
+      showMessage: false,
+      errors: '',
+      loading: false
     }
   },
   computed: {
@@ -71,24 +146,41 @@ export default {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
     activeCategory () {
-      return parseInt(this.$route.params.categoryId)
+      return this.$route.params.categoryName
+    },
+    ...mapGetters([
+      'categories', 'user'
+    ]),
+    playsForSubmit () {
+      return _.filter(this.currentPlays, play => play.active).map(play => {
+        return {
+          game_schedule: this.schedule.id,
+          bet_amount: parseFloat(play.bet_amount),
+          play: play.id,
+          bet_options: play.bet_options
+        }
+      })
+    },
+    msgType () {
+      return this.errors ? 'warn' : 'success'
     }
   },
   created () {
     this.updateSchedule()
-    this.categories = this.$store.getters.categoriesByGameId(this.gameId)
-    if (!this.categories.length) {
-      this.$store.dispatch('fetchCategories', this.gameId)
-        .then((res) => {
-          if (res) {
-            this.categories = res
-            this.$router.push(`/game/${this.gameId}/${this.categories[0].id}`)
-          } else {
-            this.performLogin()
-          }
-        })
-    } else {
-      this.$router.push(`/game/${this.gameId}/${this.categories[0].id}`)
+    if (!this.$route.params.categoryName) {
+      const categories = this.$store.getters.categoriesByGameId(this.gameId)
+      if (!categories.length) {
+        this.$store.dispatch('fetchCategories', this.gameId)
+          .then((res) => {
+            if (res && res.length) {
+              this.$router.push(`/game/${this.gameId}/${res[0].name}`)
+            } else {
+              this.performLogin()
+            }
+          })
+      } else {
+        this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
+      }
     }
   },
   methods: {
@@ -104,13 +196,12 @@ export default {
           this.startTimer()
         })
     },
-    switchCategory (category) {
-      if (!category) {
+    switchCategory (categoryName) {
+      if (!categoryName) {
         return
       }
       this.$router.push({
-        path: `/game/${this.$route.params.gameId}/${category.id}`,
-        params: { formatting: category.formatting }
+        path: `/game/${this.$route.params.gameId}/${categoryName}`
       })
     },
     startTimer () {
@@ -147,6 +238,94 @@ export default {
         minutes,
         seconds
       }
+    },
+    openDialog () {
+      const validedPlays = _.flatMap(
+        this.activePlays,
+        play => {
+          if (play.combinations && !play.selectedOptions) {
+            return _.map(play.combinations, combination => {
+              return {
+                ...play,
+                combinations: combination
+              }
+            })
+          } else {
+            return [play]
+          }
+        }
+      )
+      this.currentPlays = _.values(validedPlays.map(play => {
+        let betOptions
+        let isCustom = play.isCustom
+        let optionDisplayNames = []
+        if (play.selectedOptions) {
+          let options = []
+          _.each(play.selectedOptions, option => {
+            options.push(option.num)
+            optionDisplayNames.push(option.displayName || option.num)
+          })
+          betOptions = { options: options }
+        } else if (play.combinations) {
+          isCustom = false
+          betOptions = { options: play.combinations }
+          optionDisplayNames = [...play.combinations]
+        } else {
+          betOptions = {}
+        }
+        if (optionDisplayNames.length > 0) {
+          optionDisplayNames = optionDisplayNames.join(',')
+        } else {
+          optionDisplayNames = ''
+        }
+        return {
+          game_schedule: 10,
+          display_name: play.hideName ? play.group : `${play.group} - ${play.display_name}`,
+          odds: play.odds,
+          bet_amount: play.amount,
+          id: play.id,
+          bet_options: betOptions,
+          active: true,
+          isCustom: isCustom,
+          combinations: play.combinations,
+          optionDisplayNames: optionDisplayNames
+        }
+      }))
+      this.dialogVisible = true
+    },
+    placeOrder () {
+      this.loading = true
+      this.errors = ''
+      placeBet(this.playsForSubmit)
+        .then(res => {
+          if (res && res[0].member) {
+            setTimeout(() => {
+              // this.updateBetrecords()
+              this.$set(this, 'playReset', !this.playReset)
+              this.showMessage = true
+              this.dialogVisible = false
+              this.loading = false
+            }, 1000)
+          } else {
+            let messages = []
+            res.msg.forEach(error => {
+              messages.push(error)
+            })
+            this.errors = messages.join(', ')
+            this.showMessage = true
+            this.loading = false
+          }
+        },
+        errRes => {
+          this.errors = errRes.join()
+          setTimeout(() => {
+            this.showMessage = true
+            this.loading = false
+          }, 3000)
+        })
+    },
+    updatePlays (plays) {
+      this.activePlays = plays
     }
   }
 }
@@ -155,7 +334,7 @@ export default {
 <style lang="less" scoped>
 .bet-area {
   display: flex;
-  height: calc(~"100vh" - 125px);
+  height: calc(~"100vh" - 185px);
   .aside {
     overflow-y: auto;
     height: 100%;
@@ -189,5 +368,42 @@ export default {
     overflow-y: auto;
     background-color: #fff;
   }
+}
+.bet-input {
+  position: relative;
+  background: #fff;
+  height: 60px;
+  padding: 10px 10px;
+  box-sizing: border-box;
+  .text {
+    margin-right: 10px;
+  }
+  .balance {
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .playCount {
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .content {
+    height: 200px;
+  }
+}
+.gameclosed-mask {
+  position:absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 64, 138, 0.7);
+  color: #fff;
 }
 </style>

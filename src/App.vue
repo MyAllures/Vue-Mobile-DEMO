@@ -125,8 +125,7 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
-@import './styles/theme.less';
-@import './styles/base.css';
+@import './styles/base.less';
 
 .tabbar {
   position: fixed;

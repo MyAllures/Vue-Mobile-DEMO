@@ -13,8 +13,11 @@ export default {
   categoriesByGameId: (state, getters) => gameId => {
     return _.filter(state.categories, item => (item.game_id + '') === gameId)
   },
-  categoriesById: (state, getters) => categoryId => {
-    return _.find(state.categories, item => (item.id + '') === categoryId)
+  categoryByName: (state, getters) => categoryName => {
+    return _.find(state.categories, item => (item.name) === categoryName)
+  },
+  categories: (state) => {
+    return state.categories
   },
   customPlayGroupsById: (state, getters) => gameCode => {
     let playGroup = _.find(state.customPlayGroups, item => (item.code + '') === gameCode)
