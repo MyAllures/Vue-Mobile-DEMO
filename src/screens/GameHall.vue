@@ -1,7 +1,7 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom">
     <!-- 头部 -->
-    <x-header class="gamehall" :right-options="{showMore: true}" @on-click-more="rightMenu = true">
+    <x-header class="gamehall" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
       <x-icon
         slot="overwrite-left"
         type="navicon"
@@ -13,7 +13,7 @@
     <router-view :key="$route.name + ($route.params.gameId || '')"/>
     <!-- 侧滑菜单 -->
     <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
-    <RightMenu :isShow="rightMenu" @handleClose="rightMenu = false"></RightMenu>
+    <RightMenu :isShow="showRightMenu" @handleClose="showRightMenu = false"></RightMenu>
   </div>
 </template>
 
@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       sidebarShow: false, // 默认值
-      rightMenu: false
+      showRightMenu: false
     }
   },
   computed: {

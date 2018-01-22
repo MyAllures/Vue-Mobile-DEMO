@@ -15,10 +15,10 @@
         </div>
         <group class="popup-content">
             <cell-box :border-intent="false"
-                      v-for="(list, index) in allLists"
+                      v-for="(listItem, index) in allLists"
                       :key="index">
-              <span class="display-name text-center" @click="$router.push(list.route)">
-                {{list.display_name || ''}}
+              <span class="display-name text-center" @click="$router.push(listItem.route)">
+                {{listItem.display_name || ''}}
               </span>
             </cell-box>
         </group>
@@ -41,11 +41,11 @@
         allLists: [
           {
             display_name: '路珠',
-            route: '/'
+            route: '/stastics/roadbeads'
           },
           {
             display_name: '长龙排行榜',
-            route: '/'
+            route: '/stastics/leaderboards'
           },
           {
             display_name: '历史开奖',
@@ -53,7 +53,7 @@
           },
           {
             display_name: '游戏介绍',
-            route: '/'
+            route: '/gameintro'
           }
         ]
       }
@@ -82,9 +82,10 @@
 </script>
 
 <style lang="less" scoped>
+  @import "../styles/vars.less";
   .sidePopup {
     .popup {
-      background-color: #ffff;
+      background-color: #fff;
     }
     .popup-content {
       margin-top: 50px;
@@ -104,11 +105,11 @@
     .weui-cell__ft {
       .balance {
         padding-left: 10px;
-        color: #d0021b;
+        color: @red;
       }
     }
     .xbutton {
-      background: #156fd8;
+      background: @azul;
       font-size: 14px;
     }
   }
