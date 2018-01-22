@@ -43,7 +43,10 @@ export default {
     recentgame: '最近玩过'
   },
   game: {
-    name: '游戏'
+    betrecord: '查看注单',
+    name: '游戏',
+    pay: '立即充值',
+    nopay: '未结'
   },
   fin: {
     name: '财务',

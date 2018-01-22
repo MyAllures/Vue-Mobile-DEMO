@@ -8,11 +8,13 @@ import locales from './i18n/locales'
 import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage } from './api'
+import VueFilter from 'vue2-filters'
 import * as types from './store/mutations/mutation-types'
 
 Vue.use(require('vue-moment'))
 Vue.use(VueI18n)
 Vue.use(VueCookie)
+Vue.use(VueFilter)
 
 let navLang = navigator.language || navigator.userLanguage
 if (navLang === 'zh-CN' || navLang === 'zh-cn') {
