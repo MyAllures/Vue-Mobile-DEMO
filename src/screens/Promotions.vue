@@ -80,9 +80,11 @@ export default {
   width: 100%;
   height: 130px;
 }
+
 .click-icon {
   vertical-align: sub;
 }
+
 .caption {
   font-size: 12px;
   color: #999
@@ -96,15 +98,5 @@ export default {
 .promo-container /deep/ .weui-dialog {
   max-width: 100%;
 }
-.arrow {
-  display: inline-block;
-  height: 6px;
-  width: 6px;
-  border-width: 2px 2px 0 0;
-  border-color: #C8C8CD;
-  border-style: solid;
-  transform: rotate(45deg);
-  margin-left: 3px;
-  margin-right: 3px;
-}
+
 </style>
