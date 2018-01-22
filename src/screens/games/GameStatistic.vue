@@ -109,7 +109,7 @@ export default {
     ]),
     currentGame () {
       let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
-      return code || { display_name: '請選擇' }
+      return code || { display_name: '请选择' }
     },
     leaderboard () {
       return this.leaderboardData.sort((a, b) => {

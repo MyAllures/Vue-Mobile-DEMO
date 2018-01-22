@@ -27,5 +27,8 @@ export default {
   },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
+  },
+  [types.SET_UNREAD]: (state, { unread }) => {
+    state.unread = unread
   }
 }
