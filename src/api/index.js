@@ -130,12 +130,16 @@ export function changeUserInformation (id, member) {
   return axios.put(urls.user + member.id + '/', member)
 }
 
-export function noMessages (message) {
+export function fetchMessages (limit, page) {
+  return axios.get(urls.messages + `?limit=${limit}&offset=${page * limit}`)
+}
+
+export function readMessage (message) {
   return axios.put(urls.messages + '' + message.id + '/')
 }
 
-export function unRead () {
-  return axios.get(urls.messageCount)
+export function fetchUnread () {
+  return axios.get(urls.unread)
 }
 
 export function onlinepaySuccess (transactionId) {
