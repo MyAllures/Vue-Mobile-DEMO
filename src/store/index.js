@@ -23,7 +23,8 @@ export function createStore () {
         global_preferences: {
           send_chat_conditions: '{}'
         }
-      }
+      },
+      unread: 0
     },
     actions,
     mutations,

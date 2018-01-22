@@ -1,5 +1,5 @@
 <template>
-  <view-box ref="viewBox">
+  <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
       v-show="!$route.meta.headerHidden"
       :style="{
@@ -37,9 +37,10 @@
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
       <tabbar-item
+        :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="$route.name === menu.route"
+        :selected="$route.path.indexOf(menu.route) === 0"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
@@ -83,7 +84,8 @@ export default {
         label: this.$t('my.name'),
         icon: 'icon-my',
         link: '/my',
-        route: 'My'
+        route: 'My',
+        unreadBadge: true
       }],
       logo: '',
       userLoading: true
@@ -96,6 +98,9 @@ export default {
     ...mapState({
       isLoading: state => state.isLoading
     }),
+    unread () {
+      return this.$store.state.unread
+    },
     showActions () {
       return this.$route.name !== 'Login' && !this.user.logined
     },
@@ -136,6 +141,9 @@ export default {
   created () {
     if (this.$cookie.get('access_token')) {
       this.$store.dispatch('fetchUser').then(() => {
+        this.unreadInterval = setInterval(() => {
+          this.$store.dispatch('fetchUnread')
+        }, 10000)
       }, errRes => {
         this.performLogin()
       }).catch(() => {
@@ -147,7 +155,6 @@ export default {
       refreshTokenInterval = window.setInterval(() => {
         if (this.replaceToken) {
           this.replaceToken().then(() => {
-            this.getMessageCount()
           }).catch(error => {
             Promise.resolve(error)
           })
@@ -173,8 +180,10 @@ export default {
 <style lang="less">
 @import '~vux/src/styles/reset.less';
 @import './styles/theme.less';
-@import './styles/vars.less';
 @import './styles/base.css';
+</style>
+<style lang="less" scoped>
+@import './styles/vars.less';
 
 .tabbar {
   position: fixed;
@@ -182,10 +191,6 @@ export default {
 .logo {
   position: absolute;
   top: -8px;
-}
-
-.content {
-  margin-top: 45px;
 }
 
 .vux-header .vux-header-right {

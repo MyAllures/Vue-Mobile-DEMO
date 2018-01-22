@@ -125,64 +125,64 @@ export default new Router({
       component: resolve => { require(['../screens/My.vue'], resolve) }
     },
     {
-      path: '/person/Password',
+      path: '/my/password',
       name: 'changepassword',
       meta: {
         title: '修改密码',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Password.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Password.vue'], resolve) }
     },
     {
-      path: '/person/Profile',
+      path: '/my/profile',
       name: 'profile',
       meta: {
         title: '修改账户资料',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Profile.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Profile.vue'], resolve) }
     },
     {
-      path: '/person/Bankinfo',
+      path: '/my/bankinfo',
       name: 'bankinfo',
       meta: {
         title: '银行资讯',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Bankinfo.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Bankinfo.vue'], resolve) }
     },
     {
-      path: '/person/Withdraw',
+      path: '/my/withdraw',
       name: 'withdraw',
       meta: {
         title: '取款',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Withdraw.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Withdraw.vue'], resolve) }
     },
     {
-      path: '/person/Wpassword',
+      path: '/my/wpassword',
       name: 'wpassword',
       meta: {
         title: '重置取款密码',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Wpassword.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Wpassword.vue'], resolve) }
     },
     {
-      path: '/person/Message',
+      path: '/my/message',
       name: 'message',
       meta: {
         title: '会员消息',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Message.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Message.vue'], resolve) }
     },
     {
       path: '/depositSuccess',

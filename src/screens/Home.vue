@@ -12,7 +12,7 @@
     <flexbox class="announcement" v-if="announcements.length" @click.native="showDialog = true">
       <flexbox-item :span="1">
         <div class="speaker">
-          <icon class="icon" scale="1.5" name="bullhorn"></icon>
+          <icon class="icon" scale="1.3" name="bullhorn"></icon>
         </div>
       </flexbox-item>
       <flexbox-item>
@@ -26,50 +26,29 @@
         </marquee>
       </flexbox-item>
     </flexbox>
-    <div class="gamelist" v-if="games.length">
-      <div class="row" >
-        <div class="col"
-          v-if="index < 8"
-          v-for="(game, index) in games"
-          :style="{backgroundImage:`url(${game.bg_icon})`}"
-          :key="index">
-          <div class="gamebox">
-            <router-link :to="`/game/${game.id}`">
-              <img :src="game.icon" :alt="game.code">
-            </router-link>
-          </div>
+    <grid :cols="3">
+      <grid-item 
+        v-for="(game, index) in games" 
+        :key="'game' + index"
+        v-if="index < 11">
+        <img slot="icon" :src="game.icon">
+        <span slot="label">{{ game.display_name }}</span>
+      </grid-item>
+    </grid>
+    <div class="activity">
+      <h3 class="title">优惠活动</h3>
+      <card 
+        v-for="(promotion, index) in promotions" 
+        :header="{title: promotion.name}"
+        :key="'card' + index"
+        v-if="promotions && index < 5"
+        @click.native="handleClick(promotion)">
+        <div slot="content" class>
+          <img :src="promotion.image_mobile" alt="promotion.name">
         </div>
-        <div class="col service">
-          <div class="gamebox round">
-            <a :href="$store.state.systemConfig.customerServiceUrl">
-              <img src="../images/zxkf.png" alt="">
-            </a>
-          </div>
-        </div>
-      </div>
+      </card>
     </div>
-    <div class="activity m-b" v-if="promotions">
-      <div class="head">
-        <div class="title">
-          <img src="../images/icon-activity.png" alt="activity">
-          优惠活动
-        </div>
-      </div>
-      <div class="activity-list">
-        <div v-for="(promo, index) in promotions"
-          v-if="promo.image_mobile"
-          @click="handleClick(promo.name,promo.start_date, promo.end_date, promo.mobile_description)"
-          :key="index">
-          <p>{{promo.name}}</p>
-          <img :src="promo.image_mobile" :alt="index">
-        </div>
-      </div>
-    </div>
-    <alert :hide-on-blur="true" v-model="showpromoPopup" :title="promoPopup.title">
-      <p>开始时间：{{promoPopup.start_date}}</p>
-      <p>截止时间：{{promoPopup.end_date}}</p>
-      <p>{{promoPopup.mobile_description}}</p>
-    </alert>
+
     <x-dialog
       v-model="showDialog"
       :hide-on-blur="true">
@@ -86,7 +65,20 @@
 </template>
 
 <script>
-import { Swiper, SwiperItem, Marquee, MarqueeItem, Alert, XDialog, Flexbox, FlexboxItem } from 'vux'
+import {
+  Swiper,
+  SwiperItem,
+  Card,
+  Grid,
+  GridItem,
+  Marquee,
+  MarqueeItem,
+  XDialog,
+  Flexbox,
+  FlexboxItem,
+  Masker,
+  Alert
+} from 'vux'
 import { fetchBanner, fetchAnnouncements, fetchGames, getPromotions } from '../api'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
@@ -98,14 +90,8 @@ export default {
       announcements: [],
       showDialog: false,
       games: [],
-      promotions: '',
       showpromoPopup: false,
-      promoPopup: {
-        end_date: '',
-        start_date: '',
-        title: '',
-        description: ''
-      }
+      promotions: []
     }
   },
   created () {
@@ -127,16 +113,12 @@ export default {
       this.games = response
     })
     getPromotions().then(response => {
-      this.promotions = response
+      this.promotions = response.filter(item => item.image_mobile)
     })
   },
   methods: {
-    handleClick (title, start, end, description) {
-      this.showpromoPopup = true
-      this.promoPopup.title = title
-      this.promoPopup.start_date = start
-      this.promoPopup.end_date = end
-      this.promoPopup.description = description
+    handleClick (promotion) {
+      // 跳转到详情页面
     }
   },
   components: {
@@ -145,99 +127,72 @@ export default {
     Marquee,
     MarqueeItem,
     XDialog,
-    Alert,
     Flexbox,
     FlexboxItem,
-    Icon
+    Icon,
+    Masker,
+    Alert,
+    Card,
+    Grid,
+    GridItem
   }
 }
 </script>
 
 <style scoped lang="less">
-
 .announcement {
-  height: 40px;
+  height: 36px;
+}
+.announcement {
   .speaker {
+    display: flex;
+    justify-content: center;
     margin-left: 10px;
+    color: #666;
   }
-  .icon {
-    color: #4a4a4a;
+  /deep/ .vux-marquee-box {
+    color: #666;
   }
 }
-
 .marquee-item {
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.gamelist {
-  .row {
-    display: flex;
-    width: 100%;
-    flex-wrap: wrap;
-    .col {
-      padding: 1em 0;
-      flex: 0 0 33.33%;
-      position: relative;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center center;
-      .gamebox {
-        border-radius: 10px;
-        img {
-            display: block;
-            width: percentage(2 / 4);
-            height: auto;
-            margin: 0 auto;
-          }
-        &.round {
-          img {
-            border-radius: 50%;
-          }
-        }
-      }
-    }
+.weui-grids {
+  &:after{
+    border: none;
   }
-}
+  background: #fff;
+  .weui-grid {
+    padding: 10px;
+  }
+  /deep/ .weui-grid__icon {
+    width: 60%;
+    height: 60%;
+  }
 
-.service {
-  background-image: linear-gradient(to top, #4481eb 0%, #04befe 100%);
+  /deep/ .weui-grid__label {
+    color: #666;
+    font-size: 16px;
+  }
 }
 
 .activity {
-  .head {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
+  .title {
+    font-weight: normal;
     font-size: 16px;
-    .title {
-      position: relative;
-      font-weight: 700;
-      padding-left: 28px;
-      img {
-        width: 21px;
-        position: absolute;
-        left: 0;
-        top: 1px;
-      }
-    }
+    color: #666;
+    padding:10px 0 0 10px;
   }
-  .activity-list {
-    margin: 0 10px;
-    padding: 10px;
-    border: 1px solid #fff;
-    border-radius: 10px;
-    background: rgba(255,255,255,.5);
-    p {
-      font-size: 16px;
-      font-weight: 700;
-    }
+  /deep/ .vux-card-content {
+    text-align: center;
     img {
-      width: 100%;
-      height: 80px;
-      -webkit-user-drag: none;
+      display: block;
+      margin: auto;
+      max-height: 80px;
+      padding: 5px 0;
     }
   }
 }
