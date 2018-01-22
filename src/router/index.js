@@ -199,9 +199,14 @@ export default new Router({
       meta: {
         title: '路珠',
         requiresAuth: true,
-        tabbarHidden: true
+        tabbarHidden: true,
+        showBack: true
       },
       component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
+    },
+    {
+      path: '/stastics',
+      redirect: '/stastics/leaderboards'
     },
     {
       path: '/stastics/leaderboards',
@@ -209,9 +214,21 @@ export default new Router({
       meta: {
         title: '长龙',
         requiresAuth: true,
-        tabbarHidden: true
+        tabbarHidden: true,
+        showBack: true
       },
       component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
+    },
+    {
+      path: '/gameintro',
+      name: 'GameIntro',
+      meta: {
+        title: '游戏介绍',
+        requiresAuth: true,
+        tabbarHidden: true,
+        showBack: true
+      },
+      component: resolve => { require(['../screens/games/GameIntro.vue'], resolve) }
     }
   ]
 })
