@@ -105,11 +105,11 @@ export default {
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
     },
-    isStatisticPage () {
-      return this.$route.path.split('/')[1] === 'stastics'
+    blueHeaderPage () {
+      return ['Promotions', 'GameIntro', 'Leaderboards', 'RoadBeads'].includes(this.$route.name)
     },
     getHeaderBgColor () {
-      return this.$route.name === 'Home' ? '#fff' : this.isStatisticPage ? '#0069b1' : ''
+      return this.$route.name === 'Home' ? '#fff' : this.blueHeaderPage ? '#0069b1' : ''
     }
   },
   methods: {
