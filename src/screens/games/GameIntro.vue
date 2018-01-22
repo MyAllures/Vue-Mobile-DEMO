@@ -33,7 +33,7 @@ import er75ft from './rules/er75ft'
 import auluck8 from './rules/auluck8'
 import jnd28 from './rules/jnd28'
 import fc3d from './rules/fc3d'
-import { XAddress, InlineLoading } from 'vux'
+import { XAddress } from 'vux'
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
@@ -81,7 +81,6 @@ export default {
   },
   components: {
     XAddress,
-    InlineLoading,
     cqlf,
     gd11x5,
     jsk3,
