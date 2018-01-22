@@ -223,7 +223,7 @@ export default new Router({
       path: '/gameintro',
       name: 'GameIntro',
       meta: {
-        title: '遊戲介紹',
+        title: '游戏介绍',
         requiresAuth: true,
         tabbarHidden: true,
         showBack: true

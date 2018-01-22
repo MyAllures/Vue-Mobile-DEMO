@@ -1,7 +1,9 @@
 <template>
   <div class="clear-viewbox-default-bottom">
-    <div class="introduction"><component :is="currentGame.code"></component></div>
-    <div class="game-selector text-center" @click="selectGame()">
+    <div class="intro-container">
+      <component :is="currentGame.code"></component>
+    </div>
+    <div class="intro-selector text-center" @click="selectGame()">
       <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
       <span class="arrow"></span>
     </div>
@@ -57,7 +59,7 @@ export default {
     ]),
     currentGame () {
       let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
-      return code || { display_name: '請選擇' }
+      return code || { display_name: '请选择' }
     }
   },
   watch: {
@@ -103,9 +105,9 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '../../styles/vars.less';
-.game-selector {
+.intro-selector {
   position: fixed;
   top: 45px;
   width: 100%;
@@ -133,9 +135,30 @@ export default {
   }
 }
 
-.introduction {
+.intro-container {
   background-color: #fff;
-  margin-top: 45px + 45px;
+  margin-top: 90px;
   padding: 10px;
+}
+
+.rule-details {
+  font-size: 14px;
+  line-height: 2.0;
+  color: #4a4a4a;
+  letter-spacing: 1.6px;
+  .warn {
+    color: @red;
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: normal;
+  }
+  li {
+    margin-left: 20px;
+    list-style: initial;
+  }
+  a {
+    text-decoration: underline;
+  }
 }
 </style>

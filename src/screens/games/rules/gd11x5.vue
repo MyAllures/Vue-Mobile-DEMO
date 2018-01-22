@@ -57,27 +57,3 @@
   </section>
 </template>
 
-<style lang="less" scoped>
-@import '../../../styles/vars.less';
-
-.rule-details {
-  font-size: 14px;
-  line-height: 2.0;
-  color: #4a4a4a;
-  letter-spacing: 1.6px;
-  .warn {
-    color: @red;
-  }
-  h3 {
-    font-size: 14px;
-    font-weight: normal;
-  }
-  li {
-    margin-left: 20px;
-    list-style: initial;
-  }
-  a {
-    text-decoration: underline;
-  }
-}
-</style>

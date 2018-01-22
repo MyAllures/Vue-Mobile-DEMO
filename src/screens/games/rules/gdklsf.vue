@@ -60,25 +60,3 @@
       <span class="warn">12.选五任选：</span>指从01至20中任意选择5个号码，对开奖号码中任意5个位置的投注。 投注号码与开奖号码中任意5个位置的号码相符，即中奖。</h3>
   </section>
 </template>
-
-<style lang="less" scoped>
-@import '../../../styles/vars.less';
-
-.rule-details {
-  font-size: 14px;
-  line-height: 2.0;
-  color: #4a4a4a;
-  letter-spacing: 1.6px;
-  .warn {
-    color: @red;
-  }
-  h3 {
-    font-size: 14px;
-    font-weight: normal;
-  }
-  li {
-    margin-left: 20px;
-    list-style: initial;
-  }
-}
-</style>
