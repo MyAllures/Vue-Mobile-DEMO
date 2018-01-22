@@ -98,7 +98,6 @@
     padding: 10px 20px;
     margin-top: 0;
   }
-
   .head {
     margin-top: 30px;
     padding: 0 10px;
@@ -108,21 +107,9 @@
         color: #d0021b;
       }
     }
-    .m-10 {
-      margin-bottom: 10px;
-    }
     .xbutton {
       background: #156fd8;
       font-size: 14px;
     }
   }
-
-  .clearfix {
-    &:after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-  }
-
 </style>
