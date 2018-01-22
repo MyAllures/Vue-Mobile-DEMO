@@ -12,9 +12,9 @@ export function createStore () {
       user: {
         logined: ''
       },
+      isLoading: false,
       games: [],
       categories: [],
-      isLoading: false,
       systemConfig: {
         customerServiceUrl: '',
         agentDashboardUrl: '',
@@ -23,7 +23,8 @@ export function createStore () {
         global_preferences: {
           send_chat_conditions: '{}'
         }
-      }
+      },
+      unread: 0
     },
     actions,
     mutations,

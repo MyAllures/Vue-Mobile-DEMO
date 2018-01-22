@@ -3,19 +3,19 @@
     <p class="issue">{{schedule.issue_number}}{{$t('common.result_period')}}</p>
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">封盘</div>
-      <span v-if="!gameClosed">
-        <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天 </span>
+      <span v-if="!gameClosed" class="label">
+        <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天</span>
         <span v-if="closeCountDown.hours > 0">{{closeCountDown.hours | complete}}:</span>{{closeCountDown.minutes | complete}}:{{closeCountDown.seconds | complete}}
       </span>
-      <span v-else>已封盘</span>
+      <span v-else class="label">已封盘</span>
     </div>
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">开奖</div>
-      <span v-if="!ended">
-        <span v-if="resultCountDown.days > 0">{{resultCountDown.days}}天 </span>
+      <span v-if="!ended" class="label">
+        <span v-if="resultCountDown.days > 0">{{resultCountDown.days}}天</span>
         <span v-if="resultCountDown.hours > 0">{{resultCountDown.hours | complete}}:</span>{{resultCountDown.minutes | complete}}:{{resultCountDown.seconds | complete}}
       </span>
-      <span v-else>已结束</span>
+      <span v-else class="label">已结束</span>
     </div>
   </div>
 </template>
@@ -57,28 +57,32 @@ export default {
 .countdown-panel {
   display: flex;
   background: #00397c;
-  color: #fff;
+  align-items: center;
+  color: #f0f0f0;
   font-size: 14px;
-  height: 30px;
+  height: 40px;
 }
 .issue {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 1;
+  font-size: 14px;
   text-align: center;
-  width: 34%;
 }
 .countdown {
   font-size: 14px;
 }
 .schedule {
-  width: 33%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  flex: 1.25;
   .title {
-    margin-right: 5px;
+    display: inline-block;
+  }
+  .label {
+    display: inline-block;
+    font-size: 14px;
+    margin-left: 2px;
+    background: #fff;
+    color: #666;
+    padding: 0 5px;
+    border-radius: 4px;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="clear-viewbox-default-top clear-viewbox-default-bottom">
     <!-- 头部 -->
     <x-header class="gamehall" :right-options="{showMore: true}">
       <x-icon

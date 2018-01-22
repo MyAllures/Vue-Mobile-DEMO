@@ -130,14 +130,35 @@ export function changeUserInformation (id, member) {
   return axios.put(urls.user + member.id + '/', member)
 }
 
-export function noMessages (message) {
+export function fetchMessages (limit, page) {
+  return axios.get(urls.messages + `?limit=${limit}&offset=${page * limit}`)
+}
+
+export function readMessage (message) {
   return axios.put(urls.messages + '' + message.id + '/')
 }
 
-export function unRead () {
-  return axios.get(urls.messageCount)
+export function fetchUnread () {
+  return axios.get(urls.unread)
 }
 
 export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
+}
+
+export function fetchStatistic (code) {
+  return axios.get(`${urls.statistic}?game_code=${code}`)
+}
+
+export function getToken (oldToken) {
+  if (!oldToken) {
+    return
+  }
+  return axios.post(urls.refresh_token, {
+    refresh_token: oldToken
+  }).then(
+    res => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      return res
+    })
 }

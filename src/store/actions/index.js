@@ -8,6 +8,7 @@ import {
   login,
   logout,
   fetchGames,
+  fetchUnread,
   fetchCategories
 } from '../../api'
 
@@ -87,6 +88,13 @@ export default {
     return fetchGames().then(res => {
       commit(types.SET_GAMES, {
         games: res
+      })
+    })
+  },
+  fetchUnread: ({ commit, state }) => {
+    return fetchUnread().then(res => {
+      commit(types.SET_UNREAD, {
+        unread: res.message_count
       })
     })
   },

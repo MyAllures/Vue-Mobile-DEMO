@@ -1,9 +1,17 @@
 <template>
-  <div :class="['container',{'no-tabbar':$route.meta.tabbarHidden}]">
+  <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
       v-show="!$route.meta.headerHidden"
+      :style="{
+        width: '100%',
+        position: 'fixed', // lay over the default
+        left:'0',
+        top:'0',
+        'z-index':'100',
+        backgroundColor: getHeaderBgColor
+        }"
+      slot="header"
       :right-options="{showMore: !!user.username}"
-      :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <div
@@ -14,33 +22,42 @@
         <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
-        v-if="!this.userLoading && showActions && !user.username"
+        v-if="showActions"
         class="actions"
         slot="right">
-        <router-link to="/login">登录</router-link>
-        <router-link to="/register">注册</router-link>
-        <a style="color: deepskyblue">试玩</a>
+        <router-link class="link" to="/login">登录</router-link>
+        <router-link class="link" to="/register">注册</router-link>
+        <a class="link blue">试玩</a>
       </div>
     </x-header>
-    <router-view></router-view>
-    <tabbar v-show="!$route.meta.tabbarHidden" class="tabbar">
+    <div class="content">
+      <router-view></router-view>
+    </div>
+    <tabbar slot="bottom"
+      v-show="!$route.meta.tabbarHidden"
+      class="tabbar">
       <tabbar-item
+        :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="$route.name === menu.route"
+        :selected="$route.path.indexOf(menu.route) === 0"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-  </div>
+  </view-box>
 </template>
 
 <script>
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading } from 'vux'
+import './styles/fonts/icons.css'
+
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox } from 'vux'
 import { mapState, mapGetters } from 'vuex'
+import { getToken } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
+import axios from 'axios'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
 
@@ -67,7 +84,8 @@ export default {
         label: this.$t('my.name'),
         icon: 'icon-my',
         link: '/my',
-        route: 'My'
+        route: 'My',
+        unreadBadge: true
       }],
       logo: '',
       userLoading: true
@@ -80,28 +98,63 @@ export default {
     ...mapState({
       isLoading: state => state.isLoading
     }),
+    unread () {
+      return this.$store.state.unread
+    },
     showActions () {
-      return !['Login'].includes(this.$route.name)
+      return this.$route.name !== 'Login' && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
     },
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
+    },
+    isStatisticPage () {
+      return this.$route.path.split('/')[1] === 'stastics'
+    },
+    getHeaderBgColor () {
+      return this.$route.name === 'Home' ? '#fff' : this.isStatisticPage ? '#0069b1' : ''
+    }
+  },
+  methods: {
+    replaceToken () {
+      return new Promise((resolve, reject) => {
+        let refreshToken = this.$cookie.get('refresh_token')
+        if (!refreshToken) {
+          return
+        }
+        getToken(refreshToken).then(res => {
+          let expires = new Date(res.expires_in)
+          this.$cookie.set('access_token', res.access_token, {
+            expires: expires
+          })
+          this.$cookie.set('refresh_token', res.refresh_token, {
+            expires: expires
+          })
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+          resolve()
+        })
+      })
     }
   },
   created () {
-    this.$store.dispatch('fetchUser')
-      .then(res => {
-        this.userLoading = false
+    if (this.$cookie.get('access_token')) {
+      this.$store.dispatch('fetchUser').then(() => {
+        this.unreadInterval = setInterval(() => {
+          this.$store.dispatch('fetchUnread')
+        }, 10000)
+      }, errRes => {
+        this.performLogin()
+      }).catch(() => {
+        this.performLogin()
       })
-
+    }
     let refreshTokenInterval
     setIndicator(() => {
       refreshTokenInterval = window.setInterval(() => {
         if (this.replaceToken) {
           this.replaceToken().then(() => {
-            this.getMessageCount()
           }).catch(error => {
             Promise.resolve(error)
           })
@@ -118,14 +171,19 @@ export default {
     Group,
     Cell,
     Loading,
-    Icon
+    Icon,
+    ViewBox
   }
 }
 </script>
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
-@import './styles/base.less';
+@import './styles/theme.less';
+@import './styles/base.css';
+</style>
+<style lang="less" scoped>
+@import './styles/vars.less';
 
 .tabbar {
   position: fixed;
@@ -134,24 +192,18 @@ export default {
   position: absolute;
   top: -8px;
 }
-.bg {
-  background-color: inherit!important;
-}
-.container {
-  height: 100%;
-  padding-bottom: 55px;
-  &.no-tabbar{
-    padding-bottom: 0;
-  }
-  .vux-header .vux-header-right {
-    .actions {
-      position: relative;
-      top: -5px;
-      right: -5px;
-      a{
-        color: #666;
-        padding: 4px 10px;
-        border-radius: 2px;
+
+.vux-header .vux-header-right {
+  .actions {
+    position: relative;
+    top: -5px;
+    right: -5px;
+    .link {
+      color: #9b9b9b;
+      padding: 4px 10px;
+      border-radius: 2px;
+      &.blue {
+        color: @azul
       }
     }
   }
