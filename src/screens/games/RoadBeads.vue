@@ -21,7 +21,7 @@
       </group>
     </div>
     <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-      <tab v-if="currentHistoryTag.length&& currentHistoryTag.length < 6"
+      <tab v-if="currentHistoryTag.length&& currentHistoryTag.length < 5"
           bar-active-color="#156fd8"
           active-color="#156fd8" >
         <tab-item v-for="(item, index) in  currentHistoryTag"

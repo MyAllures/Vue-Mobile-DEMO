@@ -202,6 +202,16 @@ export default new Router({
         tabbarHidden: true
       },
       component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
+    },
+    {
+      path: '/stastics/leaderboards',
+      name: 'Leaderboards',
+      meta: {
+        title: '长龙',
+        requiresAuth: true,
+        tabbarHidden: true
+      },
+      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
     }
   ]
 })
