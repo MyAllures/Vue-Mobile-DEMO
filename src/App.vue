@@ -102,7 +102,7 @@ export default {
       return this.$store.state.unread
     },
     showActions () {
-      return this.$route.name !== 'Login' && !this.user.logined && !this.blueHeaderPage
+      return !['Login', 'Register'].includes(this.$route.name) && !this.user.logined && !this.blueHeaderPage
     },
     pageName: function () {
       return this.$route.name
