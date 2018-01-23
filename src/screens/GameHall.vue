@@ -1,5 +1,5 @@
 <template>
-  <div class="clear-viewbox-default-top clear-viewbox-default-bottom">
+  <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
     <!-- 头部 -->
     <x-header class="gamehall" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
       <x-icon
@@ -11,7 +11,6 @@
       <span>{{currentGame.display_name}}</span>
     </x-header>
     <router-view :key="$route.name + ($route.params.gameId || '')"/>
-    <!-- 侧滑菜单 -->
     <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
     <RightMenu :isShow="showRightMenu" @handleClose="showRightMenu = false"></RightMenu>
   </div>
@@ -55,3 +54,8 @@ export default {
 }
 </script>
 
+<style lang="less" scoped>
+.gamehall {
+  height: 100%;
+}
+</style>

@@ -1,0 +1,122 @@
+@import './vars.less';
+
+html, body {
+  background: #f0f0f0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.m-t {
+  margin-top: 1em;
+}
+
+.m-b {
+  margin-bottom: 1em;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.9em;
+}
+
+.m-a-md {
+  padding: 10px 15px;
+}
+
+.clear-viewbox-default-top {
+  margin-top: -45px;
+}
+
+.clear-viewbox-default-bottom {
+  margin-bottom: -50px;
+}
+
+.bet-input {
+  border: none;
+  .weui-cells.vux-no-group-title {
+    &::before{
+      display: none;
+    }
+    &::after{
+      display: none;
+    }
+    margin-top: 0;
+    .weui-btn {
+      overflow: visible;
+    }
+    .vux-x-input.weui-cell.weui-vcode {
+      padding: 0 5px;
+      .weui-cell__bd.weui-cell__primary{
+        border: 1px solid #f0f0f0;
+        border-radius: 5px;
+        height: 40px;
+        box-sizing: border-box;
+        input {
+          height: 100%;
+          box-sizing: border-box;
+          padding-left: 5px;
+        }
+      }
+    }
+  }
+}
+
+.vux-popup-dialog {
+  .bet-content {
+    font-size: 14px;
+    text-align: left;
+    width: 95%;
+    background-color:#fff;
+    margin:0 auto;
+    border-radius:5px;
+    padding:10px 0;
+    .title {
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+    }
+    ul {
+      height:150px;
+      overflow-y: auto;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+      list-style: none;
+      color: #000;
+      li {
+        text-align: left;
+        height: 25px;
+        line-height: 25px;
+      }
+    }
+    .total {
+      height: 30px;
+      line-height: 30px;
+      margin-bottom: 10px;
+    }
+    .amount {
+      color: @red
+    }
+    .loading {
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      font-size:18px;
+      text-align: center;
+      .weui-loading {
+        height: 30px;
+        width: 30px;
+      }
+    }
+    .buttons {
+      height: 50px;
+    }
+  }
+}

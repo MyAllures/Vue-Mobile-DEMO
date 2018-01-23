@@ -201,5 +201,11 @@ export default {
   common: {
     result_period: 'Period',
     total: 'Total'
+  },
+  action: {
+    submit: 'Submit',
+    reset: 'Reset',
+    confirm: 'Confirm',
+    cancel: 'Cancel'
   }
 }

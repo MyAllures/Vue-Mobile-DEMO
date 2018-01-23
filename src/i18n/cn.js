@@ -207,5 +207,11 @@ export default {
   common: {
     result_period: '期',
     total: '总和'
+  },
+  action: {
+    submit: '提交',
+    reset: '重置',
+    confirm: '确定',
+    cancel: '取消'
   }
 }
