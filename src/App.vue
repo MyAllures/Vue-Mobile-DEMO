@@ -1,10 +1,13 @@
 <template>
   <div class="container">
     <x-header
-      :right-options="{showMore: !!user.username}"
-      :class="pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''"
+      :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
+      :class="[(pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''), {'fixedHead':$route.name === 'LotterRecord'}]"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
+      <a v-if='$route.name === "LotterRecord"' slot="right">
+        <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
+      </a> 
       <div
         v-if="!$route.meta.showBack"
         class="logo"
@@ -43,6 +46,7 @@ import { gethomePage } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
+import './styles/fonts/icons.css'
 
 export default {
   name: 'app',
@@ -112,6 +116,11 @@ export default {
       window.clearInterval(refreshTokenInterval)
     })
   },
+  methods: {
+    refresh () {
+      location.reload()
+    }
+  },
   components: {
     XHeader,
     Tabbar,
@@ -125,9 +134,17 @@ export default {
 </script>
 
 <style lang="less">
+
 @import '~vux/src/styles/reset.less';
 @import './styles/base.css';
 
+.icon {
+  width: 24px;
+  margin-right: 10px;
+  font-size: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
 .tabbar {
   position: fixed;
 }
@@ -140,6 +157,9 @@ export default {
 }
 .container {
   padding-bottom: 55px;
+  .repeat-icon {
+    color: #FFFFFF;
+  }
   .vux-header .vux-header-right {
     .actions {
       position: relative;
@@ -152,5 +172,10 @@ export default {
       }
     }
   }
+  .fixedHead {
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
 }
 </style>

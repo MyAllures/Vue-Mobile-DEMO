@@ -127,3 +127,17 @@ export function unRead () {
 export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }
+
+export function getGameMenu () {
+  return axios.get(urls.games)
+}
+
+export function getGameData (codeType, dataTime) {
+  let url = urls.gamehistory + '?game_code=' + codeType + '&limit=30&date=' + dataTime + '&game_code=' + codeType
+  return axios.get(url)
+}
+
+export function getMoreGameData (codeType, dataTime, limit) {
+  let url = urls.gamehistory + '?game_code=' + codeType + '&limit=30&date=' + dataTime + '&game_code=' + codeType + '&offset=' + limit
+  return axios.get(url)
+}
