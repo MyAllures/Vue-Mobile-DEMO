@@ -14,7 +14,7 @@ import {
 
 const formatPlayInGroup = function (group) {
   let formattedPlays = _.chunk(group.plays, group.col_num)
-  if (formattedPlays[formattedPlays.length - 1].length === 1) {
+  if (formattedPlays.length > 1 && formattedPlays[formattedPlays.length - 1].length === 1) {
     if (group.col_num === 2) {
       // 將最後一組併入前一組
       let last = formattedPlays.pop()

@@ -1,9 +1,16 @@
 <template>
   <div>
-    <tab v-if="tabKeys.length>1">
-      <tab-item v-for="(key, index) in tabKeys" :key="index" selected @on-item-click="switchTab(key)">{{key}}</tab-item>
-    </tab>
+    <div class="tab-view">
+      <ul class="tab" v-if="tabKeys.length>1">
+        <li
+          :class="['tab-item', {active: currentTab === key}]"
+          v-for="(key, index) in tabKeys"
+          :key="index"
+          @click="switchTab(key)">{{key}}</li>
+      </ul>
+    </div>
     <div
+        v-if="!customPlayGroupsSetting"
         v-for="(group, index) in groups"
         :key="'group' + index">
         <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
@@ -20,6 +27,13 @@
           </grid-item>
         </grid>
     </div>
+    <component v-else
+      :is="customPlayGroupsSetting.component"
+      :playReset="playReset"
+      @updateCustomPlays="updateCustomPlays"
+      :setting="customPlayGroupsSetting"
+      :plays="groups[0].plays"
+      :gameClosed="gameClosed" />
   </div>
 </template>
 
@@ -27,6 +41,7 @@
 import _ from 'lodash'
 import { placeBet } from '../../api'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
+const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -54,7 +69,8 @@ export default {
     Grid,
     GridItem,
     Tab,
-    TabItem
+    TabItem,
+    WithCode
   },
   data () {
     return {
@@ -62,12 +78,12 @@ export default {
       plays: {},
       raw: [],
       dialogVisible: false,
-      totalAmount: 0,
       errors: '',
       groups: [],
       tabs: {},
       tabKeys: [],
-      currentTab: ''
+      currentTab: '',
+      showCombinationDetails: false
     }
   },
   computed: {
@@ -83,6 +99,10 @@ export default {
     },
     activePlays () {
       return _.filter(this.plays, play => play.active)
+    },
+    customPlayGroupsSetting () {
+      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryName}`
+      return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupId)
     }
   },
   watch: {
@@ -110,17 +130,34 @@ export default {
     const categories = this.$store.state.categories
     if (!categories.length) {
       this.$store.dispatch('fetchCategories', this.$route.params.gameId).then((res) => {
-        if (res && res.length) {
-          this.initPlayAndGroups(res)
-        } else {
-          this.performLogin()
-        }
-      })
+        this.initPlayAndGroups(res)
+      }).catch(() => {})
     } else {
       this.initPlayAndGroups(categories)
     }
   },
   methods: {
+    updateCustomPlays (playOptions) {
+      _.each(this.plays, play => {
+        // if all of the options are valid, change the target play's status
+        if (play.id === playOptions.activePlayId && playOptions.valid) {
+          this.$set(play, 'active', true)
+          this.$set(play, 'amount', this.amount)
+          this.$set(play, 'isCustom', true)
+          this.$set(play, 'options', playOptions.options)
+          this.$set(play, 'combinations', playOptions.combinations)
+          this.$set(play, 'activedOptions', playOptions.activedOptions)
+          this.$set(this, 'showCombinationDetails', playOptions.showCombinationsPopover)
+        } else {
+          // if not, reset other plays
+          this.$set(play, 'active', false)
+          this.$set(play, 'isCustom', false)
+          this.$set(play, 'options', '')
+          this.$set(play, 'combinations', [])
+          this.$set(play, 'activedOptions', [])
+        }
+      })
+    },
     placeOrder () {
       this.submitting = true
       this.errors = ''
@@ -157,12 +194,12 @@ export default {
       const tabs = {}
       const plays = {}
 
+      let groupName = this.$route.params.categoryName
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
         this.tabKeys.push(tabName)
         const groups = tab.groups
 
-        let groupName
         groups.forEach(group => {
           if (group.name) {
             groupName = group.name
@@ -195,13 +232,11 @@ export default {
     },
     switchTab (key) {
       this.groups = this.tabs[key]
+      this.currentTab = key
+      this.reset()
     },
     reset () {
-      _.each(this.plays, play => {
-        if (play.active) {
-          this.$set(play, 'active', false)
-        }
-      })
+      this.$emit('resetPlays')
     }
   },
   beforeDestroy () {
@@ -212,6 +247,29 @@ export default {
 
 <style lang="less" scoped>
 @import "../../styles/vars.less";
+.tab-view {
+  width: 100%;
+  overflow-x: auto;
+  .tab {
+    display: flex;
+    flex-wrap: nowrap;
+    list-style: none;
+    .tab-item {
+      box-sizing: border-box;
+      flex-shrink: 0;
+      width: 100px;
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      &.active {
+        border-bottom: 3px solid @azul;
+        color: @azul;
+      }
+    }
+  }
+}
 .playgroup-title {
   height: 50px;
   line-height: 50px;
