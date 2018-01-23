@@ -184,7 +184,9 @@ export default {
 </style>
 <style lang="less" scoped>
 @import './styles/vars.less';
-
+.content {
+  height: 100%;
+}
 .tabbar {
   position: fixed;
 }

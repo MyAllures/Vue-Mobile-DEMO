@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="game">
     <GameResult :gameid="$route.params.gameId"/>
     <Countdown
         :schedule="schedule"
@@ -44,7 +44,7 @@
             <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
           </flexbox-item>
           <flexbox-item>
-            <x-button type="default">{{$t('action.reset')}}</x-button>
+            <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
           </flexbox-item>
         </flexbox>
       </group>
@@ -332,9 +332,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.game {
+  height: 100%;
+}
 .bet-area {
   display: flex;
-  height: calc(~"100vh" - 185px);
+  height: calc(~"100%" - 65px);
   .aside {
     overflow-y: auto;
     height: 100%;
@@ -370,11 +373,11 @@ export default {
   }
 }
 .bet-input {
+  box-sizing: border-box;
   position: relative;
   background: #fff;
   height: 60px;
   padding: 10px 10px;
-  box-sizing: border-box;
   .text {
     margin-right: 10px;
   }

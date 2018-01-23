@@ -1,7 +1,7 @@
 <template>
-  <div class="clear-viewbox-default-top clear-viewbox-default-bottom">
+  <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
     <!-- 头部 -->
-    <x-header class="gamehall" :right-options="{showMore: true}">
+    <x-header class="gamehall-header" :right-options="{showMore: true}">
       <x-icon
         slot="overwrite-left"
         type="navicon"
@@ -49,3 +49,9 @@ export default {
 
 }
 </script>
+
+<style lang="less" scoped>
+.gamehall {
+  height: 100%;
+}
+</style>
