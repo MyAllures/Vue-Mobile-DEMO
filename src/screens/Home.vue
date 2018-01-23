@@ -36,7 +36,16 @@
       </grid-item>
     </grid>
     <div class="activity">
-      <h3 class="title">优惠活动</h3>
+      <flexbox>
+        <flexbox-item>
+          <h3 class="title">优惠活动</h3>
+        </flexbox-item>
+        <flexbox-item v-if="promotions.length > 5"
+          class="text-right"
+          @click.native="$router.push({name: 'Promotions'})">
+          <span class="title more">更多活动</span>
+        </flexbox-item>
+      </flexbox>
       <card
         v-for="(promotion, index) in promotions"
         :header="{title: promotion.name}"
@@ -52,14 +61,14 @@
     <x-dialog
       v-model="showDialog"
       :hide-on-blur="true">
-        <swiper
-          dots-position="center">
-          <swiper-item
-            :key="'swiper-anmt' + index"
-            v-for="(a, index) in announcements">
-            <p class="m-t">{{a.announcement}}</p>
-          </swiper-item>
-        </swiper>
+      <swiper
+        dots-position="center">
+        <swiper-item
+          :key="'swiper-anmt' + index"
+          v-for="(a, index) in announcements">
+          <p class="m-t">{{a.announcement}}</p>
+        </swiper-item>
+      </swiper>
     </x-dialog>
   </div>
 </template>
@@ -118,7 +127,7 @@ export default {
   },
   methods: {
     handleClick (promotion) {
-      this.$router.push({name: 'Promotions'})
+      this.$router.push(`/promotions/${promotion.id}`)
     }
   },
   components: {
@@ -181,10 +190,23 @@ export default {
 
 .activity {
   .title {
+    display: inline-block;
     font-weight: normal;
     font-size: 16px;
     color: #666;
     padding:10px 0 0 10px;
+  }
+  .more:after {
+    content: '';
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #C8C8CD;
+    border-style: solid;
+    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+    margin-right: 5px;
+    margin-left: 3px;
   }
   /deep/ .vux-card-content {
     text-align: center;
