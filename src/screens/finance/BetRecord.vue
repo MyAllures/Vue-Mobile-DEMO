@@ -10,7 +10,6 @@
               <span class="profit-text">
                 {{$t('fin.win_lose')}}
               </span>
-              <span class="direction"></span>
             </div>
           </th>
         </tr>
@@ -34,7 +33,7 @@
               <span :class="['profit-text', statusColor(record.profit)]">
                 ¥ {{record.profit | profitFilter}}
               </span>
-              <icon type="waiting-circle" class="direction"></icon>
+              <i class="arrow-right icon"></i>
             </div>
           </td>
         </tr>
@@ -51,7 +50,7 @@
                 :show-loading="loadingMore">
         <span>{{$t('misc.load_more')}}</span>
       </x-button>
-      <divider v-else>{{$t('misc.nomore_data')}}</divider>
+      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
     </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
@@ -156,36 +155,22 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 .betrecord-table {
+  margin-top: 10px;
   background-color: #fff;
 }
-
 .betrecord-thead {
   background-color: #fbf9fe;
 }
-
-.green {
-  color: @green;
+.end {
+  text-align: center;
+  color: #ccc;
 }
-
-.red {
-  color: @red;
-}
-
-.direction {
-  display: inline-block;
-  width: 15%;
-  color: #999;
-  transform: rotate(-135deg);
-  &:before {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
 .profit-text {
   display: inline-block;
   width: 80%;
+}
+.icon {
+  margin-right: 10px;
 }
 </style>

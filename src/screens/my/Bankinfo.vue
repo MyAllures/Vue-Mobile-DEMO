@@ -52,7 +52,7 @@
           <span v-else>{{$t('profile.submit')}}</span>
         </x-button>
       </div>
-      <div v-else class="text-center m-a-md">
+      <div v-else class="text-center m-a">
         <span class="text-muted">{{$t('profile.bankinfo_update_tip')}}</span>
       </div>
   </div>

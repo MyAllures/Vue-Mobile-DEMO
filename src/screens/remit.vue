@@ -242,19 +242,6 @@
     right: 15px;
   }
 
-  .m-t {
-    margin-top: 10px;
-  }
-
-  .m-b {
-    margin-bottom: 10px;
-  }
-
-  .m-a-md {
-    margin: 15px;
-    margin-bottom: 70px;
-  }
-
   .text-center {
     text-align: center;
   }

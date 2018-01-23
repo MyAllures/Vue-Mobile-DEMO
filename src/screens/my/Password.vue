@@ -49,7 +49,7 @@
 
     </group>
     <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
-    <div class="m-a-md">
+    <div class="m-a">
       <x-button type="primary" :disabled="!valid" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('change_password.submit')}}</span>

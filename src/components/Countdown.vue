@@ -71,6 +71,7 @@ export default {
   font-size: 14px;
 }
 .schedule {
+  text-align: center;
   flex: 1.25;
   .title {
     display: inline-block;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <x-table :cell-bordered="false" :content-bordered="false" class="transaction-table">
+    <x-table :cell-bordered="false" class="transaction-table">
       <thead>
         <tr class="transaction-thead">
           <th>{{$t('fin.time')}}</th>
@@ -41,7 +41,7 @@
                 :show-loading="loadingMore">
         <span>{{$t('misc.load_more')}}</span>
       </x-button>
-      <divider v-else>{{$t('misc.nomore_data')}}</divider>
+      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
     </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
@@ -159,21 +159,22 @@ export default {
 <style lang="less" scoped>
 @import '../../styles/vars.less';
 .transaction-table {
+  margin-top: 10px;
   background-color: #fff;
 }
-
 .transaction-thead {
   background-color: #fbf9fe;
 }
-
 .green {
   color: @green;
 }
-
 .red {
   color: @red;
 }
-
+.end {
+  text-align: center;
+  color: #ccc;
+}
 .amount {
   display: inline-block;
   width: 100%;
