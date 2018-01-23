@@ -30,9 +30,7 @@
         <a class="link blue">试玩</a>
       </div>
     </x-header>
-    <div class="content">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
     <tabbar slot="bottom"
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
