@@ -11,7 +11,6 @@
   </div>
 </template>
 
-
 <script>
 import { ButtonTab, ButtonTabItem } from 'vux'
 import remit from '../remit.vue'

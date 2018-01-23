@@ -27,14 +27,14 @@
          v-model="currentPay.amount"
          >
         </x-input>
-        <div class="m-a-md">
-          <x-button type="primary" :disabled="!valid" @click.native="submit">
-            <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-            <span v-else>充值</span>
-          </x-button>
-        </div> 
       </form>
     </group>  
+    <div class="m-a">
+      <x-button type="primary" :disabled="!valid" @click.native="submit">
+        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+        <span v-else>充值</span>
+      </x-button>
+    </div> 
   </div>
 </template>
 <script>
@@ -171,19 +171,18 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    .deposit-box {
-        width: 100%;
-        padding: 0;
-        background-color: #fff;
-        .pay-way {
-        width: 100%;
-        height: 40px;
-        padding: 0;
-        color: #04BE02;
-        line-height: 44px;
-        text-align: center;
-        border-bottom: 3px solid #04BE02;
-    }
+.deposit-box {
+  width: 100%;
+  padding: 0;
+  .pay-way {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    color: #04BE02;
+    line-height: 44px;
+    text-align: center;
+    border-bottom: 3px solid #04BE02;
+  }
 }
     
 </style>

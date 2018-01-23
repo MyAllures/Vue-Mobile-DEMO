@@ -2,6 +2,7 @@
   <div>
     <tab>
       <tab-item
+        :line-width="1"
         v-for="(tab,index) in tabs"
         :key="index"
         @on-item-click="switchTab(tab.name)"
