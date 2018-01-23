@@ -31,7 +31,7 @@
       </div>
     </x-header>
     <router-view></router-view>
-    <tabbar 
+    <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
@@ -46,10 +46,10 @@
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-    <actionsheet 
+    <actionsheet
       show-cancel
-      v-model="showActions" 
-      :menus="actionMenus" 
+      v-model="showActions"
+      :menus="actionMenus"
       @on-click-menu="triggerAction"></actionsheet>
   </view-box>
 </template>
@@ -129,7 +129,7 @@ export default {
       return this.$store.state.unread
     },
     showLinks () {
-      return this.$route.name !== 'Login' && !this.user.logined
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
     },
     pageName: function () {
       return this.$route.name

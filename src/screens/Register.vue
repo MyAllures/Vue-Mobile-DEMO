@@ -1,11 +1,20 @@
 <template>
   <div>
-    <form class="container" autocomplete="off" v-if="nowStep === 1">
+    <form class="container" autocomplete="off">
     <group>
+      <div v-if="!valid">
+        <ul slot="after-title" class="input-errors">
+          <li class="text" v-for="(error, index) in inputErrors" :key="index">
+            {{error}}
+          </li>
+        </ul>
+      </div>
       <x-input
         required
         show-clear
         :is-type="checkValid.checkUser"
+        @on-change="validate"
+        @on-blur="validate"
         ref="username"
         :placeholder="$t('validate.username_validate')"
         :title="$t('misc.username')"
@@ -17,6 +26,8 @@
         show-clear
         :is-type="checkValid.checkPassword"
         type="password"
+        @on-change="validate"
+        @on-blur="validate"
         ref="password"
         :placeholder="$t('validate.password_validate')"
         autocomplete="off"
@@ -29,6 +40,8 @@
         show-clear
         type="password"
         :is-type="checkValid.checkPasswordConfirmation"
+        @on-change="validate"
+        @on-blur="validate"
         ref="confirmation_password"
         autocomplete="off"
         :title="$t('misc.confirm_password')"
@@ -36,22 +49,16 @@
         v-model="user.confirmation_password">
       </x-input>
     </group>
-    <div class="actions">
-      <x-button type="primary"
-                action-type ="button"
-                :disabled="nextStepDisabled"
-                @click.native="nowStep = 2">
-                {{$t('misc.next_step')}}
-      </x-button>
-    </div>
   </form>
 
-  <form class="container" autocomplete="off" v-else>
+  <form class="container" autocomplete="off">
     <group>
       <x-input
         required
         show-clear
         is-type="china-name"
+        @on-change="validate"
+        @on-blur="validate"
         ref="real_name"
         :title="$t('misc.real_name')"
         label-width="100"
@@ -61,6 +68,8 @@
         required
         show-clear
         is-type="china-mobile"
+        @on-change="validate"
+        @on-blur="validate"
         ref="phone"
         :title="$t('misc.phone')"
         label-width="100"
@@ -70,9 +79,11 @@
         required
         show-clear
         is-type="email"
+        @on-change="validate"
+        @on-blur="validate"
         ref="email"
         autocomplete="off"
-        :title="'email'"
+        :title="'EMAIL'"
         label-width="100"
         v-model="user.email">
       </x-input>
@@ -90,6 +101,8 @@
       <x-input
         required
         show-clear
+        @on-change="validate"
+        @on-blur="validate"
         ref="verification_code_1"
         autocomplete="off"
         :title="$t('misc.captcha')"
@@ -121,7 +134,6 @@
     name: 'Register',
     data () {
       return {
-        nowStep: 1,
         withdrawPwdOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
         user: {
           username: '',
@@ -167,7 +179,9 @@
           }
         },
         captcha_src: '',
-        error: ''
+        error: '',
+        valid: true,
+        inputErrors: []
       }
     },
     methods: {
@@ -191,6 +205,28 @@
           this.fetchCaptcha()
           this.error = msgFormatter(errorMsg)
         })
+      },
+      validate () {
+        let valid = true
+        let msg = []
+        for (let x in this.$refs) {
+          let input = this.$refs[x]
+          valid = input.valid && valid
+          if (input && input.touched) {
+            let errors = input.errors
+            let title = input.title
+            let key = Object.keys(errors)[0]
+            if (errors[key] && !input.valid) {
+              if (errors[key].indexOf(title) === -1) {
+                msg.push(title + errors[key])
+              } else {
+                msg.push(errors[key])
+              }
+            }
+          }
+        }
+        this.inputErrors = msg
+        this.valid = valid && !!this.password.confirmation_password
       }
     },
     computed: {
@@ -225,48 +261,56 @@
   }
 </script>
 
-<style scoped>
-  .container {
-    margin-top: 60px;
+<style lang="less" scoped>
+.error {
+  color: #E64340;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+.actions {
+  margin-top: 1em;
+  padding: 0 1em;
+}
+.captcha {
+  vertical-align: middle;
+}
+.withdraw-password {
+  position: relative;
+  padding: 10px 15px;
+}
+.withdraw-password:before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid #D9D9D9;
+  color: #D9D9D9;
+  transform-origin: 0 0;
+  transform: scaleY(0.5);
+  left: 15px;
+}
+.weui-cell_select /deep/ .weui-select {
+  border: 1px solid #ddd;
+  padding-right: 0;
+}
+.weui-cell_select /deep/ .weui-cell__bd:after {
+  border-width: 0px 2px 2px 0;
+  right: 8px;
+  margin-top: -5px;
+}
+.weui-cell__hd /deep/ .weui-label {
+  width: 80px;
+}
+.input-errors {
+  font-size: 14px;
+  margin-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  .text {
+    list-style: circle inside;
+    color: #ff9800;
   }
-  .error {
-    color: #E64340;
-    text-align: center;
-    margin-bottom: 0.5em;
-  }
-  .actions {
-    margin-top: 1em;
-    padding: 0 1em;
-  }
-  .captcha {
-    vertical-align: middle;
-  }
-  .withdraw-password {
-    position: relative;
-    padding: 10px 15px;
-  }
-  .withdraw-password:before {
-    content: " ";
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    height: 1px;
-    border-top: 1px solid #D9D9D9;
-    color: #D9D9D9;
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(0.5);
-    transform: scaleY(0.5);
-    left: 15px;
-  }
-  .weui-cell_select /deep/ .weui-select {
-    border: 1px solid #ddd;
-    padding-right: 0;
-  }
-  .weui-cell_select /deep/ .weui-cell__bd:after {
-    border-width: 0px 2px 2px 0;
-    right: 8px;
-    margin-top: -5px;
-  }
+}
 </style>
