@@ -1,39 +1,32 @@
 <template>
   <div>
+    <tab v-if="tabKeys.length>1">
+      <tab-item v-for="(key, index) in tabKeys" :key="index" selected @on-item-click="switchTab(key)">{{key}}</tab-item>
+    </tab>
     <div
-        v-for="(playSection, index) in playSections"
-        class="clearfix"
-        :key="playSection.id + 'playSection' + index"
-        v-if="playSections.length">
-        <div
-          v-for="(playgroup, playgroupIndex) in playSection.playgroups"
-          :key="'playgroup' + playgroup.id">
-          <div class="playgroup-title">{{playgroup.display_name}}</div>
-          <grid
-            v-for="(playChunk, playChunkIndex) in playgroup.plays"
-            :key="playgroup.name + 'playChunk' + playChunkIndex">
-            <grid-item
-              :class="['play', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
-              v-for="play in playChunk"
-              :key="play.id + 'play'">
-              <div
-                class="play-area"
-                @click="toggleActive(plays[play.id], $event)">
-                <span class="play-name">{{play.display_name}}</span>
-                <span class="play-odds">{{play.odds}}</span>
-              </div>
-            </grid-item>
-          </grid>
-        </div>
+        v-for="(group, index) in groups"
+        :key="'group' + index">
+        <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
+        <grid v-for="(groupPlays, index) in group.plays" :key="index">
+          <grid-item
+            :class="['play', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
+            v-for="play in groupPlays"
+            :key="play.id + 'play'"
+            @on-item-click="toggleActive(plays[play.id], $event)">
+            <div class="play-area">
+              <span :class="['play-name', play.code]">{{play.display_name}}</span>
+              <span class="play-odds">{{play.odds}}</span>
+            </div>
+          </grid-item>
+        </grid>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { fetchPlaygroup, placeBet } from '../../api'
-import { filtAmount } from '../../utils'
-import { Grid, GridItem } from 'vux'
+import { placeBet } from '../../api'
+import { Grid, GridItem, Tab, TabItem } from 'vux'
 
 export default {
   name: 'GameCategory',
@@ -47,27 +40,34 @@ export default {
     },
     game: {
       type: Object
+    },
+    amount: {
+      type: Number,
+      default: 1
+    },
+    playReset: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
     Grid,
-    GridItem
+    GridItem,
+    Tab,
+    TabItem
   },
   data () {
     return {
-      playSections: [],
       loading: true,
       plays: {},
-      amount: localStorage.getItem('amount') || '',
-      // raw data in play group from API for generating playSections
       raw: [],
       dialogVisible: false,
-      activePlays: [],
       totalAmount: 0,
-      submitted: false,
-      submitting: false,
       errors: '',
-      playReset: false
+      groups: [],
+      tabs: {},
+      tabKeys: [],
+      currentTab: ''
     }
   },
   computed: {
@@ -81,14 +81,8 @@ export default {
         }
       })
     },
-    formattedCombinations () {
-      let formattedDetails = {}
-      _.each(this.activePlays, (activePlay) => {
-        _.each(Object.keys(this.plays[activePlay.id].combinations), (key) => {
-          formattedDetails[key] = this.plays[activePlay.id].combinations[key]
-        })
-      })
-      return formattedDetails
+    activePlays () {
+      return _.filter(this.plays, play => play.active)
     }
   },
   watch: {
@@ -99,52 +93,40 @@ export default {
           play.amount = amount
         }
       })
-      // save it into localStorage
-      localStorage.setItem('amount', amount)
     },
-    // play object array for submit to API to place the order
-    'playsForSubmit': function (plays) {
-      this.totalAmount = _.reduce(plays, (sum, play) => {
-        return sum + parseFloat(play.bet_amount)
-      }, 0)
+    'activePlays': function (activePlays) {
+      this.$emit('updatePlays', activePlays)
+    },
+    'playReset': function () {
+      _.each(this.plays, play => {
+        if (play.active) {
+          this.$set(play, 'amount', '')
+          this.$set(play, 'active', false)
+        }
+      })
     }
   },
   created () {
-    this.initPlaygroups()
+    const categories = this.$store.state.categories
+    if (!categories.length) {
+      this.$store.dispatch('fetchCategories', this.$route.params.gameId).then((res) => {
+        if (res && res.length) {
+          this.initPlayAndGroups(res)
+        } else {
+          this.performLogin()
+        }
+      })
+    } else {
+      this.initPlayAndGroups(categories)
+    }
   },
   methods: {
-    filtAmount,
-    selectAlias (playSection, tabIndex) {
-      let activePlaygroup = _.find(playSection.playgroups, playgroup => playgroup.active)
-      // reset 'active' for plays in inactive playgroups
-      _.each(_.filter(this.plays, play => play.active && play.alias === activePlaygroup.alias), play => {
-        this.$set(play, 'active', false)
-        this.$set(play, 'amount', '')
-      })
-      // switch 'active' between play groups
-      _.map(playSection.playgroups, (playgroup, index) => {
-        this.$set(playgroup, 'active', index === tabIndex)
-      })
-    },
-    getAliases (section) {
-      let aliases = _.map(section.playgroups, playgroup => playgroup.alias)
-      return aliases[0] ? aliases : []
-    },
-    beforeClose () {
-      if (this.submitting) {
-        return
-      }
-      this.errors = ''
-      this.submitted = false
-    },
     placeOrder () {
       this.submitting = true
       this.errors = ''
       placeBet(this.playsForSubmit)
         .then(res => {
           this.submitting = false
-          // TODO: update conditions
-          this.$store.dispatch('fetchUser')
           if (res && res[0].member) {
             this.submitted = true
             setTimeout(() => {
@@ -169,78 +151,36 @@ export default {
           }, 3000)
         })
     },
-    initPlaygroups () {
-      const categoryId = this.$route.params.categoryId
-      fetchPlaygroup(categoryId).then(res => {
-        let plays = {}
-        res.forEach(item => {
-          item.plays.forEach(play => {
-            plays[play.id] = play
-            plays[play.id]['group'] = item['display_name']
+    initPlayAndGroups (categories) {
+      const categoryName = this.$route.params.categoryName
+      const currentCategory = _.find(categories, item => (item.name) === categoryName)
+      const tabs = {}
+      const plays = {}
+
+      currentCategory.tabs.forEach(tab => {
+        const tabName = tab.name || 'no-alias'
+        this.tabKeys.push(tabName)
+        const groups = tab.groups
+
+        let groupName
+        groups.forEach(group => {
+          if (group.name) {
+            groupName = group.name
+          }
+          group.plays.forEach(groupPlays => {
+            groupPlays.forEach(play => {
+              plays[play.id] = play
+              plays[play.id]['group'] = groupName
+            })
           })
         })
-        this.raw = res
-        this.plays = plays
-        this.loading = false
+        tabs[tabName] = groups
       })
-    },
-    openDialog () {
-      const validedPlays = _.flatMap(
-        _.filter(this.plays, play => play.active && parseFloat(play.amount) > 0),
-        play => {
-          if (play.combinations && !play.selectedOptions) {
-            return _.map(play.combinations, combination => {
-              return {
-                ...play,
-                combinations: combination
-              }
-            })
-          } else {
-            return [play]
-          }
-        }
-      )
-      this.activePlays = _.values(validedPlays.map(play => {
-        let betOptions
-        let isCustom = play.isCustom
-        let optionDisplayNames = []
-        if (play.selectedOptions) {
-          let options = []
-          _.each(play.selectedOptions, option => {
-            options.push(option.num)
-            optionDisplayNames.push(option.displayName || option.num)
-          })
-          betOptions = { options: options }
-        } else if (play.combinations) {
-          isCustom = false
-          betOptions = { options: play.combinations }
-          optionDisplayNames = [...play.combinations]
-        } else {
-          betOptions = {}
-        }
-        if (optionDisplayNames.length > 0) {
-          optionDisplayNames = optionDisplayNames.join(',')
-        } else {
-          optionDisplayNames = ''
-        }
-        return {
-          game_schedule: 10,
-          display_name: play.hideName ? play.group : `${play.group} - ${play.display_name}`,
-          odds: play.odds,
-          bet_amount: play.amount,
-          id: play.id,
-          bet_options: betOptions,
-          active: true,
-          isCustom: isCustom,
-          combinations: play.combinations,
-          optionDisplayNames: optionDisplayNames
-        }
-      }))
-      this.dialogVisible = true
-    },
-    getWidthForGroup (playSection) {
-      // 0.01 is margin-right for each group
-      return ((1 - (playSection.groupCol - 1) * 0.01) / playSection.groupCol) * 100 + '%'
+
+      this.currentTab = this.tabKeys[0]
+      this.tabs = tabs
+      this.groups = tabs[this.currentTab]
+      this.plays = plays
     },
     toggleActive (play, event) {
       if (this.gameClosed) {
@@ -253,16 +193,19 @@ export default {
         play.amount = ''
       }
     },
+    switchTab (key) {
+      this.groups = this.tabs[key]
+    },
     reset () {
       _.each(this.plays, play => {
         if (play.active) {
-          this.$set(play, 'amount', '')
           this.$set(play, 'active', false)
         }
       })
-
-      this.$set(this, 'playReset', !this.playReset)
     }
+  },
+  beforeDestroy () {
+    this.reset()
   }
 }
 </script>

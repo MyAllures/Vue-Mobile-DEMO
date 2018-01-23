@@ -48,7 +48,7 @@ export default new Router({
           },
           children: [
             {
-              path: ':categoryId',
+              path: ':categoryName',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
               meta: {
                 tabbarHidden: true,
