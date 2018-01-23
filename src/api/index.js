@@ -32,7 +32,7 @@ export function fetchGames () {
 }
 
 export function fetchCategories (gameId) {
-  return axios.get(`${urls.category}?&game=${gameId}`)
+  return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
 }
 
 export function fetchPlaygroup (categoryId) {

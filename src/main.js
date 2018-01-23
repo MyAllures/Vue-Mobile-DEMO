@@ -9,8 +9,10 @@ import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage } from './api'
 import * as types from './store/mutations/mutation-types'
+import Vue2Filters from 'vue2-filters'
 
 Vue.use(require('vue-moment'))
+Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 

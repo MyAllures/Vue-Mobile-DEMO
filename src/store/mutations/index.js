@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import Vue from 'vue'
 import * as types from './mutation-types'
 
@@ -22,8 +21,8 @@ export default {
   [types.SET_GAMES]: (state, { games }) => {
     state.games = games
   },
-  [types.SET_CATEGORIES]: (state, { categories }) => {
-    state.categories = _.xorBy(state.categories, categories, 'id').filter(item => !!item)
+  [types.SET_CATEGORIES]: (state, categories) => {
+    state.categories = categories
   },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
