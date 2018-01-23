@@ -42,7 +42,10 @@ export default {
     announcement: 'Announcement'
   },
   game: {
-    name: 'Game'
+    betrecord: 'Look Betrecord',
+    name: 'Game',
+    pay: 'Pay Right Away',
+    nopay: 'Nopay'
   },
   fin: {
     name: 'Finance',
