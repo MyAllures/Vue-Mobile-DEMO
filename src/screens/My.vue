@@ -7,12 +7,14 @@
         <span class="balance text-green" v-if="!user.balance">￥0.00</span>
       </cell>
       <cell
+        v-if="user.account_type !== 0"
         is-link
         :title="$t('withdraw.apply')"
         @click.native="$router.push('/my/withdraw')">
-        <i class="icon-withdraw icon" slot="icon"></i>
+        <i class="icon-fin icon" slot="icon"></i>
       </cell>
       <cell
+        v-if="user.account_type !== 0"
         @click.native="$router.push('/my/bankinfo')"
         :title="$t('misc.bank')"
         is-link>
@@ -22,6 +24,7 @@
     </group>
     <group>
       <cell
+        v-if="user.account_type !== 0"
         @click.native="$router.push('/my/message')"
         :title="$t('my.message')"
         is-link>
@@ -31,10 +34,10 @@
       <cell
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
-        <span>{{user.username}}</span>
+        <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
       </cell>
     </group>
-    <group>
+    <group v-if="user.account_type !== 0">
       <cell
         @click.native="$router.push('/my/profile')"
         :title="$t('misc.phone')">
@@ -64,7 +67,7 @@
       </cell>
     </group>
 
-    <group>
+    <group v-if="user.account_type !== 0">
       <cell
         @click.native="$router.push('/my/password')"
         :title="$t('misc.reset_password')"
@@ -79,9 +82,17 @@
       </cell>
     </group>
 
+    <group v-else>
+      <cell 
+        is-link
+        link="/register">
+        <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
+      </cell>
+    </group>
+
     <group>
-      <cell @click.native="logoutDialogShow = true">
-        <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
+      <cell>
+        <span class="logout" @click="logoutDialogShow = true" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
     </group>
     <confirm
@@ -154,6 +165,11 @@ export default {
 .logout {
   display: block;
   text-align: center;
-  color: #FE3824;
+  color: @red;
+}
+.register {
+  display: block;
+  text-align: center; 
+  color: @green;
 }
 </style>

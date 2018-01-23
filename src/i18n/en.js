@@ -11,6 +11,7 @@ export default {
     confirm_password: 'Confirm Password',
     login: 'Login',
     register: 'Register',
+    register_now: 'Register now',
     try: 'Try',
     bank: 'Withdrawal Account',
     real_name: 'Real Name',
@@ -42,7 +43,10 @@ export default {
     announcement: 'Announcement'
   },
   game: {
-    name: 'Game'
+    betrecord: 'Look Betrecord',
+    name: 'Game',
+    pay: 'Pay Right Away',
+    nopay: 'Nopay'
   },
   fin: {
     name: 'Finance',

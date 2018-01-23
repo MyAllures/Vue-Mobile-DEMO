@@ -1,7 +1,7 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
     <!-- 头部 -->
-    <x-header class="gamehall-header" :right-options="{showMore: true}">
+    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
       <x-icon
         slot="overwrite-left"
         type="navicon"
@@ -12,6 +12,7 @@
     </x-header>
     <router-view :key="$route.name + ($route.params.gameId || '')"/>
     <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
+    <RightMenu :isShow="showRightMenu" @handleClose="showRightMenu = false"></RightMenu>
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import { XHeader } from 'vux'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
+import RightMenu from '../components/GameRightMenu'
 
 export default {
   name: 'GameHall',
@@ -27,11 +29,13 @@ export default {
     // 注册组件
     Icon,
     XHeader,
-    GameMenu
+    GameMenu,
+    RightMenu
   },
   data () {
     return {
-      sidebarShow: false // 默认值
+      sidebarShow: false, // 默认值
+      showRightMenu: false
     }
   },
   computed: {

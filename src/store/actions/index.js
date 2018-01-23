@@ -5,7 +5,8 @@ import axios from 'axios'
 import _ from 'lodash'
 import {
   fetchUser,
-  login,
+  login as userLogin,
+  register,
   logout,
   fetchGames,
   fetchUnread,
@@ -27,27 +28,38 @@ const formatPlayInGroup = function (group) {
   return formattedPlays
 }
 
-export default {
-  login: ({ commit, state }, { user }) => {
-    return login(user).then(res => {
-      let expires = new Date(res.expires_in)
-      if (res.access_token && res.refresh_token) {
-        Vue.cookie.set('access_token', res.access_token, {
-          expires: expires
-        })
-        Vue.cookie.set('refresh_token', res.refresh_token, {
-          expires: expires
-        })
-        axios.defaults.withCredentials = true
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-      }
-      commit(types.SET_USER, {
-        user: {
-          logined: true
-        }
+const login = function ({ commit, state }, { user }) {
+  return userLogin(user).then(res => {
+    let expires = new Date(res.expires_in)
+    if (res.access_token && res.refresh_token) {
+      Vue.cookie.set('access_token', res.access_token, {
+        expires: expires
       })
-      return Promise.resolve(res)
-    }, error => {
+      Vue.cookie.set('refresh_token', res.refresh_token, {
+        expires: expires
+      })
+      axios.defaults.withCredentials = true
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+    }
+    commit(types.SET_USER, {
+      user: {
+        logined: true
+      }
+    })
+    return Promise.resolve(res)
+  }, error => {
+    return Promise.reject(error)
+  })
+}
+
+export default {
+  login: login,
+  tryDemo ({ commit, state }) {
+    commit('UPDATE_LOADING', {isLoading: true})
+    return register({ account_type: 0 }).then(user => {
+      commit('UPDATE_LOADING', {isLoading: false})
+      return login({ commit, state }, { user })
+    }).catch(error => {
       return Promise.reject(error)
     })
   },

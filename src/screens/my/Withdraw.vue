@@ -34,8 +34,8 @@
     </group>
 
     <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
-    <div class="vux-group-tip text-danger">{{errorMsg}}</div>
-    <div class="m-a-md">
+    <div class="vux-group-tip red">{{errorMsg}}</div>
+    <div class="m-a">
       <x-button type="primary" :disabled="!valid" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('withdraw.submit')}}</span>
@@ -43,9 +43,9 @@
     </div>
   </div>
 
-  <div v-else class="text-center m-t-80">
+  <div v-else class="text-center m-t">
     <div class="vux-group-tip text-muted">申请取款需要先建立银行资讯</div>
-    <div class="m-a-md">
+    <div class="m-a">
       <x-button type="primary" @click.native="createBank">
         <span>创建银行资讯</span>
       </x-button>
@@ -143,17 +143,12 @@
 </script>
 
 <style lang="less" scoped>
-  .m-t-80{
-    margin-top: 80px;
-  }
-  .vux-group-tip, .vux-group-tip p {
-    font-size: 14px;
-    text-align: center;
-    padding-top: .3em;
-    padding-left: 10px;
-    padding-right: 5px;
-  }
-  .text-danger {
-    color: #ff0000;
-  }
+.vux-group-tip, .vux-group-tip p {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 5px;
+}
 </style>

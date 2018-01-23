@@ -8,11 +8,11 @@ html, body {
 }
 
 .m-t {
-  margin-top: 1em;
+  margin-top: 10px;
 }
 
 .m-b {
-  margin-bottom: 1em;
+  margin-bottom: 10px;
 }
 
 .text-left {
@@ -23,12 +23,16 @@ html, body {
   text-align: center;
 }
 
+.text-right {
+  text-align: right;
+}
+
 .text-sm {
   font-size: 0.9em;
 }
 
-.m-a-md {
-  padding: 10px 15px;
+.m-a{
+  margin: 10px;
 }
 
 .clear-viewbox-default-top {
@@ -37,6 +41,26 @@ html, body {
 
 .clear-viewbox-default-bottom {
   margin-bottom: -50px;
+}
+
+.arrow-right:after {
+  content: " ";
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-width: 2px 2px 0 0;
+  border-color: #C8C8CD;
+  border-style: solid;
+  transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+  position: absolute;
+  top: 50%;
+  margin-top: -4px;
+}
+.green {
+  color: @green;
+}
+.red {
+  color: @red;
 }
 
 .bet-input {

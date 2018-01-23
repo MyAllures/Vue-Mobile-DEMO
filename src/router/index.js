@@ -19,6 +19,7 @@ export default new Router({
       path: '/register',
       name: 'Register',
       meta: {
+        showBack: true,
         tabbarHidden: true,
         title: '注册'
       },
@@ -229,6 +230,26 @@ export default new Router({
         showBack: true
       },
       component: resolve => { require(['../screens/games/GameIntro.vue'], resolve) }
+    },
+    {
+      path: '/promotions',
+      name: 'Promotions',
+      meta: {
+        title: '优惠活动',
+        showBack: true
+      },
+      component: resolve => { require(['../screens/Promotions.vue'], resolve) },
+      children: [
+        {
+          path: ':promoId',
+          name: 'PromotionDetail',
+          meta: {
+            title: '活动详情',
+            showBack: true
+          },
+          component: resolve => { require(['../screens/PromoDetail.vue'], resolve) }
+        }
+      ]
     }
   ]
 })
