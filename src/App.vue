@@ -129,7 +129,7 @@ export default {
       return this.$store.state.unread
     },
     showLinks () {
-      return this.$route.name !== 'Login' && !this.user.logined
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
