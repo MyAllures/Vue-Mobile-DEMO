@@ -1,7 +1,7 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
     <!-- 头部 -->
-    <x-header class="gamehall" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
+    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
       <x-icon
         slot="overwrite-left"
         type="navicon"
