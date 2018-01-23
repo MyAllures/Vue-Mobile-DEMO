@@ -11,6 +11,7 @@ export default {
     confirm_password: 'Confirm Password',
     login: 'Login',
     register: 'Register',
+    register_now: 'Register now',
     try: 'Try',
     bank: 'Withdrawal Account',
     real_name: 'Real Name',

@@ -2,13 +2,13 @@
   <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
       v-show="!$route.meta.headerHidden"
+      @on-click-more="showActions=true"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
         left:'0',
         top:'0',
-        'z-index':'100',
-        backgroundColor: getHeaderBgColor
+        'z-index':'100'
         }"
       slot="header"
       :right-options="{showMore: !!user.username}"
@@ -22,38 +22,42 @@
         <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
-        v-if="showActions"
+        v-if="showLinks"
         class="actions"
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link blue">试玩</a>
+        <a class="link blue" @click="tryDemo">试玩</a>
       </div>
     </x-header>
-    <div class="content">
-      <router-view></router-view>
-    </div>
-    <tabbar slot="bottom"
+    <router-view></router-view>
+    <tabbar 
+      slot="bottom"
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="$route.path.indexOf(menu.route) === 0"
+        :selected="$route.path.indexOf(menu.link) === 0"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
+    <actionsheet 
+      show-cancel
+      v-model="showActions" 
+      :menus="actionMenus" 
+      @on-click-menu="triggerAction"></actionsheet>
   </view-box>
 </template>
 
 <script>
 import './styles/fonts/icons.css'
 
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox } from 'vux'
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
@@ -65,6 +69,7 @@ export default {
   name: 'app',
   data () {
     return {
+      showActions: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -88,10 +93,32 @@ export default {
         unreadBadge: true
       }],
       logo: '',
-      userLoading: true
+      userLoading: true,
+      error: ''
     }
   },
   computed: {
+    actionMenus () {
+      return this.user.account_type === 0 ? [{
+        label: '立即注册',
+        link: '/register'
+      }, {
+        label: '退出登录',
+        action: 'logout'
+      }] : [{
+        label: '立即充值',
+        link: '/fin/recharge'
+      }, {
+        label: '查看注单',
+        link: '/fin/bet_record'
+      }, {
+        label: '申请取款',
+        link: '/my/withdraw'
+      }, {
+        label: '联系客服',
+        link: this.$store.state.systemConfig.global_preferences.customer_service_url
+      }]
+    },
     ...mapGetters([
       'user'
     ]),
@@ -101,23 +128,33 @@ export default {
     unread () {
       return this.$store.state.unread
     },
-    showActions () {
-      return this.$route.name !== 'Login' && !this.user.logined && !this.blueHeaderPage
+    showLinks () {
+      return this.$route.name !== 'Login' && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
     },
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
-    },
-    blueHeaderPage () {
-      return ['Promotions', 'GameIntro', 'Leaderboards', 'RoadBeads'].includes(this.$route.name)
-    },
-    getHeaderBgColor () {
-      return this.$route.name === 'Home' ? '#fff' : this.blueHeaderPage ? '#0069b1' : ''
     }
   },
   methods: {
+    triggerAction (key, item) {
+      if (item) {
+        if (item.action) {
+          return this.$store.dispatch(item.action)
+        }
+        this.$router.push(item.link)
+      }
+    },
+    tryDemo () {
+      this.$store.dispatch('tryDemo').then(result => {
+        this.$router.push({ name: 'Home' })
+        this.$store.dispatch('fetchUser')
+      }).catch(error => {
+        this.error = error
+      })
+    },
     replaceToken () {
       return new Promise((resolve, reject) => {
         let refreshToken = this.$cookie.get('refresh_token')
@@ -136,14 +173,21 @@ export default {
           resolve()
         })
       })
+    },
+    pollUnread () {
+      this.unreadInterval = setInterval(() => {
+        if (!this.$cookie.get('access_token')) {
+          clearInterval(this.unreadInterval)
+        } else {
+          this.$store.dispatch('fetchUnread')
+        }
+      }, 10000)
     }
   },
   created () {
     if (this.$cookie.get('access_token')) {
       this.$store.dispatch('fetchUser').then(() => {
-        this.unreadInterval = setInterval(() => {
-          this.$store.dispatch('fetchUnread')
-        }, 10000)
+        this.pollUnread()
       }, errRes => {
         this.performLogin()
       }).catch(() => {
@@ -172,7 +216,8 @@ export default {
     Cell,
     Loading,
     Icon,
-    ViewBox
+    ViewBox,
+    Actionsheet
   }
 }
 </script>
@@ -184,9 +229,6 @@ export default {
 </style>
 <style lang="less" scoped>
 @import './styles/vars.less';
-.content {
-  height: 100%;
-}
 .tabbar {
   position: fixed;
 }

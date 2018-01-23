@@ -19,6 +19,7 @@ export default new Router({
       path: '/register',
       name: 'Register',
       meta: {
+        showBack: true,
         tabbarHidden: true,
         title: '注册'
       },
@@ -241,7 +242,7 @@ export default new Router({
       children: [
         {
           path: ':promoId',
-          name: 'Promotions',
+          name: 'PromotionDetail',
           meta: {
             title: '活动详情',
             showBack: true

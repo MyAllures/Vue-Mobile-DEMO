@@ -48,12 +48,12 @@
             </x-input>    
         </group>
         <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
-        <div class="m-a-md">
-            <x-button type="primary" :disabled="!valid" @click.native="submit">
-                <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-                <span v-else>{{$t('profile.submit')}}</span>
-            </x-button>
-            <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
+        <div class="m-a">
+          <x-button type="primary" :disabled="!valid" @click.native="submit">
+              <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+              <span v-else>{{$t('profile.submit')}}</span>
+          </x-button>
+          <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
         </div>
     </div>
 </template>
@@ -148,9 +148,5 @@ export default {
 .hidden {
   display: none;
   visibility: hidden;
-}
-.m-a-md {
-  text-align: center;
-  color: #1AAD19;
 }
 </style>

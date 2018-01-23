@@ -93,9 +93,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.m-t{
-  margin-top: 20px;
-}
 .result-hint {
   height: 100%;
   text-align: center;
