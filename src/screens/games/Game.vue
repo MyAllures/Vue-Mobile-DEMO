@@ -26,28 +26,27 @@
         :amount="amount"
         :playReset="playReset"
         @updatePlays="updatePlays"
+        @resetPlays="playReset = !playReset"
         />
       </div>
     </div>
     <div class="bet-input">
-      <group>
-        <flexbox>
-          <flexbox-item>
-            <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-            <div class="playCount">已选中{{activePlays.length}}注</div>
-          </flexbox-item>
-          <flexbox-item>
-            <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
-            </x-input>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
-          </flexbox-item>
-        </flexbox>
-      </group>
+      <flexbox>
+        <flexbox-item>
+          <div class="balance">{{user.balance||0 | currency('￥')}}</div>
+          <div class="playCount">已选 <span class="count">{{activePlays.length}}</span> 注</div>
+        </flexbox-item>
+        <flexbox-item>
+          <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
+          </x-input>
+        </flexbox-item>
+        <flexbox-item>
+          <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+        </flexbox-item>
+        <flexbox-item>
+          <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
+        </flexbox-item>
+      </flexbox>
       <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
     </div>
 
@@ -56,27 +55,32 @@
         <div class="title">确认注单</div>
         <ul>
           <li
-            v-for="play in currentPlays"
-            :key="play.id">
-            {{`【${play.display_name}】 @${play.odds} X `}}<span class="amount">{{amount | currency('￥')}}</span></li>
+            v-for="(play, index) in currentPlays"
+            :key="index">
+            <span class="play">{{`【${play.display_name}】 @${play.odds} X `}}</span>
+            <span class="amount">{{amount | currency('￥')}}</span>
+            <div v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </div>
+            <div v-if="play.optionDisplayNames" class="combinations"> {{`组合数：${play.combinations.length}`}} </div>
+          </li>
         </ul>
+
         <div class="total">
-          【合计】总注数：{{currentPlays.length}}总金额：
-          <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
+          <span class="bet-num">共 <span class="red">{{currentPlays.length}}</span> 组</span>
+          总金额：
+          <span v-if="activePlays.length && activePlays[0].isCustom"
+            class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
+          <span v-else
+            class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
         </div>
         <flexbox v-else class="buttons">
-          <flexbox-item :span="1/4">
-          </flexbox-item>
-          <flexbox-item :span="1/4">
+          <flexbox-item :span="1/2">
             <x-button :disabled="!currentPlays.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
           </flexbox-item>
-          <flexbox-item :span="1/4">
+          <flexbox-item :span="1/2">
             <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-          </flexbox-item>
-          <flexbox-item :span="1/4">
           </flexbox-item>
         </flexbox>
       </div>
@@ -172,12 +176,8 @@ export default {
       if (!categories.length) {
         this.$store.dispatch('fetchCategories', this.gameId)
           .then((res) => {
-            if (res && res.length) {
-              this.$router.push(`/game/${this.gameId}/${res[0].name}`)
-            } else {
-              this.performLogin()
-            }
-          })
+            this.$router.push(`/game/${this.gameId}/${res[0].name}`)
+          }).catch(() => {})
       } else {
         this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
       }
@@ -243,7 +243,7 @@ export default {
       const validedPlays = _.flatMap(
         this.activePlays,
         play => {
-          if (play.combinations && !play.selectedOptions) {
+          if (play.combinations && !play.activedOptions) {
             return _.map(play.combinations, combination => {
               return {
                 ...play,
@@ -259,9 +259,9 @@ export default {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
-        if (play.selectedOptions) {
+        if (play.activedOptions) {
           let options = []
-          _.each(play.selectedOptions, option => {
+          _.each(play.activedOptions, option => {
             options.push(option.num)
             optionDisplayNames.push(option.displayName || option.num)
           })
@@ -332,6 +332,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../styles/vars.less';
+
 .game {
   height: 100%;
 }
@@ -341,8 +343,12 @@ export default {
   .aside {
     overflow-y: auto;
     height: 100%;
-    width: 81px;
+    width: 80px;
     display: flex;
+    box-sizing: border-box;
+    border-width: 0 4px 0 0;
+    border-style: solid;
+    border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
     align-items: center;
     background-color: #f9f9f9;
     color: #9b9b9b;
@@ -350,24 +356,25 @@ export default {
       width: 100%;
       background-color: #f9f9f9;
       li {
+        text-align: center;
         box-sizing: border-box;
-        padding-left: 5px;
         height: 40px;
         width: 100%;
         line-height: 40px;
-        border-top: 1px solid rgba(0, 0, 0, 0.14);
+        border-top: 1px solid #d8d8d8;
         &:last-child {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+          border-bottom: 1px solid #d8d8d8;
         }
         &.active {
           color: #000;
+          background: #e8e8e8;
         }
       }
     }
   }
   .main {
     height: 100%;
-    width: calc(~"100%" - 81px);
+    width: calc(~"100%" - 80px);
     overflow-y: auto;
     background-color: #fff;
   }
@@ -375,11 +382,21 @@ export default {
 .bet-input {
   box-sizing: border-box;
   position: relative;
-  background: #fff;
-  height: 60px;
-  padding: 10px 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, .7);
+  border: none;
+  height: 55px;
+  padding: 7px;
   .text {
     margin-right: 10px;
+  }
+  .count {
+    background: @red;
+    display: inline-block;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    padding: 0 5px;
   }
   .balance {
     height: 20px;
@@ -396,6 +413,26 @@ export default {
   .content {
     height: 200px;
   }
+  /deep/ .weui-btn {
+    overflow: visible;
+    width: 90%;
+  }
+  /deep/ .vux-x-input {
+    color: #333;
+    padding: 0 5px;
+    .weui-cell__bd.weui-cell__primary{
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      border-radius: 5px;
+      height: 40px;
+      box-sizing: border-box;
+      input {
+        height: 100%;
+        box-sizing: border-box;
+        padding-left: 5px;
+      }
+    }
+  }
 }
 .gameclosed-mask {
   position:absolute;
@@ -409,4 +446,66 @@ export default {
   background-color: rgba(0, 64, 138, 0.7);
   color: #fff;
 }
+
+.bet-content {
+  text-align: left;
+  background-color: #fff;
+  padding: 0 0 10px;
+  .title {
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+  }
+  ul {
+    min-height: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #000;
+    padding: 10px 0;
+    li {
+      text-align: left;
+      height: 25px;
+      line-height: 25px;
+    }
+  }
+  .total {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    .bet-num {
+      margin-right: 10px;
+    }
+  }
+  .amount {
+    color: @red
+  }
+  .options,.combinations {
+    width: 100%;
+    padding-left: 10px;
+  }
+  .loading {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size:18px;
+    text-align: center;
+    .weui-loading {
+      height: 30px;
+      width: 30px;
+    }
+  }
+  button.weui-btn {
+    width: 80%;
+  }
+  .play {
+    color: #666;
+  }
+  .buttons {
+    height: 50px;
+  }
+}
+
 </style>

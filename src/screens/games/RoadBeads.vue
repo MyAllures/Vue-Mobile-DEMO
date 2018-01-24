@@ -15,7 +15,7 @@
         </cell>
       </group>
       <group>
-        <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex">
+        <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex" class="item-cell">
           <span v-for="(data, index) in datas" :key="index">{{data | typeFilter}} </span>
         </cell>
       </group>
@@ -458,7 +458,10 @@ export default {
   height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
   overflow-y: auto;
   background-color: #f9f9f9;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  border-width: 0 4px 0 0;
+  border-style: solid;
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
   .text {
     margin-left: 5px;
     font-size: 14px;
@@ -511,6 +514,10 @@ export default {
     font-weight: 600;
     margin-left: 5px;
   }
+}
+.item-cell {
+  padding: 5px 10px;
+  font-size: 14px;
 }
 </style>
 
