@@ -32,6 +32,7 @@
         <span :class="{'unread-alert': unread}">{{ unread }} 条</span>
       </cell>
       <cell
+        v-if="user.account_type !== 0"
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
         <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
@@ -83,7 +84,7 @@
     </group>
 
     <group v-else>
-      <cell 
+      <cell
         is-link
         link="/register">
         <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
@@ -169,7 +170,7 @@ export default {
 }
 .register {
   display: block;
-  text-align: center; 
+  text-align: center;
   color: @green;
 }
 </style>
