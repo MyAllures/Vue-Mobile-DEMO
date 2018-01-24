@@ -26,6 +26,7 @@
         :amount="amount"
         :playReset="playReset"
         @updatePlays="updatePlays"
+        @resetPlays="playReset = !playReset"
         />
       </div>
     </div>
@@ -56,13 +57,22 @@
         <div class="title">确认注单</div>
         <ul>
           <li
-            v-for="play in currentPlays"
-            :key="play.id">
-            {{`【${play.display_name}】 @${play.odds} X `}}<span class="amount">{{amount | currency('￥')}}</span></li>
+            v-for="(play, index) in currentPlays"
+            :key="index">
+            {{`【${play.display_name}】 @${play.odds} X `}}
+            <span class="amount">{{amount | currency('￥')}}</span>
+            <div v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </div>
+            <div v-if="play.optionDisplayNames" class="combinations"> {{`组合数：${play.combinations.length}`}} </div>
+          </li>
         </ul>
+
         <div class="total">
-          【合计】总注数：{{currentPlays.length}}总金额：
-          <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
+          <span class="bet-num">【合计】总注数：{{currentPlays.length}}</span>
+          总金额：
+          <span v-if="activePlays.length && activePlays[0].isCustom"
+            class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
+          <span v-else
+            class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
@@ -172,12 +182,8 @@ export default {
       if (!categories.length) {
         this.$store.dispatch('fetchCategories', this.gameId)
           .then((res) => {
-            if (res && res.length) {
-              this.$router.push(`/game/${this.gameId}/${res[0].name}`)
-            } else {
-              this.performLogin()
-            }
-          })
+            this.$router.push(`/game/${this.gameId}/${res[0].name}`)
+          }).catch(() => {})
       } else {
         this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
       }
@@ -243,7 +249,7 @@ export default {
       const validedPlays = _.flatMap(
         this.activePlays,
         play => {
-          if (play.combinations && !play.selectedOptions) {
+          if (play.combinations && !play.activedOptions) {
             return _.map(play.combinations, combination => {
               return {
                 ...play,
@@ -259,9 +265,9 @@ export default {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
-        if (play.selectedOptions) {
+        if (play.activedOptions) {
           let options = []
-          _.each(play.selectedOptions, option => {
+          _.each(play.activedOptions, option => {
             options.push(option.num)
             optionDisplayNames.push(option.displayName || option.num)
           })
