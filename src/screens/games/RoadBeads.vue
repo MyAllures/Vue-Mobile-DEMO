@@ -29,7 +29,7 @@
           @on-item-click="changeActiveHistoryTag(item)"
           :key="index"
           :selected="item.key === activeHistoryTag">
-          <span :class="{ 'ellipse': currentHistoryTag.length > 5 }">{{item.key}}</span>
+          <span :class="{'ellipse': currentHistoryTag.length > 5}">{{item.key}}</span>
         </tab-item>
       </tab>
     </div>
