@@ -34,7 +34,7 @@
       <flexbox>
         <flexbox-item>
           <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-          <div class="playCount">已选中{{validPlays.length}}注</div>
+          <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
           <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
@@ -56,11 +56,11 @@
           <li
             v-for="(play, index) in currentPlays"
             :key="index">
-            <p class="detail">
-              {{`【${play.display_name}】 @${play.odds} X `}}
+            <p>
+              <span class="play">{{`【${play.display_name}】 @${play.odds} X `}}</span>
               <span class="amount">{{amount | currency('￥')}}</span>
             </p>
-            <p v-if="play.optionDisplayNames" class="options">{{`已选号码：${play.optionDisplayNames}`}}</p>
+            <p v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </p>
           </li>
         </ul>
         <div class="total">
@@ -72,22 +72,18 @@
           </template>
           <template v-else>
             总金额：
-            <span class="amount">{{validPlays.length * amount | currency('￥')}}</span>
+            <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
           </template>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
         </div>
         <flexbox v-else class="buttons">
-          <flexbox-item :span="1/4">
-          </flexbox-item>
-          <flexbox-item :span="1/4">
+          <flexbox-item :span="1/2">
             <x-button :disabled="!currentPlays.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
           </flexbox-item>
-          <flexbox-item :span="1/4">
+          <flexbox-item :span="1/2">
             <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-          </flexbox-item>
-          <flexbox-item :span="1/4">
           </flexbox-item>
         </flexbox>
       </div>
@@ -398,6 +394,14 @@ export default {
   .text {
     margin-right: 10px;
   }
+  .count {
+    background: @red;
+    display: inline-block;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    padding: 0 5px;
+  }
   .balance {
     height: 20px;
     line-height: 20px;
@@ -418,6 +422,7 @@ export default {
     width: 90%;
   }
   /deep/ .vux-x-input {
+    color: #333;
     padding: 0 5px;
     .weui-cell__bd.weui-cell__primary{
       background: #fff;
@@ -447,65 +452,68 @@ export default {
   color: #fff;
 }
 
-.vux-popup-dialog {
-  .bet-content {
-    font-size: 14px;
-    text-align: left;
-    width: 95%;
-    background-color:#fff;
-    margin:0 auto;
-    border-radius:5px;
-    padding:10px 0;
-    .title {
-      height: 40px;
-      line-height: 40px;
-      text-align: center;
-    }
-    ul {
-      height:150px;
-      overflow-y: auto;
-      border-top: 1px solid #f0f0f0;
-      border-bottom: 1px solid #f0f0f0;
-      list-style: none;
-      color: #000;
-      li {
-        text-align: left;
-        p {
-          height: 25px;
-          line-height: 25px;
-        }
+.bet-content {
+  text-align: left;
+  background-color: #fff;
+  padding: 0 0 10px;
+  .title {
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+  }
+  ul {
+    min-height: 150px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #000;
+    padding: 10px 0;
+    li {
+      text-align: left;
+      padding-bottom: 5px;
+      p {
+        height: 25px;
+        line-height: 25px;
       }
     }
-    .total {
-      height: 30px;
-      line-height: 30px;
-      margin-bottom: 10px;
-      .bet-num {
-        margin-right: 10px;
-      }
-    }
-    .amount {
-      color: @red;
+  }
+  .total {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    .bet-num {
       margin-right: 10px;
     }
-    .options,.combinations {
-      width: 100%;
-      padding-left: 10px;
+  }
+  .amount {
+    margin-right: 10px;
+    color: @red;
+  }
+  .options,.combinations {
+    width: 100%;
+    padding-left: 10px;
+  }
+  .loading {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size:18px;
+    text-align: center;
+    .weui-loading {
+      height: 30px;
+      width: 30px;
     }
-    .loading {
-      width: 100%;
-      height: 50px;
-      line-height: 50px;
-      font-size:18px;
-      text-align: center;
-      .weui-loading {
-        height: 30px;
-        width: 30px;
-      }
-    }
-    .buttons {
-      height: 50px;
-    }
+  }
+  button.weui-btn {
+    width: 80%;
+  }
+  .play {
+    color: #666;
+  }
+  .buttons {
+    height: 50px;
   }
 }
 
