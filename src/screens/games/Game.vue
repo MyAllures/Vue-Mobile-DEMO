@@ -299,13 +299,10 @@ export default {
       placeBet(this.playsForSubmit)
         .then(res => {
           if (res && res[0].member) {
-            setTimeout(() => {
-              // this.updateBetrecords()
-              this.$set(this, 'playReset', !this.playReset)
-              this.showMessage = true
-              this.dialogVisible = false
-              this.loading = false
-            }, 1000)
+            this.$set(this, 'playReset', !this.playReset)
+            this.showMessage = true
+            this.dialogVisible = false
+            this.loading = false
           } else {
             let messages = []
             res.msg.forEach(error => {
