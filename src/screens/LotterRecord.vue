@@ -16,7 +16,6 @@
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
       </div>
-      <div v-if='!dataNum.results.length' class="noList">暂无资料...</div>
       <table>
         <tr v-if='lotteryTime' v-for='(schedule, scheduleIndex) in dataNum.results'>
           <td class="showTime">
@@ -81,12 +80,13 @@
                   {{schedule.result_category[subHead.key] |changeDataType}}
                 </span>
               </div>
-            </div>
+            </div>            
           </td> 
         </tr>
-      </table>     
+      </table>
+      <div class="addMore" @click='addMore' v-if="firstLimit >= 30">加载更多</div>
+      <div class="addMore" v-if="firstLimit < 30">无更多资料...</div>
     </div>
-    <div class="addMore" @click='addMore' v-if="dataNum.count > limit && dataNum.count > firstLimit">加载更多</div>
   </div>
 </template>
 <script>
@@ -730,6 +730,8 @@ export default {
     },
     getGameList () {
       getGameData(this.codeType, this.dataTime).then((response) => {
+        this.firstLimit = response.results.length
+        this.codeKl = false
         this.dataNum = response
         this.nowGameTable = _.find(this.gameTable, item => {
           return item.code === this.codeType
@@ -740,7 +742,9 @@ export default {
         this.lotteryNum = this.nowGameTable.table[0].subNum
         this.lotteryTime = this.nowGameTable.table[1].subTime
         this.lotteryResult = this.nowGameTable.table[2].resultNum
-        this.lotteryCompare = this.nowGameTable.table[3].subHeads
+        if (this.codeType !== 'auluck8' || this.codeType !== 'bjkl8') {
+          this.lotteryCompare = this.nowGameTable.table[3].subHeads
+        }
       })
     },
     addMore () {
@@ -750,6 +754,7 @@ export default {
         this.limit += this.dataNum.cout - this.limit
       }
       getMoreGameData(this.codeType, this.dataTime, this.limit).then((response) => {
+        this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
       })
     }
@@ -824,7 +829,7 @@ export default {
   }
   .noList {
     position: relative;
-    top: 90px;
+    top: 44px;
     text-align: center;
     background: #FFFFFF
   }
@@ -903,9 +908,19 @@ export default {
     overflow: hidden;
     position: relative;
     background: #FFFFFF;
-    top: 90px;
+    top: 44px;
     border-collapse:collapse;
   }
+  .addMore {
+      text-align: center;
+      height: 40px;
+      position: relative;
+      top: 44px;
+      font-size: 14px;
+      background: #f1f1f1;
+      margin-bottom: 40px;
+      line-height: 34px;
+    }
   .loteryBg {    
     display: inline-block; 
     text-indent: -9999px;
@@ -946,16 +961,6 @@ export default {
     height: 21px;
     background-size: 21px 21px;
   }
-}
-.addMore {
-  text-align: center;
-  height: 40px;
-  position: relative;
-  top: 91px;
-  font-size: 14px;
-  background: #f1f1f1;
-  margin-bottom: 40px;
-  line-height: 26px;
 }
 @media (max-width: 350px) {
   .record-box {

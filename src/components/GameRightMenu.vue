@@ -49,7 +49,7 @@
           },
           {
             display_name: '历史开奖',
-            route: '/'
+            route: '/LotterRecord'
           },
           {
             display_name: '游戏介绍',

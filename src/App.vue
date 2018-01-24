@@ -11,19 +11,19 @@
         'z-index':'100'
         }"
       slot="header"
-      :right-options="{showMore: !!user.username}"
+      :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
         <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
-      </a> 
+      </a>
       <div
         v-if="!$route.meta.showBack"
         class="logo"
         slot="overwrite-left"
         >
         <img :src="logoSrc" v-if="logoSrc" height="32" />
-      </div>
+      </div>      
       <div
         v-if="showLinks"
         class="actions"
@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import './styles/fonts/icons.css'
+
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
@@ -174,6 +176,9 @@ export default {
           resolve()
         })
       })
+    },
+    refresh () {
+      history.go(0)
     },
     pollUnread () {
       this.unreadInterval = setInterval(() => {
