@@ -31,27 +31,24 @@
       </div>
     </div>
     <div class="bet-input">
-      <group>
-        <flexbox>
-          <flexbox-item>
-            <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-            <div class="playCount">已选中{{currentPlays.length}}注</div>
-          </flexbox-item>
-          <flexbox-item>
-            <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
-            </x-input>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
-          </flexbox-item>
-        </flexbox>
-      </group>
+      <flexbox>
+        <flexbox-item>
+          <div class="balance">{{user.balance||0 | currency('￥')}}</div>
+          <div class="playCount">已选中{{validPlays.length}}注</div>
+        </flexbox-item>
+        <flexbox-item>
+          <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
+          </x-input>
+        </flexbox-item>
+        <flexbox-item>
+          <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+        </flexbox-item>
+        <flexbox-item>
+          <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
+        </flexbox-item>
+      </flexbox>
       <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
     </div>
-
     <popup v-model="dialogVisible" is-transparent>
       <div class="bet-content">
         <div class="title">确认注单</div>
@@ -247,7 +244,7 @@ export default {
       }
     },
     openDialog () {
-      this.currentPlays = _.values(this.validedPlays.map(play => {
+      this.currentPlays = _.values(this.validPlays.map(play => {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
@@ -338,6 +335,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../styles/vars.less';
+
 .game {
   height: 100%;
 }
@@ -347,8 +346,12 @@ export default {
   .aside {
     overflow-y: auto;
     height: 100%;
-    width: 81px;
+    width: 80px;
     display: flex;
+    box-sizing: border-box;
+    border-width: 0 4px 0 0;
+    border-style: solid;
+    border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
     align-items: center;
     background-color: #f9f9f9;
     color: #9b9b9b;
@@ -356,24 +359,25 @@ export default {
       width: 100%;
       background-color: #f9f9f9;
       li {
+        text-align: center;
         box-sizing: border-box;
-        padding-left: 5px;
         height: 40px;
         width: 100%;
         line-height: 40px;
-        border-top: 1px solid rgba(0, 0, 0, 0.14);
+        border-top: 1px solid #d8d8d8;
         &:last-child {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+          border-bottom: 1px solid #d8d8d8;
         }
         &.active {
           color: #000;
+          background: #e8e8e8;
         }
       }
     }
   }
   .main {
     height: 100%;
-    width: calc(~"100%" - 81px);
+    width: calc(~"100%" - 80px);
     overflow-y: auto;
     background-color: #fff;
   }
@@ -381,9 +385,11 @@ export default {
 .bet-input {
   box-sizing: border-box;
   position: relative;
-  background: #fff;
-  height: 60px;
-  padding: 10px 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, .7);
+  border: none;
+  height: 55px;
+  padding: 7px;
   .text {
     margin-right: 10px;
   }
@@ -402,6 +408,26 @@ export default {
   .content {
     height: 200px;
   }
+  /deep/ .weui-btn {
+    overflow: visible;
+    width: 90%;
+  }
+  /deep/ .vux-x-input {
+    padding: 0 5px;
+    .weui-cell__bd.weui-cell__primary{
+      background: #fff;
+      border: 1px solid #f0f0f0;
+      border-radius: 5px;
+      height: 40px;
+      box-sizing: border-box;
+      input {
+        color: #000;
+        height: 100%;
+        box-sizing: border-box;
+        padding-left: 5px;
+      }
+    }
+  }
 }
 .gameclosed-mask {
   position:absolute;
@@ -415,4 +441,64 @@ export default {
   background-color: rgba(0, 64, 138, 0.7);
   color: #fff;
 }
+
+.vux-popup-dialog {
+  .bet-content {
+    font-size: 14px;
+    text-align: left;
+    width: 95%;
+    background-color:#fff;
+    margin:0 auto;
+    border-radius:5px;
+    padding:10px 0;
+    .title {
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+    }
+    ul {
+      height:150px;
+      overflow-y: auto;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+      list-style: none;
+      color: #000;
+      li {
+        text-align: left;
+        height: 25px;
+        line-height: 25px;
+      }
+    }
+    .total {
+      height: 30px;
+      line-height: 30px;
+      margin-bottom: 10px;
+      .bet-num {
+        margin-right: 10px;
+      }
+    }
+    .amount {
+      color: @red
+    }
+    .options,.combinations {
+      width: 100%;
+      padding-left: 10px;
+    }
+    .loading {
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      font-size:18px;
+      text-align: center;
+      .weui-loading {
+        height: 30px;
+        width: 30px;
+      }
+    }
+    .buttons {
+      height: 50px;
+    }
+  }
+}
+
 </style>
