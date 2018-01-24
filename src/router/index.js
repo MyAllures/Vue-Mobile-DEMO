@@ -19,6 +19,7 @@ export default new Router({
       path: '/register',
       name: 'Register',
       meta: {
+        showBack: true,
         tabbarHidden: true,
         title: '注册'
       },
@@ -35,8 +36,29 @@ export default new Router({
       component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
-        tabbarHidden: true
-      }
+        tabbarHidden: true,
+        headerHidden: true
+      },
+      children: [
+        {
+          path: ':gameId',
+          component: resolve => { require(['../screens/games/Game.vue'], resolve) },
+          meta: {
+            tabbarHidden: true,
+            headerHidden: true
+          },
+          children: [
+            {
+              path: ':categoryName',
+              component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
+              meta: {
+                tabbarHidden: true,
+                headerHidden: true
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/fin',
@@ -104,64 +126,64 @@ export default new Router({
       component: resolve => { require(['../screens/My.vue'], resolve) }
     },
     {
-      path: '/person/Password',
+      path: '/my/password',
       name: 'changepassword',
       meta: {
         title: '修改密码',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Password.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Password.vue'], resolve) }
     },
     {
-      path: '/person/Profile',
+      path: '/my/profile',
       name: 'profile',
       meta: {
         title: '修改账户资料',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Profile.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Profile.vue'], resolve) }
     },
     {
-      path: '/person/Bankinfo',
+      path: '/my/bankinfo',
       name: 'bankinfo',
       meta: {
         title: '银行资讯',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Bankinfo.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Bankinfo.vue'], resolve) }
     },
     {
-      path: '/person/Withdraw',
+      path: '/my/withdraw',
       name: 'withdraw',
       meta: {
         title: '取款',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Withdraw.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Withdraw.vue'], resolve) }
     },
     {
-      path: '/person/Wpassword',
+      path: '/my/wpassword',
       name: 'wpassword',
       meta: {
         title: '重置取款密码',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Wpassword.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Wpassword.vue'], resolve) }
     },
     {
-      path: '/person/Message',
+      path: '/my/message',
       name: 'message',
       meta: {
         title: '会员消息',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/person/Message.vue'], resolve) }
+      component: resolve => { require(['../screens/my/Message.vue'], resolve) }
     },
     {
       path: '/depositSuccess',
@@ -180,6 +202,63 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
+    },
+    {
+      path: '/stastics/roadbeads',
+      name: 'RoadBeads',
+      meta: {
+        title: '路珠',
+        requiresAuth: true,
+        tabbarHidden: true,
+        showBack: true
+      },
+      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
+    },
+    {
+      path: '/stastics',
+      redirect: '/stastics/leaderboards'
+    },
+    {
+      path: '/stastics/leaderboards',
+      name: 'Leaderboards',
+      meta: {
+        title: '长龙',
+        requiresAuth: true,
+        tabbarHidden: true,
+        showBack: true
+      },
+      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
+    },
+    {
+      path: '/gameintro',
+      name: 'GameIntro',
+      meta: {
+        title: '游戏介绍',
+        requiresAuth: true,
+        tabbarHidden: true,
+        showBack: true
+      },
+      component: resolve => { require(['../screens/games/GameIntro.vue'], resolve) }
+    },
+    {
+      path: '/promotions',
+      name: 'Promotions',
+      meta: {
+        title: '优惠活动',
+        showBack: true
+      },
+      component: resolve => { require(['../screens/Promotions.vue'], resolve) },
+      children: [
+        {
+          path: ':promoId',
+          name: 'PromotionDetail',
+          meta: {
+            title: '活动详情',
+            showBack: true
+          },
+          component: resolve => { require(['../screens/PromoDetail.vue'], resolve) }
+        }
+      ]
     }
   ]
 })

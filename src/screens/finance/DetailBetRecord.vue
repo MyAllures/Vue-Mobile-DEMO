@@ -1,6 +1,6 @@
 <template>
   <div>
-    <x-table full-bordered class="betrecord-table">
+    <x-table :cell-bordered="false" class="betrecord-table">
       <thead>
         <tr class="betrecord-thead">
           <th>{{$t('fin.issue_number')}}</th>
@@ -15,13 +15,12 @@
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
-            <p>{{record.game.display_name}}</p>
-            <p>{{record.issue_number}}</p>
+            <span class="game">{{record.game.display_name}}</span>
+            <span class="issue">{{record.issue_number}}</span>
           </td>
           <td>
-            <p>{{record.play.display_name}}</p>
-            <p>{{record.play.playgroup}}</p>
-            <p>@ {{record.odds}}</p>
+            <p class="play">{{record.play.playgroup}} - {{record.play.display_name}}</p>
+            <span class="red odds">@ {{record.odds}}</span>
           </td>
           <td>
             <span>
@@ -47,7 +46,7 @@
                 :show-loading="loadingMore">
         <span>{{$t('misc.load_more')}}</span>
       </x-button>
-      <divider v-else>{{$t('misc.nomore_data')}}</divider>
+      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
     </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
@@ -65,7 +64,7 @@ export default {
     return {
       betRecords: [],
       totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 340) / 40), // clientHeight minus the height of top and bottom / height of each tr
+      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40), // clientHeight minus the height of top and bottom / height of each tr
       currentChunk: 1,
       loading: false,
       error: {
@@ -132,19 +131,28 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 .betrecord-table {
+  margin-top: 10px;
   background-color: #fff;
 }
 .betrecord-thead {
   background-color: #fbf9fe;
 }
-
-.green {
-  color: @green;
+.end {
+  text-align: center;
+  color: #ccc;
 }
-
-.red {
-  color: @red;
+.game, .issue, .play, .odds {
+  display: block;
+  line-height: 1.5;
+}
+.game, .play {
+  margin-top: 8px;
+}
+.issue, .odds {
+   margin-bottom: 8px;
+}
+.issue {
+  color: #999;
 }
 </style>

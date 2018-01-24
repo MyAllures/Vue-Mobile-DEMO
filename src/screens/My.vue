@@ -1,86 +1,98 @@
 <template>
-  <div class="my-box">
+  <div>
     <group>
       <cell :title="$t('my.balance')" >
         <i class="icon-sum icon" slot="icon"></i>
-        <span class="balance text-green" v-if="user.balance">￥{{user.balance.toFixed(1)}}</span>
+        <span class="balance text-green" v-if="user.balance">￥{{user.balance.toFixed(2)}}</span>
         <span class="balance text-green" v-if="!user.balance">￥0.00</span>
       </cell>
       <cell
+        v-if="user.account_type !== 0"
+        is-link
         :title="$t('withdraw.apply')"
-        @click.native="$router.push('/person/Withdraw')">
-        <i class="icon-withdraw icon" slot="icon"></i>
+        @click.native="$router.push('/my/withdraw')">
+        <i class="icon-fin icon" slot="icon"></i>
       </cell>
       <cell
-        @click.native="$router.push('/person/Bankinfo')"
+        v-if="user.account_type !== 0"
+        @click.native="$router.push('/my/bankinfo')"
         :title="$t('misc.bank')"
-        :is-link="true">
+        is-link>
         <i class="icon-bank icon" slot="icon"></i>
         <span>{{bankAccount}}</span>
       </cell>
     </group>
     <group>
       <cell
-        @click.native="$router.push('/person/Message')"
+        v-if="user.account_type !== 0"
+        @click.native="$router.push('/my/message')"
         :title="$t('my.message')"
-        :is-link="true">
+        is-link>
         <i class="icon-msg icon" slot="icon"></i>
-        <span>{{ unRead }} 条</span>
+        <span :class="{'unread-alert': unread}">{{ unread }} 条</span>
       </cell>
       <cell
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
-        <span>{{user.username}}</span>
+        <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
       </cell>
     </group>
-    <group>
+    <group v-if="user.account_type !== 0">
       <cell
-        @click.native="$router.push('/person/Profile')"
+        @click.native="$router.push('/my/profile')"
         :title="$t('misc.phone')">
         <i class="icon-phone icon" slot="icon"></i>
         <span>{{user.phone || '未填写'}}</span>
       </cell>
       <cell
-        @click.native="$router.push('/person/Profile')"
+        @click.native="$router.push('/my/profile')"
         :title="$t('misc.email')"
-        :is-link="true">
+        is-link>
         <i class="icon-email icon" slot="icon"></i>
         <span>{{user.email || '未填写'}}</span>
       </cell>
       <cell
-        @click.native="$router.push('/person/Profile')"
+        @click.native="$router.push('/my/profile')"
         :title="$t('misc.qq')"
-        :is-link="true">
+        is-link>
         <i class="icon-QQ icon" slot="icon"></i>
         <span>{{user.qq || '未填写'}}</span>
       </cell>
       <cell
-        @click.native="$router.push('/person/Profile')"
+        @click.native="$router.push('/my/profile')"
         :title="$t('misc.wechat')"
-        :is-link="true">
+        is-link>
         <i class="icon-wechat icon" slot="icon"></i>
         <span>{{user.wechat || '未填写'}}</span>
       </cell>
     </group>
 
-    <group>
+    <group v-if="user.account_type !== 0">
       <cell
-        @click.native="$router.push('/person/Password')"
+        @click.native="$router.push('/my/password')"
         :title="$t('misc.reset_password')"
-        :is-link="true">
+        is-link>
         <i class="icon-password icon" slot="icon"></i>
       </cell>
       <cell
-        @click.native="$router.push('/person/Wpassword')"
+        @click.native="$router.push('/my/wpassword')"
         :title="$t('misc.reset_withdraw_password')"
-        :is-link="true">
+        is-link>
         <i class="icon-pass icon" slot="icon"></i>
       </cell>
     </group>
 
+    <group v-else>
+      <cell 
+        is-link
+        link="/register">
+        <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
+      </cell>
+    </group>
+
     <group>
-      <cell @click.native="logoutDialogShow = true">
-        <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
+      <cell>
+        <span class="logout" @click="logoutDialogShow = true" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
     </group>
     <confirm
@@ -94,23 +106,20 @@
 </template>
 
 <script>
-import '../styles/fonts/icons.css'
 import { mapGetters } from 'vuex'
 import { Group, Cell, Confirm } from 'vux'
-import { unRead } from '../api'
 
 export default {
   name: 'Home',
   data () {
     return {
-      logoutDialogShow: false,
-      unRead: ''
+      logoutDialogShow: false
     }
   },
-  created () {
-    this.getNumber()
-  },
   computed: {
+    unread () {
+      return this.$store.state.unread
+    },
     ...mapGetters([
       'user'
     ]),
@@ -127,11 +136,6 @@ export default {
   methods: {
     logout () {
       this.$store.dispatch('logout')
-    },
-    getNumber () {
-      unRead().then((response) => {
-        this.unRead = response.message_count
-      })
     }
   },
   components: {
@@ -142,9 +146,14 @@ export default {
 }
 </script>
 
-<style scoped >
-.my-box {
-  margin-bottom: 70px;
+<style scoped lang="less">
+@import '../styles/vars.less';
+.unread-alert {
+  border-radius: 20px;
+  font-size: 14px;
+  padding: 4px 10px;
+  background: @red;
+  color: #fff;
 }
 .icon {
   width: 24px;
@@ -156,6 +165,11 @@ export default {
 .logout {
   display: block;
   text-align: center;
-  color: #FE3824;
+  color: @red;
+}
+.register {
+  display: block;
+  text-align: center; 
+  color: @green;
 }
 </style>

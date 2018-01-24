@@ -1,6 +1,16 @@
 <template>
-  <div class="container">
+  <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
+      v-show="!$route.meta.headerHidden"
+      @on-click-more="showActions=true"
+      :style="{
+        width: '100%',
+        position: 'fixed', // lay over the default
+        left:'0',
+        top:'0',
+        'z-index':'100'
+        }"
+      slot="header"
       :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
       :class="[(pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''), {'fixedHead':$route.name === 'LotterRecord'}]"
       :left-options="{showBack: $route.meta.showBack || false}">
@@ -13,37 +23,47 @@
         class="logo"
         slot="overwrite-left"
         >
-        <img :src="logo" v-if="logo" height="32" />
+        <img :src="logoSrc" v-if="logoSrc" height="32" />
       </div>
       <div
-        v-if="!this.userLoading && showActions && !user.username"
+        v-if="showLinks"
         class="actions"
         slot="right">
-        <router-link to="/login">登录</router-link>
-        <router-link to="/register">注册</router-link>
-        <a style="color: deepskyblue">试玩</a>
+        <router-link class="link" to="/login">登录</router-link>
+        <router-link class="link" to="/register">注册</router-link>
+        <a class="link blue" @click.native="tryDemo">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
-    <tabbar v-show="!$route.meta.tabbarHidden" class="tabbar">
+    <tabbar
+      slot="bottom"
+      v-show="!$route.meta.tabbarHidden"
+      class="tabbar">
       <tabbar-item
+        :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="$route.name === menu.route"
+        :selected="$route.path.indexOf(menu.link) === 0"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-  </div>
+    <actionsheet
+      show-cancel
+      v-model="showActions"
+      :menus="actionMenus"
+      @on-click-menu.native="triggerAction"></actionsheet>
+  </view-box>
 </template>
 
 <script>
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading } from 'vux'
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { gethomePage } from './api'
+import { getToken } from './api'
 import Icon from 'vue-awesome/components/Icon.vue'
+import axios from 'axios'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
 import './styles/fonts/icons.css'
@@ -52,6 +72,7 @@ export default {
   name: 'app',
   data () {
     return {
+      showActions: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -71,42 +92,119 @@ export default {
         label: this.$t('my.name'),
         icon: 'icon-my',
         link: '/my',
-        route: 'My'
+        route: 'My',
+        unreadBadge: true
       }],
       logo: '',
-      userLoading: true
+      userLoading: true,
+      error: ''
     }
   },
   computed: {
+    actionMenus () {
+      return this.user.account_type === 0 ? [{
+        label: '立即注册',
+        link: '/register'
+      }, {
+        label: '退出登录',
+        action: 'logout'
+      }] : [{
+        label: '立即充值',
+        link: '/fin/recharge'
+      }, {
+        label: '查看注单',
+        link: '/fin/bet_record'
+      }, {
+        label: '申请取款',
+        link: '/my/withdraw'
+      }, {
+        label: '联系客服',
+        link: this.$store.state.systemConfig.global_preferences.customer_service_url
+      }]
+    },
     ...mapGetters([
       'user'
     ]),
     ...mapState({
       isLoading: state => state.isLoading
     }),
-    showActions () {
-      return !['Login'].includes(this.$route.name)
+    unread () {
+      return this.$store.state.unread
+    },
+    showLinks () {
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
+    },
+    logoSrc () {
+      return this.$store.state.systemConfig.homePageLogo
+    }
+  },
+  methods: {
+    triggerAction (key, item) {
+      if (item) {
+        if (item.action) {
+          return this.$store.dispatch(item.action)
+        }
+        this.$router.push(item.link)
+      }
+    },
+    tryDemo () {
+      this.$store.dispatch('tryDemo').then(result => {
+        this.$router.push({ name: 'Home' })
+        this.$store.dispatch('fetchUser')
+      }).catch(error => {
+        this.error = error
+      })
+    },
+    replaceToken () {
+      return new Promise((resolve, reject) => {
+        let refreshToken = this.$cookie.get('refresh_token')
+        if (!refreshToken) {
+          return
+        }
+        getToken(refreshToken).then(res => {
+          let expires = new Date(res.expires_in)
+          this.$cookie.set('access_token', res.access_token, {
+            expires: expires
+          })
+          this.$cookie.set('refresh_token', res.refresh_token, {
+            expires: expires
+          })
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+          resolve()
+        })
+      })
+    },
+    pollUnread () {
+      this.unreadInterval = setInterval(() => {
+        if (!this.$cookie.get('access_token')) {
+          clearInterval(this.unreadInterval)
+        } else {
+          this.$store.dispatch('fetchUnread')
+        }
+      }, 10000)
+    },
+    refresh () {
+      location.reload()
     }
   },
   created () {
-    gethomePage()
-      .then(res => {
-        this.logo = res.icon
+    if (this.$cookie.get('access_token')) {
+      this.$store.dispatch('fetchUser').then(() => {
+        this.pollUnread()
+      }, errRes => {
+        this.performLogin()
+      }).catch(() => {
+        this.performLogin()
       })
-    this.$store.dispatch('fetchUser')
-      .then(res => {
-        this.userLoading = false
-      })
-
+    }
     let refreshTokenInterval
     setIndicator(() => {
       refreshTokenInterval = window.setInterval(() => {
         if (this.replaceToken) {
           this.replaceToken().then(() => {
-            this.getMessageCount()
           }).catch(error => {
             Promise.resolve(error)
           })
@@ -116,11 +214,6 @@ export default {
       window.clearInterval(refreshTokenInterval)
     })
   },
-  methods: {
-    refresh () {
-      location.reload()
-    }
-  },
   components: {
     XHeader,
     Tabbar,
@@ -128,23 +221,20 @@ export default {
     Group,
     Cell,
     Loading,
-    Icon
+    Icon,
+    ViewBox,
+    Actionsheet
   }
 }
 </script>
 
 <style lang="less">
-
 @import '~vux/src/styles/reset.less';
-@import './styles/base.css';
-
-.icon {
-  width: 24px;
-  margin-right: 10px;
-  font-size: 20px;
-  display: inline-block;
-  vertical-align: middle;
-}
+@import './styles/theme.less';
+@import './styles/base.less';
+</style>
+<style lang="less" scoped>
+@import './styles/vars.less';
 .tabbar {
   position: fixed;
 }
@@ -152,30 +242,24 @@ export default {
   position: absolute;
   top: -8px;
 }
-.bg {
-  background-color: inherit!important;
-}
-.container {
-  padding-bottom: 55px;
-  .repeat-icon {
-    color: #FFFFFF;
-  }
-  .vux-header .vux-header-right {
-    .actions {
-      position: relative;
-      top: -5px;
-      right: -5px;
-      a{
-        color: #666;
-        padding: 4px 10px;
-        border-radius: 2px;
+.vux-header .vux-header-right {
+  .actions {
+    position: relative;
+    top: -5px;
+    right: -5px;
+    .link {
+      color: #9b9b9b;
+      padding: 4px 10px;
+      border-radius: 2px;
+      &.blue {
+        color: @azul
       }
     }
   }
   .fixedHead {
-  position: fixed;
-  width: 100%;
-  z-index: 100;
-}
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+  }
 }
 </style>

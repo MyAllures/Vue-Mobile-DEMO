@@ -11,6 +11,7 @@ export default {
     confirm_password: 'Confirm Password',
     login: 'Login',
     register: 'Register',
+    register_now: 'Register now',
     try: 'Try',
     bank: 'Withdrawal Account',
     real_name: 'Real Name',
@@ -42,7 +43,10 @@ export default {
     announcement: 'Announcement'
   },
   game: {
-    name: 'Game'
+    betrecord: 'Look Betrecord',
+    name: 'Game',
+    pay: 'Pay Right Away',
+    nopay: 'Nopay'
   },
   fin: {
     name: 'Finance',
@@ -64,7 +68,10 @@ export default {
     depositor: 'Depositor',
     deposited_at: 'Deposited at',
     memo: 'Memo',
-    amount: 'Amount'
+    amount: 'Amount',
+    bank_name: 'Bank name',
+    bank_account: 'Bank Account',
+    receiver: 'Payee'
   },
   validate: {
     username_validate: 'User name should be 6-15 digit or character',
@@ -123,6 +130,21 @@ export default {
     w_new: 'New withdraw password',
     w_repeat: 'Repeat withdraw password'
   },
+  withdraw: {
+    title: 'Withdrawal',
+    submit: 'submit',
+    amount: 'Withdrawal amount',
+    amount_hint: 'Please enter the withdrawal amount',
+    password: 'Withdrawals password',
+    password_hint: 'Please enter the password',
+    limit: 'Withdrawal limit',
+    fee: 'Fee',
+    balance_after: 'Account balance remaining is expected',
+    bank_required: 'Please first create withdrawal bank information',
+    balance_not_enough: 'Insufficient balance',
+    success: 'Withdrawals have been submitted',
+    apply: 'Apply for withdrawal'
+  },
   profile: {
     title: 'My Account',
     letter: 'Member messages',
@@ -176,5 +198,15 @@ export default {
     bankinfo_confirm: 'Are you sure？If you want to update bank info, please contact custom service',
     bankinfo_update_tip: 'Please contact our custom service to update your bank info',
     profile_hint: 'If you need to modify your real name or mobile phone number, please contact customer service'
+  },
+  common: {
+    result_period: 'Period',
+    total: 'Total'
+  },
+  action: {
+    submit: 'Submit',
+    reset: 'Reset',
+    confirm: 'Confirm',
+    cancel: 'Cancel'
   }
 }

@@ -27,8 +27,26 @@ export function gethomePage () {
   return axios.get(urls.homePage)
 }
 
-export function getGameCategory () {
+export function fetchGames () {
   return axios.get(urls.games)
+}
+
+export function fetchCategories (gameId) {
+  return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
+}
+
+export function fetchPlaygroup (categoryId) {
+  return axios.get(`${urls.playgroup}?&category=${categoryId}`)
+}
+
+export function fetchSchedule (gameId) {
+  return axios.get(`${urls.schedule}?&game=${gameId}`)
+}
+
+export function placeBet (data) {
+  return axios.post(urls.betrecord, data, {
+    'Content-Type': 'application/json'
+  })
 }
 
 export function getPromotions () {
@@ -84,10 +102,6 @@ export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}`)
 }
 
-export function fetchGames () {
-  return axios.get(urls.games)
-}
-
 export function fetchGameResult (gameId) {
   return axios.get(`${urls.game_result}?game=${gameId}&opt_expand=next`)
 }
@@ -116,12 +130,16 @@ export function changeUserInformation (id, member) {
   return axios.put(urls.user + member.id + '/', member)
 }
 
-export function noMessages (message) {
+export function fetchMessages (limit, page) {
+  return axios.get(urls.messages + `?limit=${limit}&offset=${page * limit}`)
+}
+
+export function readMessage (message) {
   return axios.put(urls.messages + '' + message.id + '/')
 }
 
-export function unRead () {
-  return axios.get(urls.messageCount)
+export function fetchUnread () {
+  return axios.get(urls.unread)
 }
 
 export function onlinepaySuccess (transactionId) {
@@ -140,4 +158,21 @@ export function getGameData (codeType, dataTime) {
 export function getMoreGameData (codeType, dataTime, limit) {
   let url = urls.gamehistory + '?game_code=' + codeType + '&limit=30&date=' + dataTime + '&game_code=' + codeType + '&offset=' + limit
   return axios.get(url)
+}
+
+export function fetchStatistic (code) {
+  return axios.get(`${urls.statistic}?game_code=${code}`)
+}
+
+export function getToken (oldToken) {
+  if (!oldToken) {
+    return
+  }
+  return axios.post(urls.refresh_token, {
+    refresh_token: oldToken
+  }).then(
+    res => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      return res
+    })
 }

@@ -11,6 +11,7 @@ export default {
     confirm_password: '确认密码',
     login: '登录',
     register: '注册',
+    register_now: '立即注册',
     try: '试玩',
     bank: '取款账号',
     real_name: '真实姓名',
@@ -34,7 +35,7 @@ export default {
     denied: '拒绝',
     next_step: '下一步',
     submit: '送出',
-    nomore_data: '没有资料啰'
+    nomore_data: '~'
   },
   home: {
     name: '首页',
@@ -43,7 +44,10 @@ export default {
     recentgame: '最近玩过'
   },
   game: {
-    name: '游戏'
+    betrecord: '查看注单',
+    name: '游戏',
+    pay: '立即充值',
+    nopay: '未结'
   },
   fin: {
     name: '财务',
@@ -200,5 +204,15 @@ export default {
     bankinfo_confirm: '确认提交银行资讯吗？首次提交之后不可自行更改，如需更改，需联系客服',
     bankinfo_update_tip: '如需更改银行资讯请联系客服',
     profile_hint: '如需修改真实姓名或手机号码请联系客服'
+  },
+  common: {
+    result_period: '期',
+    total: '总和'
+  },
+  action: {
+    submit: '提交',
+    reset: '重置',
+    confirm: '确定',
+    cancel: '取消'
   }
 }
