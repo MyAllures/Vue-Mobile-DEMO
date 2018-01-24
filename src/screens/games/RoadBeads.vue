@@ -29,7 +29,7 @@
           @on-item-click="changeActiveHistoryTag(item)"
           :key="index"
           :selected="item.key === activeHistoryTag">
-          <span :class="{'ellipse': currentHistoryTag.length > 5}">{{item.key}}</span>
+          <span :class="{'ellipsis': currentHistoryTag.length > 5}">{{item.key}}</span>
         </tab-item>
       </tab>
     </div>
@@ -442,7 +442,7 @@ export default {
   &.full-width {
     width: 100%;
   }
-  .ellipse {
+  .ellipsis {
     white-space: nowrap;
     display: block;
     width: 75px;
