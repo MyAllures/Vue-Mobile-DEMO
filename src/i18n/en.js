@@ -29,6 +29,7 @@ export default {
     loading: 'Loading',
     load_more: 'Load More',
     no_more: 'No More',
+    lotteryResult: 'lottery Result',
     success: 'Success',
     failed: 'Failed',
     ongoing: 'Ongoing',

@@ -1,7 +1,7 @@
 <template>
   <div>
     <x-header  class='lotteryHeader'>
-      {{$t('misc.no_more')}}
+      {{$t('misc.lotteryResult')}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
         <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
       </a>
