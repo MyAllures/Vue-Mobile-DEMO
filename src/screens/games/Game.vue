@@ -26,10 +26,7 @@
         :amount="amount"
         :playReset="playReset"
         @updatePlays="updatePlays"
-<<<<<<< HEAD
-=======
         @resetPlays="playReset = !playReset"
->>>>>>> b5d0ab29eba5f2229733b927e9d878069777d2d8
         />
       </div>
     </div>
@@ -60,15 +57,6 @@
         <div class="title">确认注单</div>
         <ul>
           <li
-<<<<<<< HEAD
-            v-for="play in currentPlays"
-            :key="play.id">
-            {{`【${play.display_name}】 @${play.odds} X `}}<span class="amount">{{amount | currency('￥')}}</span></li>
-        </ul>
-        <div class="total">
-          【合计】总注数：{{currentPlays.length}}总金额：
-          <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
-=======
             v-for="(play, index) in currentPlays"
             :key="index">
             {{`【${play.display_name}】 @${play.odds} X `}}
@@ -85,7 +73,6 @@
             class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
           <span v-else
             class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
->>>>>>> b5d0ab29eba5f2229733b927e9d878069777d2d8
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
@@ -195,17 +182,8 @@ export default {
       if (!categories.length) {
         this.$store.dispatch('fetchCategories', this.gameId)
           .then((res) => {
-<<<<<<< HEAD
-            if (res && res.length) {
-              this.$router.push(`/game/${this.gameId}/${res[0].name}`)
-            } else {
-              this.performLogin()
-            }
-          })
-=======
             this.$router.push(`/game/${this.gameId}/${res[0].name}`)
           }).catch(() => {})
->>>>>>> b5d0ab29eba5f2229733b927e9d878069777d2d8
       } else {
         this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
       }
@@ -271,11 +249,7 @@ export default {
       const validedPlays = _.flatMap(
         this.activePlays,
         play => {
-<<<<<<< HEAD
-          if (play.combinations && !play.selectedOptions) {
-=======
           if (play.combinations && !play.activedOptions) {
->>>>>>> b5d0ab29eba5f2229733b927e9d878069777d2d8
             return _.map(play.combinations, combination => {
               return {
                 ...play,
@@ -291,15 +265,9 @@ export default {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
-<<<<<<< HEAD
-        if (play.selectedOptions) {
-          let options = []
-          _.each(play.selectedOptions, option => {
-=======
         if (play.activedOptions) {
           let options = []
           _.each(play.activedOptions, option => {
->>>>>>> b5d0ab29eba5f2229733b927e9d878069777d2d8
             options.push(option.num)
             optionDisplayNames.push(option.displayName || option.num)
           })
