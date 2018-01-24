@@ -31,6 +31,12 @@ export function createStore () {
           id: '176-连码',
           component: 'WithCode',
           options: Array.from(Array(11).keys())
+        },
+        {
+          // 广东11选5 直选
+          id: '176-直选',
+          component: 'gd11x5Seq',
+          options: Array.from(Array(11).keys())
         }
       ]
     },

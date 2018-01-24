@@ -35,7 +35,7 @@
         <flexbox>
           <flexbox-item>
             <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-            <div class="playCount">已选中{{activePlays.length}}注</div>
+            <div class="playCount">已选中{{currentPlays.length}}注</div>
           </flexbox-item>
           <flexbox-item>
             <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
@@ -59,20 +59,21 @@
           <li
             v-for="(play, index) in currentPlays"
             :key="index">
-            {{`【${play.display_name}】 @${play.odds} X `}}
-            <span class="amount">{{amount | currency('￥')}}</span>
-            <div v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </div>
-            <div v-if="play.optionDisplayNames" class="combinations"> {{`组合数：${play.combinations.length}`}} </div>
+            <p class="detail">
+              {{`【${play.display_name}】 @${play.odds} X `}}
+              <span class="amount">{{amount | currency('￥')}}</span>
+            </p>
+            <p v-if="play.optionDisplayNames" class="options">{{`已选号码：${play.optionDisplayNames}`}}</p>
+            <p v-if="play.optionDisplayNames" class="combinations">{{`组合数：${play.combinations.length}`}}</p>
           </li>
         </ul>
 
         <div class="total">
           <span class="bet-num">【合计】总注数：{{currentPlays.length}}</span>
           总金额：
-          <span v-if="activePlays.length && activePlays[0].isCustom"
-            class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
-          <span v-else
-            class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
+          <span v-if="validPlays.length && validPlays[0].isCustom"
+            class="amount">{{validPlays[0].combinations.length * amount | currency('￥')}}</span>
+          <span v-else class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
@@ -140,7 +141,7 @@ export default {
       currentPlays: [],
       dialogVisible: false,
       amount: parseInt(localStorage.getItem('amount')) || 1,
-      activePlays: [],
+      validPlays: [],
       playReset: false,
       showMessage: false,
       errors: '',
@@ -246,22 +247,7 @@ export default {
       }
     },
     openDialog () {
-      const validedPlays = _.flatMap(
-        this.activePlays,
-        play => {
-          if (play.combinations && !play.activedOptions) {
-            return _.map(play.combinations, combination => {
-              return {
-                ...play,
-                combinations: combination
-              }
-            })
-          } else {
-            return [play]
-          }
-        }
-      )
-      this.currentPlays = _.values(validedPlays.map(play => {
+      this.currentPlays = _.values(this.validedPlays.map(play => {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
@@ -331,7 +317,21 @@ export default {
         })
     },
     updatePlays (plays) {
-      this.activePlays = plays
+      this.validPlays = _.flatMap(
+        plays,
+        play => {
+          if (play.combinations && !play.activedOptions) {
+            return _.map(play.combinations, combination => {
+              return {
+                ...play,
+                combinations: combination
+              }
+            })
+          } else {
+            return [play]
+          }
+        }
+      )
     }
   }
 }

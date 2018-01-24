@@ -42,6 +42,7 @@ import _ from 'lodash'
 import { placeBet } from '../../api'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
+const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -70,7 +71,8 @@ export default {
     GridItem,
     Tab,
     TabItem,
-    WithCode
+    WithCode,
+    gd11x5Seq
   },
   data () {
     return {
