@@ -29,7 +29,7 @@
           @on-item-click="changeActiveHistoryTag(item)"
           :key="index"
           :selected="item.key === activeHistoryTag">
-          <span :style="getOverflowStyle">{{item.key}}</span>
+          <span :class="{ 'ellipse': currentHistoryTag.length > 5 }">{{item.key}}</span>
         </tab-item>
       </tab>
     </div>
@@ -234,11 +234,6 @@ export default {
     }
   },
   computed: {
-    getOverflowStyle () {
-      if (this.currentHistoryTag.length > 5) {
-        return {whiteSpace: 'nowrap', display: 'block', width: '75px', textOverflow: 'ellipsis', overflow: 'hidden'}
-      }
-    },
     currentTab () {
       return this.statisticsMap[this.activeName]
     },
@@ -446,6 +441,13 @@ export default {
   overflow: scroll;
   &.full-width {
     width: 100%;
+  }
+  .ellipse {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 
