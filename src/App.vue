@@ -11,8 +11,7 @@
         'z-index':'100'
         }"
       slot="header"
-      :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
-      :class="[(pageName && pageName.indexOf('Home') !== -1 ? 'bg' : ''), {'fixedHead':$route.name === 'LotterRecord'}]"
+      :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
@@ -31,7 +30,7 @@
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link blue" @click.native="tryDemo">试玩</a>
+        <a class="link blue" @click="tryDemo">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
@@ -54,7 +53,7 @@
       show-cancel
       v-model="showActions"
       :menus="actionMenus"
-      @on-click-menu.native="triggerAction"></actionsheet>
+      @on-click-menu="triggerAction"></actionsheet>
   </view-box>
 </template>
 
@@ -66,7 +65,6 @@ import Icon from 'vue-awesome/components/Icon.vue'
 import axios from 'axios'
 import 'vue-awesome/icons'
 import { setIndicator } from './utils'
-import './styles/fonts/icons.css'
 
 export default {
   name: 'app',
@@ -185,9 +183,6 @@ export default {
           this.$store.dispatch('fetchUnread')
         }
       }, 10000)
-    },
-    refresh () {
-      location.reload()
     }
   },
   created () {
@@ -255,11 +250,6 @@ export default {
         color: @azul
       }
     }
-  }
-  .fixedHead {
-    position: fixed;
-    width: 100%;
-    z-index: 100;
   }
 }
 </style>
