@@ -1,5 +1,11 @@
 <template>
   <div>
+    <x-header  class='lotteryHeader'>
+      {{$t('misc.no_more')}}
+      <a v-if='$route.name === "LotterRecord"' slot="right">
+        <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
+      </a>
+    </x-header>
     <div class="record-box">
       <div class="chooseHead">
         <group class="choose-type">
@@ -84,14 +90,14 @@
           </td> 
         </tr>
       </table>
-      <div class="addMore" @click='addMore' v-if="firstLimit >= 30">加载更多</div>
-      <div class="addMore" v-if="firstLimit < 30">无更多资料...</div>
+      <div class="addMore" @click='addMore' v-if="firstLimit >= 30">{{$t('misc.load_more')}}</div>
+      <divider class="noMore" v-if="firstLimit < 30">{{$t('misc.no_more')}}</divider>
     </div>
   </div>
 </template>
 <script>
-import {Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput} from 'vux'
-import { getGameMenu, getGameData, getMoreGameData } from '../api'
+import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, Divider} from 'vux'
+import { fetchGames, getGameData, getMoreGameData } from '../api'
 import _ from 'lodash'
 export default {
   data () {
@@ -628,7 +634,7 @@ export default {
     }
   },
   created () {
-    getGameMenu().then((response) => {
+    fetchGames().then((response) => {
       this.games = response
       if (!response) {
         return
@@ -715,6 +721,7 @@ export default {
   watch: {
     game (val) {
       this.limit = 0
+      document.getElementById('vux_view_box_body').scrollTop = 0
       for (let i = 0, l = this.games.length; i < l; i++) {
         if (this.games[i].display_name === val) {
           this.codeType = this.games[i].code
@@ -757,9 +764,14 @@ export default {
         this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
       })
+    },
+    refresh () {
+      this.getGameList()
+      document.getElementById('vux_view_box_body').scrollTop = 0
     }
   },
   components: {
+    XHeader,
     Flexbox,
     FlexboxItem,
     Datetime,
@@ -767,11 +779,22 @@ export default {
     dateFormat,
     TabItem,
     Group,
-    XInput
+    XInput,
+    Divider
   }
 }
 </script>
 <style lang="scss">
+.lotteryHeader {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 46px;
+  .repeat-icon {
+    color: #FFFFFF;
+  }
+}
 .record-box{
   background: white;
   .vux-no-group-title{
@@ -911,9 +934,8 @@ export default {
     top: 44px;
     border-collapse:collapse;
   }
-  .addMore {
+  .addMore, .noMore{
       text-align: center;
-      height: 40px;
       position: relative;
       top: 44px;
       font-size: 14px;

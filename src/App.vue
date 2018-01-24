@@ -1,7 +1,7 @@
 <template>
   <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
-      v-show="!$route.meta.headerHidden"
+      v-show="!$route.meta.headerHidden && $route.name !='LotterRecord'"
       @on-click-more="showActions=true"
       :style="{
         width: '100%',
@@ -14,9 +14,7 @@
       :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
-      <a v-if='$route.name === "LotterRecord"' slot="right">
-        <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
-      </a>
+      
       <div
         v-if="!$route.meta.showBack"
         class="logo"
@@ -176,9 +174,6 @@ export default {
           resolve()
         })
       })
-    },
-    refresh () {
-      history.go(0)
     },
     pollUnread () {
       this.unreadInterval = setInterval(() => {

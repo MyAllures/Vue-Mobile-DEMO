@@ -28,6 +28,7 @@ export default {
     cancel: 'Cancel',
     loading: 'Loading',
     load_more: 'Load More',
+    no_more: 'No More',
     success: 'Success',
     failed: 'Failed',
     ongoing: 'Ongoing',
