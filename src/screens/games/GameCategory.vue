@@ -274,8 +274,8 @@ export default {
 }
 .playgroup-title {
   background: #f5f5f5;
-  height: 40px;
-  line-height: 40px;
+  height: 32px;
+  line-height: 32px;
   text-align: center;
   color: #999;
 }
@@ -306,6 +306,9 @@ export default {
 }
 .weui-grids {
   margin-right: -1px;
+}
+.weui-grid {
+  padding: 13px 10px;
 }
 .gameplays {
   margin-top: -1px;
