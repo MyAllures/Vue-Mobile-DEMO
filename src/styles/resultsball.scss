@@ -114,3 +114,9 @@ $racing_length: length($results_racing);
   }
 }
 
+@for $index from 0 through 27 {
+  .pcdd_pl-m_sc_#{$index} {
+    @extend %plain-ball;
+  }
+}
+

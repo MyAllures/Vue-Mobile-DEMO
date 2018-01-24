@@ -10,22 +10,23 @@
       </ul>
     </div>
     <div
-        v-if="!customPlayGroupsSetting"
-        v-for="(group, index) in groups"
-        :key="'group' + index">
-        <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
-        <grid v-for="(groupPlays, index) in group.plays" :key="index">
-          <grid-item
-            :class="['play', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
-            v-for="play in groupPlays"
-            :key="play.id + 'play'"
-            @on-item-click="toggleActive(plays[play.id], $event)">
-            <div class="play-area">
-              <span :class="['play-name', play.code]">{{play.display_name}}</span>
-              <span class="play-odds">{{play.odds}}</span>
-            </div>
-          </grid-item>
-        </grid>
+      class="gameplays"
+      v-if="!customPlayGroupsSetting"
+      v-for="(group, index) in groups" 
+      :key="'group' + index">
+      <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
+      <grid :key="index" :cols="group.col_num">
+        <grid-item
+          :class="['play', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
+          v-for="play in group.plays"
+          :key="play.id + 'play'"
+          @on-item-click="toggleActive(plays[play.id], $event)">
+          <div class="play-area">
+            <span :class="['play-name', play.code]">{{play.display_name}}</span>
+            <span class="play-odds">{{play.odds}}</span>
+          </div>
+        </grid-item>
+      </grid>
     </div>
     <component v-else
       :is="customPlayGroupsSetting.component"
@@ -198,17 +199,18 @@ export default {
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
         this.tabKeys.push(tabName)
-        const groups = tab.groups
 
+        const groups = tab.groups
         groups.forEach(group => {
+          if (!group.plays) {
+            return
+          }
           if (group.name) {
             groupName = group.name
           }
-          group.plays.forEach(groupPlays => {
-            groupPlays.forEach(play => {
-              plays[play.id] = play
-              plays[play.id]['group'] = groupName
-            })
+          group.plays.forEach(play => {
+            plays[play.id] = play
+            plays[play.id]['group'] = groupName
           })
         })
         tabs[tabName] = groups
@@ -271,11 +273,11 @@ export default {
   }
 }
 .playgroup-title {
-  height: 50px;
-  line-height: 50px;
+  background: #f5f5f5;
+  height: 40px;
+  line-height: 40px;
   text-align: center;
-  font-size: 14px;
-  color: #4a4a4a;
+  color: #999;
 }
 
 .play {
@@ -295,11 +297,20 @@ export default {
   align-items: center;
 }
 .play-name {
-  font-size: 18px;
-  color: #000;
+  font-size: 20px;
+  color: #444;
 }
 .play-odds {
-  font-size: 14px;
-  color: #4a4a4a;
+  font-size: 15px;
+  color: #999;
+}
+.weui-grids {
+  margin-right: -1px;
+}
+.gameplays {
+  margin-top: -1px;
+  /deep/ .weui-grids:after {
+    border: none;
+  }
 }
 </style>
