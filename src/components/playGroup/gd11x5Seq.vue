@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <div class="odds">赔率：{{activePlay.odds}}</div>
+  <div class="gameplays">
+    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
     <div v-for="(group, index) in showViewCustomOptionsGroup" :key="index">
       <div class="playgroup-title">{{group.name}}</div>
-      <grid v-for="(chunkOptions, index) in group.options" :key="index">
+      <grid :cols="chunkOptions.length === 2 ? 2 : 3" v-for="(chunkOptions, index) in group.options" :key="index">
         <grid-item
           :class="['play', {active: option.active && !gameClosed}]"
           v-for="(option, index) in chunkOptions"
@@ -82,7 +82,7 @@ export default {
       return _.map(_.flatten(this.activedOptions), option => option.num)
     },
     activePlay () {
-      return this.plays[0][0]
+      return this.plays[0]
     },
     showViewCustomOptionsGroup () {
       return this.viewCustomOptionsGroup.slice(0, this.activePlay.rules.min_opts)
@@ -152,42 +152,12 @@ export default {
 
 <style lang="less" scoped>
 @import "../../styles/vars.less";
+@import "../../styles/playgroup.less";
 .odds {
   width: 100%;
   line-height: 40px;
   height: 40px;
   text-align: center;
   font-size: 14px;
-}
-.playgroup-title {
-  height: 50px;
-  line-height: 50px;
-  text-align: center;
-  font-size: 14px;
-  color: #4a4a4a;
-}
-.play {
-  &.active {
-    background: @azul;
-    .play-name {
-      color: #fff;
-    }
-    .play-odds {
-      color: #fff;
-    }
-  }
-}
-.play-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.play-name {
-  font-size: 18px;
-  color: #000;
-}
-.play-odds {
-  font-size: 14px;
-  color: #4a4a4a;
 }
 </style>

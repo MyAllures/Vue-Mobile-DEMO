@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div class="odds">赔率：{{activePlay.odds}}</div>
-    <grid v-for="(chunkOptions, index) in viewCustomOptions" :key="index">
+  <div class="gameplays">
+    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <grid :cols="options.length === 2 ? 2 : 3" v-for="(options, index) in viewCustomOptions" :key="index">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"
-        v-for="(option, index) in chunkOptions"
+        v-for="(option, index) in options"
         :key="index"
         @on-item-click="toggleActive(option)">
         <div class="play-area">
@@ -46,14 +46,8 @@ export default {
         active: false
       })
     })
-    const viewCustomOptions = _.chunk(customOptions, 3)
-    if (viewCustomOptions[viewCustomOptions.length - 1].length === 1) {
-      // 將最後一組與其前一組平分
-      viewCustomOptions[viewCustomOptions.length - 1].unshift(viewCustomOptions[viewCustomOptions.length - 2].pop())
-    }
     return {
       customOptions,
-      viewCustomOptions,
       combinations: [],
       valid: false
     }
@@ -65,7 +59,17 @@ export default {
       })
     },
     activePlay () {
-      return this.plays[0][0]
+      return this.plays[0]
+    },
+    viewCustomOptions () {
+      let length = this.customOptions.length
+      if (length % 3 === 1) {
+        return [this.customOptions.slice(0, length - 4), this.customOptions.slice(length - 4, length - 2), this.customOptions.slice(length - 2, length)]
+      } else if (length % 3 === 2) {
+        return [this.customOptions.slice(0, length - 2), this.customOptions.slice(length - 2, length)]
+      } else {
+        return [this.customOptions]
+      }
     }
   },
   watch: {
@@ -117,35 +121,12 @@ export default {
 
 <style lang="less" scoped>
 @import "../../styles/vars.less";
+@import "../../styles/playgroup.less";
 .odds {
   width: 100%;
   line-height: 40px;
   height: 40px;
   text-align: center;
   font-size: 14px;
-}
-.play {
-  &.active {
-    background: @azul;
-    .play-name {
-      color: #fff;
-    }
-    .play-odds {
-      color: #fff;
-    }
-  }
-}
-.play-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.play-name {
-  font-size: 18px;
-  color: #000;
-}
-.play-odds {
-  font-size: 14px;
-  color: #4a4a4a;
 }
 </style>

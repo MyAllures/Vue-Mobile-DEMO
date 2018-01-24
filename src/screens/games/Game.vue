@@ -61,16 +61,19 @@
               <span class="amount">{{amount | currency('￥')}}</span>
             </p>
             <p v-if="play.optionDisplayNames" class="options">{{`已选号码：${play.optionDisplayNames}`}}</p>
-            <p v-if="play.optionDisplayNames" class="combinations">{{`组合数：${play.combinations.length}`}}</p>
           </li>
         </ul>
-
         <div class="total">
           <span class="bet-num">【合计】总注数：{{currentPlays.length}}</span>
-          总金额：
-          <span v-if="validPlays.length && validPlays[0].isCustom"
-            class="amount">{{validPlays[0].combinations.length * amount | currency('￥')}}</span>
-          <span v-else class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
+          <template v-if="activePlays.length && activePlays[0].isCustom">
+            总金额：
+            <span class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
+            组合数：{{activePlays[0].combinations.length}}
+          </template>
+          <template v-else>
+            总金额：
+            <span class="amount">{{validPlays.length * amount | currency('￥')}}</span>
+          </template>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
@@ -139,6 +142,7 @@ export default {
       dialogVisible: false,
       amount: parseInt(localStorage.getItem('amount')) || 1,
       validPlays: [],
+      activePlays: [],
       playReset: false,
       showMessage: false,
       errors: '',
@@ -314,6 +318,7 @@ export default {
         })
     },
     updatePlays (plays) {
+      this.activePlays = plays
       this.validPlays = _.flatMap(
         plays,
         play => {
@@ -465,8 +470,10 @@ export default {
       color: #000;
       li {
         text-align: left;
-        height: 25px;
-        line-height: 25px;
+        p {
+          height: 25px;
+          line-height: 25px;
+        }
       }
     }
     .total {
@@ -478,7 +485,8 @@ export default {
       }
     }
     .amount {
-      color: @red
+      color: @red;
+      margin-right: 10px;
     }
     .options,.combinations {
       width: 100%;
