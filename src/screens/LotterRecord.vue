@@ -1,13 +1,13 @@
 <template>
   <div>
-    <x-header  class='lotteryHeader'>
+    <x-header  class='lottery-header'>
       {{$t('misc.lotteryResult')}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
-        <icon scale="1" class='repeat-icon' @click.native='refresh' name="repeat"></icon>
+        <icon scale="1" class='icon repeat-icon' @click.native='refresh' name="repeat"></icon>
       </a>
     </x-header>
     <div class="record-box">
-      <div class="chooseHead">
+      <div class="choose-head">
         <group class="choose-type">
           <popup-radio :options="gameList" v-model="game">
             <template slot-scope="props" slot="each-item">
@@ -18,7 +18,7 @@
           </popup-radio>
         </group> 
         <group class="choose-date">
-          <icon class='calendars' scale="1" name="calendar"></icon>
+          <icon class='icon calendars' scale="1" name="calendar"></icon>
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
       </div>
@@ -45,40 +45,38 @@
                     class="loteryBg jspBg">{{loteryData}}</span>
 
                   <!-- 0开始^^^ball2 jsssc  cqssc pcdd xjssc tjssc jnd28-->
-                   <span v-if='codeType === "jsssc" || codeType === "cqssc" || codeType === "pcdd" || codeType === "xjssc" || codeType === "tjssc" || codeType === "jnd28"'
-                    :style="{background: 'url('+ '/src/assets/ball_2.png' +')',
-                    backgroundPositionY: - loteryData * 27 + 'px'}"
-                    class="loteryBg sscBg">{{loteryData}}</span>
+                   <span 
+                    v-if='codeType === "jsssc" || codeType === "cqssc" || codeType === "pcdd" || codeType === "xjssc" || codeType === "tjssc" || codeType === "jnd28"'
+                    class="loteryBg sscBg">{{~~loteryData}}</span>
 
                   <!-- 1开始 gdklsf  gd11x5 fc3d-->
-                  <span v-if='codeType === "gdklsf" || codeType === "gd11x5" || codeType === "fc3d"'
-                    :style="{background: 'url('+ '/src/assets/ball_1.png' +')',
-                    backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
-                    class="loteryBg sscBg">{{loteryData}}</span>
+                  <span 
+                    v-if='codeType === "gdklsf" || codeType === "gd11x5" || codeType === "fc3d"'
+                    class="loteryBg sscBg">{{~~loteryData}}</span>
 
                   <!-- cqlf -->
-                  <span v-if='codeType === "cqlf"'
-                    :style="{background: 'url('+ '/src/assets/ball_nc_top.png' +')',
-                    backgroundPositionY: - (loteryData - 1) * 33 + 'px'}"
-                    class="loteryBg cqlfBg">{{loteryData}}</span>
+                  <span 
+                    v-if='codeType === "cqlf"'
+                    class="loteryBg sscBg">{{~~loteryData}}</span>
 
                   <!-- jsk3 -->
-                  <span v-if='codeType === "jsk3"'
+                  <span 
+                    v-if='codeType === "jsk3"'
                     :style="{background: 'url('+ '/src/assets/ball_4.png' +')',
                     backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
                     class="loteryBg jsk3">{{loteryData}}</span>  
 
                   <!-- hkl -->
-                  <span v-if='codeType === "hkl"'
-                  :style="{background: 'url('+ '/src/assets/ball_hk6.png' +')',
-                  backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
-                  class="loteryBg hkl">{{loteryData}}</span> 
+                  <span 
+                    v-if='codeType === "hkl"'
+                    :style="{background: 'url('+ '/src/assets/ball_hk6.png' +')',
+                    backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
+                    class="loteryBg hkl">{{~~loteryData}}</span> 
 
                   <!-- bjkl8 auluck8 -->
-                  <span v-if='codeType === "bjkl8" || codeType === "auluck8"'
-                  :style="{background: 'url('+ '/src/assets/ball_5_small.png' +')',
-                  backgroundPositionY: - (loteryData - 1) * 23 + 'px'}"
-                  class="loteryBg auluck">{{loteryData}}</span> 
+                  <span 
+                    v-if='codeType === "bjkl8" || codeType === "auluck8"'
+                    class="loteryBg auluck">{{~~loteryData}}</span> 
                 </span>
               </div>
               <div v-if='!codeKl' class="compareContent">
@@ -99,6 +97,8 @@
 import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, Divider} from 'vux'
 import { fetchGames, getGameData } from '../api'
 import _ from 'lodash'
+import Icon from 'vue-awesome/components/Icon'
+
 export default {
   data () {
     const TransformerTable =
@@ -778,6 +778,7 @@ export default {
     PopupRadio,
     dateFormat,
     TabItem,
+    Icon,
     Group,
     XInput,
     Divider
@@ -785,7 +786,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.lotteryHeader {
+.lottery-header {
   position: fixed;
   top: 0;
   z-index: 100;
@@ -800,7 +801,7 @@ export default {
   .vux-no-group-title{
     margin-top: 0;
   }
-  .chooseHead {
+  .choose-head {
     position: fixed;
     z-index: 100;
     width: 100%;
@@ -882,7 +883,7 @@ export default {
   .periodsNumber {
     width: 100%;
     line-height: 38px;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 14px;
     text-align: center;
     height: 25px;
@@ -945,7 +946,6 @@ export default {
     }
   .loteryBg {    
     display: inline-block; 
-    text-indent: -9999px;
   }
   .jspBg {
     margin-top: 8px;
@@ -953,35 +953,47 @@ export default {
     height: 20px;
     margin-right: 1px; 
     background-size: 20px 20px;
+    text-indent: -9999px;
   }
   .sscBg{
     margin-top: 4px;
-    width: 27px;
-    height: 27px;
-    background-size: 27px 27px;
+    border-radius: 100%;
+    background: radial-gradient(circle at 5px 5px, #fff, #ccc);
+    height: 22px;
+    width:22px;
+    color: black;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    margin-bottom: 1px; 
   }
   .cqlfBg {
     margin-top: 4px;
     width: 24px;
     height: 24px;
-    background-size: 32px 32px;
   }
   .hkl {
     width: 25px;
     height: 25px;
     margin-top: 5px;
-    background-size: 25px 25px;
+    text-indent: -9999px;
   }
   .jsk3 {
-    margin-top: 4px;
+    margin-top: 3px;
     width: 27px;
     height: 27px;
-    background-size: 27px 27px;
+    text-indent: -9999px;
   }
   .auluck {
-    width: 21px;
-    height: 21px;
-    background-size: 21px 21px;
+    margin-top: 4px;
+    border-radius: 100%;
+    text-align: center;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    line-height: 18px;
+    color: black;
+    background: radial-gradient(circle at 5px 5px, #fff, #ccc);
   }
 }
 @media (max-width: 350px) {

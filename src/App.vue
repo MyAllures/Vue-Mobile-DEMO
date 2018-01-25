@@ -1,7 +1,7 @@
 <template>
   <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
-      v-show="!$route.meta.headerHidden && $route.name !='LotterRecord'"
+      v-show="!$route.meta.headerHidden"
       @on-click-more="showActions=true"
       :style="{
         width: '100%',
