@@ -66,7 +66,7 @@
         <swiper-item
           :key="'swiper-anmt' + index"
           v-for="(a, index) in announcements">
-          <p class="m-t">{{a.announcement}}</p>
+          <p class="m-t swiper-announcement">{{a.announcement}}</p>
         </swiper-item>
       </swiper>
     </x-dialog>
@@ -162,6 +162,12 @@ export default {
   /deep/ .vux-marquee-box {
     color: #666;
   }
+}
+
+.swiper-announcement {
+  display: inline-block;
+  height: 135px;
+  overflow: hidden;
 }
 .marquee-item {
   text-align: left;
