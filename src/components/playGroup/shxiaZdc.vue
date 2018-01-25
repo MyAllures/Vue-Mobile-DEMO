@@ -117,7 +117,7 @@ export default {
       this.$emit('updateCustomPlays', {
         activePlayId: this.activePlay ? this.activePlay.id : '',
         options: _.map(this.activedOptions, (option) => option.displayName),
-        combinations: 1,
+        combinations: ['1'],
         activedOptions: _.map(this.activedOptions, (option) => { return { num: option.displayName } }),
         valid: this.valid
       })
