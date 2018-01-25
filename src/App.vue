@@ -11,24 +11,23 @@
         'z-index':'100'
         }"
       slot="header"
-      :right-options="{showMore: $route.name != 'LotterRecord' && !!user.username}"
+      :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
-      
       <div
         v-if="!$route.meta.showBack"
         class="logo"
         slot="overwrite-left"
         >
         <img :src="logoSrc" v-if="logoSrc" height="32" />
-      </div>      
+      </div>
       <div
         v-if="showLinks"
         class="actions"
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link blue" @click="tryDemo">试玩</a>
+        <a class="link bold" @click="tryDemo">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
@@ -237,17 +236,18 @@ export default {
   position: absolute;
   top: -8px;
 }
+
 .vux-header .vux-header-right {
   .actions {
     position: relative;
     top: -5px;
     right: -5px;
     .link {
-      color: #9b9b9b;
+      color: #fff;
       padding: 4px 10px;
       border-radius: 2px;
-      &.blue {
-        color: @azul
+      &.bold {
+        font-weight: 700;
       }
     }
   }
