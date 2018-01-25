@@ -149,6 +149,7 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
+
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;
@@ -171,6 +172,6 @@ export default {
 .register {
   display: block;
   text-align: center;
-  color: @green;
+  color: @azul;
 }
 </style>

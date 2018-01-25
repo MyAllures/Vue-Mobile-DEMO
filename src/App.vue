@@ -27,7 +27,7 @@
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link blue" @click="tryDemo">试玩</a>
+        <a class="link bold" @click="tryDemo">试玩</a>
       </div>
     </x-header>
     <router-view></router-view>
@@ -243,11 +243,11 @@ export default {
     top: -5px;
     right: -5px;
     .link {
-      color: #9b9b9b;
+      color: #fff;
       padding: 4px 10px;
       border-radius: 2px;
-      &.blue {
-        color: @azul
+      &.bold {
+        font-weight: 700;
       }
     }
   }
