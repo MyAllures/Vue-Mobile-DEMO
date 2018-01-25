@@ -1,7 +1,7 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
     <!-- 头部 -->
-    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="showRightMenu = true">
+    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="handleSideBarShow">
       <x-icon
         slot="overwrite-left"
         type="navicon"
@@ -36,6 +36,13 @@ export default {
     return {
       sidebarShow: false, // 默认值
       showRightMenu: false
+    }
+  },
+  methods: {
+    handleSideBarShow () {
+      this.$store.dispatch('fetchUser').then(res => {
+        this.showRightMenu = true
+      })
     }
   },
   computed: {
