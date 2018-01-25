@@ -43,6 +43,7 @@ import _ from 'lodash'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
+const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -72,7 +73,8 @@ export default {
     Tab,
     TabItem,
     WithCode,
-    gd11x5Seq
+    gd11x5Seq,
+    shxiaZdc
   },
   data () {
     return {

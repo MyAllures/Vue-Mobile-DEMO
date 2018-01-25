@@ -43,3 +43,25 @@
     border: none;
   }
 }
+
+// playicon
+//hkl
+
+.hk6ball {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin-left: 5px;
+  background-image: url('../assets/ball_hk6.png');
+  vertical-align: middle;
+}
+
+.hk6-loop(@i) when (@i < 50) {
+  .hk6-loop(@i + 1);
+  .hkl-@{i} {
+    &:extend(.hk6ball);
+    background-position: 0 (-27px * (@i - 1));;
+  }
+}
+
+.hk6-loop(1);
