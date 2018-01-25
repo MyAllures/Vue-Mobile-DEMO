@@ -11,7 +11,8 @@ export default {
     return _.find(state.games, game => (game.id + '') === id)
   },
   categoriesByGameId: (state, getters) => gameId => {
-    return _.filter(state.categories, item => (item.game_id + '') === gameId)
+    let arr = _.filter(state.categories, item => (item.game_id + '') === gameId)
+    return arr
   },
   categoryByName: (state, getters) => categoryName => {
     return _.find(state.categories, item => (item.name) === categoryName)
