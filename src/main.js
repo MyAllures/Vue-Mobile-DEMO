@@ -10,11 +10,13 @@ import { sync } from 'vuex-router-sync'
 import { gethomePage } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
+import { ToastPlugin } from 'vux'
 
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
+Vue.use(ToastPlugin, {position: 'top'})
 
 let navLang = navigator.language || navigator.userLanguage
 if (navLang === 'zh-CN' || navLang === 'zh-cn') {
@@ -59,10 +61,10 @@ const toLogin = function (router) {
   })
 }
 
-router.beforeEach((to, from, next) => {
-  store.commit(types.UPDATE_LOADING, {isLoading: true})
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   store.commit(types.UPDATE_LOADING, {isLoading: true})
+//   next()
+// })
 
 router.beforeEach((to, from, next) => {
   // fisrMacthed might be the top-level parent route of others
@@ -74,11 +76,17 @@ router.beforeEach((to, from, next) => {
       store.dispatch('fetchUser')
         .then(res => {
           // got user info
-          if (res.account_type === 0 && to.matched[0].path === '/account') {
-            toLogin(router)
-          } else {
-            next()
+          if (to.meta.trialDenied && res.account_type === 0) {
+            Vue.$vux.toast.show({
+              type: 'text',
+              text: '亲，注册会员以获得更多功能',
+              width: '15em',
+              position: 'middle'
+            })
+            router.push({name: 'Home'})
+            return
           }
+          next()
         })
         .catch(error => {
           // can't get user info
