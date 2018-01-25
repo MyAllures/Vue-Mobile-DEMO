@@ -97,7 +97,7 @@
 </template>
 <script>
 import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, Divider} from 'vux'
-import { fetchGames, getGameData, getMoreGameData } from '../api'
+import { fetchGames, getGameData } from '../api'
 import _ from 'lodash'
 export default {
   data () {
@@ -760,7 +760,7 @@ export default {
       } else {
         this.limit += this.dataNum.cout - this.limit
       }
-      getMoreGameData(this.codeType, this.dataTime, this.limit).then((response) => {
+      getGameData(this.codeType, this.dataTime, this.limit).then((response) => {
         this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
       })
