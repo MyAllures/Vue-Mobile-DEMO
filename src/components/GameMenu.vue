@@ -1,12 +1,11 @@
 <template>
   <div v-transfer-dom>
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
+      <router-link class="home-link" to="/">
+        <x-icon type="ios-arrow-left"></x-icon>
+        <span class="text">返回首页</span>
+      </router-link>
       <div class="popup-content">
-        <router-link class="banner" to="/">
-          <i class="icon-home">
-            <span class="text">返回首页</span>
-          </i>
-        </router-link>
         <ul class="popup-menu">
           <li
             :class="[
@@ -81,22 +80,29 @@ export default {
 .popup {
   background-color: #fff;
 }
+.home-link {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
+  height: 44px;
+  line-height: 44px;
+  width: 100%;
+  color: @azul;
+  font-size: 18px;
+  .vux-x-icon {
+    fill: @azul;
+    margin-left: 10px;
+  }
+  .text {
+    padding-left: 10px;
+  }
+}
 .popup-content {
   width: 150px;
+  height: calc(~"100%" - 44px);
+  overflow-y: scroll;
   font-size: 18px;
   color: #4a4a4a;
-  .banner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70px;
-    width: 100%;
-    color: @azul;
-    font-size: 18px;
-    .text {
-      padding-left: 10px;
-    }
-  }
   .popup-menu-item {
     box-sizing: border-box;
     height: 50px;
