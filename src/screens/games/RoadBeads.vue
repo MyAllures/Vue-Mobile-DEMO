@@ -21,20 +21,17 @@
       </group>
     </div>
     <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-      <tab v-if="currentHistoryTag.length&& currentHistoryTag.length < 5"
+      <tab v-if="currentHistoryTag.length"
+          :style="{width: currentHistoryTag.length > 5 ? `${currentHistoryTag.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           active-color="#156fd8" >
         <tab-item v-for="(item, index) in  currentHistoryTag"
           @on-item-click="changeActiveHistoryTag(item)"
           :key="index"
-          :selected="item.key === activeHistoryTag">{{item.key}}</tab-item>
+          :selected="item.key === activeHistoryTag">
+          <span :class="{'ellipsis': currentHistoryTag.length > 5}">{{item.key}}</span>
+        </tab-item>
       </tab>
-      <div class="trigger text-center"
-        @click="showHistorySelector = true"
-        v-else>
-        <span :class="['option', {'active': activeHistoryTag}]">{{activeHistoryTag}}</span>
-        <span class="arrow"></span>
-      </div>
     </div>
     <div class="aside" v-if="statistics.length > 0">
       <ul :cols="1">
@@ -262,6 +259,7 @@ export default {
     activeHistoryTagIndex () {
       return this.activeHistoryTag ? _.findIndex(this.currentHistoryTag, o => o.key === this.activeHistoryTag) + '' : '0'
     }
+
   },
   watch: {
     'activeHistoryTag': function () {
@@ -440,29 +438,16 @@ export default {
   right: 0;
   margin-top: @headHeight;
   width: calc(~"100% - @{asideWidth}");
+  overflow: scroll;
   &.full-width {
     width: 100%;
   }
-  .trigger {
-    background-color: #fff;
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-    .option {
-      font-size: 14px;
-    }
-    .arrow {
-      display: inline-block;
-      height: 6px;
-      width: 6px;
-      border-width: 2px 2px 0 0;
-      border-color: #C8C8CD;
-      border-style: solid;
-      transform: rotate(135deg);
-      margin-left: 5px;
-      margin-bottom: 3px;
-    }
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 
