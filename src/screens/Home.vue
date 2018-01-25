@@ -28,6 +28,7 @@
     </flexbox>
     <grid :cols="3">
       <grid-item
+        @click.native="$router.push(`/game/${game.id}`)"
         v-for="(game, index) in games"
         :key="'game' + index"
         v-if="index < 11">
