@@ -117,10 +117,6 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
   .option {
     font-size: 14px;
-    color: #c8c8cd;
-    &.selected {
-      color: @azul;
-    }
   }
   .arrow {
     display: inline-block;

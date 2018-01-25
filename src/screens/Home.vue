@@ -62,6 +62,7 @@
       v-model="showDialog"
       :hide-on-blur="true">
       <swiper
+        height="250px"
         dots-position="center">
         <swiper-item
           :key="'swiper-anmt' + index"
@@ -165,9 +166,11 @@ export default {
 }
 
 .swiper-announcement {
+  padding: 10px;
   display: inline-block;
-  height: 135px;
-  overflow: hidden;
+  height: 180px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .marquee-item {
   text-align: left;

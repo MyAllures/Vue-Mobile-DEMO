@@ -79,7 +79,7 @@
                     class="lotery-bg auluck">{{~~loteryData}}</span> 
                 </span>
               </div>
-              <div v-if='!codeKl' class="compareContent">
+              <div v-if='!codeKl' class="compare-content">
                 <span class="lottery-compare" v-for="subHead in lotteryCompare">
                   {{schedule.result_category[subHead.key] |changeDataType}}
                 </span>
@@ -851,12 +851,6 @@ export default {
       width: 80%; 
     }
   }
-  .noList {
-    position: relative;
-    top: 44px;
-    text-align: center;
-    background: #FFFFFF
-  }
   .periods {
     text-align: center;
     font-size: 14px;
@@ -921,7 +915,7 @@ export default {
     margin-right: 5px;
     font-size: 14px;
   }
-  .compareContent {
+  .compare-content {
     width: 100%;
     line-height: 25px;
     height: 25px;

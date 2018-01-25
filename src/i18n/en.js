@@ -8,6 +8,7 @@ export default {
   misc: {
     username: 'Username',
     password: 'Password',
+    need_help: 'Need help',
     confirm_password: 'Confirm Password',
     login: 'Login',
     register: 'Register',

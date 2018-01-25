@@ -59,13 +59,13 @@
       </group>
 
       <div class="vux-group-tip text-danger">{{errorMsg}}</div>
-      <div class="m-a-md" v-if="!remitSuccess">
+      <div class="m-a" v-if="!remitSuccess">
         <x-button type="primary" :disabled="!valid" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('deposit.process')}}</span>
         </x-button>
       </div>
-      <div class="m-a-md" v-else>
+      <div class="m-a" v-else>
         <div class="vux-group-tip text-success m-b">{{$t('remit.remit_success')}}</div>
         <x-button type="primary" @click.native="remitSuccess=false">继续充值</x-button>
         <x-button @click.native="$router.push('/fin/payment_record')">查看充值记录</x-button>
@@ -198,6 +198,7 @@
 <style scoped lang="less">
 
   .scan-tip {
+    color: #999;
     margin: 10px 10px;
     font-size: 14px;
     text-align: center;
