@@ -24,17 +24,17 @@
       </div>
       <table>
         <tr v-if='lotteryTime' v-for='(schedule, scheduleIndex) in dataNum.results'>
-          <td class="showTime">
-            <p class="periodsNumber" v-for="(fieldsObject, fieldsIndex) in lotteryNum">
+          <td class="show-time">
+            <p class="periods-number" v-for="(fieldsObject, fieldsIndex) in lotteryNum">
               {{schedule[fieldsObject.keyNum]}}
             </p>
-            <p class="periodsTime" v-for="(timeObject, timeIndex) in lotteryTime">
+            <p class="periods-time" v-for="(timeObject, timeIndex) in lotteryTime">
               {{schedule[timeObject.keyTime] |dateFilter}}
             </p>
           </td>
-          <td class="showCount">
+          <td class="show-count">
             <div>
-              <div class="lotteryResult" v-bind:class="{luckLotery: codeKl}" v-for="num in lotteryResult">
+              <div class="lottery-result" v-bind:class="{luckLotery: codeKl}" v-for="num in lotteryResult">
                 <span    
                   v-for='(loteryData, loteryIndex) in (schedule[num.key1]).split(",")'>
                   <!-- transformetable -->
@@ -42,45 +42,45 @@
                     v-if='codeType === "jspk10" || codeType === "bcr" || codeType === "mlaft" || codeType === "er75ft"'
                     :style="{background: 'url('+ '/src/assets/ball-pk.png' +')',
                     backgroundPositionY: -(loteryData-1) * 21 + 'px'}"
-                    class="loteryBg jspBg">{{loteryData}}</span>
+                    class="lotery-bg jsp-bg">{{loteryData}}</span>
 
                   <!-- 0开始^^^ball2 jsssc  cqssc pcdd xjssc tjssc jnd28-->
                    <span 
                     v-if='codeType === "jsssc" || codeType === "cqssc" || codeType === "pcdd" || codeType === "xjssc" || codeType === "tjssc" || codeType === "jnd28"'
-                    class="loteryBg sscBg">{{~~loteryData}}</span>
+                    class="lotery-bg ssc-bg">{{~~loteryData}}</span>
 
                   <!-- 1开始 gdklsf  gd11x5 fc3d-->
                   <span 
                     v-if='codeType === "gdklsf" || codeType === "gd11x5" || codeType === "fc3d"'
-                    class="loteryBg sscBg">{{~~loteryData}}</span>
+                    class="loteryB-bg ssc-bg">{{~~loteryData}}</span>
 
                   <!-- cqlf -->
                   <span 
                     v-if='codeType === "cqlf"'
-                    class="loteryBg sscBg">{{~~loteryData}}</span>
+                    class="lotery-bg ssc-bg">{{~~loteryData}}</span>
 
                   <!-- jsk3 -->
                   <span 
                     v-if='codeType === "jsk3"'
                     :style="{background: 'url('+ '/src/assets/ball_4.png' +')',
                     backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
-                    class="loteryBg jsk3">{{loteryData}}</span>  
+                    class="lotery-bg jsk">{{loteryData}}</span>  
 
                   <!-- hkl -->
                   <span 
                     v-if='codeType === "hkl"'
                     :style="{background: 'url('+ '/src/assets/ball_hk6.png' +')',
                     backgroundPositionY: - (loteryData - 1) * 27 + 'px'}"
-                    class="loteryBg hkl">{{~~loteryData}}</span> 
+                    class="lotery-bg hkl">{{~~loteryData}}</span> 
 
                   <!-- bjkl8 auluck8 -->
                   <span 
                     v-if='codeType === "bjkl8" || codeType === "auluck8"'
-                    class="loteryBg auluck">{{~~loteryData}}</span> 
+                    class="lotery-bg auluck">{{~~loteryData}}</span> 
                 </span>
               </div>
               <div v-if='!codeKl' class="compareContent">
-                <span class="lotteryCompare" v-for="subHead in lotteryCompare">
+                <span class="lottery-compare" v-for="subHead in lotteryCompare">
                   {{schedule.result_category[subHead.key] |changeDataType}}
                 </span>
               </div>
@@ -88,8 +88,8 @@
           </td> 
         </tr>
       </table>
-      <div class="addMore" @click='addMore' v-if="firstLimit >= 30">{{$t('misc.load_more')}}</div>
-      <divider class="noMore" v-if="firstLimit < 30">{{$t('misc.no_more')}}</divider>
+      <div class="add-more" @click='addMore' v-if="firstLimit >= 30">{{$t('misc.load_more')}}</div>
+      <divider class="no-more" v-if="firstLimit < 30">{{$t('misc.no_more')}}</divider>
     </div>
   </div>
 </template>
@@ -874,13 +874,13 @@ export default {
   .vux-flex-row {
     border-bottom: 0.5px solid #e8dcdc;
   }
-  .showTime {
+  .show-time {
     width: 25%;
     height: 50px;
     border-right: 1px solid #dcd9d9;
     border-bottom: 1px solid #f3ecec;
   }
-  .periodsNumber {
+  .periods-number {
     width: 100%;
     line-height: 38px;
     font-weight: 500;
@@ -888,19 +888,19 @@ export default {
     text-align: center;
     height: 25px;
   }
-  .periodsTime {
+  .periods-time {
     width: 100%;
     line-height: 25px;
     text-align: center;
     height: 25px;
     font-size: 13px;
   }
-  .showCount {
+  .show-count {
     width: 70%;
     height: 50px;
     border-bottom: 1px solid #f3ecec;
   }
-  .lotteryResult {
+  .lottery-result {
     width: 100%;
     height: 25px;
     text-align: center;
@@ -913,7 +913,7 @@ export default {
     margin:  0 auto;
     overflow: hidden;
   }
-  .lotteryCompare {
+  .lottery-compare {
     width: 100%;
     height: 25px;
     text-align: center;
@@ -935,7 +935,7 @@ export default {
     top: 44px;
     border-collapse:collapse;
   }
-  .addMore, .noMore{
+  .add-more, .no-more{
       text-align: center;
       position: relative;
       top: 44px;
@@ -944,10 +944,10 @@ export default {
       margin-bottom: 40px;
       line-height: 34px;
     }
-  .loteryBg {    
+  .lotery-bg {    
     display: inline-block; 
   }
-  .jspBg {
+  .jsp-bg {
     margin-top: 8px;
     width: 20px;
     height: 20px;
@@ -955,7 +955,7 @@ export default {
     background-size: 20px 20px;
     text-indent: -9999px;
   }
-  .sscBg{
+  .ssc-bg{
     margin-top: 4px;
     border-radius: 100%;
     background: radial-gradient(circle at 5px 5px, #fff, #ccc);
@@ -967,18 +967,13 @@ export default {
     text-align: center;
     margin-bottom: 1px; 
   }
-  .cqlfBg {
-    margin-top: 4px;
-    width: 24px;
-    height: 24px;
-  }
   .hkl {
     width: 25px;
     height: 25px;
     margin-top: 5px;
     text-indent: -9999px;
   }
-  .jsk3 {
+  .jsk {
     margin-top: 3px;
     width: 27px;
     height: 27px;
@@ -998,13 +993,13 @@ export default {
 }
 @media (max-width: 350px) {
   .record-box {
-    .jspBg {
+    .jsp-bg {
       margin-right: -2px;
     }
-    .lotteryCompare{
+    .lottery-compare{
       margin-right: 2px;
     }
-    .sscBg {
+    .ssc-bg {
       margin-right: -3px;
     }
   }
