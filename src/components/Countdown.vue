@@ -55,6 +55,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .countdown-panel {
+  flex:0 0 auto;
   display: flex;
   background: #00397c;
   align-items: center;

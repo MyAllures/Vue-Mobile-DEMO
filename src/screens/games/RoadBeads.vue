@@ -21,27 +21,24 @@
       </group>
     </div>
     <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-      <tab v-if="currentHistoryTag.length&& currentHistoryTag.length < 5"
+      <tab v-if="currentHistoryTag.length"
+          :style="{width: currentHistoryTag.length > 5 ? `${currentHistoryTag.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           active-color="#156fd8" >
         <tab-item v-for="(item, index) in  currentHistoryTag"
           @on-item-click="changeActiveHistoryTag(item)"
           :key="index"
-          :selected="item.key === activeHistoryTag">{{item.key}}</tab-item>
+          :selected="item.key === activeHistoryTag">
+          <span :class="{'ellipsis': currentHistoryTag.length > 5}">{{item.key}}</span>
+        </tab-item>
       </tab>
-      <div class="trigger text-center"
-        @click="showHistorySelector = true"
-        v-else>
-        <span :class="['option', {'active': activeHistoryTag}]">{{activeHistoryTag}}</span>
-        <span class="arrow"></span>
-      </div>
     </div>
     <div class="aside" v-if="statistics.length > 0">
-      <grid :cols="1">
-        <grid-item v-for="(item, index) in statistics" :key="index" @click.native="changeActiveName(item)">
+      <ul :cols="1">
+        <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
           <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
-        </grid-item>
-      </grid>
+        </li>
+      </ul>
     </div>
     <x-address style="display: none"
       title="请选择"
@@ -262,6 +259,7 @@ export default {
     activeHistoryTagIndex () {
       return this.activeHistoryTag ? _.findIndex(this.currentHistoryTag, o => o.key === this.activeHistoryTag) + '' : '0'
     }
+
   },
   watch: {
     'activeHistoryTag': function () {
@@ -440,29 +438,16 @@ export default {
   right: 0;
   margin-top: @headHeight;
   width: calc(~"100% - @{asideWidth}");
+  overflow: scroll;
   &.full-width {
     width: 100%;
   }
-  .trigger {
-    background-color: #fff;
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-    .option {
-      font-size: 14px;
-    }
-    .arrow {
-      display: inline-block;
-      height: 6px;
-      width: 6px;
-      border-width: 2px 2px 0 0;
-      border-color: #C8C8CD;
-      border-style: solid;
-      transform: rotate(135deg);
-      margin-left: 5px;
-      margin-bottom: 3px;
-    }
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 
@@ -470,6 +455,8 @@ export default {
 
 .aside {
   position: fixed;
+  display: flex;
+  align-items: center;
   bottom: 0;
   width: @asideWidth;
   height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
@@ -487,6 +474,20 @@ export default {
       color: black;
       font-weight: bold;
     }
+  }
+  ul {
+    width: 100%;
+    border-bottom: 1px solid #d8d8d8;
+  }
+  .category {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    width: 100%;
+    border-top: 1px solid #d8d8d8;
+  }
+  .weui-grid {
+    padding: 10px;
   }
 }
 .cumulative-number {
@@ -518,13 +519,14 @@ export default {
     });
   }
   .number, .result {
+    color: #666;
     display: inline-block;
     line-height: 50px;
   }
   .result {
     font-size: 14px;
     width: (11/ 18) * 100%; // from design
-    color: #4a4a4a;
+    color: #999;
   }
   .number {
     font-size: 18px;

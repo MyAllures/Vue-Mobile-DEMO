@@ -93,7 +93,11 @@ const originalConfig = {
 
 const vuxLoader = require('vux-loader')
 const webpackConfig = originalConfig
+const lessTheme = {
+  name: 'less-theme',
+  path: path.resolve(__dirname, '../src/styles/theme.less')
+}
 
 module.exports = vuxLoader.merge(webpackConfig, {
-  plugins: ['vux-ui', 'duplicate-style']
+  plugins: ['vux-ui',  lessTheme, 'duplicate-style']
 })
