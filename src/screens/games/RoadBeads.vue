@@ -34,11 +34,11 @@
       </tab>
     </div>
     <div class="aside" v-if="statistics.length > 0">
-      <grid :cols="1">
-        <grid-item v-for="(item, index) in statistics" :key="index" @click.native="changeActiveName(item)">
+      <ul :cols="1">
+        <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
           <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
-        </grid-item>
-      </grid>
+        </li>
+      </ul>
     </div>
     <x-address style="display: none"
       title="请选择"
@@ -455,6 +455,8 @@ export default {
 
 .aside {
   position: fixed;
+  display: flex;
+  align-items: center;
   bottom: 0;
   width: @asideWidth;
   height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
@@ -472,6 +474,20 @@ export default {
       color: black;
       font-weight: bold;
     }
+  }
+  ul {
+    width: 100%;
+    border-bottom: 1px solid #d8d8d8;
+  }
+  .category {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    width: 100%;
+    border-top: 1px solid #d8d8d8;
+  }
+  .weui-grid {
+    padding: 10px;
   }
 }
 .cumulative-number {
@@ -503,13 +519,14 @@ export default {
     });
   }
   .number, .result {
+    color: #666;
     display: inline-block;
     line-height: 50px;
   }
   .result {
     font-size: 14px;
     width: (11/ 18) * 100%; // from design
-    color: #4a4a4a;
+    color: #999;
   }
   .number {
     font-size: 18px;

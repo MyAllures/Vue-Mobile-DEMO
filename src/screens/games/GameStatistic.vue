@@ -167,13 +167,6 @@ export default {
   line-height: 45px;
   background-color: #fff;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  .option {
-    font-size: 14px;
-    color: #c8c8cd;
-    &.selected {
-      color: @azul;
-    }
-  }
   .arrow {
     display: inline-block;
     height: 6px;
