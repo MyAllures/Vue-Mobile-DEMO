@@ -64,16 +64,12 @@
           </li>
         </ul>
         <div class="total">
-          <span class="bet-num">【合计】总注数：{{currentPlays.length}}</span>
-          <template v-if="activePlays.length && activePlays[0].isCustom">
-            总金额：
-            <span class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
-            组合数：{{activePlays[0].combinations.length}}
-          </template>
-          <template v-else>
-            总金额：
-            <span class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
-          </template>
+          <span class="bet-num">共 <span class="red">{{currentPlays.length}}</span> 组</span>
+          总金额：
+          <span v-if="activePlays.length && activePlays[0].isCustom"
+            class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
+          <span v-else
+            class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
         </div>
         <div v-if="loading" class="loading">
           <inline-loading></inline-loading>加载中
@@ -288,13 +284,10 @@ export default {
       placeBet(this.playsForSubmit)
         .then(res => {
           if (res && res[0].member) {
-            setTimeout(() => {
-              // this.updateBetrecords()
-              this.$set(this, 'playReset', !this.playReset)
-              this.showMessage = true
-              this.dialogVisible = false
-              this.loading = false
-            }, 1000)
+            this.$set(this, 'playReset', !this.playReset)
+            this.showMessage = true
+            this.dialogVisible = false
+            this.loading = false
           } else {
             let messages = []
             res.msg.forEach(error => {
