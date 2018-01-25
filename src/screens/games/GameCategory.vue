@@ -46,6 +46,7 @@ import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
+const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -76,7 +77,8 @@ export default {
     TabItem,
     WithCode,
     gd11x5Seq,
-    hk6Exl
+    hk6Exl,
+    shxiaZdc
   },
   data () {
     return {

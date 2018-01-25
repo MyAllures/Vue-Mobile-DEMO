@@ -9,6 +9,13 @@
       <cell
         v-if="user.account_type !== 0"
         is-link
+        :title="$t('game.deposit')"
+        @click.native="$router.push('/my/deposit')">
+        <i class="icon-fin icon" slot="icon"></i>
+      </cell>
+      <cell
+        v-if="user.account_type !== 0"
+        is-link
         :title="$t('withdraw.apply')"
         @click.native="$router.push('/my/withdraw')">
         <i class="icon-fin icon" slot="icon"></i>
@@ -32,9 +39,10 @@
         <span :class="{'unread-alert': unread}">{{ unread }} 条</span>
       </cell>
       <cell
+        v-if="user.account_type !== 0"
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
-        <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
+        <span v-if="user.username">{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
       </cell>
     </group>
     <group v-if="user.account_type !== 0">
@@ -83,7 +91,7 @@
     </group>
 
     <group v-else>
-      <cell 
+      <cell
         is-link
         link="/register">
         <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
@@ -148,6 +156,7 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
+
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;
@@ -169,7 +178,7 @@ export default {
 }
 .register {
   display: block;
-  text-align: center; 
-  color: @green;
+  text-align: center;
+  color: @azul;
 }
 </style>

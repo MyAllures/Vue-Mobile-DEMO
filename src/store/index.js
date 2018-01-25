@@ -59,6 +59,12 @@ export function createStore () {
           // 香港六合彩 连尾
           id: '178-连尾',
           component: 'hk6Exl'
+        },
+        {
+          // 香港六合彩 和肖
+          id: '178-合肖',
+          component: 'shxiaZdc',
+          options: Array.from(Array(12).keys()).map(item => item)
         }
       ]
     },

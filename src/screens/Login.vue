@@ -121,21 +121,22 @@
   }
 </script>
 
-<style scoped>
-  .container {
-    margin-top: 60px;
-  }
-  .error {
-    color: #E64340;
-    text-align: center;
-    margin-bottom: 0.5em;
-  }
-  .actions {
-    margin-top: 1em;
-    padding: 0 1em;
-  }
-  .login-button {
-    background-color:#1AAD19;
-    width: 100%;
-  }
+<style lang="less" scoped>
+@import '../styles/vars.less';
+
+.container {
+  margin-top: 60px;
+}
+.error {
+  color: @red;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+.actions {
+  margin-top: 1em;
+  padding: 0 1em;
+}
+.login-button {
+  width: 100%;
+}
 </style>

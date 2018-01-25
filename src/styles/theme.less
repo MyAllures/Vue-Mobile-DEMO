@@ -1,7 +1,41 @@
+@import './vars.less';
+@blue-tone: #0069b1;  // apply design
+
+// header
+@header-background-color: @blue-tone;
+
+// buttons
+@button-primary-bg-color: @azul;
+@button-primary-active-bg-color: darken(@azul, 10%);
+@button-primary-disabled-bg-color: lighten(@azul, 10%);
+
+// tabbar
+@tabbar-text-active-color: @blue-tone;
+
+// tab
+@tab-text-active-color: @blue-tone;
+@tab-bar-active-color: @blue-tone;
+
+// button tab
+@button-tab-default-border-color: @blue-tone;
+@button-tab-active-border-color: @blue-tone;
+@button-tab-active-background-color: @blue-tone;
+
+// popup
+@popup-header-right-text-color: @blue-tone;
+
+
 .vux-header.gamehall-header{
-  background: #006bb3;
   .vux-header-title {
     text-align: left;
     margin-left: 60px;
+  }
+}
+
+body .vux-header {
+  .vux-header-left, .vux-header-right {
+    a, button, .left-arrow:before {
+      color: #fff;
+    }
   }
 }

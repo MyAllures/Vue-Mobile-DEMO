@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="$store.state.user.account_type">
     <x-table :cell-bordered="false" class="transaction-table">
       <thead>
         <tr class="transaction-thead">
@@ -45,6 +45,10 @@
     </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
+  </div>
+  <div v-else class="tip">
+    <p >请注册会员后访问</p>
+    <x-button type="primary" link="/register">立即注册</x-button>
   </div>
 </template>
 
@@ -165,12 +169,7 @@ export default {
 .transaction-thead {
   background-color: #fbf9fe;
 }
-.green {
-  color: @green;
-}
-.red {
-  color: @red;
-}
+
 .end {
   text-align: center;
   color: #ccc;
@@ -179,4 +178,18 @@ export default {
   display: inline-block;
   width: 100%;
 }
+
+.tip {
+  height: 80vh;
+  display: flex;
+  margin: 0 20px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  color: #999;
+  p {
+    margin-bottom: 10px;
+  }
+}
+
 </style>
