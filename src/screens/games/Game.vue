@@ -34,7 +34,7 @@
       <flexbox>
         <flexbox-item>
           <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-          <div class="playCount">已选 <span class="count">{{activePlays.length}}</span> 注</div>
+          <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
           <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
@@ -49,7 +49,6 @@
       </flexbox>
       <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
     </div>
-
     <popup v-model="dialogVisible" is-transparent>
       <div class="bet-content">
         <div class="title">确认注单</div>
@@ -57,13 +56,13 @@
           <li
             v-for="(play, index) in currentPlays"
             :key="index">
-            <span class="play">{{`【${play.display_name}】 @${play.odds} X `}}</span>
-            <span class="amount">{{amount | currency('￥')}}</span>
-            <div v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </div>
-            <div v-if="play.optionDisplayNames" class="combinations"> {{`组合数：${play.combinations.length}`}} </div>
+            <p>
+              <span class="play">{{`【${play.display_name}】 @${play.odds} X `}}</span>
+              <span class="amount">{{amount | currency('￥')}}</span>
+            </p>
+            <p v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </p>
           </li>
         </ul>
-
         <div class="total">
           <span class="bet-num">共 <span class="red">{{currentPlays.length}}</span> 组</span>
           总金额：
@@ -134,6 +133,7 @@ export default {
       currentPlays: [],
       dialogVisible: false,
       amount: parseInt(localStorage.getItem('amount')) || 1,
+      validPlays: [],
       activePlays: [],
       playReset: false,
       showMessage: false,
@@ -240,22 +240,7 @@ export default {
       }
     },
     openDialog () {
-      const validedPlays = _.flatMap(
-        this.activePlays,
-        play => {
-          if (play.combinations && !play.activedOptions) {
-            return _.map(play.combinations, combination => {
-              return {
-                ...play,
-                combinations: combination
-              }
-            })
-          } else {
-            return [play]
-          }
-        }
-      )
-      this.currentPlays = _.values(validedPlays.map(play => {
+      this.currentPlays = _.values(this.validPlays.map(play => {
         let betOptions
         let isCustom = play.isCustom
         let optionDisplayNames = []
@@ -323,6 +308,21 @@ export default {
     },
     updatePlays (plays) {
       this.activePlays = plays
+      this.validPlays = _.flatMap(
+        plays,
+        play => {
+          if (play.combinations && !play.activedOptions) {
+            return _.map(play.combinations, combination => {
+              return {
+                ...play,
+                combinations: combination
+              }
+            })
+          } else {
+            return [play]
+          }
+        }
+      )
     }
   }
 }
@@ -424,6 +424,7 @@ export default {
       height: 40px;
       box-sizing: border-box;
       input {
+        color: #000;
         height: 100%;
         box-sizing: border-box;
         padding-left: 5px;
@@ -463,8 +464,11 @@ export default {
     padding: 10px 0;
     li {
       text-align: left;
-      height: 25px;
-      line-height: 25px;
+      padding-bottom: 5px;
+      p {
+        height: 25px;
+        line-height: 25px;
+      }
     }
   }
   .total {
@@ -477,7 +481,8 @@ export default {
     }
   }
   .amount {
-    color: @red
+    margin-right: 10px;
+    color: @red;
   }
   .options,.combinations {
     width: 100%;

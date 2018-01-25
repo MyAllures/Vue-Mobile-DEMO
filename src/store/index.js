@@ -31,6 +31,24 @@ export function createStore () {
           id: '176-连码',
           component: 'WithCode',
           options: Array.from(Array(11).keys())
+        },
+        {
+          // 广东11选5 直选
+          id: '176-直选',
+          component: 'gd11x5Seq',
+          options: Array.from(Array(11).keys())
+        },
+        {
+          // 重庆幸运农场 连码
+          id: '174-连码',
+          component: 'WithCode',
+          options: Array.from(Array(20).keys()).map(item => item + 1)
+        },
+        {
+          // 广东快乐十分 连码
+          id: '177-连码',
+          component: 'WithCode',
+          options: Array.from(Array(20).keys()).map(item => item + 1)
         }
       ]
     },
