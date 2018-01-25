@@ -12,7 +12,7 @@
     <div
       class="gameplays"
       v-if="!customPlayGroupsSetting"
-      v-for="(group, index) in groups" 
+      v-for="(group, index) in groups"
       :key="'group' + index">
       <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
       <grid :key="index" :cols="group.col_num">
@@ -40,9 +40,9 @@
 
 <script>
 import _ from 'lodash'
-import { placeBet } from '../../api'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
+const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -71,7 +71,8 @@ export default {
     GridItem,
     Tab,
     TabItem,
-    WithCode
+    WithCode,
+    gd11x5Seq
   },
   data () {
     return {
@@ -115,8 +116,11 @@ export default {
         }
       })
     },
-    'activePlays': function (activePlays) {
-      this.$emit('updatePlays', activePlays)
+    'activePlays': {
+      handler: function (activePlays) {
+        this.$emit('updatePlays', activePlays)
+      },
+      deep: true
     },
     'playReset': function () {
       _.each(this.plays, play => {
@@ -158,36 +162,6 @@ export default {
           this.$set(play, 'activedOptions', [])
         }
       })
-    },
-    placeOrder () {
-      this.submitting = true
-      this.errors = ''
-      placeBet(this.playsForSubmit)
-        .then(res => {
-          this.submitting = false
-          if (res && res[0].member) {
-            this.submitted = true
-            setTimeout(() => {
-              this.submitted = false
-              this.dialogVisible = false
-              this.updateBetrecords()
-              this.reset()
-            }, 1000)
-          } else {
-            let messages = []
-            res.msg.forEach(error => {
-              messages.push(error)
-            })
-            this.errors = messages.join(', ')
-          }
-        },
-        errRes => {
-          this.submitting = false
-          this.errors = errRes.join()
-          setTimeout(() => {
-            this.dialogVisible = false
-          }, 3000)
-        })
     },
     initPlayAndGroups (categories) {
       const categoryName = this.$route.params.categoryName
@@ -249,6 +223,7 @@ export default {
 
 <style lang="less" scoped>
 @import "../../styles/vars.less";
+@import "../../styles/playgroup.less";
 .tab-view {
   width: 100%;
   overflow-x: auto;
@@ -270,50 +245,6 @@ export default {
         color: @azul;
       }
     }
-  }
-}
-.playgroup-title {
-  background: #f5f5f5;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  color: #999;
-}
-
-.play {
-  &.active {
-    background: @azul;
-    .play-name {
-      color: #fff;
-    }
-    .play-odds {
-      color: #fff;
-    }
-  }
-}
-.play-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.play-name {
-  font-size: 20px;
-  color: #444;
-}
-.play-odds {
-  font-size: 15px;
-  color: #999;
-}
-.weui-grids {
-  margin-right: -1px;
-}
-.weui-grid {
-  padding: 13px 10px;
-}
-.gameplays {
-  margin-top: -1px;
-  /deep/ .weui-grids:after {
-    border: none;
   }
 }
 </style>

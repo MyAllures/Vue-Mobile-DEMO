@@ -2,11 +2,11 @@
   <div v-transfer-dom>
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
       <div class="popup-content">
-        <div class="banner">
-          <router-link to="/">
-            <img :src="logoSrc" alt="logo"/>
-          </router-link>
-        </div>
+        <router-link class="banner" to="/">
+          <i class="icon-home">
+            <span class="text">返回首页</span>
+          </i>
+        </router-link>
         <ul class="popup-menu">
           <li
             :class="[
@@ -77,6 +77,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../styles/vars.less';
 .popup {
   background-color: #fff;
 }
@@ -90,8 +91,10 @@ export default {
     align-items: center;
     height: 70px;
     width: 100%;
-    img {
-      width: 100%;
+    color: @azul;
+    font-size: 18px;
+    .text {
+      padding-left: 10px;
     }
   }
   .popup-menu-item {
