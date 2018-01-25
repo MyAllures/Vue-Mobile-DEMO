@@ -46,7 +46,7 @@
         <cell :title="$t('profile.bank_account')" :value="user.bank.account"></cell>
       </group>
       <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
-      <div class="m-a-md" v-if="!user.bank">
+      <div class="m-a" v-if="!user.bank">
         <x-button type="primary" :disabled="!valid" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('profile.submit')}}</span>
@@ -146,6 +146,7 @@ export default {
 </script>
 <style lang='less'>
 .text-muted {
+  color: #999;
   display: block;
   width: 100%;
   height: 100;
