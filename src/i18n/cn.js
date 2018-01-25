@@ -133,8 +133,7 @@ export default {
     change_withdraw: '重置取款密码',
     w_old: '当前取款密码',
     w_new: '新的取款密码',
-    w_repeat: '确认新的密码',
-    submit: '提交'
+    w_repeat: '确认新的密码'
   },
   withdraw: {
     title: '取款',

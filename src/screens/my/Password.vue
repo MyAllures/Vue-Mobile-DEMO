@@ -1,27 +1,27 @@
 <template>
   <div>
     <group label-width="'120px'">
-        <div v-if="!valid" :class="{'hidden': valid}"> 
+        <div v-if="!valid" :class="{'hidden': valid}">
           <ul slot="after-title" class="text-warning input-errors">
             <li v-for="error in inputErrors">{{error}}</li>
           </ul>
         </div>
         <x-input
-          autocapitalize="off" 
+          autocapitalize="off"
           :title="$t('change_password.old')"
-          :show-clear=true 
+          :show-clear=true
           required
           type="password"
           ref="oldPassword"
           @on-change="validate"
           @on-blur="validate"
-          v-model="password.prev_password">   
+          v-model="password.prev_password">
         </x-input>
 
         <x-input
-          autocapitalize="off" 
+          autocapitalize="off"
           :title="$t('change_password.new')"
-          :show-clear=true 
+          :show-clear=true
           required
           :min="8"
           :max="16"
@@ -29,13 +29,13 @@
           ref="newPassword"
           @on-change="validate"
           @on-blur="validate"
-          v-model="password.new_password">   
+          v-model="password.new_password">
           </x-input>
 
         <x-input
-          autocapitalize="off" 
+          autocapitalize="off"
           :title="$t('change_password.repeat')"
-          :show-clear=true 
+          :show-clear=true
           type="password"
           :equal-with="password.new_password"
           :min="8"
@@ -44,7 +44,7 @@
           @on-change="validate"
           @on-blur="validate"
           :required=false
-          v-model="password.repeat_password">   
+          v-model="password.repeat_password">
         </x-input>
 
     </group>
@@ -52,7 +52,7 @@
     <div class="m-a">
       <x-button type="primary" :disabled="!valid" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>{{$t('change_password.submit')}}</span>
+        <span v-else>{{$t('action.submit')}}</span>
       </x-button>
       <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
     </div>

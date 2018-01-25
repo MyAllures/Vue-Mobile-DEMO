@@ -128,8 +128,7 @@ export default {
     change_withdraw: 'Change Withdraw Password',
     w_old: 'Old withdraw password',
     w_new: 'New withdraw password',
-    w_repeat: 'Repeat withdraw password',
-    submit: 'Submit'
+    w_repeat: 'Repeat withdraw password'
   },
   withdraw: {
     title: 'Withdrawal',
