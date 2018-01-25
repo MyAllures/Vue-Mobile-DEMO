@@ -332,27 +332,32 @@ export default {
 @import '../../styles/vars.less';
 
 .game {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(~"100vh" - 46px);
 }
 .bet-area {
+  flex:1 1 auto;
   display: flex;
-  height: calc(~"100%" - 65px);
   .aside {
     overflow-y: auto;
-    height: 100%;
     width: 80px;
-    display: flex;
     box-sizing: border-box;
     border-width: 0 4px 0 0;
     border-style: solid;
     border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
+    display: flex;
     align-items: center;
     background-color: #f9f9f9;
     color: #9b9b9b;
     ul {
+      max-height: 100%;
       width: 100%;
       background-color: #f9f9f9;
       li {
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        overflow:hidden;
         text-align: center;
         box-sizing: border-box;
         height: 40px;
@@ -370,13 +375,13 @@ export default {
     }
   }
   .main {
-    height: 100%;
     width: calc(~"100%" - 80px);
     overflow-y: auto;
     background-color: #fff;
   }
 }
 .bet-input {
+  flex:0 0 auto;
   box-sizing: border-box;
   position: relative;
   color: #fff;
