@@ -42,3 +42,28 @@
     border: none;
   }
 }
+
+
+
+// playicon
+
+//hkl
+
+.hk6ball {
+  display: inline-block;
+  width: 24px;
+  height: 26px;
+  margin-left: 3px;
+  background-size: 25px 1321px;
+  background-image: url('../assets/ball_hk6.png');
+}
+
+.hk6-loop(@i) when (@i < 50) {
+  .hk6-loop(@i + 1);
+  .hkl-@{i} {
+    &:extend(.hk6ball);
+    background-position: 0 (-27px * (@i - 1));;
+  }
+}
+
+.hk6-loop(1);
