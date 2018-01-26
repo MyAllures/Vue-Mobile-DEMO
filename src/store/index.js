@@ -30,13 +30,13 @@ export function createStore () {
           // 广东11选5 连码
           id: '176-连码',
           component: 'WithCode',
-          options: Array.from(Array(11).keys())
+          options: Array.from(Array(11).keys()).map(item => item + 1)
         },
         {
           // 广东11选5 直选
           id: '176-直选',
           component: 'gd11x5Seq',
-          options: Array.from(Array(11).keys())
+          options: Array.from(Array(11).keys()).map(item => item + 1)
         },
         {
           // 重庆幸运农场 连码
@@ -49,6 +49,12 @@ export function createStore () {
           id: '177-连码',
           component: 'WithCode',
           options: Array.from(Array(20).keys()).map(item => item + 1)
+        },
+        {
+          // 香港六合彩 连码
+          id: '178-连码',
+          component: 'WithCode',
+          options: Array.from(Array(49).keys()).map(item => item + 1)
         },
         {
           // 香港六合彩 连肖
