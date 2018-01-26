@@ -22,9 +22,7 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <span :class="getPlayClass(play)"
-            v-text="getPlayText(play)">
-            </span>
+            <span :class="getPlayClass(play)">{{play.display_name}}</span>
             <span class="play-odds">{{play.odds}}</span>
           </div>
         </grid-item>
@@ -152,21 +150,9 @@ export default {
   methods: {
     getPlayClass (play) {
       if (!(isNaN(play.display_name))) {
-        if (play.display_name.indexOf('和') !== -1) {
-          return [ 'play-name', play.code ]
-        }
         return ['play-name', play.code, `${this.game.code}-${play.display_name}`]
       } else {
         return [ 'play-name', play.code ]
-      }
-    },
-    getPlayText (play) {
-      if (isNaN(play.display_name)) {
-        return play.display_name
-      } else {
-        if (play.group.indexOf('和') !== -1) {
-          return play.display_name
-        }
       }
     },
     updateCustomPlays (playOptions) {
