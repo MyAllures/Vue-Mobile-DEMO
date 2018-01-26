@@ -347,8 +347,7 @@ export default {
     box-sizing: border-box;
     border-width: 0 4px 0 0;
     border-style: solid;
-    border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1
-      100%;
+    border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
     display: flex;
     align-items: center;
     background-color: #f9f9f9;
