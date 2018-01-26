@@ -18,22 +18,37 @@
       <x-button class="xbutton" type="primary" @click.native="redirect('/fin/bet_record')" link="/fin/bet_record">{{$t('game.betrecord')}}</x-button>
       <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
     </div>
-    <group class="links" v-if="showLinks">
+    <group class="links" >
       <cell-box 
+        v-if="showLinks"
         @click.native="redirect(link.route)"
         :border-intent="false"
         v-for="(link, index) in links"
         :key="index">
-        <span class="display-name text-center" >
+        <span class="link text-center" >
           {{link.display_name}}
         </span>
       </cell-box>
+      <cell-box
+        :border-intent="false"
+        @click.native="logoutDialogShow = true">
+        <span class="link text-center red" >
+          {{$t('misc.logout')}}
+        </span>
+      </cell-box>
     </group>
+    <confirm
+      v-model="logoutDialogShow"
+      :confirm-text="$t('misc.logout')"
+      :cancel-text="$t('misc.cancel')"
+      @on-confirm="logout">
+      <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
+    </confirm>
   </popup>
 </template>
 
 <script>
-  import { TransferDom, Popup, Group, CellBox, Cell, XButton } from 'vux'
+  import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
   export default {
     props: {
@@ -47,6 +62,7 @@
     },
     data () {
       return {
+        logoutDialogShow: false,
         links: [{
           display_name: '路珠',
           route: '/stastics/roadbeads'
@@ -70,7 +86,8 @@
       Group,
       CellBox,
       Cell,
-      XButton
+      XButton,
+      Confirm
     },
     computed: {
       ...mapGetters([
@@ -81,6 +98,10 @@
       }
     },
     methods: {
+      logout () {
+        this.handleClose()
+        this.$store.dispatch('logout')
+      },
       redirect (link) {
         this.$router.push(link)
         this.handleClose()
@@ -112,8 +133,8 @@
   position: absolute;
   width: 100%;
   bottom: 0;
-  .display-name {
-    display: inline-block;
+  .link {
+    display: block;
     width: 100%;
   }
 }

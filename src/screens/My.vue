@@ -11,14 +11,14 @@
         is-link
         :title="$t('game.deposit')"
         @click.native="$router.push('/my/deposit')">
-        <i class="icon-fin icon" slot="icon"></i>
+        <x-icon type="ios-loop-strong" size="25" slot="icon"></x-icon>
       </cell>
       <cell
         v-if="user.account_type !== 0"
         is-link
         :title="$t('withdraw.apply')"
         @click.native="$router.push('/my/withdraw')">
-        <i class="icon-fin icon" slot="icon"></i>
+        <x-icon type="social-yen" size="25" slot="icon"></x-icon>
       </cell>
       <cell
         v-if="user.account_type !== 0"
@@ -156,7 +156,12 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
-
+.weui-cell /deep/ .weui-cell__hd {
+  line-height: 1;
+}
+.vux-x-icon {
+  margin-right: 10px;
+}
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;

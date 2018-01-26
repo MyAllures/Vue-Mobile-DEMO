@@ -243,10 +243,6 @@
     right: 15px;
   }
 
-  .text-center {
-    text-align: center;
-  }
-
   .text-success {
     color: #4caf50;
   }

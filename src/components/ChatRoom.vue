@@ -4,8 +4,8 @@
     <div v-else>
       <div class="chat-announce" v-if="chatAnnounce">
         <div class="annouce-info clearfix">
-          <icon class="fl volume-up" name="volume-up"></icon>
-          <span class="fl">公告:</span>
+          <icon class="volume-up" name="volume-up"></icon>
+          公告
         </div>
         <div class="scroll">
           <MarqueeTips :content="chatAnnounce" :speed="10"></MarqueeTips>
@@ -47,6 +47,16 @@
       </div>
       <div class="footer" height="100">
         <div class="typing">
+          <div class="control-bar">
+            <a href="javascript:void(0)" class="btn-control btn-smile">
+              <label for="imgUploadInput">
+                <span title="上传图片">
+                  <icon scale="1.3" name="picture-o" class="text-center el-icon-picture"></icon>
+                  <input @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
+                </span>
+              </label>
+            </a>
+          </div>
           <div class="txtinput el-textarea">
             <textarea 
               @keyup.enter="sendMsg" 
@@ -59,20 +69,8 @@
               :disabled="personal_setting.chat.status ? false : true">
             </textarea>
           </div>
-          <div class="fr txt-right clearfix">
-            <div class="control-bar fl">
-              <a href="javascript:void(0)" class="btn-control btn-smile">
-                <label for="imgUploadInput">
-                  <span title="上传图片">
-                    <icon scale="1.3" name="picture-o" class="text-center el-icon-picture"></icon>
-                    <input @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
-                  </span>
-                </label>
-              </a>
-            </div>
-            <div class="sendbtn fl">
-              <a href="javascript:void(0)" class="u-btn" @click="sendMsg">发送</a>
-            </div>
+          <div class="txt-right clearfix">
+            <a href="javascript:void(0)" class="send-btn" @click="sendMsg">发送</a>
           </div>
         </div>
       </div>
@@ -329,7 +327,7 @@ export default {
 
 .chat-box {
   position: fixed;
-  top: 84px;
+  top: 46px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -348,41 +346,40 @@ export default {
   }
 }
 .chat-announce {
-  position: absolute;
-  left: 5px;
-  right: 5px;
-  background: rgba(237,244,254,.91);
+  position: sticky;
+  top: 5px;
+  margin: 0 5px;
+  background: rgba(237,244,254,.9);
   border: 1px solid #c2cfe2;
   border-radius: 5px;
   padding-right: 10px;
   height: 29px;
   overflow: hidden;
-  z-index: 999;
+  z-index: 1;
   .annouce-info {
-    display: block;
+    display: flex;
+    align-items: center;
     float: left;
     background: #e1edfd;
-    color: red;
-    padding: 6px 8px;
-    padding-top: 0;
-    padding-bottom: 0;
+    color: @red;
+    padding: 0 8px;
     line-height: 29px;
+    font-size: 14px;
     .volume-up {
-      padding-top: 5px;
       margin-right: 4px;
     }
   }
   .scroll {
+    line-height: 30px;
+    font-size: 14px;
     display: block;
     margin-left: 72px;
-    padding-top: 5px;
   }
 }
 .chat-content {
-  padding-bottom: 118px;
+  padding-bottom: 70px;
 }
 .lay-scroll {
-  padding-top: 36px;
   .block-user-info {
     text-align: center;
     padding-top: 100px;
@@ -502,9 +499,7 @@ export default {
   }
   .msg-time {
     color: #9f9f9f;
-    background: rgba(230, 230, 230, .6);
-    padding: 0 6px;
-    border-radius: 10px;
+    margin-left: 10px;
     float: left;
     font-size: 12px;
   }
@@ -561,92 +556,80 @@ export default {
   width: 100%;
   background: #f5f5f5;
   padding: 0;
+}
+.typing {
   .control-bar {
-    width: 30px;
-    height: 51px;
-    background: #72aadb;
-    padding-left: 6px;
-    border: 1px solid #ccc;
-    border-left: 0;
-    border-right: 0;
-    position: relative;
-    overflow: hidden;
-    .btn-smile {
-      .img-upload-input {
-        width: 0.1px; 
-        height: 0.1px; 
-        opacity: 0; 
-        position: absolute; 
-        top: -20px;
-      }
-    }
-    .btn-smile:hover {
-      background: #ffd4c0;
-    }
-  }
-  .typing {
-    position: relative;
-    padding: 5px;
-    .txtinput {
-      display: block;
-      width: auto;
-      margin-right: 88px;
-    }
-    .el-textarea {
-      vertical-align: bottom;
-    }
-    .is-disabled {
-      .el-textarea-inner {
-        background-color: #eef1f6;
-        border-color: #d1dbe5;
-        color: #bbb;
-        cursor: not-allowed;
-        height: 54px;
-        resize: none;
-      }
-    }
-    .el-textarea-inner {
-      display: block;
-      resize: vertical;
-      padding: 5px 7px;
-      line-height: 1.5;
-      width: 100%;
-      font-size: 14px;
-      color: #1f2d3d;
-      background-color: #fff;
-      border: 1px solid #bfcbd9;
-      border-radius: 4px;
-      transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-      box-sizing: border-box;
-      background-image: none;
-    }
-  }
-
-  .btn-control {
+    margin-right: 5px;
+    flex: 0.5;
     height: 100%;
-    float: left;
-    display: inline-block;
-    line-height: 58px;
-    margin-right: 1px;
-    color: #666;
-    .el-icon-picture {
-      font-size: 20px;
-      color: #fff;
+    background: #72aadb;
+    border-radius: 4px;
+    overflow: hidden;
+    .img-upload-input {
+      width: 0.1px; 
+      height: 0.1px; 
+      opacity: 0; 
+      position: absolute; 
+      top: -20px;
     }
   }
-
+  display: flex;
+  position: relative;
+  padding: 5px;
+  .txtinput {
+    flex: 3;
+  }
   .txt-right {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
+    margin-left: 5px;
+    flex: 1;
+  }
+  .el-textarea {
+    vertical-align: bottom;
+  }
+  .is-disabled {
+    .el-textarea-inner {
+      background-color: #eef1f6;
+      border-color: #d1dbe5;
+      color: #bbb;
+      cursor: not-allowed;
+      height: 54px;
+      resize: none;
+    }
+  }
+  .el-textarea-inner {
+    display: block;
+    resize: vertical;
+    padding: 5px 7px;
+    line-height: 1.5;
+    width: 100%;
+    font-size: 14px;
+    color: #1f2d3d;
+    background-color: #fff;
+    border: 1px solid #bfcbd9;
+    border-radius: 4px;
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    box-sizing: border-box;
+    background-image: none;
   }
 }
-.u-btn {
-  display: inline-block;
+
+.btn-control {
+  height: 100%;
+  display: block;
+  line-height: 54px;
+  color: #666;
+  text-align: center;
+  .el-icon-picture {
+    font-size: 20px;
+    color: #fff;
+  }
+}
+
+.send-btn {
+  display: block;
   text-align: center;
   border-radius: 3px;
-  width: 52px;
-  height: 52px;
+  height: 100%;
   font-size: 14px;
   line-height: 52px;
   background: #72aadb;
