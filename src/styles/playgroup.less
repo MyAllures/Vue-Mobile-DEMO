@@ -65,10 +65,19 @@
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
   vertical-align: middle;
+  text-indent: -9999px;
 }
+
+.hkl-if(@i) when (@i < 10) {
+    .hkl-0@{i} {
+      &:extend(.hk6ball);
+      background-position: 0 (-27px * (@i - 1));;
+    }
+  }
 
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
+  .hkl-if(@i);
   .hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-27px * (@i - 1));;

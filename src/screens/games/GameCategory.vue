@@ -22,7 +22,7 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <span :class="['play-name', play.code]">{{play.display_name}}</span>
+            <span :class="getPlayClass(play)">{{play.display_name}}</span>
             <span class="play-odds">{{play.odds}}</span>
           </div>
         </grid-item>
@@ -148,6 +148,13 @@ export default {
     }
   },
   methods: {
+    getPlayClass (play) {
+      if (!(isNaN(play.display_name))) {
+        return ['play-name', play.code, `${this.game.code}-${play.display_name}`]
+      } else {
+        return [ 'play-name', play.code ]
+      }
+    },
     updateCustomPlays (playOptions) {
       _.each(this.plays, play => {
         // if all of the options are valid, change the target play's status
