@@ -4,6 +4,7 @@
       <ul class="tab" v-if="tabKeys.length>1">
         <li
           :class="['tab-item', {active: currentTab === key}]"
+          :style="{width: tabKeys.length > 4 ? '100px' : 100/tabKeys.length + '%'}"
           v-for="(key, index) in tabKeys"
           :key="index"
           @click="switchTab(key)">{{key}}</li>
@@ -262,7 +263,6 @@ export default {
     .tab-item {
       box-sizing: border-box;
       flex-shrink: 0;
-      width: 100px;
       height: 44px;
       line-height: 44px;
       text-align: center;
