@@ -1,21 +1,38 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
-    <!-- 头部 -->
-    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="handleSideBarShow">
-      <x-icon
+    <x-header 
+      class="gamehall-header" 
+      :right-options="{showMore: true}"
+      @on-click-more="handleSideBarShow">
+      <span 
+        v-if="!showChatRoom"
         slot="overwrite-left"
-        type="navicon"
-        size="35"
-        style="fill:#fff;position:relative;top:-8px;left:-3px;"
-        @click="sidebarShow = true"></x-icon>
-      <span>{{currentGame.display_name}}</span>
+        @click="sidebarShow = true"
+        class="left-trigger">
+        <x-icon
+          type="navicon"
+          size="32"></x-icon>
+        {{currentGame.display_name}}
+      </span>
+      <span 
+        v-else
+        slot="overwrite-left"
+        @click="showChatRoom = false"
+        class="left-trigger">
+        <x-icon
+          type="ios-close-empty"
+          size="32"></x-icon>
+          退出聊天室
+      </span>
+      <x-icon 
+        type="chatbubble-working"
+        size="30"
+        v-show="!showChatRoom"
+        @click.native="showChatRoom = true"
+        slot="right"></x-icon>
     </x-header>
-    <tab :line-width="0" class="tab-box" active-color="#fff"  defaultColor="#999">
-      <tab-item active-class="tab-item" :selected="!showChatRoom" @on-item-click="onItemClick">投注区</tab-item>
-      <tab-item active-class="tab-item" :selected="showChatRoom" @on-item-click="onItemClick(true)">聊天室</tab-item>
-    </tab>
-    <router-view v-if="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
-    <chat-room v-else="showChatRoom"></chat-room>
+    <router-view v-show="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
+    <chat-room v-if="showChatRoom"></chat-room>
     <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
     <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
   </div>
@@ -42,7 +59,7 @@ export default {
   },
   data () {
     return {
-      sidebarShow: false, // 默认值
+      sidebarShow: false,
       showRightMenu: false,
       showChatRoom: false
     }
@@ -63,22 +80,13 @@ export default {
     })
   },
   methods: {
-    changeRoute () {
-      this.showChatRoom = false
-    },
-    onItemClick (bFlag) {
-      if (bFlag) {
-        this.showChatRoom = true
-      } else {
-        this.showChatRoom = false
-      }
-    },
     handleSideBarShow () {
-      console.log('ggg')
       this.$store.dispatch('fetchUser').then(res => {
-        console.log('fff')
         this.showRightMenu = true
       })
+    },
+    changeRoute () {
+      this.showChatRoom = false
     }
   }
 
@@ -86,6 +94,32 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.vux-header {
+  /deep/ .vux-header-left {
+    left: 8px;
+    top: 7px;
+    line-height: 100%;
+  }
+  /deep/ .vux-header-right{
+    top: 7px;
+    a {
+      margin-left: 20px;
+      float: right;
+    }
+    .vux-header-more {
+      margin-top: 6px;
+    }
+  }
+}
+.left-trigger {
+  font-size: 15px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+.vux-x-icon {
+  fill: #fff;
+}
 .gamehall {
   height: 100%;
 }
