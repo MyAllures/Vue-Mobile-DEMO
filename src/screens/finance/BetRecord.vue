@@ -64,11 +64,6 @@ import { msgFormatter } from '../../utils'
 
 export default {
   name: 'BetRecord',
-  props: {
-    date: {
-      type: String
-    }
-  },
   data () {
     return {
       betRecords: [],
@@ -99,6 +94,7 @@ export default {
       this.loading = true
       fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: 0, limit: this.chunkSize })
         .then(data => {
+          console.log('init')
           this.totalCount = data.count
           this.betRecords = data.results
           this.currentPage = 1
