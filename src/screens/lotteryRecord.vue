@@ -9,8 +9,8 @@
     <div class="record-box">
       <div class="choose-head">
         <group class="choose-type">
-          <popup-radio :options="gameList" v-model="game">
-            <template slot-scope="props" slot="each-item">
+          <popup-radio id='type-box' :options="gameList" v-model="game">
+            <template class="coslslssldsjf" slot-scope="props" slot="each-item">
               <p>
                 <span style="color:#666;">{{ gameList[props.index] }}</span>
               </p>
@@ -763,27 +763,35 @@ export default {
 }
 .record-box{
   background: white;
+  .vux-no-group-title{
+    margin-top: 0;
+  }
   .choose-head {
     position: fixed;
     z-index: 100;
     width: 100%;
     top: 26px;
-    .choose-type{
-      width: 40%;
-      float: left;
-      border-bottom: solid 1px #b5aaaa; 
+    #type-box {
+      color: red;
+      .vux-cell-value {
+        position: relative;
+        left: -8px;
+      }
     }
-    .choose-type /deep/ .weui-cell__hd {
+  }
+  .choose-type{
+    width: 40%;
+    float: left;
+    border-bottom: solid 1px #b5aaaa; 
+    .weui-cell {
+      padding: 10px;
+    }
+    .weui-cell_access .weui-cell__ft:after {
+      transform: matrix(0.71, 0.71, 0.71, -0.71, 0, 0);
+      right: -4px;
+    }
+    .vux-cell-primary {
       display: none;
-    }
-    .choose-type /deep/ .vux-cell-bd {
-      display: none;
-    }
-    .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
-      transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
-    }
-    .choose-type /deep/ .vux-cell-value {
-      color: #0268b1;
     }
   }
   .choose-date {
@@ -797,18 +805,22 @@ export default {
       left: 10px;
       color: #ccc;
     }
+    span.vux-cell-value {
+      display: inline-block;
+      width: 100%;
+      color: red;
+      margin-left: 16px;
+    }
+    .weui-cell__ft {
+      text-align: left;
+    }
+    .weui-cell_access .weui-cell__ft:after {
+      transform: matrix(0, 0, 0, 0, 0, 0);
+    }
     .lucky {
       display: block; 
       width: 80%; 
     }
-  }
-  .choose-date /deep/ .vux-cell-value {
-      display: block;
-      text-align: left;
-      text-indent: 20px;
-  }
-  .choose-date /deep/ .weui-cell_access .weui-cell__ft:after {
-      transform: matrix(0, 0, 0, 0, 0, 0);
   }
   .periods {
     text-align: center;
@@ -961,7 +973,7 @@ $bjklbgtable: bjkl8, auluck8;
   color: black;
   background: radial-gradient(circle at 5px 5px, #fff, #ccc);
 }
-@each $game in $bjklbgtable {
+@each $game in $bjklbgtable{
   @for $i from 1 through 80 {
     .lottery_#{$game}_#{$i} {
       @extend %bjklbg;
@@ -982,8 +994,8 @@ $anothertable: ball2, jsssc, cqssc, pcdd, xjssc, tjssc, jnd28, gdklsf, gd11x5, f
   text-align: center;
   margin-bottom: 1px; 
 }
-@each $game in $anothertable {
-  @for $i from 0 through 20 {
+@each $game in $anothertable{
+  @for $i from 0 through 80 {
     .lottery_#{$game}_#{$i} {
       @extend %anotherbg;
     }
