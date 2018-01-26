@@ -9,6 +9,13 @@
       <cell
         v-if="user.account_type !== 0"
         is-link
+        :title="$t('game.deposit')"
+        @click.native="$router.push('/my/deposit')">
+        <i class="icon-fin icon" slot="icon"></i>
+      </cell>
+      <cell
+        v-if="user.account_type !== 0"
+        is-link
         :title="$t('withdraw.apply')"
         @click.native="$router.push('/my/withdraw')">
         <i class="icon-fin icon" slot="icon"></i>
@@ -35,7 +42,7 @@
         v-if="user.account_type !== 0"
         :title="$t('misc.username')">
         <i class="icon-user icon" slot="icon"></i>
-        <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
+        <span v-if="user.username">{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
       </cell>
     </group>
     <group v-if="user.account_type !== 0">

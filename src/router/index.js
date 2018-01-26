@@ -71,15 +71,6 @@ export default new Router({
       component: resolve => { require(['../screens/Fin.vue'], resolve) },
       children: [
         {
-          path: 'recharge',
-          name: 'Recharge',
-          meta: {
-            title: '充值',
-            requiresAuth: true
-          },
-          component: resolve => { require(['../screens/finance/Recharge.vue'], resolve) }
-        },
-        {
           path: 'payment_record',
           name: 'PaymentRecord',
           meta: {
@@ -121,10 +112,20 @@ export default new Router({
       path: '/my',
       name: 'My',
       meta: {
-        title: '我的',
+        title: '我的账号',
         requiresAuth: true
       },
       component: resolve => { require(['../screens/My.vue'], resolve) }
+    },
+    {
+      path: '/my/deposit',
+      name: 'Deposit',
+      meta: {
+        title: '充值',
+        showBack: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
     },
     {
       path: '/my/password',

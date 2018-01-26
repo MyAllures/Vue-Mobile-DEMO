@@ -8,6 +8,7 @@ export default {
   misc: {
     username: '用户名',
     password: '密码',
+    need_help: '联系客服',
     confirm_password: '确认密码',
     login: '登录',
     register: '注册',
@@ -46,7 +47,7 @@ export default {
   game: {
     betrecord: '查看注单',
     name: '游戏',
-    pay: '立即充值',
+    deposit: '立即充值',
     nopay: '未结'
   },
   fin: {

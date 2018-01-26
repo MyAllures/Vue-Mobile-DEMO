@@ -16,8 +16,8 @@
     </tab>
     <router-view v-if="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
     <chat-room v-else="showChatRoom"></chat-room>
-    <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
-    <RightMenu :isShow="showRightMenu" @handleClose="showRightMenu = false"></RightMenu>
+    <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
+    <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
   </div>
 </template>
 
@@ -26,13 +26,12 @@ import { XHeader, Tab, TabItem } from 'vux'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
-import RightMenu from '../components/GameRightMenu'
+import RightMenu from '../components/RightMenu'
 import ChatRoom from '../components/ChatRoom'
 
 export default {
   name: 'GameHall',
   components: {
-    // 注册组件
     Icon,
     XHeader,
     GameMenu,

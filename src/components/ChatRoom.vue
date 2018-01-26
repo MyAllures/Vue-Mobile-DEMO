@@ -3,7 +3,7 @@
     <p class="login-info" v-if="chatLoading">聊天室登陆中...</p>
     <div v-else>
       <div class="chat-announce" v-if="chatAnnounce">
-        <div class="ttl clearfix">
+        <div class="annouce-info clearfix">
           <icon class="fl volume-up" name="volume-up"></icon>
           <span class="fl">公告:</span>
         </div>
@@ -91,6 +91,8 @@
 <script>
 import Vue from 'vue'
 import Icon from 'vue-awesome/components/Icon'
+import 'vue-awesome/icons/picture-o'
+import 'vue-awesome/icons/volume-up'
 import MarqueeTips from 'vue-marquee-tips'
 import { mapGetters } from 'vuex'
 import { sendImgToChat } from '../api'
@@ -345,7 +347,6 @@ export default {
     margin: 60px auto;
   }
 }
-
 .chat-announce {
   position: absolute;
   left: 5px;
@@ -357,7 +358,7 @@ export default {
   height: 29px;
   overflow: hidden;
   z-index: 999;
-  .ttl {
+  .annouce-info {
     display: block;
     float: left;
     background: #e1edfd;
@@ -377,11 +378,9 @@ export default {
     padding-top: 5px;
   }
 }
-
 .chat-content {
   padding-bottom: 118px;
 }
-
 .lay-scroll {
   padding-top: 36px;
   .block-user-info {
@@ -457,12 +456,10 @@ export default {
     }
   }
 }
-
 .lay-block {
   .avatar {
     width: 42px;
     height: 42px;
-    cursor: pointer;
     float: left;
     .font-cog {
       color: #7285d6;
@@ -475,7 +472,6 @@ export default {
     }
   }
 }
-  
 .common-member {
   margin: 0 2px;
   background: #cb9b64;
@@ -486,8 +482,6 @@ export default {
   font-size: 10px;
   float: left;
 }
-
-  
 .lay-content {
   margin-left: 18px;
   float: left;
@@ -500,14 +494,12 @@ export default {
     color: #4f77ab;
     display: inline-block;
     font-weight: 400;
-    cursor: pointer;
     max-width: 73px;
     text-overflow:ellipsis;
     line-height: 12px;
     float: left;
     padding-top: 2px;
   }
-  
   .msg-time {
     color: #9f9f9f;
     background: rgba(230, 230, 230, .6);
@@ -550,7 +542,6 @@ export default {
     img {
       width: 100%;
       min-height: 50px;
-      cursor: pointer;
     }
   }
 }
@@ -638,9 +629,7 @@ export default {
     line-height: 58px;
     margin-right: 1px;
     color: #666;
-    cursor: pointer;
     .el-icon-picture {
-      cursor: pointer;
       font-size: 20px;
       color: #fff;
     }
@@ -652,7 +641,6 @@ export default {
     bottom: 5px;
   }
 }
-
 .u-btn {
   display: inline-block;
   text-align: center;
@@ -663,12 +651,10 @@ export default {
   line-height: 52px;
   background: #72aadb;
   color: #fff;
-  cursor: pointer;
 }
 .close-pop-btn {
   text-align: right;
   padding: 4px;
   color: #444;
-  cursor: pointer;
 }
 </style>
