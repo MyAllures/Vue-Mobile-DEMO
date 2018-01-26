@@ -451,7 +451,7 @@ export default {
   }
 }
 
-@asideWidth: 80px;
+@asideWidth: 100px;
 
 .aside {
   position: fixed;
@@ -468,7 +468,6 @@ export default {
   border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
   .text {
     margin-left: 5px;
-    font-size: 14px;
     color: #9b9b9b;
     &.active {
       color: black;
