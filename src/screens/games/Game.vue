@@ -66,7 +66,7 @@
         <div class="total">
           <span class="bet-num">共 <span class="red">{{currentPlays.length}}</span> 组</span>
           总金额：
-          <span v-if="activePlays.length && activePlays[0].isCustom"
+          <span v-if="amountByCombination"
             class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
           <span v-else
             class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
@@ -167,6 +167,11 @@ export default {
     },
     msgType () {
       return this.errors ? 'warn' : 'success'
+    },
+    amountByCombination () {
+      // 自定義且有指定選項且有組合，總金額以組合數計算
+      let play = this.activePlays[0]
+      return play && play.isCustom && play.activedOptions && play.combinations
     }
   },
   created () {
@@ -177,7 +182,7 @@ export default {
         this.$store.dispatch('fetchCategories', this.gameId)
           .then((res) => {
             this.$router.push(`/game/${this.gameId}/${res[0].name}`)
-          }).catch(() => {})
+          }).catch(() => { })
       } else {
         this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
       }
@@ -242,7 +247,6 @@ export default {
     openDialog () {
       this.currentPlays = _.values(this.validPlays.map(play => {
         let betOptions
-        let isCustom = play.isCustom
         let optionDisplayNames = []
         if (play.activedOptions) {
           let options = []
@@ -252,7 +256,6 @@ export default {
           })
           betOptions = { options: options }
         } else if (play.combinations) {
-          isCustom = false
           betOptions = { options: play.combinations }
           optionDisplayNames = [...play.combinations]
         } else {
@@ -271,7 +274,6 @@ export default {
           id: play.id,
           bet_options: betOptions,
           active: true,
-          isCustom: isCustom,
           combinations: play.combinations,
           optionDisplayNames: optionDisplayNames
         }
@@ -329,7 +331,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
+@import "../../styles/vars.less";
 
 .game {
   display: flex;
@@ -337,7 +339,7 @@ export default {
   height: calc(~"100vh" - 46px);
 }
 .bet-area {
-  flex:1 1 auto;
+  flex: 1 1 auto;
   display: flex;
   .aside {
     overflow-y: auto;
@@ -355,9 +357,9 @@ export default {
       width: 100%;
       background-color: #f9f9f9;
       li {
-        text-overflow:ellipsis;
-        white-space:nowrap;
-        overflow:hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
         text-align: center;
         box-sizing: border-box;
         height: 40px;
@@ -381,11 +383,11 @@ export default {
   }
 }
 .bet-input {
-  flex:0 0 auto;
+  flex: 0 0 auto;
   box-sizing: border-box;
   position: relative;
   color: #fff;
-  background: rgba(0, 0, 0, .7);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   height: 55px;
   padding: 7px;
@@ -422,7 +424,7 @@ export default {
   /deep/ .vux-x-input {
     color: #333;
     padding: 0 5px;
-    .weui-cell__bd.weui-cell__primary{
+    .weui-cell__bd.weui-cell__primary {
       background: #fff;
       border: 1px solid #f0f0f0;
       border-radius: 5px;
@@ -438,7 +440,7 @@ export default {
   }
 }
 .gameclosed-mask {
-  position:absolute;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -489,7 +491,8 @@ export default {
     margin-right: 10px;
     color: @red;
   }
-  .options,.combinations {
+  .options,
+  .combinations {
     width: 100%;
     padding-left: 10px;
   }
@@ -497,7 +500,7 @@ export default {
     width: 100%;
     height: 50px;
     line-height: 50px;
-    font-size:18px;
+    font-size: 18px;
     text-align: center;
     .weui-loading {
       height: 30px;
@@ -514,5 +517,4 @@ export default {
     height: 50px;
   }
 }
-
 </style>

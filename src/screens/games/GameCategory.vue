@@ -32,8 +32,10 @@
       :is="customPlayGroupsSetting.component"
       :playReset="playReset"
       @updateCustomPlays="updateCustomPlays"
+      @updateMultiCustomPlays="updateMultiCustomPlays"
       :setting="customPlayGroupsSetting"
       :plays="groups[0].plays"
+      :groupName="groups[0].name"
       :gameClosed="gameClosed" />
   </div>
 </template>
@@ -43,6 +45,7 @@ import _ from 'lodash'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
+const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
 
 export default {
@@ -74,6 +77,7 @@ export default {
     TabItem,
     WithCode,
     gd11x5Seq,
+    hk6Exl,
     shxiaZdc
   },
   data () {
@@ -138,7 +142,7 @@ export default {
     if (!categories.length) {
       this.$store.dispatch('fetchCategories', this.$route.params.gameId).then((res) => {
         this.initPlayAndGroups(res)
-      }).catch(() => {})
+      }).catch(() => { })
     } else {
       this.initPlayAndGroups(categories)
     }
@@ -148,22 +152,37 @@ export default {
       _.each(this.plays, play => {
         // if all of the options are valid, change the target play's status
         if (play.id === playOptions.activePlayId && playOptions.valid) {
-          this.$set(play, 'active', true)
-          this.$set(play, 'amount', this.amount)
-          this.$set(play, 'isCustom', true)
-          this.$set(play, 'options', playOptions.options)
-          this.$set(play, 'combinations', playOptions.combinations)
-          this.$set(play, 'activedOptions', playOptions.activedOptions)
-          this.$set(this, 'showCombinationDetails', playOptions.showCombinationsPopover)
+          this.updateCustomPlay(play, playOptions, true)
         } else {
-          // if not, reset other plays
-          this.$set(play, 'active', false)
-          this.$set(play, 'isCustom', false)
-          this.$set(play, 'options', '')
-          this.$set(play, 'combinations', [])
-          this.$set(play, 'activedOptions', [])
+          this.resetCustomPlay(play)
         }
       })
+    },
+    updateMultiCustomPlays (activePlays) {
+      const ids = Object.keys(activePlays)
+      _.each(this.plays, play => {
+        let playOptions = activePlays[play.id]
+        if (ids.includes(play.id + '') && playOptions.valid) {
+          this.updateCustomPlay(play, playOptions, false)
+        } else {
+          this.resetCustomPlay(play)
+        }
+      })
+    },
+    updateCustomPlay (play, playOptions) {
+      this.$set(play, 'active', true)
+      this.$set(play, 'amount', this.amount)
+      this.$set(play, 'isCustom', true)
+      this.$set(play, 'options', playOptions.options)
+      this.$set(play, 'combinations', playOptions.combinations)
+      this.$set(play, 'activedOptions', playOptions.activedOptions)
+    },
+    resetCustomPlay (play) {
+      this.$set(play, 'active', false)
+      this.$set(play, 'isCustom', false)
+      this.$set(play, 'options', '')
+      this.$set(play, 'combinations', [])
+      this.$set(play, 'activedOptions', [])
     },
     initPlayAndGroups (categories) {
       const categoryName = this.$route.params.categoryName
