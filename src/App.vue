@@ -40,7 +40,7 @@
         :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="$route.path.indexOf(menu.link) === 0"
+        :selected="`/${$route.path.split('/')[1]}` === menu.link"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
