@@ -1,15 +1,19 @@
 <template>
   <div>
-    <div class="tab-view">
-      <ul class="tab" v-if="tabKeys.length>1">
-        <li
-          :class="['tab-item', {active: currentTab === key}]"
-          :style="{width: tabKeys.length > 4 ? '100px' : 100/tabKeys.length + '%'}"
-          v-for="(key, index) in tabKeys"
+    <div v-if="tabKeys.length>1" class="tab-selector">
+      <tab
+          :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
+          bar-active-color="#156fd8"
+          active-color="#156fd8" >
+        <tab-item v-for="(key, index) in  tabKeys"
+          @on-item-click="switchTab(key)"
           :key="index"
-          @click="switchTab(key)">{{key}}</li>
-      </ul>
+          :selected="key === currentTab">
+          <span :class="{'ellipsis': tabKeys.length > 5}">{{key}}</span>
+        </tab-item>
+      </tab>
     </div>
+
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -253,26 +257,15 @@ export default {
 <style lang="less" scoped>
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
-.tab-view {
+.tab-selector {
   width: 100%;
-  overflow-x: auto;
-  .tab {
-    display: flex;
-    flex-wrap: nowrap;
-    list-style: none;
-    .tab-item {
-      box-sizing: border-box;
-      flex-shrink: 0;
-      height: 44px;
-      line-height: 44px;
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-      &.active {
-        border-bottom: 3px solid @azul;
-        color: @azul;
-      }
-    }
+  overflow: scroll;
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
 </style>
