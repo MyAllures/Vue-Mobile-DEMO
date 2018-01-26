@@ -65,8 +65,7 @@ export default new Router({
       name: 'Fin',
       meta: {
         title: '财务',
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/Fin.vue'], resolve) },
       children: [
@@ -75,8 +74,7 @@ export default new Router({
           name: 'PaymentRecord',
           meta: {
             title: '充值记录',
-            requiresAuth: true,
-            trialDenied: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -85,8 +83,7 @@ export default new Router({
           name: 'WithdrawRecord',
           meta: {
             title: '取款记录',
-            requiresAuth: true,
-            trialDenied: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -95,8 +92,7 @@ export default new Router({
           name: 'DetailBetRecord',
           meta: {
             title: '注單',
-            requiresAuth: true,
-            trialDenied: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
         },
@@ -105,8 +101,7 @@ export default new Router({
           name: 'BetRecord',
           meta: {
             title: '注單',
-            requiresAuth: true,
-            trialDenied: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
         }
@@ -137,8 +132,7 @@ export default new Router({
       meta: {
         title: '修改密码',
         showBack: true,
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/my/Password.vue'], resolve) }
     },
@@ -148,8 +142,7 @@ export default new Router({
       meta: {
         title: '修改账户资料',
         showBack: true,
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/my/Profile.vue'], resolve) }
     },
@@ -159,8 +152,7 @@ export default new Router({
       meta: {
         title: '银行资讯',
         showBack: true,
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/my/Bankinfo.vue'], resolve) }
     },
@@ -170,8 +162,7 @@ export default new Router({
       meta: {
         title: '取款',
         showBack: true,
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/my/Withdraw.vue'], resolve) }
     },
@@ -181,8 +172,7 @@ export default new Router({
       meta: {
         title: '重置取款密码',
         showBack: true,
-        requiresAuth: true,
-        trialDenied: true
+        requiresAuth: true
       },
       component: resolve => { require(['../screens/my/Wpassword.vue'], resolve) }
     },

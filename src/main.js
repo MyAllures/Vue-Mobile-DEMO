@@ -62,11 +62,6 @@ const toLogin = function (router) {
 }
 
 router.beforeEach((to, from, next) => {
-  store.commit(types.UPDATE_LOADING, {isLoading: true})
-  next()
-})
-
-router.beforeEach((to, from, next) => {
   // fisrMacthed might be the top-level parent route of others
   const firstMatched = to.matched.length ? to.matched[0] : null
   if ((firstMatched || to).meta.requiresAuth) {
@@ -76,17 +71,17 @@ router.beforeEach((to, from, next) => {
       store.dispatch('fetchUser')
         .then(res => {
           // got user info
-          if (to.meta.trialDenied && res.account_type === 0) {
+          if (res.account_type === 0 && ['/my', '/fin'].includes(to.matched[0].path)) {
+            toLogin(router)
             Vue.$vux.toast.show({
               type: 'text',
               text: '亲，注册会员以获得更多功能',
               width: '15em',
               position: 'middle'
             })
-            router.push({name: 'Home'})
-            return
+          } else {
+            next()
           }
-          next()
         })
         .catch(error => {
           // can't get user info
