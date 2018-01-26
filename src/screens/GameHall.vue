@@ -11,8 +11,8 @@
       <span>{{currentGame.display_name}}</span>
     </x-header>
     <router-view :key="$route.name + ($route.params.gameId || '')"/>
-    <GameMenu :isShow="sidebarShow" @closeSideBar="sidebarShow = false"/>
-    <RightMenu :isShow="showRightMenu" @handleClose="showRightMenu = false"></RightMenu>
+    <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
+    <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
   </div>
 </template>
 
@@ -21,12 +21,11 @@ import { XHeader } from 'vux'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
-import RightMenu from '../components/GameRightMenu'
+import RightMenu from '../components/RightMenu'
 
 export default {
   name: 'GameHall',
   components: {
-    // 注册组件
     Icon,
     XHeader,
     GameMenu,
@@ -34,7 +33,7 @@ export default {
   },
   data () {
     return {
-      sidebarShow: false, // 默认值
+      sidebarShow: false,
       showRightMenu: false
     }
   },

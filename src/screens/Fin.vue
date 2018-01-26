@@ -17,30 +17,27 @@
 </template>
 
 <script>
-import { Tab, TabItem } from 'vux'
+import { Tab, TabItem, XButton } from 'vux'
+const tabs = [{
+  label: '注单',
+  name: 'BetRecord'
+}, {
+  label: '充值记录',
+  name: 'PaymentRecord'
+}, {
+  label: '取款记录',
+  name: 'WithdrawRecord'
+}]
 export default {
   name: 'Home',
   data () {
     return {
-      activeTab: this.$route.name,
-      tabs: [
-        {
-          label: '充值',
-          name: 'Recharge'
-        },
-        {
-          label: '注单',
-          name: 'BetRecord'
-        },
-        {
-          label: '充值记录',
-          name: 'PaymentRecord'
-        },
-        {
-          label: '取款记录',
-          name: 'WithdrawRecord'
-        }
-      ]
+      activeTab: this.$route.name
+    }
+  },
+  computed: {
+    tabs () {
+      return this.$store.state.user.account_type === 0 ? tabs.slice(0, 1) : tabs
     }
   },
   methods: {
@@ -48,25 +45,10 @@ export default {
       this.$router.push({name: name})
     }
   },
-  watch: {
-    '$route.name': function () {
-      this.activeTab = this.$route.name
-
-      if (this.$route.name === 'Fin') { // to avoid not arrive recharge-page after user key .../fin/ directly
-        this.$router.push({name: 'Recharge'})
-      }
-    }
-  },
   components: {
     Tab,
-    TabItem
-  },
-  beforeRouteEnter (to, from, next) {
-    if (to.name === 'Fin') {
-      next({ name: 'Recharge' })
-    } else {
-      next()
-    }
+    TabItem,
+    XButton
   }
 }
 </script>
@@ -97,6 +79,5 @@ export default {
     border: 4px solid #ddd;
   }
 }
-
 </style>
 

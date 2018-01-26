@@ -2,7 +2,7 @@
   <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
     <x-header
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showActions=true"
+      @on-click-more="showRightMenu=true"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
@@ -14,12 +14,8 @@
       :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
-      <div
-        v-if="!$route.meta.showBack"
-        class="logo"
-        slot="overwrite-left"
-        >
-        <img :src="logoSrc" v-if="logoSrc" height="32" />
+      <div>
+        {{systemConfig.siteName}}
       </div>
       <div
         v-if="showLinks"
@@ -27,8 +23,13 @@
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link bold" @click="tryDemo">试玩</a>
+        <a class="link try" @click="tryDemo">试玩</a>
       </div>
+      <span 
+        v-else 
+        slot="right">
+        <span class="username">{{ user.account_type === 0 ? '游客' : user.username}}</span>
+      </span>
     </x-header>
     <router-view></router-view>
     <tabbar
@@ -46,11 +47,10 @@
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-    <actionsheet
-      show-cancel
-      v-model="showActions"
-      :menus="actionMenus"
-      @on-click-menu="triggerAction"></actionsheet>
+    <right-menu 
+      v-model="showRightMenu"
+      :show-links="showRightMenuLinks"
+      @handleClose="closeRightMenu" />
   </view-box>
 </template>
 
@@ -60,16 +60,15 @@ import './styles/fonts/icons.css'
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
-import Icon from 'vue-awesome/components/Icon.vue'
 import axios from 'axios'
-import 'vue-awesome/icons'
 import { setIndicator } from './utils'
+import RightMenu from './components/RightMenu'
 
 export default {
   name: 'app',
   data () {
     return {
-      showActions: false,
+      showRightMenu: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -83,7 +82,7 @@ export default {
       }, {
         label: this.$t('fin.name'),
         icon: 'icon-fin',
-        link: '/fin',
+        link: '/fin/bet_record',
         route: 'Fin'
       }, {
         label: this.$t('my.name'),
@@ -97,28 +96,16 @@ export default {
       error: ''
     }
   },
+  watch: {
+    'user.logined' (newStatus, old) {
+      if (!newStatus) {
+        clearInterval(this.unreadInterval)
+      } else {
+        this.pollUnread()
+      }
+    }
+  },
   computed: {
-    actionMenus () {
-      return this.user.account_type === 0 ? [{
-        label: '立即注册',
-        link: '/register'
-      }, {
-        label: '退出登录',
-        action: 'logout'
-      }] : [{
-        label: '立即充值',
-        link: '/fin/recharge'
-      }, {
-        label: '查看注单',
-        link: '/fin/bet_record'
-      }, {
-        label: '申请取款',
-        link: '/my/withdraw'
-      }, {
-        label: '联系客服',
-        link: this.$store.state.systemConfig.global_preferences.customer_service_url
-      }]
-    },
     ...mapGetters([
       'user'
     ]),
@@ -128,17 +115,23 @@ export default {
     unread () {
       return this.$store.state.unread
     },
+    showRightMenuLinks () {
+      return ['RoadBeads', 'Leaderboards', 'GameIntro'].includes(this.$route.name)
+    },
     showLinks () {
       return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
     },
     pageName: function () {
       return this.$route.name
     },
-    logoSrc () {
-      return this.$store.state.systemConfig.homePageLogo
+    systemConfig () {
+      return this.$store.state.systemConfig
     }
   },
   methods: {
+    closeRightMenu () {
+      this.showRightMenu = false
+    },
     triggerAction (key, item) {
       if (item) {
         if (item.action) {
@@ -187,7 +180,6 @@ export default {
   created () {
     if (this.$cookie.get('access_token')) {
       this.$store.dispatch('fetchUser').then(() => {
-        this.pollUnread()
       }, errRes => {
         this.performLogin()
       }).catch(() => {
@@ -215,9 +207,9 @@ export default {
     Group,
     Cell,
     Loading,
-    Icon,
     ViewBox,
-    Actionsheet
+    Actionsheet,
+    RightMenu
   }
 }
 </script>
@@ -237,19 +229,32 @@ export default {
   top: -8px;
 }
 
-.vux-header .vux-header-right {
+.vux-header-right {
   .actions {
     position: relative;
     top: -5px;
     right: -5px;
     .link {
       color: #fff;
-      padding: 4px 10px;
+      padding: 4px 5px;
       border-radius: 2px;
-      &.bold {
-        font-weight: 700;
+      &.try {
+        background: #fff;
+        color: #666;
       }
     }
   }
+}
+
+.vux-header /deep/ .vux-header-right a.vux-header-more {
+  float: right;
+}
+.username {
+  color: #fff;
+  overflow: hidden;
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 100px;
+  text-overflow: ellipsis;
 }
 </style>
