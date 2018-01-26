@@ -71,16 +71,6 @@ export default new Router({
       component: resolve => { require(['../screens/Fin.vue'], resolve) },
       children: [
         {
-          path: 'recharge',
-          name: 'Recharge',
-          meta: {
-            title: '充值',
-            requiresAuth: true,
-            trialDenied: true
-          },
-          component: resolve => { require(['../screens/finance/Recharge.vue'], resolve) }
-        },
-        {
           path: 'payment_record',
           name: 'PaymentRecord',
           meta: {
