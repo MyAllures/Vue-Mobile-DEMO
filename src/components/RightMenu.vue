@@ -1,5 +1,5 @@
 <template>
-  <popup :value="value" position="right" @on-hide="handleClose" class="popup" v-transfer-dom>
+  <popup :value="value" position="right" @on-hide="handleClose" class="popup" v-transfer-dom width="180px">
     <group class="head">
       <cell :title="$t('my.balance')" :border-intent="false">
         <div class="balance">{{user.balance | currency('￥')}}</div>
@@ -117,6 +117,9 @@
 @import "../styles/vars.less";
 .popup {
   background-color: #fff;
+}
+.head /deep/ .weui-cells{
+  font-size: 15px;
 }
 .weui-cell {
   padding: 10px 20px;

@@ -10,7 +10,7 @@
       </ul>
     </div>
     <div
-      class="gameplays"
+      :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
       v-for="(group, index) in groups"
       :key="'group' + index">
