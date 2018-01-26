@@ -10,7 +10,7 @@
         :resultCountDown="resultCountDown"/>
     <div class="bet-area">
       <div class="aside">
-        <ul>
+        <ul :class="{short: categories.length < 11}">
           <li
             :class="['category-menu-item',activeCategory===category.name?'active':'']"
             v-for="(category, index) in categories"
@@ -343,7 +343,7 @@ export default {
   display: flex;
   .aside {
     overflow-y: auto;
-    width: 80px;
+    width: 100px;
     box-sizing: border-box;
     border-width: 0 4px 0 0;
     border-style: solid;
@@ -357,22 +357,23 @@ export default {
       width: 100%;
       background-color: #f9f9f9;
       li {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        padding: 10px 0;
+        overflow:hidden;
         text-align: center;
         box-sizing: border-box;
-        height: 40px;
         width: 100%;
-        line-height: 40px;
+        line-height: 20px;
         border-top: 1px solid #d8d8d8;
-        &:last-child {
+        &:last-child{
           border-bottom: 1px solid #d8d8d8;
         }
         &.active {
-          color: #000;
-          background: #e8e8e8;
+          color: #156fd8;
+          background: #f0f0f0;
         }
+      }
+      &.short li {
+        padding: 13px 0;
       }
     }
   }

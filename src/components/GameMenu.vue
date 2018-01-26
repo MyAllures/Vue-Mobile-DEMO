@@ -3,7 +3,7 @@
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
       <router-link class="home-link" to="/">
         <x-icon type="ios-arrow-left"></x-icon>
-        <span class="text">返回首页</span>
+        <span>返回首页</span>
       </router-link>
       <div class="popup-content">
         <ul class="popup-menu">
@@ -92,9 +92,6 @@ export default {
   .vux-x-icon {
     fill: @azul;
     margin-left: 10px;
-  }
-  .text {
-    padding-left: 10px;
   }
 }
 .popup-content {
