@@ -55,6 +55,12 @@ export function createStore () {
           id: '178-合肖',
           component: 'shxiaZdc',
           options: Array.from(Array(12).keys()).map(item => item)
+        },
+        {
+          // 香港六合彩 自選不中
+          id: '178-自选不中',
+          component: 'shxiaZdc',
+          options: Array.from(Array(49).keys()).map(item => item + 1)
         }
       ]
     },
