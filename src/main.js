@@ -61,10 +61,10 @@ const toLogin = function (router) {
   })
 }
 
-// router.beforeEach((to, from, next) => {
-//   store.commit(types.UPDATE_LOADING, {isLoading: true})
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  store.commit(types.UPDATE_LOADING, {isLoading: true})
+  next()
+})
 
 router.beforeEach((to, from, next) => {
   // fisrMacthed might be the top-level parent route of others
