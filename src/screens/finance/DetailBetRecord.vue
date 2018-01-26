@@ -29,7 +29,7 @@
           </td>
           <td>
             <span :class="statusColor(record.profit)">
-              ￥{{record.profit | profitFilter}}
+              {{record.profit | profitFilter | currency('￥')}}
             </span>
           </td>
         </tr>
@@ -86,7 +86,7 @@ export default {
   methods: {
     initFetchBetHistory () {
       this.loading = true
-      fetchBetHistory({ bet_date: this.getDate, offset: 0, limit: this.chunkSize })
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: 0, limit: this.chunkSize })
         .then(data => {
           this.totalCount = data.count
           this.betRecords = data.results
@@ -100,7 +100,7 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchBetHistory({ bet_date: this.getDate, offset: this.betRecords.length, limit: 10 }).then(data => {
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
         this.loadingMore = false
@@ -109,7 +109,7 @@ export default {
       })
     },
     statusColor (val) {
-      return val >= 0 ? 'green' : 'red'
+      return val >= 0 ? 'red' : 'green'
     }
   },
   computed: {
@@ -119,9 +119,7 @@ export default {
   },
   filters: {
     profitFilter (val) {
-      if (val && typeof val === 'number') {
-        return val.toFixed(2).replace('-', '')
-      }
+      return val && typeof val === 'number' ? val.toFixed(2) : 0
     }
   },
   created () {
