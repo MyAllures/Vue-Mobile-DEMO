@@ -71,7 +71,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch('fetchUser')
         .then(res => {
           // got user info
-          if (res.account_type === 0 && ['/my', '/fin'].includes(to.matched[0].path)) {
+          if (res.account_type === 0 && ['/my'].includes(to.matched[0].path)) {
             toLogin(router)
             Vue.$vux.toast.show({
               type: 'text',
