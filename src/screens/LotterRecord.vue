@@ -6,7 +6,7 @@
         <icon scale="1" class='icon repeat-icon' @click.native='refresh' name="repeat"></icon>
       </a>
     </x-header>
-    <div class="record-box">
+    <div ref="recordBox" class="record-box results" :style="{height: resultsH + 'px'}">
       <div class="choose-head">
         <group class="choose-type">
           <popup-radio :options="gameList" v-model="game">
@@ -22,7 +22,7 @@
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
       </div>
-      <table>
+      <table class="results">
         <tr v-if='lotteryTime' v-for='(schedule, scheduleIndex) in dataNum.results'>
           <td class="show-time">
             <p class="periods-number" v-for="(fieldsObject, fieldsIndex) in lotteryNum">
@@ -686,13 +686,18 @@ export default {
   watch: {
     game (val) {
       this.limit = 0
-      document.getElementById('vux_view_box_body').scrollTop = 0
+      this.$refs.recordBox.scrollTop = 0
       for (let i = 0, l = this.games.length; i < l; i++) {
         if (this.games[i].display_name === val) {
           this.codeType = this.games[i].code
           this.getGameList()
         }
       }
+    }
+  },
+  computed: {
+    resultsH () {
+      return (document.documentElement.clientHeight || document.body.clientHeight) - 46 - 53
     }
   },
   methods: {
@@ -732,7 +737,7 @@ export default {
     },
     refresh () {
       this.getGameList()
-      document.getElementById('vux_view_box_body').scrollTop = 0
+      this.$refs.recordBox.scrollTop = 0
     }
   },
   components: {
@@ -751,6 +756,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
+.results {
+  overflow-y: scroll;
+}
 .lottery-header {
   position: fixed;
   top: 0;
@@ -781,9 +790,12 @@ export default {
     }
     .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
       transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
+      right:-4px;
     }
     .choose-type /deep/ .vux-cell-value {
-      color: #0268b1;
+      color: #0983da;
+      font-size: 16px;
+      font-weight: 400;
     }
   }
   .choose-date {
@@ -889,14 +901,16 @@ export default {
     border-collapse:collapse;
   }
   .add-more, .no-more{
-      text-align: center;
-      position: relative;
-      top: 44px;
-      font-size: 14px;
-      background: #f1f1f1;
-      margin-bottom: 40px;
-      line-height: 34px;
-    }
+    text-align: center;
+    position: relative;
+    top: 44px;
+    font-size: 14px;
+    background: #f1f1f1;
+    line-height: 34px;
+  }
+  .no-more {
+    background: #f1f1f1;
+  }
 }
 
 $transformetable: jspk10, bcr, mlaft, er75ft;
