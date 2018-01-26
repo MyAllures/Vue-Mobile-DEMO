@@ -11,7 +11,7 @@
             <span class="play-odds">{{option.odds}}</span>
           </span>
           <span class="play-nums">
-            <span class="play-num" v-for="num in option.value" :key="num">{{num}}</span>
+            <span :class="`hkl-${num}`" v-for="num in option.value" :key="num"></span>
           </span>
         </div>
       </grid-item>
