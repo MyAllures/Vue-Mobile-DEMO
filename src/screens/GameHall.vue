@@ -47,13 +47,6 @@ export default {
       showChatRoom: false
     }
   },
-  methods: {
-    handleSideBarShow () {
-      this.$store.dispatch('fetchUser').then(res => {
-        this.showRightMenu = true
-      })
-    }
-  },
   computed: {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId) || {}
@@ -79,6 +72,13 @@ export default {
       } else {
         this.showChatRoom = false
       }
+    },
+    handleSideBarShow () {
+      console.log('ggg')
+      this.$store.dispatch('fetchUser').then(res => {
+        console.log('fff')
+        this.showRightMenu = true
+      })
     }
   }
 
