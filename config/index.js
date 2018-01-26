@@ -1,6 +1,8 @@
 const path = require('path')
+const config = process.env.NODE_ENV !== 'production' ? require('./dev.env.js') : require('./prod.env.js')
 
 module.exports = {
+  chatHost: config.chatHost.replace(/"/g, ''),
   dev: {
     env: require('./dev.env'),
     assetsSubDirectory: 'static',
@@ -16,7 +18,7 @@ module.exports = {
     showEslintErrorsInOverlay: false,
     devtool: 'eval-source-map',
     cacheBusting: true,
-    cssSourceMap: false,
+    cssSourceMap: false
   },
   build: {
     env: require('./prod.env'),

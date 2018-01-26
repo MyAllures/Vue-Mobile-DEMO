@@ -19,7 +19,7 @@ Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'top'})
 
 let navLang = navigator.language || navigator.userLanguage
-if (navLang === 'zh-CN' || navLang === 'zh-cn') {
+if (navLang === 'zh-CNN' || navLang === 'zh-cn') {
   Vue.config.lang = 'cn'
 } else if (navLang === 'en-US' || navLang === 'en-us') {
   Vue.config.lang = 'en'

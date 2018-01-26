@@ -51,6 +51,16 @@ export function createStore () {
           options: Array.from(Array(20).keys()).map(item => item + 1)
         },
         {
+          // 香港六合彩 连肖
+          id: '178-连肖',
+          component: 'hk6Exl'
+        },
+        {
+          // 香港六合彩 连尾
+          id: '178-连尾',
+          component: 'hk6Exl'
+        },
+        {
           // 香港六合彩 和肖
           id: '178-合肖',
           component: 'shxiaZdc',
