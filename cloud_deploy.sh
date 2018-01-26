@@ -3,7 +3,6 @@ set -e  # to stop script when error occurs
 
 # NPM commands and Azure cli scripts to deploy our static VueJS in a CDN
 
-# export ENV_CONTAINER=staging
 export root_container=\$root  # is '\' is to escape the special character
 export mobile_container=mobile
 export static_container=static
@@ -25,4 +24,4 @@ npm run build
 
 # To start purging the CDN
 # CDN is cached and will not reflect any change until purged
-/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths '/mobile/index.html'
+/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths "/$mobile_container/index.html"
