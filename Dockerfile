@@ -19,6 +19,8 @@ ARG CDN_PROFILE
 ARG CDN_ENDPOINT
 ARG HOST
 ARG MAX_AGE
+ARG chatHost
+ARG chatApi
 
 # Cannot be made into one line as it has a possibility that it will return a 'text file busy' making the shell script unexecutable
 RUN chmod u+x cloud_deploy.sh

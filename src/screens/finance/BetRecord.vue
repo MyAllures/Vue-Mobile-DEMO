@@ -31,7 +31,7 @@
           <td>
             <div>
               <span :class="['profit-text', statusColor(record.profit)]">
-                ¥ {{record.profit | profitFilter}}
+                {{record.profit | profitFilter | currency('￥')}}
               </span>
               <i class="arrow-right icon"></i>
             </div>
@@ -97,7 +97,7 @@ export default {
   methods: {
     initfetchDateBetRecords () {
       this.loading = true
-      fetchDateBetRecords({ bet_date: this.date, offset: 0, limit: this.chunkSize })
+      fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: 0, limit: this.chunkSize })
         .then(data => {
           this.totalCount = data.count
           this.betRecords = data.results
@@ -111,7 +111,7 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchDateBetRecords({ bet_date: this.date, offset: this.betRecords.length, limit: 10 }).then(data => {
+      fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
         this.loadingMore = false
@@ -120,7 +120,7 @@ export default {
       })
     },
     statusColor (val) {
-      return val > 0 ? 'green' : 'red'
+      return val > 0 ? 'red' : 'green'
     },
     fotmattedDate (time) {
       return dateFormat(new Date(time), 'YYYY-MM-DD')
@@ -130,21 +130,9 @@ export default {
     dateFilter (value) {
       return dateFormat(new Date(value), 'YYYY-MM-DD')
     },
-    weekdayFilter (value) {
-      const weekdayMap = {
-        'Mon': '星期一',
-        'Tue': '星期二',
-        'Wed': '星期三',
-        'Thu': '星期四',
-        'Fri': '星期五',
-        'Sat': '星期六',
-        'Sun': '星期日'
-      }
-      return weekdayMap[(String(new Date(value)).split(' '))[0]]
-    },
     profitFilter (val) {
       if (val && typeof val === 'number') {
-        return val.toFixed(2).replace('-', '')
+        return val.toFixed(2)
       }
     }
   },

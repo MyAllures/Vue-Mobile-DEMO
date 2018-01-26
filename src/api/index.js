@@ -15,6 +15,10 @@ export function fetchUser () {
   return axios.get(urls.user)
 }
 
+export function updateUser (user, id) {
+  return axios.put(`${urls.user}${user.id ? user.id : id}/`, user)
+}
+
 export function fetchBanner () {
   return axios.get(urls.banner)
 }
@@ -169,4 +173,8 @@ export function getToken (oldToken) {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       return res
     })
+}
+
+export function sendImgToChat (data) {
+  return axios.post(`${urls.sendImgToChat}`, data)
 }
