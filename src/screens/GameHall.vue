@@ -1,10 +1,10 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
-    <x-header 
-      class="gamehall-header" 
+    <x-header
+      class="gamehall-header"
       :right-options="{showMore: true}"
-      @on-click-more="handleSideBarShow">
-      <span 
+      @on-click-more="showRightMenu = true">
+      <span
         v-if="!showChatRoom"
         slot="overwrite-left"
         @click="sidebarShow = true"
@@ -14,7 +14,7 @@
           size="32"></x-icon>
         {{currentGame.display_name}}
       </span>
-      <span 
+      <span
         v-else
         slot="overwrite-left"
         @click="showChatRoom = false"
@@ -24,7 +24,7 @@
           size="32"></x-icon>
           退出聊天室
       </span>
-      <x-icon 
+      <x-icon
         type="chatbubble-working"
         size="30"
         v-show="!showChatRoom"
@@ -80,11 +80,6 @@ export default {
     })
   },
   methods: {
-    handleSideBarShow () {
-      this.$store.dispatch('fetchUser').then(res => {
-        this.showRightMenu = true
-      })
-    },
     changeRoute () {
       this.showChatRoom = false
     }

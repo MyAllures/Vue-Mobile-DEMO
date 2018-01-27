@@ -70,18 +70,7 @@ router.beforeEach((to, from, next) => {
     } else {
       store.dispatch('fetchUser')
         .then(res => {
-          // got user info
-          if (res.account_type === 0 && ['/my', '/fin'].includes(to.matched[0].path)) {
-            toLogin(router)
-            Vue.$vux.toast.show({
-              type: 'text',
-              text: '亲，注册会员以获得更多功能',
-              width: '15em',
-              position: 'middle'
-            })
-          } else {
-            next()
-          }
+          next()
         })
         .catch(error => {
           // can't get user info

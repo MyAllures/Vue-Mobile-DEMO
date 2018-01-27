@@ -19,7 +19,7 @@
       <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
     </div>
     <group class="links" >
-      <cell-box 
+      <cell-box
         v-if="showLinks"
         @click.native="redirect(link.route)"
         :border-intent="false"
@@ -108,6 +108,11 @@
       },
       handleClose () {
         this.$emit('handleClose')
+      }
+    },
+    watch: {
+      'value': function () {
+        this.$store.dispatch('fetchUser')
       }
     }
   }
