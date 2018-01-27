@@ -29,7 +29,7 @@ export default {
     cancel: '取消',
     loading: '加载中',
     load_more: '加载更多',
-    no_more: '没有更多资料',
+    no_more: '~',
     lotteryResult: '开奖结果',
     success: '成功',
     failed: '失败',

@@ -29,7 +29,7 @@ export default {
     cancel: 'Cancel',
     loading: 'Loading',
     load_more: 'Load More',
-    no_more: 'No More',
+    no_more: '~',
     lotteryResult: 'lottery Result',
     success: 'Success',
     failed: 'Failed',

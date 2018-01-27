@@ -51,13 +51,20 @@
           </td> 
         </tr>
       </table>
-      <div class="add-more" @click='addMore' v-if="firstLimit >= 30">{{$t('misc.load_more')}}</div>
-      <divider class="no-more" v-if="firstLimit < 30">{{$t('misc.no_more')}}</divider>
+      <box gap="10px 10px">
+        <x-button v-if="firstLimit >= 30"
+                  type="primary"
+                  class="add-more"
+                  @click.native='addMore'>
+          <span>{{$t('misc.load_more')}}</span>
+        </x-button>
+        <div class="no-more" v-else>{{$t('misc.no_more')}}</div>
+      </box>
     </div>
   </div>
 </template>
 <script>
-import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, Divider} from 'vux'
+import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box} from 'vux'
 import { fetchGames, getGameData } from '../api'
 import _ from 'lodash'
 import Icon from 'vue-awesome/components/Icon'
@@ -751,12 +758,12 @@ export default {
     Icon,
     Group,
     XInput,
-    Divider
+    XButton,
+    Box
   }
 }
 </script>
 <style lang="scss" scoped>
-
 .results {
   overflow-y: scroll;
 }
@@ -771,16 +778,16 @@ export default {
   }
 }
 .record-box{
-  background: white;
+  background: #f1f1f1;
   .choose-head {
     position: fixed;
     z-index: 100;
     width: 100%;
     top: 26px;
+    border-bottom: solid 1px #b5aaaa;
     .choose-type{
       width: 40%;
       float: left;
-      border-bottom: solid 1px #b5aaaa; 
     }
     .choose-type /deep/ .weui-cell__hd {
       display: none;
@@ -793,7 +800,7 @@ export default {
       right:-4px;
     }
     .choose-type /deep/ .vux-cell-value {
-      color: #0983da;
+      color: #156fd8;
       font-size: 16px;
       font-weight: 400;
     }
@@ -802,7 +809,6 @@ export default {
     position: relative;
     width: 60%;
     float: left;
-    border-bottom: solid 1px #b5aaaa; 
     .calendars {
       position: absolute;
       top: 13px;
@@ -901,15 +907,14 @@ export default {
     border-collapse:collapse;
   }
   .add-more, .no-more{
-    text-align: center;
     position: relative;
     top: 44px;
     font-size: 14px;
-    background: #f1f1f1;
-    line-height: 34px;
+    margin-bottom: 10px;
   }
   .no-more {
-    background: #f1f1f1;
+    text-align: center;
+    color: #ccc;
   }
 }
 
