@@ -10,12 +10,6 @@ export default {
   gameById: (state, getters) => id => {
     return _.find(state.games, game => (game.id + '') === id)
   },
-  categoriesByGameId: (state, getters) => gameId => {
-    return _.filter(state.categories, item => (item.game_id + '') === gameId)
-  },
-  categoryByName: (state, getters) => categoryName => {
-    return _.find(state.categories, item => (item.name) === categoryName)
-  },
   categories: (state) => {
     return state.categories
   }

@@ -53,22 +53,13 @@ export default {
       return this.$store.state.systemConfig.homePageLogo
     }
   },
-  watch: {
-    'allGames': function () {
-      let currentGameId = this.$route.params.gameId
-      if (!currentGameId) {
-        currentGameId = localStorage.getItem('lastGame') || this.allGames[0].id
-        this.$router.push(`/game/${currentGameId}`)
-      }
-    }
-  },
   methods: {
     handleClose () {
       this.$emit('closeSideBar')
     },
     switchGame (key) {
       localStorage.setItem('lastGame', key)
-      this.$router.push(`/game/${key}`)
+      this.$router.push({path: `/game/${key + ''}/`})
       this.handleClose()
     }
   }

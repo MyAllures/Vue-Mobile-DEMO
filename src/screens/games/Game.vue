@@ -113,7 +113,6 @@ export default {
   },
   data () {
     return {
-      gameId: this.$route.params.gameId,
       schedule: {
         id: null
       },
@@ -172,23 +171,35 @@ export default {
       // 自定義且有指定選項且有組合，總金額以組合數計算
       let play = this.activePlays[0]
       return play && play.isCustom && play.activedOptions && play.combinations
+    },
+    gameId () {
+      return this.$route.params.gameId
+    }
+  },
+  watch: {
+    '$route': function (to, from) {
+      if (to.params.gameId === from.params.gameId) {
+        if (to.matched.length === 2 && from.matched.length === 3) {
+          this.$router.go(-1)
+        }
+      }
+    },
+    'gameId': function (gameId) {
+      this.init()
     }
   },
   created () {
-    this.updateSchedule()
-    if (!this.$route.params.categoryName) {
-      const categories = this.$store.getters.categoriesByGameId(this.gameId)
-      if (!categories.length) {
-        this.$store.dispatch('fetchCategories', this.gameId)
-          .then((res) => {
-            this.$router.push(`/game/${this.gameId}/${res[0].name}`)
-          }).catch(() => { })
-      } else {
-        this.$router.push(`/game/${this.gameId}/${categories[0].name}`)
-      }
-    }
+    this.init()
   },
   methods: {
+    init () {
+      this.updateSchedule()
+      this.$store.dispatch('fetchCategories', this.gameId).then(res => {
+        if (!this.$route.params.categoryName) {
+          this.$router.push(`/game/${this.gameId}/${res[0].name}`)
+        }
+      })
+    },
     updateSchedule () {
       clearInterval(this.timer)
       fetchSchedule(this.gameId)

@@ -85,6 +85,7 @@ export default {
       commit(types.SET_GAMES, {
         games: res
       })
+      return Promise.resolve(res)
     })
   },
   fetchUnread: ({ commit, state }) => {

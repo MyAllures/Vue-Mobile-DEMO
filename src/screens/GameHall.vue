@@ -1,10 +1,10 @@
 <template>
   <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
-    <x-header 
-      class="gamehall-header" 
+    <x-header
+      class="gamehall-header"
       :right-options="{showMore: true}"
       @on-click-more="handleSideBarShow">
-      <span 
+      <span
         v-if="!showChatRoom"
         slot="overwrite-left"
         @click="sidebarShow = true"
@@ -14,7 +14,7 @@
           size="32"></x-icon>
         {{currentGame.display_name}}
       </span>
-      <span 
+      <span
         v-else
         slot="overwrite-left"
         @click="showChatRoom = false"
@@ -24,14 +24,14 @@
           size="32"></x-icon>
           退出聊天室
       </span>
-      <x-icon 
+      <x-icon
         type="chatbubble-working"
         size="30"
         v-show="!showChatRoom"
         @click.native="showChatRoom = true"
         slot="right"></x-icon>
     </x-header>
-    <router-view v-show="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
+    <router-view v-show="!showChatRoom" />
     <chat-room v-if="showChatRoom"></chat-room>
     <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
     <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
@@ -75,7 +75,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$store.dispatch('fetchGames').then(res => {
-
+        let currentGameId = vm.$route.params.gameId
+        if (!currentGameId) {
+          currentGameId = localStorage.getItem('lastGame') || res[0].id
+          vm.$router.push(`/game/${currentGameId}`)
+        }
       }).catch(() => { })
     })
   },
@@ -85,8 +89,11 @@ export default {
         this.showRightMenu = true
       })
     },
-    changeRoute () {
+    changeRoute (to, from) {
       this.showChatRoom = false
+      if (to.matched.length === 1 && from.matched.length >= 2) {
+        this.$router.go(-1)
+      }
     }
   }
 
