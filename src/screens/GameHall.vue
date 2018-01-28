@@ -3,7 +3,11 @@
     <x-header
       class="gamehall-header"
       :right-options="{showMore: true}"
+<<<<<<< HEAD
       @on-click-more="handleSideBarShow">
+=======
+      @on-click-more="showRightMenu = true">
+>>>>>>> 618be8725d505cb4ece0a49a7383f52db95b0ef0
       <span
         v-if="!showChatRoom"
         slot="overwrite-left"

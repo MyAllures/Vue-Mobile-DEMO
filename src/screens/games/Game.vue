@@ -301,6 +301,7 @@ export default {
             this.showMessage = true
             this.dialogVisible = false
             this.loading = false
+            this.$store.dispatch('fetchUser')
           } else {
             let messages = []
             res.msg.forEach(error => {
