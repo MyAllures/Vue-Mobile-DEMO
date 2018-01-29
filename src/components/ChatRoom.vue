@@ -52,7 +52,7 @@
               <label for="imgUploadInput">
                 <span title="上传图片">
                   <icon scale="1.3" name="picture-o" class="text-center el-icon-picture"></icon>
-                  <input @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
+                  <input :disabled="!personal_setting.chat.status" @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
                 </span>
               </label>
             </a>
