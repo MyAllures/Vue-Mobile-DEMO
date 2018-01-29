@@ -90,12 +90,12 @@
       <div class="withdraw-password">
         <p class="m-b">{{$t('misc.withdraw_password')}}</p>
         <Flexbox :justify="'center'">
-          <flexbox-item><selector v-model="rawWithdrawPassword[0]" :placeholder="''+withdrawPwdOptions[0]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[1]" :placeholder="''+withdrawPwdOptions[1]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[2]" :placeholder="''+withdrawPwdOptions[2]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[3]" :placeholder="''+withdrawPwdOptions[3]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[4]" :placeholder="''+withdrawPwdOptions[4]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[5]" :placeholder="''+withdrawPwdOptions[5]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[0]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[1]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[2]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[3]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[4]" :options="withdrawPwdOptions"></selector></flexbox-item>
+          <flexbox-item><selector v-model="rawWithdrawPassword[5]" :options="withdrawPwdOptions"></selector></flexbox-item>
         </Flexbox>
       </div>
       <x-input
