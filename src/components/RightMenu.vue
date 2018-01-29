@@ -73,7 +73,7 @@
           route: '/stastics/leaderboards'
         }, {
           display_name: '历史开奖',
-          route: '/'
+          route: '/results'
         }, {
           display_name: '游戏介绍',
           route: '/gameintro'
