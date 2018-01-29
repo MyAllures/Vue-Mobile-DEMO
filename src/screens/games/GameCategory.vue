@@ -27,14 +27,23 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <span :class="getPlayClass(play)">{{play.display_name}}</span>
+            <div class="dice-container" v-if="play.display_name.split(',').length && game && game.code === 'jsk3'">
+              <span :class="['play-name', `jsk3-${dice}` ]"
+                v-for="(dice, index) in play.display_name.split(',')"
+                :key="index">
+                {{dice}}
+              </span>
+            </div>
+            <span v-else :class="getPlayClass(play)">{{play.display_name}}</span>
             <span class="play-odds">{{play.odds}}</span>
           </div>
         </grid-item>
       </grid>
     </div>
+
     <component v-else
       :is="customPlayGroupsSetting.component"
+      :gameCode="game.code"
       :playReset="playReset"
       @updateCustomPlays="updateCustomPlays"
       @updateMultiCustomPlays="updateMultiCustomPlays"
@@ -156,10 +165,19 @@ export default {
   },
   methods: {
     getPlayClass (play) {
-      if (!(isNaN(play.display_name))) {
-        return ['play-name', play.code, `${this.game.code}-${play.display_name}`]
-      } else {
-        return [ 'play-name', play.code ]
+      if (this.game) {
+        let plain = [ 'play-name', play.code ]
+        let style = [...plain, `${this.game.code}-${play.display_name}`, {'plain': this.plays[play.id] ? this.plays[play.id].active && !this.gameClosed : false}]
+        // plain is for lay over the default active style
+
+        if (!(isNaN(play.display_name))) {
+          if (play.group.indexOf('和') !== -1) {
+            return plain
+          }
+          return style
+        } else {
+          return plain
+        }
       }
     },
     updateCustomPlays (playOptions) {
@@ -274,5 +292,9 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
+}
+
+.dice-container {
+  display: inline-block;
 }
 </style>

@@ -8,7 +8,7 @@
         :key="index"
         @on-item-click="toggleActive(option)">
         <div class="play-area">
-          <span class="play-name">{{option.num}}</span>
+          <span :class="['play-name', `${gameCode}-${option.num}`]">{{option.num}}</span>
         </div>
       </grid-item>
     </grid>
@@ -21,6 +21,9 @@ import Combinatorics from 'js-combinatorics'
 export default {
   name: 'WithCode',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
