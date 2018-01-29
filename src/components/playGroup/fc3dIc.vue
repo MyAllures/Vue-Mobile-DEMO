@@ -8,8 +8,8 @@
         v-for="(option, index) in customOptions"
         :key="index"
         @on-item-click="toggleActive(option)">
-        <div class="play-area">
-          <span class="play-name">{{option.num}}</span>
+        <div class="text-center">
+          <span :class="['play-name', `${gameCode}-${option.num}`]">{{option.num}}</span>
         </div>
       </grid-item>
     </grid>
@@ -21,6 +21,9 @@ import { Grid, GridItem } from 'vux'
 export default {
   name: 'fc3dIc',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
