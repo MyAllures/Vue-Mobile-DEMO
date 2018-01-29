@@ -44,6 +44,10 @@
 .play-odds {
   font-size: 15px;
   color: #999;
+  .under480({
+    position: absolute;
+    right: 5px;
+  })
 }
 .weui-grids {
   margin-right: -1px;
@@ -92,13 +96,23 @@
 .hk6-loop(1);
 
 // jsk3
+
+.under480(@rules) {
+  @media (max-width: 481px) { @rules(); }
+}
+
 .jsk3-dice {
   display: inline-block;
-  background: url(../assets/ball_4.png) no-repeat;
-  width: 27px;
-  height: 27px;
+  background: url(../assets/dice.png) no-repeat;
+  width: 42px;
+  height: 42px;
   text-indent: -9999px;
   margin-right: 5px;
+  .under480({
+    background-size: (42px * 0.7) (252px * 0.7);
+    width: 42px * 0.7;
+    height: 42px * 0.7;
+  })
 }
 
 
@@ -107,7 +121,10 @@
 
   .jsk3-@{i} {
     &:extend(.jsk3-dice);
-    background-position: 0 (-27px * (@i - 1));
+    background-position: 0 (-42px * (@i - 1));
+    .under480({
+      background-position: 0 ((-42px * 0.7) * (@i - 1));
+    })
   }
 }
 
@@ -117,9 +134,9 @@
 // racing series
 .racingicon {
   display: inline-block;
-  background: url("../assets/ball-pk.png") no-repeat;
-  width: 20px;
-  height: 20px;
+  background: url("../assets/racingicon.jpg") no-repeat;
+  width: 42px;
+  height: 42px;
   text-indent: -9999px;
 }
 
@@ -138,7 +155,7 @@
   .number-loop(@num: @size) when (@num > 0) {
     .@{name}-@{num} {
       &:extend(.racingicon);
-      background-position: 0 -21px * (@num - 1) ;
+      background-position: 0 -42px * (@num - 1) ;
     }
     .number-loop(@num - 1);
   }
