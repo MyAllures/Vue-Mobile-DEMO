@@ -14,12 +14,12 @@
           <flexbox-item v-if="option.value" class="play-name text-right"  :span="8">
             <span v-for="number in option.value"
               :key="number"
-              :class="`hkl-${number}`">
+              :class="`${gameCode}-${number}`">
             </span>
           </flexbox-item>
         </flexbox>
         <div v-else>
-          <span :class="['play-name', `hkl-${option.num}`]"></span>
+          <span :class="['play-name', `${gameCode}-${option.num}`]"></span>
         </div>
       </grid-item>
     </grid>
@@ -35,6 +35,9 @@ import { zodiacMap } from '../../utils/hk6'
 export default {
   name: 'shixaZdc',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },

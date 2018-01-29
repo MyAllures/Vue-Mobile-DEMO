@@ -25,8 +25,8 @@
         <router-link class="link" to="/register">注册</router-link>
         <a class="link try" @click="tryDemo">试玩</a>
       </div>
-      <span 
-        v-else 
+      <span
+        v-else
         slot="right">
         <span class="username">{{ user.account_type === 0 ? '游客' : user.username}}</span>
       </span>
@@ -40,14 +40,14 @@
         :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="`/${$route.path.split('/')[1]}` === menu.link"
+        :selected="`/${$route.path.split('/')[1]}` === menu.link || $route.path === menu.link"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-    <right-menu 
+    <right-menu
       v-model="showRightMenu"
       :show-links="showRightMenuLinks"
       @handleClose="closeRightMenu" />
@@ -245,7 +245,6 @@ export default {
     }
   }
 }
-
 .vux-header /deep/ .vux-header-right a.vux-header-more {
   float: right;
 }

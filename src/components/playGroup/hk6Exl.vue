@@ -26,6 +26,9 @@ import { zodiacMap, tailMap } from '../../utils/hk6'
 export default {
   name: 'hk6Exl',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
