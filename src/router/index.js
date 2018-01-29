@@ -93,7 +93,9 @@ export default new Router({
           name: 'DetailBetRecord',
           meta: {
             title: '注單',
-            requiresAuth: true
+            requiresAuth: true,
+            tabbarHidden: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
         },
