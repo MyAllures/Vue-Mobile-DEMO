@@ -56,11 +56,13 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
+const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -92,7 +94,8 @@ export default {
     WithCode,
     gd11x5Seq,
     hk6Exl,
-    shxiaZdc
+    shxiaZdc,
+    fc3dIc
   },
   data () {
     return {
@@ -125,7 +128,10 @@ export default {
     customPlayGroupsSetting () {
       let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryName}`
       return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupId)
-    }
+    },
+    ...mapGetters([
+      'categories'
+    ])
   },
   watch: {
     // update amount of active plays
@@ -149,16 +155,14 @@ export default {
           this.$set(play, 'active', false)
         }
       })
+    },
+    'categories': function (categories) {
+      this.initPlayAndGroups(categories)
     }
   },
   created () {
-    const categories = this.$store.state.categories
-    if (!categories.length) {
-      this.$store.dispatch('fetchCategories', this.$route.params.gameId).then((res) => {
-        this.initPlayAndGroups(res)
-      }).catch(() => { })
-    } else {
-      this.initPlayAndGroups(categories)
+    if (this.categories.length > 0) {
+      this.initPlayAndGroups(this.categories)
     }
   },
   methods: {
@@ -217,13 +221,17 @@ export default {
     initPlayAndGroups (categories) {
       const categoryName = this.$route.params.categoryName
       const currentCategory = _.find(categories, item => (item.name) === categoryName)
+      if (!currentCategory) {
+        return
+      }
       const tabs = {}
       const plays = {}
+      const tabKeys = []
 
       let groupName = this.$route.params.categoryName
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
-        this.tabKeys.push(tabName)
+        tabKeys.push(tabName)
 
         const groups = tab.groups
         groups.forEach(group => {
@@ -241,7 +249,8 @@ export default {
         tabs[tabName] = groups
       })
 
-      this.currentTab = this.tabKeys[0]
+      this.currentTab = tabKeys[0]
+      this.tabKeys = tabKeys
       this.tabs = tabs
       this.groups = tabs[this.currentTab]
       this.plays = plays

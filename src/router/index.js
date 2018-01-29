@@ -199,6 +199,16 @@ export default new Router({
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
     },
     {
+      path: '/LotterRecord',
+      name: 'LotterRecord',
+      meta: {
+        title: '开奖结果',
+        headerHidden: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
+    },
+    {
       path: '/stastics/roadbeads',
       name: 'RoadBeads',
       meta: {
