@@ -31,7 +31,7 @@
         @click.native="showChatRoom = true"
         slot="right"></x-icon>
     </x-header>
-    <router-view v-show="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
+    <router-view v-show="!showChatRoom" />
     <chat-room v-if="showChatRoom"></chat-room>
     <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
     <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
@@ -40,6 +40,7 @@
 
 <script>
 import { XHeader, Tab, TabItem } from 'vux'
+import { mapGetters } from 'vuex'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
@@ -67,7 +68,10 @@ export default {
   computed: {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId) || {}
-    }
+    },
+    ...mapGetters([
+      'allGames'
+    ])
   },
   watch: {
     '$route': 'changeRoute'
@@ -75,13 +79,25 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$store.dispatch('fetchGames').then(res => {
-
+        let currentGameId = vm.$route.params.gameId
+        if (!currentGameId) {
+          currentGameId = localStorage.getItem('lastGame') || res[0].id
+          vm.$router.replace(`/game/${currentGameId}`)
+        }
       }).catch(() => { })
     })
   },
   methods: {
-    changeRoute () {
+    handleSideBarShow () {
+      this.$store.dispatch('fetchUser').then(res => {
+        this.showRightMenu = true
+      })
+    },
+    changeRoute (to, from) {
       this.showChatRoom = false
+      if (!this.$route.params.gameId) {
+        this.$router.replace(`/game/${this.allGames[0].id}`)
+      }
     }
   }
 
