@@ -129,7 +129,7 @@
     </div>
   </form>
   <div v-transfer-dom>
-    <popup v-model="agreement.showAgreement" height="100%">
+    <popup v-model="agreement.showAgreement" height="50%">
       <div class="agreement">
         <h3>用户协议</h3>
         </br>
@@ -143,7 +143,7 @@
         <p>管理层 敬啟</p>
         <hr>
         </br>
-        <check-icon :value.sync="agreement.isAgree" @click.native="handleAgreementClick" class="m-t">我已阅读并完全同意此协议</check-icon>
+        <p>注册本站会员并使用本站任何服务即表示您完全同意此协议</p>
       </div>
     </popup>
     </div>
