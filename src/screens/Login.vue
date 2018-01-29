@@ -5,14 +5,16 @@
         required
         show-clear
         ref="username"
-      @on-change="validate"
-      :title="$t('misc.username')"
-      label-width="100"
-      v-model="user.username">
+        placeholder="请输入用户名"
+        @on-change="validate"
+        :title="$t('misc.username')"
+        label-width="100"
+        v-model="user.username">
       </x-input>
       <x-input
         required
         show-clear
+        placeholder="请输入密码"
         type="password"
         ref="password"
         autocomplete="off"
@@ -20,6 +22,25 @@
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
+      </x-input>
+    </group>
+    <group v-if="illegalTriedLogin"
+      title="请输入验证码"
+      class="weui-cells_form">
+      <x-input v-model="user.verification_code_1"
+        class="captcha-input"
+        title="验证码"
+        placeholder="请输入验证码"
+        :show-clear="false"
+        :max="4">
+        <img slot="right" :src="captcha_src" class="captcha">
+      </x-input>
+      <x-input title="发送验证码" class="weui-vcode">
+        <x-button slot="right"
+          action-type ="button"
+          type="primary"
+          @click.native="fetchCaptcha()"
+          mini>发送验证码</x-button>
       </x-input>
     </group>
 
@@ -53,7 +74,7 @@
 
 <script>
   import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
-  import urls from '../api/urls'
+  import { fetchCaptcha } from '../api'
 
   export default {
     name: 'Home',
@@ -62,13 +83,14 @@
         user: {
           username: '',
           password: '',
-          verification_code_0: ''
+          verification_code_0: '',
+          verification_code_1: ''
         },
         valid: false,
-        captcha: '',
-        display_verification: false,
         loading: false,
-        error: ''
+        error: '',
+        illegalTriedLogin: false,
+        captcha_src: ''
       }
     },
     methods: {
@@ -80,10 +102,9 @@
         this.valid = valid
       },
       fetchCaptcha () {
-        this.$http.get(urls.verification).then(response => {
-          this.captcha = urls.domain + response.data.captcha_src
-          this.user.verification_code_0 = response.data.captcha_val
-          this.display_verification = true
+        return fetchCaptcha().then(res => {
+          this.captcha_src = res.captcha_src
+          this.user.verification_code_0 = res.captcha_val
         })
       },
       submit () {
@@ -93,12 +114,18 @@
             user: this.user
           }).then(res => {
             this.$store.dispatch('fetchUser')
+            this.illegalTriedLogin = false
             this.error = ''
             this.loading = false
             this.$router.push('/')
           }, error => {
+            if (error.data.auth_req === 1) {
+              this.fetchCaptcha().then(res => {
+                this.illegalTriedLogin = true
+              })
+            }
             this.loading = false
-            this.error = error
+            this.error = error.msg
           })
         }
       },
@@ -138,5 +165,12 @@
 }
 .login-button {
   width: 100%;
+}
+.captcha {
+  width: 100px;
+  height: 40px;
+}
+.captcha-input {
+  height: 30px;
 }
 </style>
