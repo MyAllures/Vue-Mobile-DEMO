@@ -178,10 +178,8 @@ export default {
   },
   watch: {
     '$route': function (to, from) {
-      if (to.params.gameId === from.params.gameId) {
-        if (to.matched.length === 2 && from.matched.length === 3) {
-          this.$router.go(-1)
-        }
+      if (!this.$route.params.categoryName && to.params.gameId === from.params.gameId) {
+        this.$router.replace(`/game/${this.gameId}/${this.categories[0].name}`)
       }
     },
     'gameId': function (gameId) {
@@ -196,7 +194,7 @@ export default {
       this.updateSchedule()
       this.$store.dispatch('fetchCategories', this.gameId).then(res => {
         if (!this.$route.params.categoryName) {
-          this.$router.push(`/game/${this.gameId}/${res[0].name}`)
+          this.$router.replace(`/game/${this.gameId}/${res[0].name}`)
         }
       })
     },

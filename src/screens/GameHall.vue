@@ -40,6 +40,7 @@
 
 <script>
 import { XHeader, Tab, TabItem } from 'vux'
+import { mapGetters } from 'vuex'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
@@ -67,7 +68,10 @@ export default {
   computed: {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId) || {}
-    }
+    },
+    ...mapGetters([
+      'allGames'
+    ])
   },
   watch: {
     '$route': 'changeRoute'
@@ -78,7 +82,7 @@ export default {
         let currentGameId = vm.$route.params.gameId
         if (!currentGameId) {
           currentGameId = localStorage.getItem('lastGame') || res[0].id
-          vm.$router.push(`/game/${currentGameId}`)
+          vm.$router.replace(`/game/${currentGameId}`)
         }
       }).catch(() => { })
     })
@@ -91,8 +95,8 @@ export default {
     },
     changeRoute (to, from) {
       this.showChatRoom = false
-      if (to.matched.length === 1 && from.matched.length >= 2) {
-        this.$router.go(-1)
+      if (!this.$route.params.gameId) {
+        this.$router.replace(`/game/${this.allGames[0].id}`)
       }
     }
   }
