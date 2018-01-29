@@ -154,7 +154,6 @@
   import { fetchCaptcha, checkUserName, register } from '../api'
   import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter } from '../utils'
   import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, Cell, Popup, CheckIcon, TransferDom } from 'vux'
-import { setTimeout } from 'timers'
 
 export default {
     name: 'Register',
