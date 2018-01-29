@@ -558,6 +558,9 @@ export default {
   padding: 0;
 }
 .typing {
+  .el-textarea-inner {
+    outline: none;
+  }
   .control-bar {
     margin-right: 5px;
     flex: 0.5;
