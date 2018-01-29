@@ -17,7 +17,7 @@
     .play-name {
       color: #fff;
       &.plain {
-        color: black; // for lay over default active for plain ball
+        color: black; // lay over default active for plain ball
       }
     }
     .play-odds {
@@ -98,7 +98,7 @@
   width: 27px;
   height: 27px;
   text-indent: -9999px;
-  margin-left: 5px;
+  margin-right: 5px;
 }
 
 
@@ -114,8 +114,8 @@
 .jsk3-loop();
 
 
-// racingball series
-.racingball {
+// racing series
+.racingicon {
   display: inline-block;
   background: url("../assets/ball-pk.png") no-repeat;
   width: 20px;
@@ -137,7 +137,7 @@
 
   .number-loop(@num: @size) when (@num > 0) {
     .@{name}-@{num} {
-      &:extend(.racingball);
+      &:extend(.racingicon);
       background-position: 0 -21px * (@num - 1) ;
     }
     .number-loop(@num - 1);
@@ -163,7 +163,7 @@
   font-size: 15px;
 }
 
-@plaingames:
+@plainballgames:
   tjssc 10,
   xjssc 10 ,
   cqssc 10,
@@ -176,9 +176,9 @@
   jnd28 27,
   cqlf 20;
 
-.plaingames-loop(@gameindex: length(@plaingames)) when (@gameindex > 0) {
+.plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
 
-  @device: extract(@plaingames, @gameindex);
+  @device: extract(@plainballgames, @gameindex);
   @name:   extract(@device, 1);
   @size:   extract(@device, 2);
 

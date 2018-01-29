@@ -29,8 +29,8 @@
           <div class="play-area">
             <div class="dice-container" v-if="play.display_name.split(',').length && game && game.code === 'jsk3'">
               <span :class="['play-name', `jsk3-${dice}` ]"
-                v-for="dice in play.display_name.split(',')"
-                :key="dice">
+                v-for="(dice, index) in play.display_name.split(',')"
+                :key="index">
                 {{dice}}
               </span>
             </div>
@@ -40,6 +40,7 @@
         </grid-item>
       </grid>
     </div>
+
     <component v-else
       :is="customPlayGroupsSetting.component"
       :gameCode="game.code"
