@@ -1,3 +1,8 @@
+@breakpoint: 481px;
+.under480(@rules) {
+  @media (max-width: @breakpoint) { @rules(); }
+}
+
 .playgroup-title {
   position: sticky;
   top: 0;
@@ -25,6 +30,7 @@
     }
   }
 }
+
 .play-area {
   display: flex;
   justify-content: space-between;
@@ -34,6 +40,9 @@
   white-space: nowrap;
   font-size: 20px;
   color: #444;
+  .under480({
+    font-size: 18px;
+  })
 }
 .play-nums {
   .play-num {
@@ -42,14 +51,24 @@
   }
 }
 .play-odds {
-  font-size: 15px;
+  font-size: 20px;
   color: #999;
+  &.right {
+    position: absolute;
+    right: 5px;
+  }
+  .under480({
+    font-size: 12px;
+  })
 }
 .weui-grids {
   margin-right: -1px;
 }
 .weui-grid {
   padding: 13px 10px;
+  .under480({
+    padding: 10px 5px;
+  })
 }
 .gameplays {
   /deep/ .weui-grids:after {
@@ -92,13 +111,19 @@
 .hk6-loop(1);
 
 // jsk3
+
 .jsk3-dice {
   display: inline-block;
-  background: url(../assets/ball_4.png) no-repeat;
-  width: 27px;
-  height: 27px;
+  background: url(../assets/dice.png) no-repeat;
+  width: 42px;
+  height: 42px;
   text-indent: -9999px;
   margin-right: 5px;
+  .under480({
+    background-size: (42px * 0.7) (252px * 0.7);
+    width: 42px * 0.7;
+    height: 42px * 0.7;
+  })
 }
 
 
@@ -107,7 +132,10 @@
 
   .jsk3-@{i} {
     &:extend(.jsk3-dice);
-    background-position: 0 (-27px * (@i - 1));
+    background-position: 0 (-42px * (@i - 1));
+    .under480({
+      background-position: 0 ((-42px * 0.7) * (@i - 1));
+    })
   }
 }
 
@@ -117,9 +145,9 @@
 // racing series
 .racingicon {
   display: inline-block;
-  background: url("../assets/ball-pk.png") no-repeat;
-  width: 20px;
-  height: 20px;
+  background: url("../assets/racingicon.jpg") no-repeat;
+  width: 42px;
+  height: 42px;
   text-indent: -9999px;
 }
 
@@ -138,7 +166,7 @@
   .number-loop(@num: @size) when (@num > 0) {
     .@{name}-@{num} {
       &:extend(.racingicon);
-      background-position: 0 -21px * (@num - 1) ;
+      background-position: 0 -42px * (@num - 1) ;
     }
     .number-loop(@num - 1);
   }
@@ -152,15 +180,16 @@
 // plainball series
 .plainball {
   display: inline-block;
-  width: 22px;
-  height: 22px;
-  line-height: 22px;
+  width: 42px;
+  height: 42px;
+  line-height: 42px;
   background: radial-gradient(circle at 5px 5px, #fff, #ccc);
   border-radius: 100%;
   text-align: center;
   color: #333;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 24px;
+  margin: -5px;
 }
 
 @plainballgames:
@@ -174,7 +203,8 @@
   gd11x5 11,
   gdklsf 20,
   jnd28 27,
-  cqlf 20;
+  cqlf 20,
+  fc3d 10;
 
 .plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
 

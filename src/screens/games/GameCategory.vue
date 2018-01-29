@@ -35,7 +35,7 @@
               </span>
             </div>
             <span v-else :class="getPlayClass(play)">{{play.display_name}}</span>
-            <span class="play-odds">{{play.odds}}</span>
+            <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
           </div>
         </grid-item>
       </grid>

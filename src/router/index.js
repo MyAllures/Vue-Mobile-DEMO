@@ -93,7 +93,9 @@ export default new Router({
           name: 'DetailBetRecord',
           meta: {
             title: '注單',
-            requiresAuth: true
+            requiresAuth: true,
+            tabbarHidden: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
         },
@@ -197,8 +199,8 @@ export default new Router({
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
     },
     {
-      path: '/LotterRecord',
-      name: 'LotterRecord',
+      path: '/results',
+      name: 'Results',
       meta: {
         title: '开奖结果',
         headerHidden: true,

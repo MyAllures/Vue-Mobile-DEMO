@@ -178,3 +178,7 @@ export function getToken (oldToken) {
 export function sendImgToChat (data) {
   return axios.post(`${urls.sendImgToChat}`, data)
 }
+
+export function fetchPlaySetting (id) {
+  return axios.get(`${urls.playSetting}?game=${id}`)
+}

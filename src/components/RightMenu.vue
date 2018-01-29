@@ -37,13 +37,15 @@
         </span>
       </cell-box>
     </group>
-    <confirm
-      v-model="logoutDialogShow"
-      :confirm-text="$t('misc.logout')"
-      :cancel-text="$t('misc.cancel')"
-      @on-confirm="logout">
-      <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
-    </confirm>
+    <div v-transfer-dom>
+      <confirm
+        v-model="logoutDialogShow"
+        :confirm-text="$t('misc.logout')"
+        :cancel-text="$t('misc.cancel')"
+        @on-confirm="logout">
+        <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
+      </confirm>
+    </div>
   </popup>
 </template>
 
@@ -71,7 +73,7 @@
           route: '/stastics/leaderboards'
         }, {
           display_name: '历史开奖',
-          route: '/'
+          route: '/results'
         }, {
           display_name: '游戏介绍',
           route: '/gameintro'
