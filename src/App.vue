@@ -245,7 +245,6 @@ export default {
     }
   }
 }
-
 .vux-header /deep/ .vux-header-right a.vux-header-more {
   float: right;
 }
