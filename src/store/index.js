@@ -77,6 +77,18 @@ export function createStore () {
           id: '178-自选不中',
           component: 'shxiaZdc',
           options: Array.from(Array(49).keys()).map(item => item + 1)
+        },
+        {
+          // 福彩3D 组选三
+          id: '197-组选三',
+          component: 'fc3dIc',
+          options: Array.from(Array(10).keys())
+        },
+        {
+          // 福彩3D 组选六
+          id: '197-组选六',
+          component: 'fc3dIc',
+          options: Array.from(Array(10).keys())
         }
       ]
     },

@@ -62,6 +62,7 @@ const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], r
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
+const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -93,7 +94,8 @@ export default {
     WithCode,
     gd11x5Seq,
     hk6Exl,
-    shxiaZdc
+    shxiaZdc,
+    fc3dIc
   },
   data () {
     return {
