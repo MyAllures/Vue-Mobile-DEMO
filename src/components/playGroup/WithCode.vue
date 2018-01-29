@@ -7,7 +7,7 @@
         v-for="(option, index) in options"
         :key="index"
         @on-item-click="toggleActive(option)">
-        <div class="play-area">
+        <div class="text-center">
           <span :class="['play-name', `${gameCode}-${option.num}`]">{{option.num}}</span>
         </div>
       </grid-item>
