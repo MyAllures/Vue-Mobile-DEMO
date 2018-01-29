@@ -23,24 +23,15 @@
         label-width="100"
         v-model="user.password">
       </x-input>
-    </group>
-    <group v-if="illegalTriedLogin"
-      title="请输入验证码"
-      class="weui-cells_form">
-      <x-input v-model="user.verification_code_1"
+      <x-input v-if="illegalTriedLogin"
+        v-model="user.verification_code_1"
         class="captcha-input"
         title="验证码"
         placeholder="请输入验证码"
+        label-width="100"
         :show-clear="false"
         :max="4">
-        <img slot="right" :src="captcha_src" class="captcha">
-      </x-input>
-      <x-input title="发送验证码" class="weui-vcode">
-        <x-button slot="right"
-          action-type ="button"
-          type="primary"
-          @click.native="fetchCaptcha()"
-          mini>发送验证码</x-button>
+        <img slot="right" @click="fetchCaptcha()" :src="captcha_src" class="captcha">
       </x-input>
     </group>
 
