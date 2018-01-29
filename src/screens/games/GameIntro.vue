@@ -2,10 +2,10 @@
   <div class="clear-viewbox-default-bottom">
     <div class="intro-container">
       <h2 class="rules-sub-title m-b m-t">游戏资讯：</h2>
-      <x-table :cell-bordered="false" :content-bordered="false" class="playsetting-table">
+      <x-table :cell-bordered="false" :content-bordered="true" class="playsetting-table">
         <thead>
           <tr>
-            <th></th>
+            <th class="gameplay-field"></th>
             <th>赔率</th>
             <th>反水</th>
           </tr>
@@ -72,8 +72,8 @@ export default {
     selectGame () {
       this.showGameMenu = true
     },
-    fetchPlaySetting () {
-      fetchPlaySetting(this.currentGameId[0]).then(res => {
+    fetchPlaySetting (id) {
+      fetchPlaySetting(id).then(res => {
         this.playSet = res
       })
     }
@@ -144,6 +144,10 @@ export default {
 .playsetting-table{
   font-size: 14px;
   color: #4a4a4a;
+}
+
+.gameplay-field {
+  width: 200px;
 }
 
 .intro-selector {
