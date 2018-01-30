@@ -1,20 +1,28 @@
 <template>
   <div>
-    <group label-width="'100px'" :title="$t('profile.bankinfo_hint')" v-if="!user.bank">
-      <selector
+    <group label-width="100px" :title="$t('profile.bankinfo_hint')" v-if="!user.bank">
+      <div v-if="inputErrors.length">
+        <ul slot="after-title" class="input-errors">
+          <li class="text" v-for="(error, index) in inputErrors" :key="index">
+            {{error}}
+          </li>
+        </ul>
+      </div>
+      <cell
         :title="$t('profile.select_bank')"
-        :options="banks"
-        v-model="member.bank.bank"
-        @on-change="validate"
-        placeholder="请选择">
-      </selector>
+        is-link
+        :border-intent="false"
+        :arrow-direction="showBankOptions ? 'up' : 'down'"
+        value-align="left"
+        @click.native="showBankOptions = !showBankOptions">{{bankName}}</cell>
       <x-input
         autocapitalize="off"
         :title="$t('profile.bank_province')"
         required
         type="text"
         ref="province"
-        @on-change="validate"
+        required
+        @on-blur="validateErrors"
         v-model="member.bank.province" >
       </x-input>
 
@@ -24,7 +32,8 @@
         required
         type="text"
         ref="city"
-        @on-change="validate"
+        required
+        @on-blur="validateErrors"
         v-model="member.bank.city">
       </x-input>
 
@@ -35,7 +44,8 @@
         type="number"
         keyboard="number"
         ref="account"
-        @on-change="validate"
+        required
+        @on-blur="validateErrors"
         v-model="member.bank.account">
       </x-input>
     </group>
@@ -47,7 +57,7 @@
       </group>
       <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
       <div class="m-a" v-if="!user.bank">
-        <x-button type="primary" :disabled="!valid" @click.native="submit">
+        <x-button type="primary" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('profile.submit')}}</span>
         </x-button>
@@ -55,10 +65,16 @@
       <div v-else class="text-center m-a">
         <span class="text-muted">{{$t('profile.bankinfo_update_tip')}}</span>
       </div>
+      <x-address style="display: none"
+        title="请选择"
+        v-model="selectedBank"
+        :list="banks"
+        :show.sync="showBankOptions">
+      </x-address>
   </div>
 </template>
 <script>
-import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
+import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapActions, mapGetters } from 'vuex'
 export default {
@@ -76,17 +92,34 @@ export default {
           account: ''
         }
       },
-      valid: false
+      selectedBank: [],
+      inputErrors: [],
+      valid: false,
+      showBankOptions: false
     }
   },
   computed: {
     ...mapGetters([
       'user'
-    ])
+    ]),
+    bankName () {
+      let currentBank = this.banks.find(item => {
+        return item.value === this.selectedBank[0]
+      })
+      return currentBank ? currentBank.name : ''
+    }
+  },
+  watch: {
+    'selectedBank': function (selectedBank) {
+      this.member.bank.bank = selectedBank[0]
+    }
   },
   created () {
-    this.fetchBank()
-    this.checkBankValue()
+    if (!this.user.bank) {
+      this.fetchBank()
+    } else {
+      this.checkBankValue()
+    }
   },
   methods: {
     validate () {
@@ -96,20 +129,53 @@ export default {
       }
       this.valid = valid && !!this.member.bank.bank
     },
+    validateErrors () {
+      const inputErrors = []
+      if (this.$refs.province.firstError) {
+        inputErrors.push('必須輸入省份')
+      }
+      if (this.$refs.city.firstError) {
+        inputErrors.push('必須輸入县市')
+      }
+      if (this.$refs.account.firstError) {
+        inputErrors.push('必須輸入银行账号')
+      }
+      this.inputErrors = inputErrors
+    },
+    validateAll () {
+      let valid = true
+      for (let key in this.$refs) {
+        let ref = this.$refs[key]
+        ref.validate()
+        if (ref.firstError) {
+          ref.forceShowError = true
+          valid = false
+        }
+      }
+      this.validateErrors()
+      return valid
+    },
     ...mapActions([
       'fetchUser'
     ]),
     fetchBank (index) {
       fetchBank().then(response => {
-        this.banks = response
+        response.forEach(item => {
+          this.banks.push({
+            name: item.value,
+            value: item.key + ''
+          })
+        })
+        this.member.bank.bank = this.banks[0].value
+        this.selectedBank = [this.banks[0].value]
       })
     },
     submit () {
-      if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
-        return
-      }
-      this.loading = true
-      if (this.valid) {
+      if (this.validateAll()) {
+        if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
+          return
+        }
+        this.loading = true
         addUserBank(this.user, this.member).then((response) => {
           this.loading = false
           this.fetchUser({})
@@ -125,12 +191,10 @@ export default {
       }
     },
     checkBankValue () {
-      if (this.user.bank) {
-        this.member.bank.bank = this.user.bank.bank.toString()
-        this.member.bank.city = this.user.bank.city
-        this.member.bank.province = this.user.bank.province
-        this.member.bank.account = this.user.bank.account
-      }
+      this.member.bank.bank = this.user.bank.bank.toString()
+      this.member.bank.city = this.user.bank.city
+      this.member.bank.province = this.user.bank.province
+      this.member.bank.account = this.user.bank.account
     }
   },
   components: {
@@ -140,7 +204,8 @@ export default {
     XButton,
     Datetime,
     Selector,
-    Spinner
+    Spinner,
+    XAddress
   }
 }
 </script>
