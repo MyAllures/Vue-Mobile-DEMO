@@ -9,7 +9,7 @@
         :key="index"
         @on-item-click="toggleActive(option)">
         <div class="text-center">
-          <span :class="['play-name', `${gameCode}-${option.num}`]">{{option.num}}</span>
+          <span :class="['play-name', `${gameCode}-${option.num}` , {'plain': option.active && !gameClosed}]">{{option.num}}</span>
         </div>
       </grid-item>
     </grid>
