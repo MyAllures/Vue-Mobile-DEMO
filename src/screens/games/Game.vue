@@ -388,6 +388,7 @@ export default {
   .main {
     width: calc(~"100%" - 80px);
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #fff;
   }
 }
