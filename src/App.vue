@@ -25,11 +25,7 @@
         <router-link class="link" to="/register">注册</router-link>
         <a class="link try" @click="tryDemo">试玩</a>
       </div>
-      <span
-        v-else
-        slot="right">
-        <span class="username">{{ user.account_type === 0 ? '游客' : user.username}}</span>
-      </span>
+      <span slot="right" class="username fr" v-else>{{ user.account_type === 0 ? '游客' : user.username}}</span>
     </x-header>
     <router-view></router-view>
     <tabbar

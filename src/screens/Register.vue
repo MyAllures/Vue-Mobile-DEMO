@@ -245,7 +245,7 @@ export default {
           this.$router.push({ name: 'Home' })
         }, errorMsg => {
           this.fetchCaptcha()
-          this.error = msgFormatter(errorMsg)
+          this.error = msgFormatter(errorMsg.msg)
         })
       },
       validate () {
