@@ -459,7 +459,7 @@ export default {
   align-items: center;
   bottom: 0;
   width: @asideWidth;
-  height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
+  height: calc(~"100vh - @{headHeight}*2"); // for fixed header & game-selector
   overflow-y: auto;
   background-color: #f9f9f9;
   box-sizing: border-box;
@@ -489,12 +489,14 @@ export default {
     padding: 10px;
   }
 }
+
 .cumulative-number {
   color: #888888
 }
+
 .statistics {
   position: absolute;
-  height: calc(~"100% - @{headHeight}*2");
+  height: calc(~"100vh - @{headHeight}*2");
   overflow-y: auto;
   right: 0;
   padding-top: @headHeight * 2;

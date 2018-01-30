@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="remitpayees.length">
-      <tab :line-width="2" :animate="false">
+      <tab :line-width="2">
         <tab-item v-for="(p,idx) in remitpayees" :key="idx" :selected="remit.remit_info.remit_payee === p.id" @click.native="togglePayee(p)">{{payeeName(p)}}</tab-item>
       </tab>
 
