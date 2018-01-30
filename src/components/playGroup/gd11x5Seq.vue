@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
     <div v-for="(group, index) in showViewCustomOptionsGroup" :key="index">
       <div class="playgroup-title">{{group.name}}</div>
       <grid :cols="chunkOptions.length === 2 ? 2 : 3" v-for="(chunkOptions, index) in group.options" :key="index">
@@ -154,6 +154,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../styles/base.less";
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
 .odds {
