@@ -7,6 +7,13 @@
       <cell :title="$t('my.receiver')" :value="user.real_name"></cell>
     </group>
     <group label-width="'80px'" :title="limitHint + ', 当前余额：￥' + user.balance">
+      <div v-if="inputErrors.length">
+        <ul slot="after-title" class="input-errors">
+          <li class="text" v-for="(error, index) in inputErrors" :key="index">
+            {{error}}
+          </li>
+        </ul>
+      </div>
       <x-input autocapitalize="off"
                name="withdraw-amount"
                :title="$t('withdraw.amount')"
@@ -15,23 +22,23 @@
                keyboard="number"
                ref="amount"
                required
+               @on-blur="validateErrors"
+               @on-cnange="validateErrors"
                :is-type="amountValidator"
                :placeholder="$t('withdraw.amount_hint')"
                v-model.number="withdraw.amount">
       </x-input>
-    </group>
-    <group label-width="'80px'">
       <x-input autocapitalize="off"
                :title="$t('withdraw.password')"
                :show-clear="true"
                type="password"
                ref="password"
                required
+               @on-blur="validateErrors"
                :placeholder="$t('withdraw.password_hint')"
                v-model="withdraw.withdraw_password">
       </x-input>
     </group>
-
     <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
     <div class="vux-group-tip red">{{errorMsg}}</div>
     <div class="m-a">
@@ -70,7 +77,8 @@
         errorMsg: '',
         loading: false,
         message: '',
-        show: false
+        show: false,
+        inputErrors: []
       }
     },
     computed: {
@@ -94,6 +102,20 @@
       this.$root.loading = false
     },
     methods: {
+      validateErrors () {
+        const inputErrors = []
+        if (this.$refs.password.firstError) {
+          inputErrors.push('必須輸入密碼')
+        }
+        if (this.$refs.amount.firstError) {
+          if (this.$refs.amount.firstError === '必填哦') {
+            inputErrors.push('必须输入金额')
+          } else {
+            inputErrors.push(this.$refs.amount.firstError)
+          }
+        }
+        this.inputErrors = inputErrors
+      },
       validateAll () {
         let amount = this.$refs.amount
         let password = this.$refs.password
@@ -105,13 +127,8 @@
         if (password.firstError) {
           password.forceShowError = true
         }
+        this.validateErrors()
         return amount.valid && password.valid
-      },
-      validate () {
-        let amount = parseInt(this.withdraw.amount)
-        let meetLower = !this.limit.lower || amount >= this.limit.lower
-        let meetUpper = !this.limit.upper || amount <= this.limit.upper
-        this.valid = this.$refs.amount.valid && meetLower && meetUpper && (this.withdraw.amount <= this.user.balance)
       },
       amountValidator (value) {
         let meetLower = !this.limit.lower || value >= this.limit.lower

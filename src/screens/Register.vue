@@ -350,16 +350,6 @@ export default {
 .weui-cell__hd /deep/ .weui-label {
   width: 80px;
 }
-.input-errors {
-  font-size: 14px;
-  margin-left: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  .text {
-    list-style: circle inside;
-    color: #ff9800;
-  }
-}
 
 .read-agreement {
   padding-left: 1em;
