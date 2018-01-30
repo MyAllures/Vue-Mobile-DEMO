@@ -1,8 +1,3 @@
-@breakpoint: 481px;
-.under480(@rules) {
-  @media (max-width: @breakpoint) { @rules(); }
-}
-
 .playgroup-title {
   position: sticky;
   top: 0;
@@ -40,9 +35,6 @@
   white-space: nowrap;
   font-size: 20px;
   color: #444;
-  .under480({
-    font-size: 18px;
-  })
 }
 .play-nums {
   .play-num {
@@ -51,24 +43,18 @@
   }
 }
 .play-odds {
-  font-size: 20px;
+  font-size: 15px;
   color: #999;
   &.right {
     position: absolute;
     right: 5px;
   }
-  .under480({
-    font-size: 15px;
-  })
 }
 .weui-grids {
   margin-right: -1px;
 }
 .weui-grid {
   padding: 13px 10px;
-  .under480({
-    padding: 10px 5px;
-  })
 }
 .gameplays {
   /deep/ .weui-grids:after {
@@ -119,11 +105,6 @@
   height: 42px;
   text-indent: -9999px;
   margin-right: 5px;
-  .under480({
-    background-size: (42px * 0.7) (252px * 0.7);
-    width: 42px * 0.7;
-    height: 42px * 0.7;
-  })
 }
 
 
@@ -133,9 +114,6 @@
   .jsk3-@{i} {
     &:extend(.jsk3-dice);
     background-position: 0 (-42px * (@i - 1));
-    .under480({
-      background-position: 0 ((-42px * 0.7) * (@i - 1));
-    })
   }
 }
 
