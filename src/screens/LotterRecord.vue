@@ -9,13 +9,17 @@
     <div ref="recordBox" class="record-box results" :style="{height: resultsH + 'px'}">
       <div class="choose-head">
         <group class="choose-type">
-          <popup-radio :options="gameList" v-model="game">
-            <template slot-scope="props" slot="each-item">
-              <p>
-                <span style="color:#666;">{{ gameList[props.index] }}</span>
-              </p>
-            </template>
-          </popup-radio>
+          <div class="current-game" @click='selectGame()'>
+            <span>{{currentGame.display_name}}</span>
+            <span class="arrow"></span>
+          </div>
+          <x-address 
+            style="display:none;" 
+            title="title" 
+            v-model="currentGameId" 
+            :list="gameLists" 
+            :show.sync="showGameMenu">
+          </x-address>
         </group> 
         <group class="choose-date">
           <icon class='icon calendars' scale="1" name="calendar"></icon>
@@ -64,12 +68,13 @@
   </div>
 </template>
 <script>
-import {XHeader, Flexbox, FlexboxItem, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box} from 'vux'
-import { fetchGames, getGameData } from '../api'
+import {XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box} from 'vux'
+import { getGameData } from '../api'
 import _ from 'lodash'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/calendar'
 import 'vue-awesome/icons/repeat'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -577,11 +582,9 @@ export default {
     ]
 
     return {
-      game: '',
-      gameList: [{
-        code: '',
-        display_name: ''
-      }],
+      game: [],
+      gameLists: [],
+      currentGameId: [],
       dataTime: '',
       codeType: '',
       limit: 30,
@@ -599,24 +602,26 @@ export default {
       codeKl: false,
       gameTable,
       nowGameTable: '',
+      showGameMenu: false,
       lotteryTime: '',
       lotteryNum: '',
       lotteryResult: '',
       lotteryCompare: ''
     }
   },
+  computed: {
+    resultsH () {
+      return (document.documentElement.clientHeight || document.body.clientHeight) - 46 - 53
+    },
+    ...mapGetters([
+      'allGames'
+    ]),
+    currentGame () {
+      let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
+      return code || { display_name: '请选择' }
+    }
+  },
   created () {
-    fetchGames().then((response) => {
-      this.games = response
-      if (!response) {
-        return
-      }
-      response.forEach((game, i) => {
-        this.gameList[i] = game.display_name
-      })
-      this.game = this.gameList[0]
-      this.codeType = this.games[0].code
-    })
     let data = new Date()
     data = dateFormat(new Date(data), 'YYYY-MM-DD')
     this.dataTime = data
@@ -691,26 +696,37 @@ export default {
     }
   },
   watch: {
-    game (val) {
+    'allGames': function (allGames) {
+      const played = localStorage.getItem('lastGame')
+      this.currentGameId = played ? [played] : [allGames[0].id + '']
+      _.each(this.allGames, (game) => {
+        this.gameLists.push(
+          {
+            name: game.display_name,
+            value: game.id + '',
+            code: game.code
+          }
+        )
+      })
+    },
+    currentGame () {
       this.limit = 0
       this.$refs.recordBox.scrollTop = 0
-      for (let i = 0, l = this.games.length; i < l; i++) {
-        if (this.games[i].display_name === val) {
-          this.codeType = this.games[i].code
+      this.gameLists.forEach((game, i) => {
+        if (this.currentGame.display_name === game.name) {
+          this.codeType = game.code
           this.getGameList()
         }
-      }
-    }
-  },
-  computed: {
-    resultsH () {
-      return (document.documentElement.clientHeight || document.body.clientHeight) - 46 - 53
+      })
     }
   },
   methods: {
     change (value) {
       this.dataTime = value
       this.getGameList()
+    },
+    selectGame () {
+      this.showGameMenu = true
     },
     getGameList () {
       getGameData(this.codeType, this.dataTime).then((response) => {
@@ -747,8 +763,14 @@ export default {
       this.$refs.recordBox.scrollTop = 0
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$store.dispatch('fetchGames')
+    })
+  },
   components: {
     XHeader,
+    XAddress,
     Flexbox,
     FlexboxItem,
     Datetime,
@@ -788,6 +810,25 @@ export default {
     .choose-type{
       width: 40%;
       float: left;
+      .current-game {
+        width: 100%;
+        display: inline-block;
+        line-height: 44px;
+        text-indent: 10px;
+        height: 44px;
+        color: #156fd8;
+      }
+      .arrow {
+        display: inline-block;
+        height: 6px;
+        width: 6px;
+        border-width: 2px 2px 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        transform: rotate(135deg);
+        margin-left: 3px;
+        margin-bottom: 2px;
+      }
     }
     .choose-type /deep/ .weui-cell__hd {
       display: none;
