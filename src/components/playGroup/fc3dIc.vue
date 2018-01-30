@@ -1,7 +1,7 @@
 <template>
   <div class="gameplays">
     <div class="playgroup-title">{{groupName}}</div>
-    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="2">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"

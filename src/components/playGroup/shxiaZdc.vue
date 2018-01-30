@@ -1,6 +1,7 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds"> {{ activePlay ? `賠率：${activePlay.odds}` : $route.params.categoryName}}</div>
+    <div class="playgroup-odds" v-if="!activePlay"> {{ $route.params.categoryName}}</div>
+    <div class="playgroup-odds" v-else> 賠率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="zodiacs ? 1 : 5"
       v-for="(options, index) in [customOptions]"
       :key="index">
@@ -143,6 +144,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../styles/base.less";
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
 

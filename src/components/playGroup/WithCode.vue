@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="options.length === 2 ? 2 : 3" v-for="(options, index) in viewCustomOptions" :key="index">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"
@@ -123,6 +123,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../styles/base.less";
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
 .odds {
