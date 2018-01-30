@@ -23,7 +23,7 @@
         :key="$route.name + ($route.params.categoryName || '')"
         :game="currentGame"
         :gameClosed="gameClosed"
-        :amount="amount"
+        :amount="amountForProp"
         :playReset="playReset"
         @updatePlays="updatePlays"
         @resetPlays="playReset = !playReset"
@@ -37,7 +37,7 @@
           <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
-          <x-input class="weui-vcode" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
+          <x-input class="weui-vcode" keyboard="number" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
           </x-input>
         </flexbox-item>
         <flexbox-item>
@@ -174,6 +174,9 @@ export default {
     },
     gameId () {
       return this.$route.params.gameId
+    },
+    amountForProp () {
+      return parseInt(this.amount)
     }
   },
   watch: {
