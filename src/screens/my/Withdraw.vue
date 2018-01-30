@@ -10,24 +10,23 @@
       <x-input autocapitalize="off"
                name="withdraw-amount"
                :title="$t('withdraw.amount')"
-               :show-clear=true
-               required
+               :show-clear="true"
                type="number"
                keyboard="number"
                ref="amount"
-               @on-change="validate"
+               required
+               :is-type="amountValidator"
                :placeholder="$t('withdraw.amount_hint')"
-               v-model="withdraw.amount">
+               v-model.number="withdraw.amount">
       </x-input>
     </group>
     <group label-width="'80px'">
       <x-input autocapitalize="off"
                :title="$t('withdraw.password')"
-               :show-clear=true
-               required
+               :show-clear="true"
                type="password"
                ref="password"
-               @on-change="validate"
+               required
                :placeholder="$t('withdraw.password_hint')"
                v-model="withdraw.withdraw_password">
       </x-input>
@@ -36,7 +35,7 @@
     <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
     <div class="vux-group-tip red">{{errorMsg}}</div>
     <div class="m-a">
-      <x-button type="primary" :disabled="!valid" @click.native="submit">
+      <x-button type="primary" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('withdraw.submit')}}</span>
       </x-button>
@@ -65,12 +64,11 @@
     data () {
       return {
         withdraw: {
-          amount: '',
-          withdraw_password: ''
+          amount: undefined,
+          withdraw_password: undefined
         },
         errorMsg: '',
         loading: false,
-        valid: false,
         message: '',
         show: false
       }
@@ -96,11 +94,48 @@
       this.$root.loading = false
     },
     methods: {
+      validateAll () {
+        let amount = this.$refs.amount
+        let password = this.$refs.password
+        amount.validate()
+        password.validate()
+        if (amount.firstError) {
+          amount.forceShowError = true
+        }
+        if (password.firstError) {
+          password.forceShowError = true
+        }
+        return amount.valid && password.valid
+      },
       validate () {
         let amount = parseInt(this.withdraw.amount)
         let meetLower = !this.limit.lower || amount >= this.limit.lower
         let meetUpper = !this.limit.upper || amount <= this.limit.upper
         this.valid = this.$refs.amount.valid && meetLower && meetUpper && (this.withdraw.amount <= this.user.balance)
+      },
+      amountValidator (value) {
+        let meetLower = !this.limit.lower || value >= this.limit.lower
+        let meetUpper = !this.limit.upper || value <= this.limit.upper
+        if (!meetLower) {
+          return {
+            valid: false,
+            msg: '必须大于最小取款金额'
+          }
+        } else if (!meetUpper) {
+          return {
+            valid: false,
+            msg: '必须小于最大取款金额'
+          }
+        } else if (value > this.user.balance) {
+          return {
+            valid: false,
+            msg: '余额不足'
+          }
+        } else {
+          return {
+            valid: true
+          }
+        }
       },
       createBank () {
         this.$router.push({
@@ -111,15 +146,19 @@
         })
       },
       submit () {
-        this.loading = true
-        if (this.valid) {
+        if (this.validateAll()) {
+          this.loading = true
           postWithdraw(this.withdraw)
             .then(response => {
               this.loading = false
               this.message = '取款信息已提交'
               this.show = true
-              this.withdraw.amount = ' '
+              this.withdraw.amount = ''
               this.withdraw.withdraw_password = ''
+              this.$nextTick(() => {
+                this.$refs.amount.reset()
+                this.$refs.password.reset()
+              })
               this.errorMsg = ''
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
