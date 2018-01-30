@@ -9,15 +9,16 @@
         :closeCountDown="closeCountDown"
         :resultCountDown="resultCountDown"/>
     <div class="bet-area">
-      <div class="aside">
-        <ul :class="{short: categories.length < 11}">
-          <li
-            :class="['category-menu-item',activeCategory===category.name?'active':'']"
-            v-for="(category, index) in categories"
-            :key="'category' + category.name"
-            @click="switchCategory(category.name)">{{category.name}}</li>
-        </ul>
-      </div>
+      <group class="aside">
+        <cell-box
+          :border-intent="false"
+          :class="['category-menu-item',activeCategory===category.name ? 'active' : '']"
+          v-for="(category, index) in categories"
+          @click.native="switchCategory(category.name)"
+          :key="'category' + category.name">
+          {{category.name}}
+        </cell-box>
+      </group>
       <div class="main">
         <router-view
         :key="$route.name + ($route.params.categoryName || '')"
@@ -37,7 +38,14 @@
           <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
-          <x-input class="weui-vcode" keyboard="number" type="number" v-model.number="amount" label-width="100px" :show-clear="false">
+          <x-input 
+            class="weui-vcode"
+            keyboard="number" 
+            type="number" 
+            placeholder="金额"
+            v-model.number="amount" 
+            label-width="100px" 
+            :show-clear="false">
           </x-input>
         </flexbox-item>
         <flexbox-item>
@@ -94,7 +102,7 @@ import { mapGetters } from 'vuex'
 import { fetchSchedule, placeBet } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
-import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading } from 'vux'
+import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox } from 'vux'
 export default {
   name: 'Game',
   components: {
@@ -109,7 +117,8 @@ export default {
     Flexbox,
     FlexboxItem,
     Toast,
-    InlineLoading
+    InlineLoading,
+    CellBox
   },
   data () {
     return {
@@ -351,48 +360,35 @@ export default {
   flex-direction: column;
   height: calc(~"100vh" - 46px);
 }
+.active {
+  background: @azul;
+  color: #fff;
+}
 .bet-area {
   flex: 1 1 auto;
   display: flex;
+  /deep/ .weui-cells {
+    margin: auto; // fix the overflowing flexitem issue 
+    line-height: 18px;
+    width: 100%;
+    background: #f9f9f9;
+  }
   .aside {
+    display: flex;
     overflow-y: auto;
-    width: 100px;
-    box-sizing: border-box;
+    justify-content: safe center;
+    align-items: safe center;
+    width: 110px;
     border-width: 0 4px 0 0;
     border-style: solid;
     border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
-    display: flex;
-    align-items: center;
     background-color: #f9f9f9;
     color: #9b9b9b;
-    ul {
-      max-height: 100%;
-      width: 100%;
-      background-color: #f9f9f9;
-      li {
-        padding: 10px 0;
-        overflow:hidden;
-        text-align: center;
-        box-sizing: border-box;
-        width: 100%;
-        line-height: 20px;
-        border-top: 1px solid #d8d8d8;
-        &:last-child{
-          border-bottom: 1px solid #d8d8d8;
-        }
-        &.active {
-          color: #156fd8;
-          background: #f0f0f0;
-        }
-      }
-      &.short li {
-        padding: 13px 0;
-      }
-    }
   }
   .main {
     width: calc(~"100%" - 80px);
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #fff;
   }
 }
