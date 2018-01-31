@@ -140,7 +140,7 @@
 .buttons {
   margin: 10px 10px 0;
   /deep/ .weui-btn {
-    font-size: 15px;  
+    font-size: 15px;
   }
 }
 .links {
