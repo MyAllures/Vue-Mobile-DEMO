@@ -168,6 +168,7 @@
           this.$router.push({ name: 'Home' })
           this.$store.dispatch('fetchUser')
         }).catch(error => {
+          this.fetchCaptcha()
           this.error = error
         })
       }
