@@ -60,11 +60,45 @@
         </flexbox-item>
       </flexbox>
     </div>
+    <div v-transfer-dom>
+      <popup v-model="$store.state.showVerifyPopup" height="270px" @on-show="fetchCaptcha()" is-transparent>
+        <div class="verify-popup">
+          <p class="text-center">请输入验证码以继续试玩</p>
+         <group>
+          <x-input
+            v-model="user.verification_code_1"
+            class="captcha-input"
+            title="验证码"
+            placeholder="请输入验证码"
+            label-width="100"
+            :show-clear="false"
+            :max="4">
+            <img slot="right"
+              v-if="captcha_src"
+              @click="fetchCaptcha()"
+              :src="captcha_src"
+              alt="captcha"
+              class="captcha">
+            <x-button type="primary"
+              @click.native="fetchCaptcha()"
+              slot="right"
+              mini
+              v-else>获取验证码</x-button>
+          </x-input>
+        </group>
+         <div class="continue">
+          <div v-if="error" class="error">{{error}}</div>
+          <x-button type="primary" @click.native="tryDemo">继续试玩</x-button>
+         </div>
+        </div>
+
+      </popup>
+    </div>
   </form>
 </template>
 
 <script>
-  import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
+  import { XInput, Group, XButton, Flexbox, FlexboxItem, Popup, TransferDom } from 'vux'
   import { fetchCaptcha } from '../api'
 
   export default {
@@ -81,10 +115,14 @@
         loading: false,
         error: '',
         illegalTriedLogin: false,
+        illegalTrial: false,
         captcha_src: ''
       }
     },
     methods: {
+      handleClose () {
+        this.$store.dispatch('closeVerifyPopup')
+      },
       validate () {
         let valid = true
         for (let x in this.$refs) {
@@ -121,10 +159,16 @@
         }
       },
       tryDemo () {
-        this.$store.dispatch('tryDemo').then(result => {
+        let verification = {
+          verification_code_0: this.user.verification_code_0,
+          verification_code_1: this.user.verification_code_1
+        }
+
+        this.$store.dispatch('tryDemo', verification).then(result => {
           this.$router.push({ name: 'Home' })
           this.$store.dispatch('fetchUser')
         }).catch(error => {
+          this.fetchCaptcha()
           this.error = error
         })
       }
@@ -134,7 +178,11 @@
       Group,
       XButton,
       Flexbox,
-      FlexboxItem
+      FlexboxItem,
+      Popup
+    },
+    directives: {
+      TransferDom
     }
   }
 </script>
@@ -160,8 +208,21 @@
 .captcha {
   width: 100px;
   height: 40px;
+  vertical-align: middle;
 }
 .captcha-input {
   height: 30px;
+}
+
+.verify-popup {
+  width: 95%;
+  background-color: white;
+  height: 75%;
+  margin: 0 auto;
+  border-radius: 5px;
+  padding-top: 10px;
+}
+.continue {
+  padding: 20px 15px;
 }
 </style>

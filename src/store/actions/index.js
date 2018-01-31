@@ -38,9 +38,16 @@ const login = function ({ commit, state }, { user }) {
 
 export default {
   login: login,
-  tryDemo ({ commit, state }) {
+  tryDemo ({ commit, state }, verification) {
+    if (!verification) {
+      verification = {}
+    }
     commit('UPDATE_LOADING', {isLoading: true})
-    return register({ account_type: 0 }).then(user => {
+    return register({
+      account_type: 0,
+      verification_code_0: verification.verification_code_0,
+      verification_code_1: verification.verification_code_1
+    }).then(user => {
       commit('UPDATE_LOADING', {isLoading: false})
       return login({ commit, state }, { user })
     }).catch(error => {
@@ -103,5 +110,11 @@ export default {
   },
   setSystemConfig: ({ commit }, data) => {
     commit(types.SET_SYSTEM_CONFIG, data)
+  },
+  openVerifyPopup: ({ commit }) => {
+    commit(types.SHOW_VERIFY_POPUP)
+  },
+  closeVerifyPopup: ({ commit }) => {
+    commit(types.CLOSE_VERIFY_POPUP)
   }
 }

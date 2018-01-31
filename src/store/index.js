@@ -13,6 +13,7 @@ export function createStore () {
         logined: ''
       },
       isLoading: false,
+      showVerifyPopup: false,
       games: [],
       categories: [],
       systemConfig: {

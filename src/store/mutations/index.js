@@ -29,5 +29,11 @@ export default {
   },
   [types.SET_UNREAD]: (state, { unread }) => {
     state.unread = unread
+  },
+  [types.SHOW_VERIFY_POPUP]: (state) => {
+    state.showVerifyPopup = true
+  },
+  [types.CLOSE_VERIFY_POPUP]: (state) => {
+    state.showVerifyPopup = false
   }
 }
