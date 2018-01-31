@@ -28,13 +28,13 @@
          >
         </x-input>
       </form>
-    </group>  
+    </group>
     <div class="m-a">
       <x-button type="primary" :disabled="!valid" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>充值</span>
       </x-button>
-    </div> 
+    </div>
   </div>
 </template>
 <script>
@@ -111,7 +111,7 @@ export default {
     toggleTab (payee) {
       this.payDetail = payee.detail[0]
       this.currentPay = Object.assign({}, this.currentPay, {
-        'type_id': payee.id,
+        'type_id': payee.detail[0].payment_type,
         'payee_id': payee.detail[0].payee_id,
         'gateway_id': payee.detail[0].gateway_id,
         'display_name': payee.display_name,
@@ -154,18 +154,16 @@ export default {
       })
     },
     submit () {
-      if (this.valid) {
-        let token = this.$cookie.get('access_token')
-        if (!token) {
-          let next = '/login?next=' + this.$route.fullPath
-          this.$router.push(next)
-          return
-        }
-        this.currentPay.token = token
-        Vue.nextTick(() => {
-          this.$refs.paymentform.submit()
-        })
+      let token = this.$cookie.get('access_token')
+      if (!token) {
+        let next = '/login?next=' + this.$route.fullPath
+        this.$router.push(next)
+        return
       }
+      this.currentPay.token = token
+      Vue.nextTick(() => {
+        this.$refs.paymentform.submit()
+      })
     }
   }
 }
@@ -184,5 +182,5 @@ export default {
     border-bottom: 3px solid #04BE02;
   }
 }
-    
+
 </style>

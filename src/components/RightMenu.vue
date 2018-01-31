@@ -137,7 +137,10 @@
   color: @red;
 }
 .buttons {
-  margin: 20px 10px 0;
+  margin: 15px 10px 0;
+  .weui-btn {
+    font-size: 16px;
+  }
 }
 .links {
   position: absolute;
