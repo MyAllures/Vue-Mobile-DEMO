@@ -206,11 +206,16 @@ export default {
       this.updateSchedule()
       this.$store.dispatch('fetchCategories', this.gameId).then(res => {
         if (!this.$route.params.categoryName) {
-          this.$router.replace(`/game/${this.gameId}/${res[0].name}`)
+          if (this.gameId) {
+            this.$router.replace(`/game/${this.gameId}/${res[0].name}`)
+          }
         }
       })
     },
     updateSchedule () {
+      if (!this.gameId) {
+        return
+      }
       clearInterval(this.timer)
       fetchSchedule(this.gameId)
         .then(res => {

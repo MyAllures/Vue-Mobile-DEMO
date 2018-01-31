@@ -10,7 +10,8 @@ export function createStore () {
   return new Vuex.Store({
     state: {
       user: {
-        logined: ''
+        logined: '',
+        unread: 0
       },
       isLoading: false,
       showVerifyPopup: false,
@@ -25,7 +26,7 @@ export function createStore () {
           send_chat_conditions: '{}'
         }
       },
-      unread: 0,
+
       customPlayGroups: [
         {
           // 广东11选5 连码
