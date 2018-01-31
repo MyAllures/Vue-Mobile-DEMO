@@ -28,7 +28,7 @@
     </flexbox>
     <grid :cols="3">
       <grid-item
-        @click.native="$router.push(`/game/${game.id}`)"
+        @click.native="chooseGame(game.id)"
         v-for="(game, index) in games"
         :key="'game' + index"
         v-if="index < 11">
@@ -130,6 +130,10 @@ export default {
   methods: {
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
+    },
+    chooseGame (gameId) {
+      localStorage.setItem('lastGame', gameId)
+      this.$router.push(`/game/${gameId}`)
     }
   },
   components: {

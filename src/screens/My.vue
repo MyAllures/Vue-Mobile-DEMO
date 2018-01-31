@@ -126,7 +126,7 @@ export default {
   },
   computed: {
     unread () {
-      return this.$store.state.unread
+      return this.$store.state.user.unread
     },
     ...mapGetters([
       'user'
