@@ -16,12 +16,13 @@
         <input type="hidden" name="notify_page" :value="currentPay.notifyPage" />
         <x-input  autocapitalize="off"
          :title="'存款金额'"
-         :show-clear=true
+         :show-clear="true"
          required
          type="number"
          keyboard="number"
          name="amount"
          ref="amount"
+         action-type="button"
          @on-change="validate"
          @on-blur="validate"
          v-model="currentPay.amount"
