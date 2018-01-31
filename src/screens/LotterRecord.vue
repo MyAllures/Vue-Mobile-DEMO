@@ -801,165 +801,165 @@ export default {
 }
 .record-box{
   background: #f1f1f1;
-  .choose-head {
-    position: fixed;
-    z-index: 100;
+}
+.choose-type{
+  width: 40%;
+  float: left;
+  .current-game {
     width: 100%;
-    top: 26px;
-    border-bottom: solid 1px #b5aaaa;
-    .choose-type{
-      width: 40%;
-      float: left;
-      .current-game {
-        width: 100%;
-        display: inline-block;
-        line-height: 44px;
-        text-indent: 10px;
-        height: 44px;
-        color: @azul;
-      }
-      .arrow {
-        display: inline-block;
-        height: 6px;
-        width: 6px;
-        border-width: 2px 2px 0 0;
-        border-color: #C8C8CD;
-        border-style: solid;
-        transform: rotate(135deg);
-        margin-left: 3px;
-        margin-bottom: 2px;
-      }
-    }
-    .choose-type /deep/ .weui-cell__hd {
-      display: none;
-    }
-    .choose-type /deep/ .vux-cell-bd {
-      display: none;
-    }
-    .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
-      transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
-      right:-4px;
-    }
-    .choose-type /deep/ .vux-cell-value {
-      color: #156fd8;
-      font-size: 16px;
-      font-weight: 400;
-    }
+    display: inline-block;
+    line-height: 44px;
+    text-indent: 10px;
+    height: 44px;
   }
-  .choose-date {
-    position: relative;
-    width: 60%;
-    float: left;
-    .calendars {
-      position: absolute;
-      top: 13px;
-      left: 10px;
-      color: #ccc;
-    }
-    .lucky {
-      display: block; 
-      width: 80%; 
-    }
+  .arrow {
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #C8C8CD;
+    border-style: solid;
+    transform: rotate(135deg);
+    margin-left: 3px;
+    margin-bottom: 2px;
   }
-  .choose-date /deep/ .vux-cell-value {
-      display: block;
-      text-align: left;
-      text-indent: 20px;
+}
+.choose-head {
+  position: fixed;
+  z-index: 100;
+  width: 100%;
+  top: 26px;
+  border-bottom: solid 1px #b5aaaa;
+  .choose-type /deep/ .weui-cell__hd {
+    display: none;
   }
-  .choose-date /deep/ .weui-cell_access .weui-cell__ft:after {
-      transform: matrix(0, 0, 0, 0, 0, 0);
+  .choose-type /deep/ .vux-cell-bd {
+    display: none;
   }
-  .periods {
-    text-align: center;
-    font-size: 14px;
+  .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
+    transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
+    right:-4px;
   }
-  .periods-list {
-    color: #327bce;
-    font-weight: bold;
+  .choose-type /deep/ .vux-cell-value {
+    color: #156fd8;
+    font-size: 16px;
+    font-weight: 400;
   }
-  .blod {
-    font-weight: bold;
-  }
-  .periods-right {
-    border-right: 1px solid #c3bbbb;
-  }
-  .vux-flex-row {
-    border-bottom: 0.5px solid #e8dcdc;
-  }
-  .show-time {
-    width: 25%;
-    height: 50px;
-    border-right: 1px solid #dcd9d9;
-    border-bottom: 1px solid #f3ecec;
-  }
-  .periods-number {
-    width: 100%;
-    line-height: 38px;
-    font-weight: 500;
-    font-size: 14px;
-    text-align: center;
-    height: 25px;
-  }
-  .periods-time {
-    width: 100%;
-    line-height: 25px;
-    text-align: center;
-    height: 25px;
-    font-size: 13px;
-  }
-  .show-count {
-    width: 70%;
-    height: 50px;
-    border-bottom: 1px solid #f3ecec;
-  }
-  .lottery-result {
-    width: 100%;
-    height: 25px;
-    text-align: center;
-    color: #327bce;
-    line-height: 25px;
-    .bjkl-class {
-      margin-top: 0px;
-    }
-  }
-  .luckLotery {
-    height: 50px;
-    width: 230px;
-    margin:  0 auto;
-    overflow: hidden;
-  }
-  .lottery-compare {
-    width: 100%;
-    height: 25px;
-    text-align: center;
-    line-height: 25px;
-    margin-right: 5px;
-    font-size: 14px;
-  }
-  .compare-content {
-    width: 100%;
-    line-height: 25px;
-    height: 25px;
-    text-align: center;
-  }
-  table {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    background: #FFFFFF;
-    top: 44px;
-    border-collapse:collapse;
-  }
-  .add-more, .no-more{
-    position: relative;
-    top: 44px;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  .no-more {
-    text-align: center;
+}
+.choose-date {
+  position: relative;
+  width: 60%;
+  float: left;
+  .calendars {
+    position: absolute;
+    top: 13px;
+    left: 10px;
     color: #ccc;
   }
+  .lucky {
+    display: block; 
+    width: 80%; 
+  }
+}
+.choose-date /deep/ .vux-cell-value {
+    display: block;
+    text-align: left;
+    text-indent: 20px;
+}
+.choose-date /deep/ .weui-cell_access .weui-cell__ft:after {
+    transform: matrix(0, 0, 0, 0, 0, 0);
+}
+.periods {
+  text-align: center;
+  font-size: 14px;
+}
+.periods-list {
+  color: #327bce;
+  font-weight: bold;
+}
+.blod {
+  font-weight: bold;
+}
+.periods-right {
+  border-right: 1px solid #c3bbbb;
+}
+.vux-flex-row {
+  border-bottom: 0.5px solid #e8dcdc;
+}
+.show-time {
+  width: 25%;
+  height: 50px;
+  border-right: 1px solid #dcd9d9;
+  border-bottom: 1px solid #f3ecec;
+}
+.periods-number {
+  width: 100%;
+  line-height: 38px;
+  font-size: 14px;
+  text-align: center;
+  height: 25px;
+}
+.periods-time {
+  color: #999;
+  width: 100%;
+  line-height: 25px;
+  text-align: center;
+  height: 25px;
+  font-size: 13px;
+}
+.show-count {
+  width: 70%;
+  height: 50px;
+  border-bottom: 1px solid #f3ecec;
+}
+.lottery-result {
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  color: #327bce;
+  line-height: 25px;
+  .bjkl-class {
+    margin-top: 0px;
+  }
+}
+.luckLotery {
+  height: 50px;
+  width: 230px;
+  margin:  0 auto;
+  overflow: hidden;
+}
+.lottery-compare {
+  color: #999;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  line-height: 25px;
+  margin-right: 5px;
+  font-size: 14px;
+}
+.compare-content {
+  width: 100%;
+  line-height: 25px;
+  height: 25px;
+  text-align: center;
+}
+table {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background: #FFFFFF;
+  top: 44px;
+  border-collapse:collapse;
+}
+.add-more, .no-more{
+  position: relative;
+  top: 44px;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.no-more {
+  text-align: center;
+  color: #ccc;
 }
 .jspbg {
   display: inline-block; 

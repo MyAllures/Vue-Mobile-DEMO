@@ -42,13 +42,13 @@ export default new Router({
         {
           path: ':gameId',
           component: resolve => { require(['../screens/games/Game.vue'], resolve) },
-          name: 'GameDetail',
           meta: {
             tabbarHidden: true
           },
           children: [
             {
               path: ':categoryName',
+              name: 'GameDetail',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
               meta: {
                 tabbarHidden: true
