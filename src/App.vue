@@ -60,7 +60,7 @@
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
       <tabbar-item
-        :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
+        :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
         :selected="`/${$route.path.split('/')[1]}` === menu.link || $route.path === menu.link"
@@ -138,7 +138,7 @@ export default {
       isLoading: state => state.isLoading
     }),
     unread () {
-      return this.$store.state.unread
+      return this.$store.state.user.unread
     },
     isGameHall () {
       return this.$route.matched[0] && this.$route.matched[0].path === '/game'

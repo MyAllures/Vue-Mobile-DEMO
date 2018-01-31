@@ -50,13 +50,21 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.$store.dispatch('fetchGames').then(res => {
+      if (vm.allGames.length > 0) {
         let currentGameId = vm.$route.params.gameId
         if (!currentGameId) {
-          currentGameId = localStorage.getItem('lastGame') || res[0].id
+          currentGameId = localStorage.getItem('lastGame') || vm.allGames[0].id
           vm.$router.replace(`/game/${currentGameId}`)
         }
-      }).catch(() => { })
+      } else {
+        vm.$store.dispatch('fetchGames').then(res => {
+          let currentGameId = vm.$route.params.gameId
+          if (!currentGameId) {
+            currentGameId = localStorage.getItem('lastGame') || res[0].id
+            vm.$router.replace(`/game/${currentGameId}`)
+          }
+        }).catch(() => { })
+      }
     })
   },
   methods: {
