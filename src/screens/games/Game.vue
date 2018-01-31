@@ -38,13 +38,13 @@
           <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
-          <x-input 
+          <x-input
             class="weui-vcode"
-            keyboard="number" 
-            type="number" 
+            keyboard="number"
+            type="number"
             placeholder="金额"
-            v-model.number="amount" 
-            label-width="100px" 
+            v-model.number="amount"
+            label-width="100px"
             :show-clear="false">
           </x-input>
         </flexbox-item>
@@ -358,7 +358,7 @@ export default {
 .game {
   display: flex;
   flex-direction: column;
-  height: calc(~"100vh" - 46px);
+  height: 100%;
 }
 .active {
   background: @azul;
@@ -368,7 +368,7 @@ export default {
   flex: 1 1 auto;
   display: flex;
   /deep/ .weui-cells {
-    margin: auto; // fix the overflowing flexitem issue 
+    margin: auto; // fix the overflowing flexitem issue
     line-height: 18px;
     width: 100%;
     background: #f9f9f9;

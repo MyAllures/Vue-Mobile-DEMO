@@ -57,7 +57,7 @@ export default {
 .countdown-panel {
   flex:0 0 auto;
   display: flex;
-  background: #00397c;
+  background-image: linear-gradient(to bottom, #005188, #003E69);
   align-items: center;
   color: #f0f0f0;
   font-size: 14px;
