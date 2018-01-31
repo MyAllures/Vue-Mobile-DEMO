@@ -48,6 +48,7 @@ export default {
   game: {
     betrecord: 'Look Betrecord',
     name: 'Game',
+    deposit: 'Reload Now',
     pay: 'Pay Right Away',
     nopay: 'Nopay'
   },
