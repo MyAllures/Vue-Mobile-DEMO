@@ -100,9 +100,8 @@
 <script>
   import { XInput, Group, XButton, Flexbox, FlexboxItem, Popup, TransferDom } from 'vux'
   import { fetchCaptcha } from '../api'
-import { setTimeout } from 'timers'
 
-export default {
+  export default {
     name: 'Home',
     data () {
       return {
