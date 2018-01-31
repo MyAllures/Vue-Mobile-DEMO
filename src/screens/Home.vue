@@ -35,6 +35,10 @@
         <img slot="icon" :src="game.icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
+      <grid-item @click.native="$router.push(`/`)">
+        <img slot="icon" src="../assets/icon_pc.png" alt="PC">
+        <span slot="label">电脑版</span>
+      </grid-item>
     </grid>
     <div class="activity">
       <flexbox>
