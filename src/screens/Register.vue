@@ -238,6 +238,7 @@ export default {
           })
         }).then(result => {
           this.$router.push({ name: 'Home' })
+          this.$store.dispatch('fetchUser')
         }, errorMsg => {
           this.fetchCaptcha()
           this.error = msgFormatter(errorMsg.msg)
