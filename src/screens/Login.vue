@@ -61,7 +61,7 @@
       </flexbox>
     </div>
     <div v-transfer-dom>
-      <popup v-model="$store.state.showVerifyPopup" height="270px" @on-show="fetchCaptcha()" is-transparent>
+      <popup v-model="$store.state.showVerifyPopup" :height="'calc(50vh + 100px)'" @on-show="fetchCaptcha()" is-transparent>
         <div class="verify-popup">
           <p class="text-center">请输入验证码以继续试玩</p>
          <group>
@@ -86,12 +86,11 @@
               v-else>获取验证码</x-button>
           </x-input>
         </group>
-         <div class="continue">
-          <div v-if="error" class="error">{{error}}</div>
-          <x-button type="primary" @click.native="tryDemo">继续试玩</x-button>
-         </div>
+        <div class="continue">
+          <div :class="['trial-error', {'unvisible': !error }]">{{error}}</div>
+          <x-button class="trial-btn" type="primary" @click.native="tryDemo">继续试玩</x-button>
         </div>
-
+      </div>
       </popup>
     </div>
   </form>
@@ -227,12 +226,22 @@
 .verify-popup {
   width: 95%;
   background-color: white;
-  height: 75%;
+  height: 200px;
   margin: 0 auto;
   border-radius: 5px;
   padding-top: 10px;
 }
 .continue {
-  padding: 20px 15px;
+  padding: 25px 15px;
+}
+.trial-error {
+  color: @red;
+  text-align: center;
+  height: 20px;
+  line-height: 20px;
+  margin-bottom: 5px;
+  &.unvisible {
+    visibility: hidden;
+  }
 }
 </style>

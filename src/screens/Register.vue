@@ -48,11 +48,6 @@
         label-width="100"
         v-model="user.confirmation_password">
       </x-input>
-    </group>
-  </form>
-
-  <form class="container" autocomplete="off">
-    <group>
       <x-input
         required
         show-clear
@@ -243,6 +238,7 @@ export default {
           })
         }).then(result => {
           this.$router.push({ name: 'Home' })
+          this.$store.dispatch('fetchUser')
         }, errorMsg => {
           this.fetchCaptcha()
           this.error = msgFormatter(errorMsg.msg)
