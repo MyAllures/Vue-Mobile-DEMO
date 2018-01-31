@@ -41,9 +41,9 @@
               <div class="lottery-result" v-bind:class="{luckLotery: codeKl}" v-for="num in lotteryResult">
                 <span v-for='(loteryData, loteryIndex) in (schedule[num.key1]).split(",")'>
                   <span v-if='codeType != "bjkl8" && codeType != "auluck8"' 
-                        :class="`lottery_${codeType}_${~~loteryData}`">{{~~loteryData}}</span>
+                        :class="`lottery-${codeType}-${~~loteryData}`">{{~~loteryData}}</span>
                   <span v-if='codeType === "bjkl8" || codeType === "auluck8"' 
-                        :class="`lottery_${codeType}_${~~loteryData}`">{{~~loteryData}}</span>
+                        :class="[`lottery-${codeType}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
                 </span>
               </div>
               <div v-if='!codeKl' class="compare-content">
@@ -785,7 +785,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .results {
   overflow-y: scroll;
 }
@@ -918,6 +918,9 @@ export default {
     text-align: center;
     color: #327bce;
     line-height: 25px;
+    .bjkl-class {
+      margin-top: 0px;
+    }
   }
   .luckLotery {
     height: 50px;
@@ -958,9 +961,7 @@ export default {
     color: #ccc;
   }
 }
-
-$transformetable: jspk10, bcr, mlaft, er75ft;
-%jspbg {
+.jspbg {
   display: inline-block; 
   margin-top: 8px;
   width: 20px;
@@ -970,93 +971,126 @@ $transformetable: jspk10, bcr, mlaft, er75ft;
   background-size: 20px 210px;
   text-indent: -9999px;
 }
-@each $game in $transformetable{
-  @for $i from 0 through 9 {
-    .lottery_#{$game}_#{$i+1} {
-      @extend %jspbg;
-      background-position-y:(-21px * $i);
+@racinggames:
+  jspk10 10,
+  bcr 10 ,
+  mlaft 10,
+  er75ft 10;
+
+.racinggames-loop(@gameindex: length(@racinggames)) when (@gameindex > 0) {
+
+  @device: extract(@racinggames, @gameindex);
+  @name:   extract(@device, 1);
+  @size:   extract(@device, 2);
+
+  .number-loop(@num: @size) when (@num > 0) {
+    .lottery-@{name}-@{num} {
+      &:extend(.jspbg);
+      background-position: 0 -21px * (@num - 1) ;
     }
+    .number-loop(@num - 1);
   }
+
+  .number-loop();
+  .racinggames-loop(@gameindex - 1);
 }
 
-%hklbg {
-  display: inline-block; 
-  width: 25px;
-  height: 25px;
-  margin-top: 5px;
-  background: url("../assets/ball_hk6.png") no-repeat;
-  text-indent: -9999px;
-}
-@for $i from 1 through 49 {
-  .lottery_hkl_#{$i+1} {
-    @extend %hklbg;
-    background-position-y:(-27px * $i);
-  }
-}
-%jskbg {
+.racinggames-loop();
+
+.plainball {
   display: inline-block;
-  margin-top: 3px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
+  border-radius: 100%;
+  text-align: center;
+  color: #333;
+  margin-top: 4px;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+@plainballgames:
+  tjssc 10,
+  xjssc 10 ,
+  cqssc 10,
+  jsssc 10,
+  pcdd 27,
+  bjkl8 80,
+  auluck8 80,
+  gd11x5 11,
+  gdklsf 20,
+  jnd28 27,
+  cqlf 20,
+  fc3d 9;
+
+.plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
+
+  @device: extract(@plainballgames, @gameindex);
+  @name:   extract(@device, 1);
+  @size:   extract(@device, 2);
+
+  .number-loop(@num: @size) when (@num >= 0) {
+    .lottery-@{name}-@{num} {
+      &:extend(.plainball);
+    }
+    .number-loop(@num - 1);
+  }
+
+  .number-loop();
+  .plaingames-loop(@gameindex - 1);
+}
+
+.plaingames-loop();
+
+.jsk3-dice {
+  display: inline-block;
+  background: url(../assets/ball_4.png) no-repeat;
   width: 27px;
   height: 27px;
+  margin-top: 3px;
   text-indent: -9999px;
-  background: url("../assets/ball_4.png") no-repeat;
+  margin-right: 5px;
 }
-@for $i from 0 through 5 {
-  .lottery_jsk3_#{$i+1} {
-    @extend %jskbg;
-    background-position-y:(-27px * $i);
+
+
+.jsk3-loop(@i: 6) when (@i > 0) {
+  .jsk3-loop(@i - 1);
+  .lottery-jsk3-@{i} {
+    &:extend(.jsk3-dice);
+    background-position: 0 (-27px * (@i - 1));
   }
 }
 
-$bjklbgtable: bjkl8, auluck8;
-%bjklbg {
+.jsk3-loop();
+
+.hk6ball {
   display: inline-block;
+  width: 25px;
+  height: 25px;
   margin-top: 4px;
-  border-radius: 100%;
-  text-align: center;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  line-height: 18px;
-  color: black;
-  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
+  margin-left: 5px;
+  background-image: url('../assets/ball_hk6.png');
+  vertical-align: middle;
+  text-indent: -9999px;
 }
-@each $game in $bjklbgtable {
-  @for $i from 1 through 80 {
-    .lottery_#{$game}_#{$i} {
-      @extend %bjklbg;
+
+.hkl-if(@i) when (@i < 10) {
+    .hkl-0@{i} {
+      &:extend(.hk6ball);
+      background-position: 0 (-27px * (@i - 1));;
     }
   }
-}
-$anothertable: ball2, jsssc, cqssc, pcdd, xjssc, tjssc, jnd28, gdklsf, gd11x5, fc3d, cqlf;
-%anotherbg {
-  display: inline-block;
-  margin-top: 4px;
-  border-radius: 100%;
-  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
-  height: 22px;
-  width:22px;
-  color: black;
-  font-size: 14px;
-  line-height: 22px;
-  text-align: center;
-  margin-bottom: 1px; 
-}
-@each $game in $anothertable {
-  @for $i from 0 through 20 {
-    .lottery_#{$game}_#{$i} {
-      @extend %anotherbg;
-    }
+
+.hk6-loop(@i) when (@i < 50) {
+  .hk6-loop(@i + 1);
+  .hkl-if(@i);
+  .lottery-hkl-@{i} {
+    &:extend(.hk6ball);
+    background-position: 0 (-27px * (@i - 1));;
   }
 }
-@media (max-width: 350px) {
-  $transformetable: jspk10, bcr, mlaft, er75ft;
-  @each $game in $transformetable{
-    @for $i from 0 through 9 {
-      .lottery_#{$game}_#{$i+1} {
-        margin-right: -2px;
-      }
-    }
-  }
-}
+
+.hk6-loop(1);
 </style>
