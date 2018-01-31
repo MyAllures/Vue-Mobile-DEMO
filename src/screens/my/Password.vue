@@ -48,7 +48,7 @@
         </x-input>
 
     </group>
-    <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
+    <div class="text-center text-danger m-t">{{errorMsg}}</div>
     <div class="m-a">
       <x-button type="primary" :disabled="!valid" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -61,6 +61,7 @@
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import { changePassword } from '../../api'
+import { msgFormatter } from '../../utils'
 
 export default {
   name: 'changepassword',
@@ -114,7 +115,7 @@ export default {
           }, 2000)
         }, (response) => {
           this.loading = false
-          this.errorMsg = response
+          this.errorMsg = msgFormatter(response)
         })
       }
     }

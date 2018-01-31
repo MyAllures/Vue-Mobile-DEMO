@@ -40,7 +40,7 @@
       </x-input>
     </group>
     <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
-    <div class="vux-group-tip red">{{errorMsg}}</div>
+    <div class="text-center text-danger m-t">{{errorMsg}}</div>
     <div class="m-a">
       <x-button type="primary" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -66,6 +66,7 @@
 <script>
   import {Group, Cell, XButton, XInput, Spinner, Alert} from 'vux'
   import { postWithdraw } from '../../api'
+  import { msgFormatter } from '../../utils'
 
   export default {
     data () {
@@ -180,9 +181,9 @@
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
-            }, (response) => {
+            }, (error) => {
               this.loading = false
-              this.errorMsg = response[0]
+              this.errorMsg = msgFormatter(error)
             })
         }
       }
