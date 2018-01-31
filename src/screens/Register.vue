@@ -175,7 +175,7 @@ export default {
           verification_code_0: '',
           verification_code_1: ''
         },
-        rawWithdrawPassword: [],
+        rawWithdrawPassword: [0, 0, 0, 0, 0, 0],
         checkValid: {
           checkUser: (val) => {
             if (validateUserName(val)) {
