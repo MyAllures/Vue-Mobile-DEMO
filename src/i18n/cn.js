@@ -64,6 +64,7 @@ export default {
     amount: '金额'
   },
   my: {
+    select: '请选择',
     name: '我的',
     balance: '余额',
     message: '未读消息',
@@ -72,6 +73,7 @@ export default {
     depositor: '存款人',
     deposited_at: '存款日期',
     memo: '备注',
+    memo_tip: '如有额外备注请填写',
     amount: '金额',
     withdraw: '取款',
     bank_name: '银行',
