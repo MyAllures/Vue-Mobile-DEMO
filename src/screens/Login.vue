@@ -87,6 +87,7 @@
           </x-input>
         </group>
          <div class="continue">
+          <div v-if="error" class="error">{{error}}</div>
           <x-button type="primary" @click.native="tryDemo">继续试玩</x-button>
          </div>
         </div>
@@ -130,7 +131,7 @@
         this.valid = valid
       },
       fetchCaptcha () {
-        fetchCaptcha().then(res => {
+        return fetchCaptcha().then(res => {
           this.captcha_src = res.captcha_src
           this.user.verification_code_0 = res.captcha_val
         })
@@ -214,7 +215,7 @@
 .verify-popup {
   width: 95%;
   background-color: white;
-  height: 65%;
+  height: 75%;
   margin: 0 auto;
   border-radius: 5px;
   padding-top: 10px;
