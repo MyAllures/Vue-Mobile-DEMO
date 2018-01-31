@@ -124,7 +124,7 @@
                 :show-loading="false"
                 :disabled="false"
                 @click.native="submitForm">
-                {{$t('misc.submit')}}
+                注册
       </x-button>
     </div>
   </form>
