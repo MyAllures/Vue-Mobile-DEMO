@@ -70,8 +70,11 @@ export function msgFormatter (msgs) {
     })
     formatMsg = arr.join(', ')
   } else {
-    if (msgs.message) {
-      formatMsg = msgs.message
+    if (msgs.msg) {
+      formatMsg = msgs.msg
+      if (Array.isArray(formatMsg)) {
+        formatMsg = formatMsg[0]
+      }
       return formatMsg
     }
     formatMsg = msgs

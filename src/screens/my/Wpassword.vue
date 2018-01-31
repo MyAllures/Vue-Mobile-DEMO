@@ -1,27 +1,27 @@
 <template>
     <div>
         <group>
-            <div v-if="!valid" :class="{'hidden': valid}"> 
+            <div v-if="!valid" :class="{'hidden': valid}">
                 <ul slot="after-title" class="text-warning input-errors">
                     <li v-for="error in inputErrors">{{error}}</li>
                 </ul>
             </div>
             <x-input
-            autocapitalize="off" 
+            autocapitalize="off"
             :title="$t('change_password.w_old')"
-            :show-clear=true 
+            :show-clear=true
             required
             type="password"
             ref="currentpassword"
             @on-change="validate"
             @on-blur="validate"
-            v-model="password.current_password">   
+            v-model="password.current_password">
             </x-input>
 
             <x-input
-            autocapitalize="off" 
+            autocapitalize="off"
             :title="$t('change_password.w_new')"
-            :show-clear=true 
+            :show-clear=true
             required
             type="password"
             ref="newpassword"
@@ -29,13 +29,13 @@
             @on-blur="validate"
             v-model="password.new_password"
             :min="6"
-            :max="12">   
+            :max="12">
             </x-input>
 
             <x-input
-            autocapitalize="off" 
+            autocapitalize="off"
             :title="$t('change_password.w_repeat')"
-            :show-clear=true 
+            :show-clear=true
             type="password"
             ref="repeatpassword"
             @on-change="validate"
@@ -44,10 +44,10 @@
             :required=false
             :min="6"
             :max="12"
-            :equal-with="password.new_password">   
-            </x-input>    
+            :equal-with="password.new_password">
+            </x-input>
         </group>
-        <div class="vux-group-tip text-danger m-t">{{errorMsg}}</div>
+        <div class="text-center text-danger m-t">{{errorMsg}}</div>
         <div class="m-a">
           <x-button type="primary" :disabled="!valid" @click.native="submit">
               <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -60,6 +60,7 @@
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import { changeWpassword } from '../../api'
+import { msgFormatter } from '../../utils'
 export default {
   data () {
     return {
@@ -111,7 +112,7 @@ export default {
           }, 2000)
         }, (response) => {
           this.loading = false
-          this.errorMsg = response
+          this.errorMsg = msgFormatter(response)
         })
       }
     }
@@ -139,11 +140,6 @@ export default {
   li:last-child {
     padding-bottom: 10px;
   }
-}
-.text-danger {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #f44336;
 }
 .hidden {
   display: none;
