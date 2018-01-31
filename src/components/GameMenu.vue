@@ -1,7 +1,7 @@
 <template>
   <div v-transfer-dom>
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
-      <router-link class="home-link" to="/">
+      <router-link class="home-link" to="/" @click.native="handleClose">
         <x-icon type="ios-arrow-left"></x-icon>
         <span>返回首页</span>
       </router-link>

@@ -146,7 +146,7 @@ export default {
   flex:0 0 auto;
   display: flex;
   color: #f0f0f0;
-  background-image: linear-gradient(to bottom, #006bb3, #00397c);
+  background-image: linear-gradient(to bottom, #0069b1, #005188);
   .balls-text {
     font-size: 14px;
     flex: 1;
