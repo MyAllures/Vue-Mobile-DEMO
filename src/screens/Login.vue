@@ -112,7 +112,7 @@
         },
         valid: false,
         loading: false,
-        error: '',
+        error: 'fff',
         illegalTriedLogin: false,
         illegalTrial: false,
         captcha_src: ''
@@ -239,6 +239,7 @@
   text-align: center;
   height: 20px;
   line-height: 20px;
+  margin-bottom: 5px;
   &.unvisible {
     visibility: hidden;
   }
