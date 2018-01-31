@@ -147,7 +147,7 @@ export default {
       return this.$store.getters.gameById(this.$route.params.gameId) || {}
     },
     showRightMenuLinks () {
-      return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game'].includes(this.$route.name)
+      return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game', 'GameDetail'].includes(this.$route.name)
     },
     showLinks () {
       return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
