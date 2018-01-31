@@ -48,11 +48,6 @@
         label-width="100"
         v-model="user.confirmation_password">
       </x-input>
-    </group>
-  </form>
-
-  <form class="container" autocomplete="off">
-    <group>
       <x-input
         required
         show-clear

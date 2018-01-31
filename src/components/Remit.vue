@@ -35,6 +35,7 @@
           v-model="remit.remit_info.deposited_at"
           format="YYYY-MM-DD HH:mm"
           :confirm-text="$t('my.ok')"
+          :placeholder="$t('my.select')"
           class="fix-arrow"
           :cancel-text="$t('my.cancel')">
         </datetime>
@@ -51,7 +52,7 @@
         <x-textarea
           autocapitalize="off"
           :title="$t('my.memo')"
-          :placeholder="$t('my.memo')"
+          :placeholder="$t('my.memo_tip')"
           type="text"
           :rows="1"
           v-model="remit.memo">
@@ -105,7 +106,7 @@
           remit_info: {
             remit_payee: '',
             depositor: '',
-            deposited_at: moment(new Date()).format('YYYY-MM-DD HH:mm')
+            deposited_at: ''
           },
           memo: '',
           amount: ''
@@ -199,7 +200,7 @@
 
   .scan-tip {
     color: #999;
-    margin: 10px 10px;
+    margin: 5px 10px;
     font-size: 14px;
     text-align: center;
   }
@@ -212,7 +213,7 @@
   }
 
   .qr-code {
-    margin: 20px auto 0;
+    margin: 10px auto 0;
 
     img {
       width: 150px;
