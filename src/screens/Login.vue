@@ -100,8 +100,9 @@
 <script>
   import { XInput, Group, XButton, Flexbox, FlexboxItem, Popup, TransferDom } from 'vux'
   import { fetchCaptcha } from '../api'
+import { setTimeout } from 'timers'
 
-  export default {
+export default {
     name: 'Home',
     data () {
       return {
@@ -167,10 +168,20 @@
         this.$store.dispatch('tryDemo', verification).then(result => {
           this.$router.push({ name: 'Home' })
           this.$store.dispatch('fetchUser')
+          this.$store.dispatch('closeVerifyPopup')
         }).catch(error => {
           this.fetchCaptcha()
           this.error = error
         })
+      }
+    },
+    watch: {
+      'error': function (error) {
+        if (error) {
+          setTimeout(() => {
+            this.error = ''
+          }, 3000)
+        }
       }
     },
     components: {
