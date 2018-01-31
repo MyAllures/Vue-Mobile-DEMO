@@ -112,7 +112,7 @@
         },
         valid: false,
         loading: false,
-        error: 'fff',
+        error: '',
         illegalTriedLogin: false,
         illegalTrial: false,
         captcha_src: ''
