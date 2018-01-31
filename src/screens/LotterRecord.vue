@@ -816,7 +816,7 @@ export default {
         line-height: 44px;
         text-indent: 10px;
         height: 44px;
-        color: #156fd8;
+        color: @azul;
       }
       .arrow {
         display: inline-block;
