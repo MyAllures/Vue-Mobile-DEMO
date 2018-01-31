@@ -124,7 +124,7 @@
                 :show-loading="false"
                 :disabled="false"
                 @click.native="submitForm">
-                {{$t('misc.submit')}}
+                注册
       </x-button>
     </div>
   </form>
@@ -175,7 +175,7 @@ export default {
           verification_code_0: '',
           verification_code_1: ''
         },
-        rawWithdrawPassword: [],
+        rawWithdrawPassword: [0, 0, 0, 0, 0, 0],
         checkValid: {
           checkUser: (val) => {
             if (validateUserName(val)) {

@@ -459,7 +459,7 @@ export default {
   align-items: center;
   bottom: 0;
   width: @asideWidth;
-  height: calc(~"100vh - @{headHeight}*2"); // for fixed header & game-selector
+  height: calc(~"100vh" - 90px);
   overflow-y: auto;
   background-color: #f9f9f9;
   box-sizing: border-box;
@@ -496,8 +496,6 @@ export default {
 
 .statistics {
   position: absolute;
-  height: calc(~"100vh - @{headHeight}*2");
-  overflow-y: auto;
   right: 0;
   padding-top: @headHeight * 2;
   width: calc(~"100% - @{asideWidth}");

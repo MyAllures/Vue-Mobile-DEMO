@@ -126,6 +126,7 @@
   background-color: #fff;
 }
 .head /deep/ .weui-cells{
+  margin-top: -1px;
   font-size: 15px;
 }
 .weui-cell {
@@ -137,7 +138,10 @@
   color: @red;
 }
 .buttons {
-  margin: 20px 10px 0;
+  margin: 10px 10px 0;
+  /deep/ .weui-btn {
+    font-size: 15px;
+  }
 }
 .links {
   position: absolute;
