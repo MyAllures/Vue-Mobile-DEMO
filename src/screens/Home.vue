@@ -138,6 +138,7 @@ export default {
   methods: {
     openPClink () {
       this.$cookie.set('desktop', 1)
+      window.location.reload()
     },
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
