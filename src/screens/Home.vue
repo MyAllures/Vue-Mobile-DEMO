@@ -35,10 +35,14 @@
         <img slot="icon" :src="game.icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
-      <grid-item @click.native="$router.push(`/`)">
-        <img slot="icon" src="../assets/icon_pc.png" alt="PC">
-        <span slot="label">电脑版</span>
-      </grid-item>
+      <a href="/" class="weui-grid" @click="openPClink()">
+        <div class="weui-grid__icon">
+          <img slot="icon" src="../assets/icon_pc.png" alt="PC">
+        </div>
+        <div class="weui-grid__label">
+          <span>电脑版</span>
+        </div>
+      </a>
     </grid>
     <div class="activity">
       <flexbox>
@@ -132,6 +136,9 @@ export default {
     })
   },
   methods: {
+    openPClink () {
+      this.$cookie.set('desktop', 1)
+    },
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
     },
