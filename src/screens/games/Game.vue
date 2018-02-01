@@ -12,16 +12,16 @@
       <group class="aside">
         <cell-box
           :border-intent="false"
-          :class="['category-menu-item',activeCategory===category.name ? 'active' : '']"
+          :class="['category-menu-item',activeCategory===category.id+'' ? 'active' : '']"
           v-for="(category, index) in categories"
-          @click.native="switchCategory(category.name)"
-          :key="'category' + category.name">
+          @click.native="switchCategory(category.id)"
+          :key="'category' + category.id">
           {{category.name}}
         </cell-box>
       </group>
       <div class="main">
         <router-view
-        :key="$route.name + ($route.params.categoryName || '')"
+        :key="$route.name + ($route.params.categoryId || '')"
         :game="currentGame"
         :gameClosed="gameClosed"
         :amount="amountForProp"
@@ -158,7 +158,7 @@ export default {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
     activeCategory () {
-      return this.$route.params.categoryName
+      return this.$route.params.categoryId
     },
     ...mapGetters([
       'categories', 'user'
@@ -190,8 +190,8 @@ export default {
   },
   watch: {
     '$route': function (to, from) {
-      if (!this.$route.params.categoryName && to.params.gameId === from.params.gameId) {
-        this.$router.replace(`/game/${this.gameId}/${this.categories[0].name}`)
+      if (!this.$route.params.categoryId && to.params.gameId === from.params.gameId) {
+        this.$router.replace(`/game/${this.gameId}/${this.categories[0].id}`)
       }
     },
     'gameId': function (gameId) {
@@ -205,9 +205,9 @@ export default {
     init () {
       this.updateSchedule()
       this.$store.dispatch('fetchCategories', this.gameId).then(res => {
-        if (!this.$route.params.categoryName) {
+        if (!this.$route.params.categoryId) {
           if (this.gameId) {
-            this.$router.replace(`/game/${this.gameId}/${res[0].name}`)
+            this.$router.replace(`/game/${this.gameId}/${res[0].id}`)
           }
         }
       })
@@ -227,12 +227,12 @@ export default {
           this.startTimer()
         })
     },
-    switchCategory (categoryName) {
-      if (!categoryName) {
+    switchCategory (categoryId) {
+      if (!categoryId) {
         return
       }
       this.$router.push({
-        path: `/game/${this.$route.params.gameId}/${categoryName}`
+        path: `/game/${this.$route.params.gameId}/${categoryId}`
       })
     },
     startTimer () {

@@ -126,7 +126,7 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
-      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryName}`
+      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryId}`
       return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupId)
     },
     ...mapGetters([
@@ -219,8 +219,8 @@ export default {
       this.$set(play, 'activedOptions', [])
     },
     initPlayAndGroups (categories) {
-      const categoryName = this.$route.params.categoryName
-      const currentCategory = _.find(categories, item => (item.name) === categoryName)
+      const categoryId = this.$route.params.categoryId
+      const currentCategory = _.find(categories, item => (item.id + '') === categoryId)
       if (!currentCategory) {
         return
       }
@@ -228,7 +228,7 @@ export default {
       const plays = {}
       const tabKeys = []
 
-      let groupName = this.$route.params.categoryName
+      let groupName = currentCategory.name
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
         tabKeys.push(tabName)
