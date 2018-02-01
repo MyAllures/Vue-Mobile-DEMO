@@ -7,6 +7,13 @@
       {{description}}
     </div>
     <group label-width="'80px'" :title="limitHint">
+      <div v-if="inputErrors.length">
+        <ul class="input-errors">
+          <li class="text" v-for="(error, index) in inputErrors" :key="index">
+            {{error}}
+          </li>
+        </ul>
+      </div>
       <form :action="paymentUrl" method="post" target="_blank" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
         <input type="hidden" name="payment_type" :value="currentPay.type_id" />
@@ -23,15 +30,16 @@
          name="amount"
          ref="amount"
          action-type="button"
-         @on-change="validate"
-         @on-blur="validate"
+         @on-change="validateErrors"
+         @on-blur="validateErrors"
+         :is-type="amountValidator"
          v-model="currentPay.amount"
          >
         </x-input>
       </form>
     </group>
     <div class="m-a">
-      <x-button type="primary" :disabled="!valid" @click.native="submit">
+      <x-button type="primary" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>充值</span>
       </x-button>
@@ -65,7 +73,6 @@ export default {
       paymentUrl: urls.payment,
       payBoradUrl: urls.paymentBoard,
       transactionId: '',
-      valid: false,
       loading: '',
       success: false,
       defaultPayName: '',
@@ -73,7 +80,8 @@ export default {
       onlineLimit: {
         lower: '',
         upper: ''
-      }
+      },
+      inputErrors: []
     }
   },
   created () {
@@ -131,11 +139,45 @@ export default {
       this.currentPay.gateway_id = detail[0].gateway_id
       this.currentPay.payee_id = detail[0].payee_id
     },
-    validate () {
-      let amount = parseInt(this.currentPay.amount)
+    validateErrors () {
+      const inputErrors = []
+      if (this.$refs.amount.firstError) {
+        if (this.$refs.amount.firstError === '必填哦') {
+          inputErrors.push('必须输入金额')
+        } else {
+          inputErrors.push(this.$refs.amount.firstError)
+        }
+      }
+      this.inputErrors = inputErrors
+    },
+    amountValidator (value) {
+      let amount = parseInt(value)
       let meetLower = !this.onlineLimit.lower || amount >= parseInt(this.onlineLimit.lower)
       let meetUpper = !this.onlineLimit.upper || amount <= parseInt(this.onlineLimit.upper)
-      this.valid = this.$refs.amount.valid && meetLower && meetUpper
+      if (!meetLower) {
+        return {
+          valid: false,
+          msg: '必须大于最小取款金额'
+        }
+      } else if (!meetUpper) {
+        return {
+          valid: false,
+          msg: '必须小于最大取款金额'
+        }
+      } else {
+        return {
+          valid: true
+        }
+      }
+    },
+    validateAll () {
+      let amount = this.$refs.amount
+      amount.validate()
+      if (amount.firstError) {
+        amount.forceShowError = true
+      }
+      this.validateErrors()
+      return amount.valid
     },
     formatOnlinepayees (onlinepayees) {
       let arr = onlinepayees.filter(function (item, index, arr) {
@@ -155,16 +197,23 @@ export default {
       })
     },
     submit () {
-      let token = this.$cookie.get('access_token')
-      if (!token) {
-        let next = '/login?next=' + this.$route.fullPath
-        this.$router.push(next)
-        return
+      if (this.validateAll()) {
+        let token = this.$cookie.get('access_token')
+        if (!token) {
+          let next = '/login?next=' + this.$route.fullPath
+          this.$router.push(next)
+          return
+        }
+        this.currentPay.token = token
+        Vue.nextTick(() => {
+          this.$refs.paymentform.submit()
+          this.currentPay.amount = ''
+          Vue.nextTick(() => {
+            this.$refs.amount.reset()
+            this.inputErrors = []
+          })
+        })
       }
-      this.currentPay.token = token
-      Vue.nextTick(() => {
-        this.$refs.paymentform.submit()
-      })
     }
   }
 }
