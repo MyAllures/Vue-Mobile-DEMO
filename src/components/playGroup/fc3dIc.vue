@@ -1,7 +1,7 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-title">{{groupName}}</div>
-    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
+    <div class="playgroup-title" v-if="!activePlay.odds">{{groupName}}</div>
+    <div class="playgroup-odds" v-else>赔率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="2">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"
@@ -59,7 +59,7 @@ export default {
       activePlay: {
         id: '',
         display_name: '',
-        odds: '--'
+        odds: ''
       }
     }
   },
@@ -77,7 +77,7 @@ export default {
     'activedOptions': function () {
       if (this.activedOptions.length < this.maxOptionCount / 2) {
         this.updateForSubmit()
-        this.activePlay.odds = '--'
+        this.activePlay.odds = ''
         this.activePlay.id = ''
         this.activePlay.display_name = ''
         return

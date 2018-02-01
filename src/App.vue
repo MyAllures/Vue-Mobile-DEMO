@@ -205,7 +205,7 @@ export default {
         } else {
           this.$store.dispatch('fetchUnread')
         }
-      }, 10000)
+      }, 11000)
     },
     closeGameMenu () {
       this.showGameMenu = false

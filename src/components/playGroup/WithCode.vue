@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
+    <div class="playgroup-odds">赔率：<span class="red">{{activeOdds}}</span></div>
     <grid :cols="options.length === 2 ? 2 : 3" v-for="(options, index) in viewCustomOptions" :key="index">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"
@@ -63,6 +63,15 @@ export default {
     },
     activePlay () {
       return this.plays[0]
+    },
+    activeOdds () {
+      if (this.plays.length > 1) {
+        let odds = []
+        this.plays.forEach(play => { odds.push(play.odds) })
+        return odds.join('/')
+      } else {
+        return this.plays[0].odds
+      }
     },
     viewCustomOptions () {
       let length = this.customOptions.length

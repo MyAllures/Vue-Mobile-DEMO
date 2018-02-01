@@ -47,7 +47,7 @@ export default new Router({
           },
           children: [
             {
-              path: ':categoryName',
+              path: ':categoryId',
               name: 'GameDetail',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
               meta: {

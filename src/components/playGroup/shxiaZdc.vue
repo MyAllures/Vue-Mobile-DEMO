@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds" v-if="!activePlay"> {{ $route.params.categoryName}}</div>
+    <div class="playgroup-odds" v-if="!activePlay"> {{ groupName }}</div>
     <div class="playgroup-odds" v-else> 賠率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="zodiacs ? 1 : 5"
       v-for="(options, index) in [customOptions]"
@@ -50,6 +50,9 @@ export default {
     },
     setting: {
       type: Object
+    },
+    groupName: {
+      type: String
     }
   },
   data () {
