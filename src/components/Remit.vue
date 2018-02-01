@@ -248,10 +248,6 @@
     color: #4caf50;
   }
 
-  .text-danger {
-    color: #f44336;
-  }
-
   .vux-group-tip, .vux-group-tip p {
     font-size: 14px;
     text-align: center;
