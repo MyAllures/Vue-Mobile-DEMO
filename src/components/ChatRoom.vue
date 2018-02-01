@@ -2,19 +2,18 @@
   <div class="chat-box" id="chatBox">
     <p class="login-info" v-if="chatLoading">聊天室登陆中...</p>
     <div class="chat-container" v-else>
-      <div class="chat-announce" v-if="chatAnnounce">
-        <div class="annouce-info clearfix">
-          <icon class="volume-up" name="volume-up"></icon>
-          公告
-        </div>
-        <div class="scroll">
-          <MarqueeTips :content="chatAnnounce" :speed="10"></MarqueeTips>
-        </div>
-      </div>
-
 
     <div class="chat-body">
       <div class="chat-content">
+        <div class="chat-announce" v-if="chatAnnounce">
+          <div class="annouce-info clearfix">
+            <icon class="volume-up" name="volume-up"></icon>
+            公告
+          </div>
+        <div class="scroll">
+          <MarqueeTips :content="chatAnnounce" :speed="10"></MarqueeTips>
+        </div>
+        </div>
         <ul class="lay-scroll">
           <li v-for="(item, index) in messages" :class="['clearfix', 'item', item.sender && ((item.sender.nickname && item.sender.nickname === user.nickname) || user.username === item.sender.username) ? 'item-right' : 'item-left', item.type < 0 ? 'sys-msg' : '']">
             <div class="lay-block clearfix" v-if="item.type >= 0">
@@ -332,9 +331,6 @@ export default {
 @import '../styles/vars.less';
 
 .chat-box {
-  position: fixed;
-  top: 46px;
-  left: 0;
   width: 100%;
   height: 100%;
   background: url('../assets/chatbg.jpg') no-repeat right bottom;
@@ -355,7 +351,7 @@ export default {
   top: 5px;
   margin: 0 5px;
   background: rgba(237,244,254,.9);
-  border: 1px solid #c2cfe2;
+  border: 1px solid #0a0d13;
   border-radius: 5px;
   padding-right: 10px;
   height: 29px;
@@ -646,7 +642,7 @@ export default {
   color: #444;
 }
 .chat-container {
-  height: calc(~"100%" - 80px);
+  height: 100%;
 }
 .chat-content {
   flex: 1 1 auto;
