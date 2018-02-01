@@ -192,6 +192,11 @@
     },
     directives: {
       TransferDom
+    },
+    beforeDestroy () {
+      if (this.$store.state.showVerifyPopup) {
+        this.$store.dispatch('closeVerifyPopup')
+      }
     }
   }
 </script>
