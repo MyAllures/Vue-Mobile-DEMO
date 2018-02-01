@@ -171,11 +171,12 @@
               this.loading = false
               this.message = '取款信息已提交'
               this.show = true
-              this.withdraw.amount = ''
-              this.withdraw.withdraw_password = ''
+              this.$refs.amount.reset()
+              this.$refs.password.reset()
               this.$nextTick(() => {
-                this.$refs.amount.reset()
-                this.$refs.password.reset()
+                this.$refs.amount.firstError = ''
+                this.$refs.password.firstError = ''
+                this.inputErrors = []
               })
               this.errorMsg = ''
               setTimeout(() => {
