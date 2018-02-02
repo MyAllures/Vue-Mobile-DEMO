@@ -1,59 +1,53 @@
 <template>
     <div>
-        <group>
-            <div v-if="!valid" :class="{'hidden': valid}">
-                <ul slot="after-title" class="text-warning input-errors">
-                    <li v-for="error in inputErrors">{{error}}</li>
+        <group label-width="120px">
+            <div v-if="inputErrors.length">
+                <ul class="text-warning input-errors">
+                    <li v-for="(error, index) in inputErrors" :key="index">{{error}}</li>
                 </ul>
             </div>
             <x-input
             autocapitalize="off"
             :title="$t('change_password.w_old')"
-            :show-clear=true
+            :show-clear="true"
             required
             type="password"
-            ref="currentpassword"
-            @on-change="validate"
-            @on-blur="validate"
+            ref="oldPassword"
+            @on-blur="validateErrors"
             v-model="password.current_password">
             </x-input>
-
             <x-input
             autocapitalize="off"
             :title="$t('change_password.w_new')"
-            :show-clear=true
+            :show-clear="true"
             required
             type="password"
-            ref="newpassword"
-            @on-change="validate"
-            @on-blur="validate"
+            ref="newPassword"
+            @on-change="validateErrors"
+            @on-blur="validateErrors"
             v-model="password.new_password"
-            :min="6"
-            :max="12">
+            :is-type="passwordValidator"
+            :max="6">
             </x-input>
-
             <x-input
             autocapitalize="off"
             :title="$t('change_password.w_repeat')"
-            :show-clear=true
+            :show-clear="true"
             type="password"
-            ref="repeatpassword"
-            @on-change="validate"
-            @on-blur="validate"
-            v-model="password.repeat_password"
-            :required=false
-            :min="6"
-            :max="12"
-            :equal-with="password.new_password">
+            ref="confirmPassword"
+            :max="6"
+            @on-blur="validateErrors"
+            :class="!confirmWithdrawPasswordValidator.valid?'weui-cell_warn':''"
+            v-model="password.repeat_password">
             </x-input>
         </group>
         <div class="text-center text-danger m-t">{{errorMsg}}</div>
+        <div class="text-center text-success m-t" v-if="changed">{{$t('change_password.success')}}</div>
         <div class="m-a">
-          <x-button type="primary" :disabled="!valid" @click.native="submit">
+          <x-button type="primary" @click.native="submit">
               <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
               <span v-else>{{$t('profile.submit')}}</span>
           </x-button>
-          <div class="vux-group-tip text-success" v-if="changed">{{$t('change_password.success')}}</div>
         </div>
     </div>
 </template>
@@ -61,6 +55,7 @@
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import { changeWpassword } from '../../api'
 import { msgFormatter } from '../../utils'
+import { validateWithdrawPassword } from '../../validate'
 export default {
   data () {
     return {
@@ -73,42 +68,66 @@ export default {
       },
       valid: false,
       inputErrors: [],
-      changed: false
+      changed: false,
+      confirmWithdrawPasswordValidator: {
+        valid: true
+      }
     }
   },
   methods: {
-    validate () {
-      let valid = true
-      let msg = []
-      for (let x in this.$refs) {
-        let input = this.$refs[x]
-        valid = input.valid && valid
-        // when blur event trigger, touched will be true
-        if (input && input.touched) {
-          let errors = input.errors
-          let title = input.title
-          let key = Object.keys(errors)[0]
-          if (errors[key] && !input.valid) {
-            if (errors[key].indexOf(title) === -1) {
-              msg.push(title + errors[key])
-            } else {
-              msg.push(errors[key])
-            }
-          }
+    validateErrors () {
+      const inputErrors = []
+      if (this.$refs.oldPassword.firstError) {
+        inputErrors.push('请輸入当前取款密码')
+      }
+      if (this.$refs.newPassword.firstError) {
+        if (this.$refs.newPassword.firstError === '必填哦') {
+          inputErrors.push('请输入新取款密码')
+        } else {
+          inputErrors.push(this.$refs.newPassword.firstError)
         }
       }
-      this.inputErrors = msg
-      this.valid = valid && !!this.password.repeat_password
+      this.$set(this.confirmWithdrawPasswordValidator, 'valid', !(this.password.repeat_password !== this.password.new_password))
+      if (!this.confirmWithdrawPasswordValidator.valid) {
+        inputErrors.push('两次输入密码不一致')
+      }
+      this.inputErrors = inputErrors
+    },
+    validateAll () {
+      let newPassword = this.$refs.newPassword
+      let oldPassword = this.$refs.oldPassword
+      newPassword.validate()
+      oldPassword.validate()
+      if (newPassword.firstError) {
+        newPassword.forceShowError = true
+      }
+      if (oldPassword.firstError) {
+        oldPassword.forceShowError = true
+      }
+      this.validateErrors()
+      return newPassword.valid && oldPassword.valid && this.confirmWithdrawPasswordValidator.valid
+    },
+    passwordValidator (value) {
+      if (!validateWithdrawPassword(value)) {
+        return {
+          valid: false,
+          msg: '请输入6位纯数字'
+        }
+      } else {
+        return {
+          valid: true
+        }
+      }
     },
     submit () {
-      this.loading = true
       this.errorMsg = ''
-      if (this.valid) {
+      if (this.validateAll()) {
+        this.loading = true
         changeWpassword(this.password).then((response) => {
-          this.loading = false
           this.changed = true
           setTimeout(() => {
             this.$router.push({name: 'My'})
+            this.loading = false
           }, 2000)
         }, (response) => {
           this.loading = false
