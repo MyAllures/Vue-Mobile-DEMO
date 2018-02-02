@@ -127,7 +127,8 @@ export default {
         'payee_id': payee.detail[0].payee_id,
         'gateway_id': payee.detail[0].gateway_id,
         'display_name': payee.display_name,
-        'amount': ''
+        'amount': '',
+        'token': this.$cookie.get('access_token')
       })
       this.description = payee.description
       this.currentTab = payee
@@ -207,7 +208,6 @@ export default {
           this.$router.push(next)
           return
         }
-        this.currentPay.token = token
         Vue.nextTick(() => {
           this.$refs.paymentform.submit()
           this.$refs.amount.reset()

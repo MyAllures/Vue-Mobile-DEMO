@@ -14,7 +14,7 @@
           <tr v-for="(set, index) in playSet" :key="index">
             <td>{{set.display_name}}</td>
             <td>{{set.odds}}</td>
-            <td>{{set.return_rate}}</td>
+            <td>{{set.return_rate+'%'}}</td>
           </tr>
         </tbody>
       </x-table>
