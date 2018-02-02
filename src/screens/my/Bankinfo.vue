@@ -132,13 +132,13 @@ export default {
     validateErrors () {
       const inputErrors = []
       if (this.$refs.province.firstError) {
-        inputErrors.push('必須輸入省份')
+        inputErrors.push('请輸入省份')
       }
       if (this.$refs.city.firstError) {
-        inputErrors.push('必須輸入县市')
+        inputErrors.push('请輸入县市')
       }
       if (this.$refs.account.firstError) {
-        inputErrors.push('必須輸入银行账号')
+        inputErrors.push('请輸入银行账号')
       }
       this.inputErrors = inputErrors
     },

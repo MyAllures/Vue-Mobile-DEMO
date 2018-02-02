@@ -6,14 +6,8 @@
     <div v-if="description" class="text-danger m-l-md m-t m-r">
       {{description}}
     </div>
-    <group label-width="'80px'" :title="limitHint">
-      <div v-if="inputErrors.length">
-        <ul class="input-errors">
-          <li class="text" v-for="(error, index) in inputErrors" :key="index">
-            {{error}}
-          </li>
-        </ul>
-      </div>
+
+
       <form :action="paymentUrl" method="post" target="_blank" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
         <input type="hidden" name="payment_type" :value="currentPay.type_id" />
@@ -21,29 +15,38 @@
         <input type="hidden" name="mobile" value="true" />
         <input type="hidden" name="token" :value="currentPay.token" />
         <input type="hidden" name="notify_page" :value="currentPay.notifyPage" />
-        <x-input  autocapitalize="off"
-         :title="'存款金额'"
-         :show-clear="true"
-         required
-         type="number"
-         keyboard="number"
-         name="amount"
-         ref="amount"
-         action-type="button"
-         @on-change="validateErrors"
-         @on-blur="validateErrors"
-         :is-type="amountValidator"
-         v-model="currentPay.amount"
-         >
-        </x-input>
+        <group label-width="'80px'" :title="limitHint">
+          <div v-if="inputErrors.length">
+            <ul class="input-errors">
+              <li class="text" v-for="(error, index) in inputErrors" :key="index">
+                {{error}}
+              </li>
+            </ul>
+          </div>
+          <x-input  autocapitalize="off"
+            :title="'存款金额'"
+            :show-clear="true"
+            required
+            type="number"
+            keyboard="number"
+            name="amount"
+            ref="amount"
+            action-type="button"
+            @on-change="validateErrors"
+            @on-blur="validateErrors"
+            :is-type="amountValidator"
+            v-model="currentPay.amount"
+            >
+          </x-input>
+        </group>
+        <div class="m-a">
+          <x-button type="primary" @click.native="submit">
+            <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+            <span v-else>充值</span>
+          </x-button>
+        </div>
       </form>
-    </group>
-    <div class="m-a">
-      <x-button type="primary" @click.native="submit">
-        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>充值</span>
-      </x-button>
-    </div>
+
   </div>
 </template>
 <script>
@@ -124,7 +127,8 @@ export default {
         'payee_id': payee.detail[0].payee_id,
         'gateway_id': payee.detail[0].gateway_id,
         'display_name': payee.display_name,
-        'amount': ''
+        'amount': '',
+        'token': this.$cookie.get('access_token')
       })
       this.description = payee.description
       this.currentTab = payee
@@ -204,12 +208,11 @@ export default {
           this.$router.push(next)
           return
         }
-        this.currentPay.token = token
         Vue.nextTick(() => {
           this.$refs.paymentform.submit()
-          this.currentPay.amount = ''
+          this.$refs.amount.reset()
           Vue.nextTick(() => {
-            this.$refs.amount.reset()
+            this.$refs.amount.firstError = ''
             this.inputErrors = []
           })
         })

@@ -106,11 +106,11 @@
       validateErrors () {
         const inputErrors = []
         if (this.$refs.password.firstError) {
-          inputErrors.push('必須輸入密碼')
+          inputErrors.push('请輸入密碼')
         }
         if (this.$refs.amount.firstError) {
           if (this.$refs.amount.firstError === '必填哦') {
-            inputErrors.push('必须输入金额')
+            inputErrors.push('请输入金额')
           } else {
             inputErrors.push(this.$refs.amount.firstError)
           }
