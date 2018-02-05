@@ -17,11 +17,11 @@ npm run build
 /root/bin/az storage container create --public-access blob --name $ENV_CONTAINER
 
 # Upload the changes
-/root/bin/az storage blob delete-batch --source $ENV_CONTAINER --pattern '$mobile_container/*'
+/root/bin/az storage blob delete-batch --source $ENV_CONTAINER --pattern "$mobile_container/*"
 /root/bin/az storage blob upload-batch --content-cache-control "public, max-age=$MAX_AGE" --destination $ENV_CONTAINER/$mobile_container/$static_container --source dist/mobile/static
 /root/bin/az storage blob upload --file dist/index.html --container-name $ENV_CONTAINER/$mobile_container --name index.html
 
 
 # To start purging the CDN
 # CDN is cached and will not reflect any change until purged
-/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths "/$mobile_container/index.html"
+/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths "/*"
