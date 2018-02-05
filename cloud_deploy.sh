@@ -24,4 +24,4 @@ npm run build
 
 # To start purging the CDN
 # CDN is cached and will not reflect any change until purged
-/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths "/$mobile_container/index.html"
+/root/bin/az cdn endpoint purge --resource-group dockercloud-bd6da6d7 --name $CDN_ENDPOINT --profile-name $CDN_PROFILE --content-paths "/*"
