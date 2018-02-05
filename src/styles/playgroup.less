@@ -1,4 +1,9 @@
-.playgroup-title,.playgroup-odds {
+.playgroup-title {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.playgroup-title, .playgroup-odds {
   background: #f5f5f5;
   height: 32px;
   line-height: 32px;
@@ -11,12 +16,16 @@
     background: @azul;
     .play-name {
       color: #fff;
+      &.plain {
+        color: black; // lay over default active for plain ball
+      }
     }
     .play-odds {
       color: #fff;
     }
   }
 }
+
 .play-area {
   display: flex;
   justify-content: space-between;
@@ -34,8 +43,12 @@
   }
 }
 .play-odds {
-  font-size: 15px;
+  font-size: 16px;
   color: #999;
+  &.right {
+    position: absolute;
+    right: 5px;
+  }
 }
 .weui-grids {
   margin-right: -1px;
@@ -44,15 +57,17 @@
   padding: 13px 10px;
 }
 .gameplays {
-  margin-top: -1px;
   /deep/ .weui-grids:after {
+    border: none;
+  }
+  &.no-title /deep/ .weui-grids:before{
     border: none;
   }
 }
 
-// playicon
-//hkl
+/* playicon */
 
+// hkl
 .hk6ball {
   display: inline-block;
   width: 25px;
@@ -60,10 +75,19 @@
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
   vertical-align: middle;
+  text-indent: -9999px;
 }
+
+.hkl-if(@i) when (@i < 10) {
+    .hkl-0@{i} {
+      &:extend(.hk6ball);
+      background-position: 0 (-27px * (@i - 1));;
+    }
+  }
 
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
+  .hkl-if(@i);
   .hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-27px * (@i - 1));;
@@ -71,3 +95,113 @@
 }
 
 .hk6-loop(1);
+
+
+// jsk3
+
+.jsk3-dice {
+  display: inline-block;
+  background: url(../assets/dice.png) no-repeat;
+  background-size: (42px * 0.8) (252px * 0.8);
+  width: (42px * 0.8);
+  height: (42px * 0.8);
+  text-indent: -9999px;
+  margin-right: 5px;
+}
+
+
+.jsk3-loop(@i: 6) when (@i > 0) {
+  .jsk3-loop(@i - 1);
+
+  .jsk3-@{i} {
+    &:extend(.jsk3-dice);
+    background-position: 0 ((-42px * 0.8) * (@i - 1));
+  }
+}
+
+.jsk3-loop();
+
+
+// racing series
+.racingicon {
+  display: inline-block;
+  background: url("../assets/racingicon.jpg") no-repeat;
+  background-size: (42px * 0.8) (420px * 0.8);
+  width: (42px * 0.8);
+  height: (42px * 0.8);
+  text-indent: -9999px;
+}
+
+@racinggames:
+  jspk10 10,
+  bcr 10 ,
+  mlaft 10,
+  er75ft 10;
+
+.racinggames-loop(@gameindex: length(@racinggames)) when (@gameindex > 0) {
+
+  @device: extract(@racinggames, @gameindex);
+  @name:   extract(@device, 1);
+  @size:   extract(@device, 2);
+
+  .number-loop(@num: @size) when (@num > 0) {
+    .@{name}-@{num} {
+      &:extend(.racingicon);
+      background-position: 0 ((-42px * 0.8) * (@num - 1)) ;
+    }
+    .number-loop(@num - 1);
+  }
+
+  .number-loop();
+  .racinggames-loop(@gameindex - 1);
+}
+
+.racinggames-loop();
+
+// plainball series
+.plainball {
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
+  border-radius: 100%;
+  text-align: center;
+  color: #333;
+  font-weight: normal;
+  font-size: 22px;
+  margin: -3px 0;
+}
+
+@plainballgames:
+  tjssc 10,
+  xjssc 10 ,
+  cqssc 10,
+  jsssc 10,
+  pcdd 27,
+  bjkl8 80,
+  auluck8 80,
+  gd11x5 11,
+  gdklsf 20,
+  jnd28 27,
+  cqlf 20,
+  fc3d 10;
+
+.plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
+
+  @device: extract(@plainballgames, @gameindex);
+  @name:   extract(@device, 1);
+  @size:   extract(@device, 2);
+
+  .number-loop(@num: @size) when (@num >= 0) {
+    .@{name}-@{num} {
+      &:extend(.plainball);
+    }
+    .number-loop(@num - 1);
+  }
+
+  .number-loop();
+  .plaingames-loop(@gameindex - 1);
+}
+
+.plaingames-loop();

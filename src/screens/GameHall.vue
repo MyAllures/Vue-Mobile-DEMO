@@ -1,84 +1,86 @@
 <template>
-  <div class="clear-viewbox-default-top clear-viewbox-default-bottom gamehall">
-    <!-- 头部 -->
-    <x-header class="gamehall-header" :right-options="{showMore: true}" @on-click-more="handleSideBarShow">
-      <x-icon
-        slot="overwrite-left"
-        type="navicon"
-        size="35"
-        style="fill:#fff;position:relative;top:-8px;left:-3px;"
-        @click="sidebarShow = true"></x-icon>
-      <span>{{currentGame.display_name}}</span>
-    </x-header>
-    <tab :line-width="0" class="tab-box" active-color="#fff"  defaultColor="#999">
-      <tab-item active-class="tab-item" :selected="!showChatRoom" @on-item-click="onItemClick">投注区</tab-item>
-      <tab-item active-class="tab-item" :selected="showChatRoom" @on-item-click="onItemClick(true)">聊天室</tab-item>
-    </tab>
-    <router-view v-if="!showChatRoom" :key="$route.name + ($route.params.gameId || '')"/>
-    <chat-room v-else="showChatRoom"></chat-room>
-    <game-menu :isShow="sidebarShow" @closeSideBar="sidebarShow = false" />
-    <right-menu v-model="showRightMenu" @handleClose="showRightMenu = false" />
+  <div class="gamehall">
+    <router-view v-show="!showChatRoom" />
+    <chat-room v-if="showChatRoom"></chat-room>
+    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
   </div>
 </template>
-
 <script>
 import { XHeader, Tab, TabItem } from 'vux'
+import { mapGetters } from 'vuex'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import GameMenu from '../components/GameMenu.vue'
-import RightMenu from '../components/RightMenu'
 import ChatRoom from '../components/ChatRoom'
 
 export default {
   name: 'GameHall',
+  props: {
+    showChatRoom: {
+      type: Boolean
+    },
+    showGameMenu: {
+      type: Boolean
+    }
+  },
   components: {
     Icon,
     XHeader,
     GameMenu,
-    RightMenu,
     Tab,
     TabItem,
     ChatRoom
   },
   data () {
     return {
-      sidebarShow: false, // 默认值
-      showRightMenu: false,
-      showChatRoom: false
-    }
-  },
-  methods: {
-    handleSideBarShow () {
-      this.$store.dispatch('fetchUser').then(res => {
-        this.showRightMenu = true
-      })
+      sidebarShow: false,
+      showRightMenu: false
     }
   },
   computed: {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId) || {}
-    }
+    },
+    ...mapGetters([
+      'allGames'
+    ])
   },
   watch: {
     '$route': 'changeRoute'
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.$store.dispatch('fetchGames').then(res => {
-
-      }).catch(() => { })
+      if (vm.allGames.length > 0) {
+        let currentGameId = vm.$route.params.gameId
+        if (!currentGameId) {
+          currentGameId = localStorage.getItem('lastGame') || vm.allGames[0].id
+          vm.$router.replace(`/game/${currentGameId}`)
+        }
+      } else {
+        vm.$store.dispatch('fetchGames').then(res => {
+          let currentGameId = vm.$route.params.gameId
+          if (!currentGameId) {
+            currentGameId = localStorage.getItem('lastGame') || res[0].id
+            vm.$router.replace(`/game/${currentGameId}`)
+          }
+        }).catch(() => { })
+      }
     })
   },
   methods: {
-    changeRoute () {
-      this.showChatRoom = false
+    handleSideBarShow () {
+      this.$store.dispatch('fetchUser').then(res => {
+        this.showRightMenu = true
+      })
     },
-    onItemClick (bFlag) {
-      if (bFlag) {
-        this.showChatRoom = true
-      } else {
-        this.showChatRoom = false
+    changeRoute (to, from) {
+      this.showChatRoom = false
+      if (!this.$route.params.gameId) {
+        this.$router.replace(`/game/${this.allGames[0].id}`)
       }
+    },
+    closeGameMenu () {
+      this.$emit('closeGameMenu')
     }
   }
 
@@ -86,6 +88,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.vux-x-icon {
+  fill: #fff;
+}
 .gamehall {
   height: 100%;
 }

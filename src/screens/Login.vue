@@ -5,14 +5,16 @@
         required
         show-clear
         ref="username"
-      @on-change="validate"
-      :title="$t('misc.username')"
-      label-width="100"
-      v-model="user.username">
+        placeholder="请输入用户名"
+        @on-change="validate"
+        :title="$t('misc.username')"
+        label-width="100"
+        v-model="user.username">
       </x-input>
       <x-input
         required
         show-clear
+        placeholder="请输入密码"
         type="password"
         ref="password"
         autocomplete="off"
@@ -20,6 +22,16 @@
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
+      </x-input>
+      <x-input v-if="illegalTriedLogin"
+        v-model="user.verification_code_1"
+        class="captcha-input"
+        title="验证码"
+        placeholder="请输入验证码"
+        label-width="100"
+        :show-clear="false"
+        :max="4">
+        <img slot="right" @click="fetchCaptcha()" :src="captcha_src" class="captcha">
       </x-input>
     </group>
 
@@ -48,12 +60,45 @@
         </flexbox-item>
       </flexbox>
     </div>
+    <div v-transfer-dom>
+      <popup v-model="$store.state.showVerifyPopup" :height="'calc(50vh + 100px)'" @on-show="fetchCaptcha()" is-transparent>
+        <div class="verify-popup">
+          <p class="text-center">请输入验证码以继续试玩</p>
+         <group>
+          <x-input
+            v-model="user.verification_code_1"
+            class="captcha-input"
+            title="验证码"
+            placeholder="请输入验证码"
+            label-width="100"
+            :show-clear="false"
+            :max="4">
+            <img slot="right"
+              v-if="captcha_src"
+              @click="fetchCaptcha()"
+              :src="captcha_src"
+              alt="captcha"
+              class="captcha">
+            <x-button type="primary"
+              @click.native="fetchCaptcha()"
+              slot="right"
+              mini
+              v-else>获取验证码</x-button>
+          </x-input>
+        </group>
+        <div class="continue">
+          <div :class="['trial-error', {'unvisible': !error }]">{{error}}</div>
+          <x-button class="trial-btn" type="primary" @click.native="tryDemo">继续试玩</x-button>
+        </div>
+      </div>
+      </popup>
+    </div>
   </form>
 </template>
 
 <script>
-  import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
-  import urls from '../api/urls'
+  import { XInput, Group, XButton, Flexbox, FlexboxItem, Popup, TransferDom } from 'vux'
+  import { fetchCaptcha } from '../api'
 
   export default {
     name: 'Home',
@@ -62,16 +107,21 @@
         user: {
           username: '',
           password: '',
-          verification_code_0: ''
+          verification_code_0: '',
+          verification_code_1: ''
         },
         valid: false,
-        captcha: '',
-        display_verification: false,
         loading: false,
-        error: ''
+        error: '',
+        illegalTriedLogin: false,
+        illegalTrial: false,
+        captcha_src: ''
       }
     },
     methods: {
+      handleClose () {
+        this.$store.dispatch('closeVerifyPopup')
+      },
       validate () {
         let valid = true
         for (let x in this.$refs) {
@@ -80,10 +130,9 @@
         this.valid = valid
       },
       fetchCaptcha () {
-        this.$http.get(urls.verification).then(response => {
-          this.captcha = urls.domain + response.data.captcha_src
-          this.user.verification_code_0 = response.data.captcha_val
-          this.display_verification = true
+        return fetchCaptcha().then(res => {
+          this.captcha_src = res.captcha_src
+          this.user.verification_code_0 = res.captcha_val
         })
       },
       submit () {
@@ -93,22 +142,44 @@
             user: this.user
           }).then(res => {
             this.$store.dispatch('fetchUser')
+            this.illegalTriedLogin = false
             this.error = ''
             this.loading = false
             this.$router.push('/')
           }, error => {
+            if (error.data.auth_req === 1) {
+              this.fetchCaptcha().then(res => {
+                this.illegalTriedLogin = true
+              })
+            }
             this.loading = false
-            this.error = error
+            this.error = error.msg
           })
         }
       },
       tryDemo () {
-        this.$store.dispatch('tryDemo').then(result => {
+        let verification = {
+          verification_code_0: this.user.verification_code_0,
+          verification_code_1: this.user.verification_code_1
+        }
+
+        this.$store.dispatch('tryDemo', verification).then(result => {
           this.$router.push({ name: 'Home' })
           this.$store.dispatch('fetchUser')
+          this.$store.dispatch('closeVerifyPopup')
         }).catch(error => {
+          this.fetchCaptcha()
           this.error = error
         })
+      }
+    },
+    watch: {
+      'error': function (error) {
+        if (error) {
+          setTimeout(() => {
+            this.error = ''
+          }, 3000)
+        }
       }
     },
     components: {
@@ -116,7 +187,16 @@
       Group,
       XButton,
       Flexbox,
-      FlexboxItem
+      FlexboxItem,
+      Popup
+    },
+    directives: {
+      TransferDom
+    },
+    beforeDestroy () {
+      if (this.$store.state.showVerifyPopup) {
+        this.$store.dispatch('closeVerifyPopup')
+      }
     }
   }
 </script>
@@ -138,5 +218,35 @@
 }
 .login-button {
   width: 100%;
+}
+.captcha {
+  width: 100px;
+  height: 40px;
+  vertical-align: middle;
+}
+.captcha-input {
+  height: 30px;
+}
+
+.verify-popup {
+  width: 95%;
+  background-color: white;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 5px;
+  padding-top: 10px;
+}
+.continue {
+  padding: 25px 15px;
+}
+.trial-error {
+  color: @red;
+  text-align: center;
+  height: 20px;
+  line-height: 20px;
+  margin-bottom: 5px;
+  &.unvisible {
+    visibility: hidden;
+  }
 }
 </style>

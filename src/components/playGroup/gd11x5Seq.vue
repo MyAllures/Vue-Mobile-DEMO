@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
     <div v-for="(group, index) in showViewCustomOptionsGroup" :key="index">
       <div class="playgroup-title">{{group.name}}</div>
       <grid :cols="chunkOptions.length === 2 ? 2 : 3" v-for="(chunkOptions, index) in group.options" :key="index">
@@ -9,8 +9,8 @@
           v-for="(option, index) in chunkOptions"
           :key="index"
           @on-item-click="toggleActive(option)">
-          <div class="play-area">
-            <span class="play-name">{{option.num}}</span>
+          <div class="text-center">
+            <span :class="['play-name', `${gameCode}-${option.num}`, {'plain': option.active && !gameClosed}]">{{option.num}}</span>
           </div>
         </grid-item>
       </grid>
@@ -24,6 +24,9 @@ import Combinatorics from 'js-combinatorics'
 export default {
   name: 'gd11x5Seq',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
@@ -151,6 +154,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../styles/base.less";
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
 .odds {

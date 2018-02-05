@@ -451,7 +451,7 @@ export default {
   }
 }
 
-@asideWidth: 80px;
+@asideWidth: 100px;
 
 .aside {
   position: fixed;
@@ -459,7 +459,7 @@ export default {
   align-items: center;
   bottom: 0;
   width: @asideWidth;
-  height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
+  height: calc(~"100vh" - 90px);
   overflow-y: auto;
   background-color: #f9f9f9;
   box-sizing: border-box;
@@ -468,7 +468,6 @@ export default {
   border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
   .text {
     margin-left: 5px;
-    font-size: 14px;
     color: #9b9b9b;
     &.active {
       color: black;
@@ -490,13 +489,13 @@ export default {
     padding: 10px;
   }
 }
+
 .cumulative-number {
   color: #888888
 }
+
 .statistics {
   position: absolute;
-  height: calc(~"100% - @{headHeight}*2");
-  overflow-y: auto;
   right: 0;
   padding-top: @headHeight * 2;
   width: calc(~"100% - @{asideWidth}");

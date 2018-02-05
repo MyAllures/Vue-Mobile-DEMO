@@ -103,7 +103,7 @@ export function fetchBetHistory (option) {
 }
 
 export function fetchDateBetRecords (option) {
-  return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}`)
+  return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
 }
 
 export function fetchGameResult (gameId) {
@@ -150,6 +150,14 @@ export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }
 
+export function getGameData (codeType, dataTime, limit) {
+  if (limit) {
+    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}&ffset=${limit}`)
+  } else {
+    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`)
+  }
+}
+
 export function fetchStatistic (code) {
   return axios.get(`${urls.statistic}?game_code=${code}`)
 }
@@ -169,4 +177,8 @@ export function getToken (oldToken) {
 
 export function sendImgToChat (data) {
   return axios.post(`${urls.sendImgToChat}`, data)
+}
+
+export function fetchPlaySetting (id) {
+  return axios.get(`${urls.playSetting}?game=${id}`)
 }

@@ -1,36 +1,44 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-odds"> {{ activePlay ? `賠率：${activePlay.odds}` : '合肖'}}</div>
-    <grid v-for="(options, index) in [customOptions]"
-      :cols="1"
+    <div class="playgroup-odds" v-if="!activePlay"> {{ groupName }}</div>
+    <div class="playgroup-odds" v-else> 賠率：<span class="red">{{activePlay.odds}}</span></div>
+    <grid :cols="zodiacs ? 1 : 5"
+      v-for="(options, index) in [customOptions]"
       :key="index">
       <grid-item
-        :class="['play', {active: option.active && !gameClosed}]"
+        :class="['play','text-center', {active: option.active && !gameClosed}]"
         v-for="(option, index) in options"
         :key="index"
         @on-item-click="toggleActive(option)">
-        <flexbox class="play-area">
+       <flexbox class="play-area" v-if="zodiacs">
           <flexbox-item class="play-name">{{zodiacs[index]}}</flexbox-item>
-          <flexbox-item class="play-name text-right"  :span="8">
+          <flexbox-item v-if="option.value" class="play-name text-right"  :span="8">
             <span v-for="number in option.value"
               :key="number"
-              :class="`hkl-${number}`">
+              :class="`${gameCode}-${number}`">
             </span>
           </flexbox-item>
         </flexbox>
+        <div v-else>
+          <span :class="['play-name', `${gameCode}-${option.num}`]"></span>
+        </div>
       </grid-item>
     </grid>
-    <toast v-model="illegal" type="text" width="10em">不允许超过11个选项</toast>
+    <toast v-model="illegal" type="text" width="10em">不允许超过{{maxOpts}}个选项</toast>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import { Grid, GridItem, Toast, Flexbox, FlexboxItem } from 'vux'
+import { zodiacMap } from '../../utils/hk6'
 
 export default {
   name: 'shixaZdc',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
@@ -42,23 +50,12 @@ export default {
     },
     setting: {
       type: Object
+    },
+    groupName: {
+      type: String
     }
   },
   data () {
-    const zodiacMap = {
-      '鼠': [10, 22, 34, 46],
-      '牛': [9, 21, 33, 45],
-      '虎': [8, 20, 32, 44],
-      '兔': [7, 19, 31, 43],
-      '龙': [6, 18, 30, 42],
-      '蛇': [5, 17, 29, 41],
-      '马': [4, 16, 28, 40],
-      '羊': [3, 15, 27, 39],
-      '猴': [2, 14, 26, 38],
-      '鸡': [1, 13, 25, 37, 49],
-      '狗': [12, 24, 36, 48],
-      '猪': [11, 23, 35, 47]
-    }
     const rawOptions = []
     _.each(this.setting.options, option => {
       rawOptions.push({
@@ -72,15 +69,17 @@ export default {
       rawOptions,
       valid: false,
       illegal: false,
-      zodiacs: this.plays[0].rules.choices
+      zodiacs: this.plays[0].rules.choices ? this.plays[0].rules.choices : ''
     }
   },
   computed: {
     customOptions () {
-      _.each(this.rawOptions, (option) => {
-        option.displayName = this.zodiacs[option.num]
-        option.value = this.zodiacMap[option.displayName]
-      })
+      if (this.zodiacs) {
+        _.each(this.rawOptions, (option) => {
+          option.displayName = this.zodiacs[option.num]
+          option.value = this.zodiacMap[option.displayName]
+        })
+      }
       return this.rawOptions
     },
     activedOptions () {
@@ -89,9 +88,17 @@ export default {
       })
     },
     activePlay () {
-      if (this.activedOptions.length > 1) {
-        return this.plays[this.activedOptions.length - 2]
+      if (this.activedOptions.length > (this.minOpts - 1)) {
+        return this.plays[this.activedOptions.length - this.minOpts]
       }
+    },
+    maxOpts () {
+      const maxOptionsPlay = this.plays[this.plays.length - 1].display_name
+      return maxOptionsPlay.slice(0, 2)
+    },
+    minOpts () {
+      const minOptionsPlay = this.plays[0].display_name
+      return minOptionsPlay.slice(0, 1)
     }
   },
   watch: {
@@ -108,17 +115,13 @@ export default {
     updateForSubmit () {
       let numbers = this.activedOptions.map(option => option.num)
       let rules = this.activePlay ? this.activePlay.rules : ''
+      this.valid = rules && numbers.length >= rules.min_opts
 
-      if (rules && numbers.length >= rules.min_opts) {
-        this.valid = true
-      } else {
-        this.valid = false
-      }
       this.$emit('updateCustomPlays', {
         activePlayId: this.activePlay ? this.activePlay.id : '',
-        options: _.map(this.activedOptions, (option) => option.displayName),
+        options: _.map(this.activedOptions, (option) => option.displayName ? option.displayName : option.num),
         combinations: ['1'],
-        activedOptions: _.map(this.activedOptions, (option) => { return { num: option.displayName } }),
+        activedOptions: _.map(this.activedOptions, (option) => { return { num: option.displayName ? option.displayName : option.num } }),
         valid: this.valid
       })
     },
@@ -127,7 +130,7 @@ export default {
         return false
       }
       if (!option.active) {
-        if (this.activedOptions.length < 11) { // apply gamerule
+        if (this.activedOptions.length < this.maxOpts) {
           option.active = true
         } else {
           this.illegal = true
@@ -144,6 +147,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../../styles/base.less";
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
 

@@ -64,11 +64,6 @@ import { msgFormatter } from '../../utils'
 
 export default {
   name: 'BetRecord',
-  props: {
-    date: {
-      type: String
-    }
-  },
   data () {
     return {
       betRecords: [],

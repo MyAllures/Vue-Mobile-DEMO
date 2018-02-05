@@ -6,7 +6,8 @@
     <div v-if="description" class="text-danger m-l-md m-t m-r">
       {{description}}
     </div>
-    <group label-width="'80px'" :title="limitHint">
+
+
       <form :action="paymentUrl" method="post" target="_blank" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
         <input type="hidden" name="payment_type" :value="currentPay.type_id" />
@@ -14,27 +15,38 @@
         <input type="hidden" name="mobile" value="true" />
         <input type="hidden" name="token" :value="currentPay.token" />
         <input type="hidden" name="notify_page" :value="currentPay.notifyPage" />
-        <x-input  autocapitalize="off"
-         :title="'存款金额'"
-         :show-clear=true
-         required
-         type="number"
-         keyboard="number"
-         name="amount"
-         ref="amount"
-         @on-change="validate"
-         @on-blur="validate"
-         v-model="currentPay.amount"
-         >
-        </x-input>
+        <group label-width="'80px'" :title="limitHint">
+          <div v-if="inputErrors.length">
+            <ul class="input-errors">
+              <li class="text" v-for="(error, index) in inputErrors" :key="index">
+                {{error}}
+              </li>
+            </ul>
+          </div>
+          <x-input  autocapitalize="off"
+            :title="'存款金额'"
+            :show-clear="true"
+            required
+            type="number"
+            keyboard="number"
+            name="amount"
+            ref="amount"
+            action-type="button"
+            @on-change="validateErrors"
+            @on-blur="validateErrors"
+            :is-type="amountValidator"
+            v-model="currentPay.amount"
+            >
+          </x-input>
+        </group>
+        <div class="m-a">
+          <x-button type="primary" @click.native="submit">
+            <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+            <span v-else>充值</span>
+          </x-button>
+        </div>
       </form>
-    </group>  
-    <div class="m-a">
-      <x-button type="primary" :disabled="!valid" @click.native="submit">
-        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>充值</span>
-      </x-button>
-    </div> 
+
   </div>
 </template>
 <script>
@@ -64,7 +76,6 @@ export default {
       paymentUrl: urls.payment,
       payBoradUrl: urls.paymentBoard,
       transactionId: '',
-      valid: false,
       loading: '',
       success: false,
       defaultPayName: '',
@@ -72,7 +83,8 @@ export default {
       onlineLimit: {
         lower: '',
         upper: ''
-      }
+      },
+      inputErrors: []
     }
   },
   created () {
@@ -111,11 +123,12 @@ export default {
     toggleTab (payee) {
       this.payDetail = payee.detail[0]
       this.currentPay = Object.assign({}, this.currentPay, {
-        'type_id': payee.id,
+        'type_id': payee.detail[0].payment_type,
         'payee_id': payee.detail[0].payee_id,
         'gateway_id': payee.detail[0].gateway_id,
         'display_name': payee.display_name,
-        'amount': ''
+        'amount': '',
+        'token': this.$cookie.get('access_token')
       })
       this.description = payee.description
       this.currentTab = payee
@@ -130,11 +143,45 @@ export default {
       this.currentPay.gateway_id = detail[0].gateway_id
       this.currentPay.payee_id = detail[0].payee_id
     },
-    validate () {
-      let amount = parseInt(this.currentPay.amount)
+    validateErrors () {
+      const inputErrors = []
+      if (this.$refs.amount.firstError) {
+        if (this.$refs.amount.firstError === '必填哦') {
+          inputErrors.push('必须输入金额')
+        } else {
+          inputErrors.push(this.$refs.amount.firstError)
+        }
+      }
+      this.inputErrors = inputErrors
+    },
+    amountValidator (value) {
+      let amount = parseInt(value)
       let meetLower = !this.onlineLimit.lower || amount >= parseInt(this.onlineLimit.lower)
       let meetUpper = !this.onlineLimit.upper || amount <= parseInt(this.onlineLimit.upper)
-      this.valid = this.$refs.amount.valid && meetLower && meetUpper
+      if (!meetLower) {
+        return {
+          valid: false,
+          msg: '必须大于最小取款金额'
+        }
+      } else if (!meetUpper) {
+        return {
+          valid: false,
+          msg: '必须小于最大取款金额'
+        }
+      } else {
+        return {
+          valid: true
+        }
+      }
+    },
+    validateAll () {
+      let amount = this.$refs.amount
+      amount.validate()
+      if (amount.firstError) {
+        amount.forceShowError = true
+      }
+      this.validateErrors()
+      return amount.valid
     },
     formatOnlinepayees (onlinepayees) {
       let arr = onlinepayees.filter(function (item, index, arr) {
@@ -154,16 +201,20 @@ export default {
       })
     },
     submit () {
-      if (this.valid) {
+      if (this.validateAll()) {
         let token = this.$cookie.get('access_token')
         if (!token) {
           let next = '/login?next=' + this.$route.fullPath
           this.$router.push(next)
           return
         }
-        this.currentPay.token = token
         Vue.nextTick(() => {
           this.$refs.paymentform.submit()
+          this.$refs.amount.reset()
+          Vue.nextTick(() => {
+            this.$refs.amount.firstError = ''
+            this.inputErrors = []
+          })
         })
       }
     }
@@ -184,5 +235,5 @@ export default {
     border-bottom: 3px solid #04BE02;
   }
 }
-    
+
 </style>

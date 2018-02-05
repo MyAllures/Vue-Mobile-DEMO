@@ -1,6 +1,7 @@
 <template>
-  <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
+  <view-box ref="viewBox" body-padding-top="46px" :body-padding-bottom="$route.meta.tabbarHidden?0:'55px'" >
     <x-header
+      :class="isGameHall?'gamehall':''"
       v-show="!$route.meta.headerHidden"
       @on-click-more="showRightMenu=true"
       :style="{
@@ -14,8 +15,28 @@
       :right-options="{showMore: !!user.username}"
       :left-options="{showBack: $route.meta.showBack || false}">
       {{$route.meta.title}}
-      <div>
+      <div v-if="!isGameHall">
         {{systemConfig.siteName}}
+      </div>
+      <div
+        v-if="isGameHall && !showChatRoom"
+        slot="overwrite-left"
+        @click="showGameMenu = true"
+        class="left-trigger">
+        <x-icon
+          type="navicon"
+          size="32"></x-icon>
+        {{currentGame.display_name}}
+      </div>
+      <div
+        v-else-if="isGameHall && showChatRoom"
+        slot="overwrite-left"
+        @click="showChatRoom = false"
+        class="left-trigger">
+        <x-icon
+          type="ios-close-empty"
+          size="32"></x-icon>
+          退出聊天室
       </div>
       <div
         v-if="showLinks"
@@ -25,29 +46,31 @@
         <router-link class="link" to="/register">注册</router-link>
         <a class="link try" @click="tryDemo">试玩</a>
       </div>
-      <span 
-        v-else 
-        slot="right">
-        <span class="username">{{ user.account_type === 0 ? '游客' : user.username}}</span>
-      </span>
+      <span slot="right" class="username fr" v-else-if="!isGameHall">{{ user.account_type === 0 ? '游客' : user.username}}</span>
+      <x-icon
+        type="chatbubble-working"
+        size="30"
+        v-if="isGameHall &&!showChatRoom"
+        @click.native="showChatRoom = true"
+        slot="right"></x-icon>
     </x-header>
-    <router-view></router-view>
+    <router-view :showChatRoom="showChatRoom" :showGameMenu="showGameMenu" @closeGameMenu="closeGameMenu"></router-view>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
       class="tabbar">
       <tabbar-item
-        :badge="menu.unreadBadge && unread !== 0 ? ('' + unread) : ''"
+        :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="`/${$route.path.split('/')[1]}` === menu.link"
+        :selected="`/${$route.path.split('/')[1]}` === menu.link || $route.path === menu.link"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
     <loading v-model="isLoading"></loading>
-    <right-menu 
+    <right-menu
       v-model="showRightMenu"
       :show-links="showRightMenuLinks"
       @handleClose="closeRightMenu" />
@@ -69,6 +92,8 @@ export default {
   data () {
     return {
       showRightMenu: false,
+      showChatRoom: false,
+      showGameMenu: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -113,10 +138,16 @@ export default {
       isLoading: state => state.isLoading
     }),
     unread () {
-      return this.$store.state.unread
+      return this.$store.state.user.unread
+    },
+    isGameHall () {
+      return this.$route.matched[0] && this.$route.matched[0].path === '/game'
+    },
+    currentGame () {
+      return this.$store.getters.gameById(this.$route.params.gameId) || {}
     },
     showRightMenuLinks () {
-      return ['RoadBeads', 'Leaderboards', 'GameIntro'].includes(this.$route.name)
+      return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game', 'GameDetail'].includes(this.$route.name)
     },
     showLinks () {
       return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
@@ -174,7 +205,10 @@ export default {
         } else {
           this.$store.dispatch('fetchUnread')
         }
-      }, 10000)
+      }, 11000)
+    },
+    closeGameMenu () {
+      this.showGameMenu = false
     }
   },
   created () {
@@ -229,8 +263,11 @@ export default {
   top: -8px;
 }
 
+.vux-x-icon {
+  fill: #fff;
+}
 .vux-header-right {
-  .actions {
+   .actions {
     position: relative;
     top: -5px;
     right: -5px;
@@ -245,10 +282,26 @@ export default {
     }
   }
 }
-
 .vux-header /deep/ .vux-header-right a.vux-header-more {
   float: right;
 }
+
+.vux-header.gamehall /deep/ .vux-header-left {
+  left: 8px;
+  top: 7px;
+  line-height: 100%;
+}
+.vux-header.gamehall /deep/ .vux-header-right{
+  top: 7px;
+  a {
+    margin-left: 20px;
+    float: right;
+  }
+  .vux-header-more {
+    margin-top: 6px;
+  }
+}
+
 .username {
   color: #fff;
   overflow: hidden;
@@ -256,5 +309,12 @@ export default {
   white-space: nowrap;
   max-width: 100px;
   text-overflow: ellipsis;
+}
+.left-trigger {
+  float: left;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #fff;
 }
 </style>

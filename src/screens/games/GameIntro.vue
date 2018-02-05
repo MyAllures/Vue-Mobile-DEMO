@@ -1,6 +1,24 @@
 <template>
   <div class="clear-viewbox-default-bottom">
     <div class="intro-container">
+      <h2 class="rules-sub-title m-b m-t">游戏资讯：</h2>
+      <x-table :cell-bordered="false" :content-bordered="true" class="playsetting-table">
+        <thead>
+          <tr>
+            <th class="gameplay-field"></th>
+            <th>赔率</th>
+            <th>反水</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(set, index) in playSet" :key="index">
+            <td>{{set.display_name}}</td>
+            <td>{{set.odds}}</td>
+            <td>{{set.return_rate+'%'}}</td>
+          </tr>
+        </tbody>
+      </x-table>
+      <h2 class="rules-sub-title m-b m-t">具体规则：</h2>
       <component :is="currentGame.code"></component>
     </div>
     <div class="intro-selector text-center" @click="selectGame()">
@@ -35,8 +53,9 @@ import er75ft from './rules/er75ft'
 import auluck8 from './rules/auluck8'
 import jnd28 from './rules/jnd28'
 import fc3d from './rules/fc3d'
-import { XAddress } from 'vux'
+import { XAddress, XTable } from 'vux'
 import { mapGetters } from 'vuex'
+import { fetchPlaySetting } from '../../api'
 import _ from 'lodash'
 
 export default {
@@ -45,12 +64,18 @@ export default {
     return {
       currentGameId: [],
       games: [],
-      showGameMenu: false
+      showGameMenu: false,
+      playSet: ''
     }
   },
   methods: {
     selectGame () {
       this.showGameMenu = true
+    },
+    fetchPlaySetting (id) {
+      fetchPlaySetting(id).then(res => {
+        this.playSet = res
+      })
     }
   },
   computed: {
@@ -74,6 +99,9 @@ export default {
           }
         )
       })
+    },
+    'currentGameId': function (id) {
+      this.fetchPlaySetting(id[0])
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -83,6 +111,7 @@ export default {
   },
   components: {
     XAddress,
+    XTable,
     cqlf,
     gd11x5,
     jsk3,
@@ -107,6 +136,20 @@ export default {
 
 <style lang="less">
 @import '../../styles/vars.less';
+.rules-sub-title {
+  font-size: 14px;
+  color: black;
+}
+
+.playsetting-table{
+  font-size: 14px;
+  color: #4a4a4a;
+}
+
+.gameplay-field {
+  width: 200px;
+}
+
 .intro-selector {
   position: fixed;
   top: 45px;
@@ -133,7 +176,7 @@ export default {
 
 .intro-container {
   background-color: #fff;
-  margin-top: 90px;
+  margin-top: 45px;
   padding: 10px;
 }
 

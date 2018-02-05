@@ -1,9 +1,9 @@
 <template>
   <div v-transfer-dom>
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
-      <router-link class="home-link" to="/">
+      <router-link class="home-link" to="/" @click.native="handleClose">
         <x-icon type="ios-arrow-left"></x-icon>
-        <span class="text">返回首页</span>
+        <span>返回首页</span>
       </router-link>
       <div class="popup-content">
         <ul class="popup-menu">
@@ -53,22 +53,13 @@ export default {
       return this.$store.state.systemConfig.homePageLogo
     }
   },
-  watch: {
-    'allGames': function () {
-      let currentGameId = this.$route.params.gameId
-      if (!currentGameId) {
-        currentGameId = localStorage.getItem('lastGame') || this.allGames[0].id
-        this.$router.push(`/game/${currentGameId}`)
-      }
-    }
-  },
   methods: {
     handleClose () {
       this.$emit('closeSideBar')
     },
     switchGame (key) {
       localStorage.setItem('lastGame', key)
-      this.$router.push(`/game/${key}`)
+      this.$router.push({path: `/game/${key + ''}/`})
       this.handleClose()
     }
   }
@@ -92,9 +83,6 @@ export default {
   .vux-x-icon {
     fill: @azul;
     margin-left: 10px;
-  }
-  .text {
-    padding-left: 10px;
   }
 }
 .popup-content {

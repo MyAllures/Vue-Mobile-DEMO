@@ -1,16 +1,21 @@
 <template>
   <div>
-    <div class="tab-view">
-      <ul class="tab" v-if="tabKeys.length>1">
-        <li
-          :class="['tab-item', {active: currentTab === key}]"
-          v-for="(key, index) in tabKeys"
+    <div v-if="tabKeys.length>1" class="tab-selector">
+      <tab
+          :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
+          bar-active-color="#156fd8"
+          active-color="#156fd8" >
+        <tab-item v-for="(key, index) in  tabKeys"
+          @on-item-click="switchTab(key)"
           :key="index"
-          @click="switchTab(key)">{{key}}</li>
-      </ul>
+          :selected="key === currentTab">
+          <span :class="{'ellipsis': tabKeys.length > 5}">{{key}}</span>
+        </tab-item>
+      </tab>
     </div>
+
     <div
-      class="gameplays"
+      :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
       v-for="(group, index) in groups"
       :key="'group' + index">
@@ -22,14 +27,23 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <span :class="['play-name', play.code]">{{play.display_name}}</span>
-            <span class="play-odds">{{play.odds}}</span>
+            <div class="dice-container" v-if="play.display_name.split(',').length && game && game.code === 'jsk3'">
+              <span :class="['play-name', `jsk3-${dice}` ]"
+                v-for="(dice, index) in play.display_name.split(',')"
+                :key="index">
+                {{dice}}
+              </span>
+            </div>
+            <span v-else :class="getPlayClass(play)">{{play.display_name}}</span>
+            <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
           </div>
         </grid-item>
       </grid>
     </div>
+
     <component v-else
       :is="customPlayGroupsSetting.component"
+      :gameCode="game.code"
       :playReset="playReset"
       @updateCustomPlays="updateCustomPlays"
       @updateMultiCustomPlays="updateMultiCustomPlays"
@@ -42,11 +56,13 @@
 
 <script>
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
+const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -78,7 +94,8 @@ export default {
     WithCode,
     gd11x5Seq,
     hk6Exl,
-    shxiaZdc
+    shxiaZdc,
+    fc3dIc
   },
   data () {
     return {
@@ -109,9 +126,12 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
-      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryName}`
+      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryId}`
       return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupId)
-    }
+    },
+    ...mapGetters([
+      'categories'
+    ])
   },
   watch: {
     // update amount of active plays
@@ -135,19 +155,33 @@ export default {
           this.$set(play, 'active', false)
         }
       })
-    }
-  },
-  created () {
-    const categories = this.$store.state.categories
-    if (!categories.length) {
-      this.$store.dispatch('fetchCategories', this.$route.params.gameId).then((res) => {
-        this.initPlayAndGroups(res)
-      }).catch(() => { })
-    } else {
+    },
+    'categories': function (categories) {
       this.initPlayAndGroups(categories)
     }
   },
+  created () {
+    if (this.categories.length > 0) {
+      this.initPlayAndGroups(this.categories)
+    }
+  },
   methods: {
+    getPlayClass (play) {
+      if (this.game) {
+        let plain = [ 'play-name', play.code ]
+        let style = [...plain, `${this.game.code}-${play.display_name}`, {'plain': this.plays[play.id] ? this.plays[play.id].active && !this.gameClosed : false}]
+        // plain is for lay over the default active style
+
+        if (!(isNaN(play.display_name))) {
+          if (play.group.indexOf('和') !== -1) {
+            return plain
+          }
+          return style
+        } else {
+          return plain
+        }
+      }
+    },
     updateCustomPlays (playOptions) {
       _.each(this.plays, play => {
         // if all of the options are valid, change the target play's status
@@ -185,15 +219,19 @@ export default {
       this.$set(play, 'activedOptions', [])
     },
     initPlayAndGroups (categories) {
-      const categoryName = this.$route.params.categoryName
-      const currentCategory = _.find(categories, item => (item.name) === categoryName)
+      const categoryId = this.$route.params.categoryId
+      const currentCategory = _.find(categories, item => (item.id + '') === categoryId)
+      if (!currentCategory) {
+        return
+      }
       const tabs = {}
       const plays = {}
+      const tabKeys = []
 
-      let groupName = this.$route.params.categoryName
+      let groupName = currentCategory.name
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
-        this.tabKeys.push(tabName)
+        tabKeys.push(tabName)
 
         const groups = tab.groups
         groups.forEach(group => {
@@ -211,7 +249,8 @@ export default {
         tabs[tabName] = groups
       })
 
-      this.currentTab = this.tabKeys[0]
+      this.currentTab = tabKeys[0]
+      this.tabKeys = tabKeys
       this.tabs = tabs
       this.groups = tabs[this.currentTab]
       this.plays = plays
@@ -245,27 +284,19 @@ export default {
 <style lang="less" scoped>
 @import "../../styles/vars.less";
 @import "../../styles/playgroup.less";
-.tab-view {
+.tab-selector {
   width: 100%;
-  overflow-x: auto;
-  .tab {
-    display: flex;
-    flex-wrap: nowrap;
-    list-style: none;
-    .tab-item {
-      box-sizing: border-box;
-      flex-shrink: 0;
-      width: 100px;
-      height: 44px;
-      line-height: 44px;
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-      &.active {
-        border-bottom: 3px solid @azul;
-        color: @azul;
-      }
-    }
+  overflow: scroll;
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
+}
+
+.dice-container {
+  display: inline-block;
 }
 </style>

@@ -36,25 +36,22 @@ export default new Router({
       component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
-        tabbarHidden: true,
-        headerHidden: true
+        tabbarHidden: true
       },
       children: [
         {
           path: ':gameId',
           component: resolve => { require(['../screens/games/Game.vue'], resolve) },
-          name: 'GameDetail',
           meta: {
-            tabbarHidden: true,
-            headerHidden: true
+            tabbarHidden: true
           },
           children: [
             {
-              path: ':categoryName',
+              path: ':categoryId',
+              name: 'GameDetail',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
               meta: {
-                tabbarHidden: true,
-                headerHidden: true
+                tabbarHidden: true
               }
             }
           ]
@@ -93,7 +90,9 @@ export default new Router({
           name: 'DetailBetRecord',
           meta: {
             title: '注單',
-            requiresAuth: true
+            requiresAuth: true,
+            tabbarHidden: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
         },
@@ -195,6 +194,16 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
+    },
+    {
+      path: '/results',
+      name: 'Results',
+      meta: {
+        title: '开奖结果',
+        headerHidden: true,
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
     },
     {
       path: '/stastics/roadbeads',

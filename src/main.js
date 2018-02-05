@@ -38,12 +38,22 @@ if (token) {
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
+    if (responseData.data && responseData.data.trial_auth_req === 1) {
+      router.push({
+        path: '/login'
+      })
+      store.dispatch('openVerifyPopup')
+    }
     return responseData.data
   } else {
     if (responseData.code === 9007) {
       router.push({
         path: '/login'
       })
+    } else if (responseData.code === 9011 || responseData.code === 9013) {
+      axios.defaults.withCredentials = true
+      Vue.cookie.set('sessionid', res.data.sessionid)
+      return Promise.reject(responseData)
     }
     return Promise.reject(responseData.msg)
   }
@@ -70,18 +80,7 @@ router.beforeEach((to, from, next) => {
     } else {
       store.dispatch('fetchUser')
         .then(res => {
-          // got user info
-          if (res.account_type === 0 && ['/my', '/fin'].includes(to.matched[0].path)) {
-            toLogin(router)
-            Vue.$vux.toast.show({
-              type: 'text',
-              text: '亲，注册会员以获得更多功能',
-              width: '15em',
-              position: 'middle'
-            })
-          } else {
-            next()
-          }
+          next()
         })
         .catch(error => {
           // can't get user info

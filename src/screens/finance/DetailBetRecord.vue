@@ -27,9 +27,15 @@
               ￥{{record.bet_amount}}
             </span>
           </td>
-          <td>
+          <td v-if="!record.remarks">
             <span :class="statusColor(record.profit)">
               {{record.profit | profitFilter | currency('￥')}}
+            </span>
+          </td>
+          <td v-else>
+            <span>
+              {{record.remarks}}
+              <!-- if status of betrecord is 'no_draw' or 'canclled', the field remarks will show status -->
             </span>
           </td>
         </tr>

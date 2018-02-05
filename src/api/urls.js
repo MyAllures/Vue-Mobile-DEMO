@@ -46,5 +46,6 @@ export default {
   banUser: apiChat + '/v1/room/',
   sendImgToChat: host + '/v1/manage/attachment/',
   getRoomManagers: apiChat + '/v1/room/',
-  chatRoomLogin: apiChat + '/chat/'
+  chatRoomLogin: apiChat + '/chat/',
+  playSetting: apiv1 + '/game/playset/'
 }

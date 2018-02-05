@@ -29,6 +29,8 @@ export default {
     cancel: 'Cancel',
     loading: 'Loading',
     load_more: 'Load More',
+    no_more: '~',
+    lotteryResult: 'lottery Result',
     success: 'Success',
     failed: 'Failed',
     ongoing: 'Ongoing',
@@ -46,6 +48,7 @@ export default {
   game: {
     betrecord: 'Look Betrecord',
     name: 'Game',
+    deposit: 'Reload Now',
     pay: 'Pay Right Away',
     nopay: 'Nopay'
   },
@@ -61,6 +64,7 @@ export default {
     amount: 'Amount'
   },
   my: {
+    select: 'Select',
     name: 'My',
     balance: 'Balance',
     message: 'Unread Message',
@@ -69,6 +73,7 @@ export default {
     depositor: 'Depositor',
     deposited_at: 'Deposited at',
     memo: 'Memo',
+    memo_tip: 'Memo if needed',
     amount: 'Amount',
     bank_name: 'Bank name',
     bank_account: 'Bank Account',

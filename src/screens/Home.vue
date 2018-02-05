@@ -28,13 +28,21 @@
     </flexbox>
     <grid :cols="3">
       <grid-item
-        @click.native="$router.push(`/game/${game.id}`)"
+        @click.native="chooseGame(game.id)"
         v-for="(game, index) in games"
         :key="'game' + index"
         v-if="index < 11">
         <img slot="icon" :src="game.icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
+      <a href="#" class="weui-grid" @click="openPClink()">
+        <div class="weui-grid__icon">
+          <img slot="icon" src="../assets/icon_pc.png" alt="PC">
+        </div>
+        <div class="weui-grid__label">
+          <span>电脑版</span>
+        </div>
+      </a>
     </grid>
     <div class="activity">
       <flexbox>
@@ -128,8 +136,16 @@ export default {
     })
   },
   methods: {
+    openPClink () {
+      this.$cookie.set('desktop', 1)
+      window.location.reload()
+    },
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
+    },
+    chooseGame (gameId) {
+      localStorage.setItem('lastGame', gameId)
+      this.$router.push(`/game/${gameId}`)
     }
   },
   components: {
