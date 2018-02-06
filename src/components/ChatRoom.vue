@@ -490,7 +490,9 @@ export default {
     display: inline-block;
     font-weight: 400;
     max-width: 73px;
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-space: nowrap;
     line-height: 12px;
     float: left;
     padding-top: 2px;
