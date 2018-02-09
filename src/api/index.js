@@ -3,6 +3,7 @@ import urls from './urls'
 import qs from 'qs'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+let axiosChat = axios.create()
 
 export function login (user) {
   return axios.post(urls.login, qs.stringify(user))
@@ -181,4 +182,8 @@ export function sendImgToChat (data) {
 
 export function fetchPlaySetting (id) {
   return axios.get(`${urls.playSetting}?game=${id}`)
+}
+
+export function getChatUser (id) {
+  return axiosChat.get(`${urls.banUser}${id}/`)
 }
