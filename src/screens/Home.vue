@@ -35,7 +35,7 @@
         <img slot="icon" :src="game.icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
-      <a href="#" class="weui-grid" @click="openPClink()">
+      <a href="#" class="weui-grid" @click="openPClink()" v-if="games.length">
         <div class="weui-grid__icon">
           <img slot="icon" src="../assets/icon_pc.png" alt="PC">
         </div>

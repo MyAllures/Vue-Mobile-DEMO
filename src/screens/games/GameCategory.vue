@@ -126,8 +126,9 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
-      let playGroupId = `${this.$route.params.gameId}-${this.$route.params.categoryId}`
-      return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupId)
+      let currentPlayGroup = _.find(this.categories, item => item.id + '' === this.$route.params.categoryId)
+      let playGroupCode = currentPlayGroup.code
+      return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupCode)
     },
     ...mapGetters([
       'categories'
