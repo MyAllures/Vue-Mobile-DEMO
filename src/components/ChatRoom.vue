@@ -25,7 +25,7 @@
                 <div class="msg-header">
                   <h4 v-html="item.type === 4 ? '计划消息' : item.sender && item.sender.username === user.username && user.nickname ? user.nickname : item.sender && (item.sender.nickname || item.sender.username)"></h4>
                   <span class="common-member" v-if="item.type !== 4">
-                    {{item.sender && item.sender.level_name && item.sender.level_name.indexOf('管理员') !== -1 ? '管理员' : '普通会员'}}
+                    {{roomManegers.indexOf(item.sender.id) !== -1 ? '管理员' : '普通会员'}}
                   </span>
                   <span class="msg-time">{{item.created_at | moment('HH:mm:ss')}}</span>
                 </div>
@@ -98,7 +98,7 @@ import 'vue-awesome/icons/picture-o'
 import 'vue-awesome/icons/volume-up'
 import MarqueeTips from 'vue-marquee-tips'
 import { mapGetters } from 'vuex'
-import { sendImgToChat } from '../api'
+import { sendImgToChat, getChatUser } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import config from '../../config'
 const WSHOST = config.chatHost
@@ -126,6 +126,7 @@ export default {
       ws: null,
       chatAnnounce: '',
       messages: [],
+      roomManegers: [],
       msgCnt: '',
       showNickNameBox: false,
       nickname: this.$store.state.user.nickname,
@@ -175,6 +176,9 @@ export default {
       }
     },
     joinChatRoom () {
+      getChatUser(1).then(response => {
+        this.roomManegers = response.data.managers
+      })
       let token = Vue.cookie.get('access_token')
       if ((this.ws && this.ws.readyState === 1 && this.messages.length)) {
         return false
