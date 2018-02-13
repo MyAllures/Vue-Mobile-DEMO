@@ -7,10 +7,17 @@ import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
 import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage } from './api'
+import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
+import qs from 'qs'
+
+let url = window.location.href
+let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
+if (params.r) {
+  setCookie('r=' + params.r).catch(() => {})
+}
 
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)

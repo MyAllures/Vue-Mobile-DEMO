@@ -79,7 +79,7 @@ export function postWithdraw (option) {
 }
 
 export function register (user) {
-  return axios.post(urls.register, qs.stringify(user))
+  return axios.post(urls.register, qs.stringify(user), {withCredentials: true})
 }
 
 export function checkUserName (username) {
@@ -182,6 +182,10 @@ export function sendImgToChat (data) {
 
 export function fetchPlaySetting (id) {
   return axios.get(`${urls.playSetting}?game=${id}`)
+}
+
+export function setCookie (cookie) {
+  return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
 }
 
 export function getChatUser (id) {
