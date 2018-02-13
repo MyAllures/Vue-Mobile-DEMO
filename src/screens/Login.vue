@@ -169,7 +169,7 @@
           this.$store.dispatch('closeVerifyPopup')
         }).catch(error => {
           this.fetchCaptcha()
-          this.error = error
+          this.error = error.msg
         })
       }
     },

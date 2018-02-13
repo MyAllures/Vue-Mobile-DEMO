@@ -3,6 +3,7 @@ import urls from './urls'
 import qs from 'qs'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+let axiosChat = axios.create()
 
 export function login (user) {
   return axios.post(urls.login, qs.stringify(user))
@@ -185,4 +186,8 @@ export function fetchPlaySetting (id) {
 
 export function setCookie (cookie) {
   return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
+}
+
+export function getChatUser (id) {
+  return axiosChat.get(`${urls.banUser}${id}/`)
 }

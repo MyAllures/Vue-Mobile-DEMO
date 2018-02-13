@@ -128,6 +128,9 @@ export default {
       } else {
         this.pollUnread()
       }
+    },
+    '$route' () {
+      this.showChatRoom = false
     }
   },
   computed: {

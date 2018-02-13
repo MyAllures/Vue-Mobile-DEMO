@@ -51,6 +51,7 @@ export default {
       commit('UPDATE_LOADING', {isLoading: false})
       return login({ commit, state }, { user })
     }).catch(error => {
+      commit('UPDATE_LOADING', {isLoading: false})
       return Promise.reject(error)
     })
   },
