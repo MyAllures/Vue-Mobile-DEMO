@@ -13,46 +13,58 @@
             <span>{{currentGame.display_name}}</span>
             <span class="arrow"></span>
           </div>
-          <x-address 
-            style="display:none;" 
-            title="title" 
-            v-model="currentGameId" 
-            :list="gameLists" 
+          <x-address
+            style="display:none;"
+            title="title"
+            v-model="currentGameId"
+            :list="gameLists"
             :show.sync="showGameMenu">
           </x-address>
-        </group> 
+        </group>
         <group class="choose-date">
           <icon class='icon calendars' scale="1" name="calendar"></icon>
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
       </div>
       <table class="results">
-        <tr v-if='lotteryTime' v-for='(schedule, scheduleIndex) in dataNum.results'>
+        <tr v-if="lotteryTime"
+          v-for="(schedule, scheduleIndex) in dataNum.results"
+          :key="'scheduleIndex' + scheduleIndex">
           <td class="show-time">
-            <p class="periods-number" v-for="(fieldsObject, fieldsIndex) in lotteryNum">
+            <p class="periods-number"
+              v-for="(fieldsObject, fieldsIndex) in lotteryNum"
+              :key="'fieldsIndex' + fieldsIndex">
               {{schedule[fieldsObject.keyNum]}}
             </p>
-            <p class="periods-time" v-for="(timeObject, timeIndex) in lotteryTime">
+            <p class="periods-time"
+              v-for="(timeObject, timeIndex) in lotteryTime"
+              :key="'timeIndex' + timeIndex">
               {{schedule[timeObject.keyTime] |dateFilter}}
             </p>
           </td>
           <td class="show-count">
             <div>
-              <div class="lottery-result" v-bind:class="{luckLotery: codeKl}" v-for="num in lotteryResult">
-                <span v-for='(loteryData, loteryIndex) in (schedule[num.key1]).split(",")'>
-                  <span v-if='codeType != "bjkl8" && codeType != "auluck8"' 
+              <div class="lottery-result"
+                :class="{luckLotery: codeKl}"
+                v-for="(num, index) in lotteryResult"
+                :key="'lotteryResult' + index">
+                <span v-for="(loteryData, lotteryIndex) in (schedule[num.key1]).split(',')"
+                :key="'lotteryIndex' + lotteryIndex">
+                  <span v-if='codeType != "bjkl8" && codeType != "auluck8"'
                         :class="`lottery-${codeType}-${~~loteryData}`">{{~~loteryData}}</span>
-                  <span v-if='codeType === "bjkl8" || codeType === "auluck8"' 
+                  <span v-if='codeType === "bjkl8" || codeType === "auluck8"'
                         :class="[`lottery-${codeType}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
                 </span>
               </div>
               <div v-if='!codeKl' class="compare-content">
-                <span class="lottery-compare" v-for="subHead in lotteryCompare">
+                <span class="lottery-compare"
+                  v-for="(subHead, index) in lotteryCompare"
+                  :key="'subHead' + index">
                   {{schedule.result_category[subHead.key] |changeDataType}}
                 </span>
               </div>
-            </div>            
-          </td> 
+            </div>
+          </td>
         </tr>
       </table>
       <box gap="10px 10px">
@@ -748,11 +760,9 @@ export default {
       })
     },
     addMore () {
-      if (this.dataNum.count > this.limit || this.dataNum.count < this.limit + 30) {
-        this.limit += 30
-      } else {
-        this.limit += this.dataNum.cout - this.limit
-      }
+      let total = this.dataNum.count
+      this.limit = (total > this.limit || total < this.limit + 30) ? this.limit + 30 : this.limit + (total - this.limit)
+
       getGameData(this.codeType, this.dataTime, this.limit).then((response) => {
         this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
@@ -857,8 +867,8 @@ export default {
     color: #ccc;
   }
   .lucky {
-    display: block; 
-    width: 80%; 
+    display: block;
+    width: 80%;
   }
 }
 .choose-date /deep/ .vux-cell-value {
@@ -962,12 +972,12 @@ table {
   color: #ccc;
 }
 .jspbg {
-  display: inline-block; 
+  display: inline-block;
   margin-top: 8px;
   width: 20px;
   height: 20px;
   background: url("../assets/ball-pk.png") no-repeat;
-  margin-right: 1px; 
+  margin-right: 1px;
   background-size: 20px 210px;
   text-indent: -9999px;
 }
