@@ -760,8 +760,7 @@ export default {
       })
     },
     addMore () {
-      let total = this.dataNum.count
-      this.limit = (total > this.limit || total < this.limit + 30) ? this.limit + 30 : this.limit + (total - this.limit)
+      this.limit = this.limit + 30
 
       getGameData(this.codeType, this.dataTime, this.limit).then((response) => {
         this.firstLimit = response.results.length
