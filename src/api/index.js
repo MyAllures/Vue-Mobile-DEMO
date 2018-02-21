@@ -152,11 +152,9 @@ export function onlinepaySuccess (transactionId) {
 }
 
 export function getGameData (codeType, dataTime, limit) {
-  if (limit) {
-    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}&ffset=${limit}`)
-  } else {
-    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`)
-  }
+  let url = `${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`
+  url = limit ? `${url}&offset=${limit}` : url
+  return axios.get(url)
 }
 
 export function fetchStatistic (code) {
