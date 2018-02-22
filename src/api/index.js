@@ -132,7 +132,7 @@ export function changeWpassword (password) {
 }
 
 export function changeUserInformation (id, member) {
-  return axios.put(urls.user + member.id + '/', member)
+  return axios.put(urls.user + id + '/', member)
 }
 
 export function fetchMessages (limit, page) {

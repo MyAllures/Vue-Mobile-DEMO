@@ -77,8 +77,11 @@ export function msgFormatter (msgs) {
         formatMsg = formatMsg[0]
       }
       return formatMsg
+    } else if (typeof msgs === 'string') {
+      formatMsg = msgs
+    } else {
+      formatMsg = '系统发生了错误, 请联系客服'
     }
-    formatMsg = msgs
   }
   return formatMsg
 }

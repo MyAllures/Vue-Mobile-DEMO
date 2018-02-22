@@ -23,7 +23,7 @@ Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
-Vue.use(ToastPlugin, {position: 'top'})
+Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 
 let navLang = navigator.language || navigator.userLanguage
 if (navLang === 'zh-CNN' || navLang === 'zh-cn') {
@@ -65,6 +65,10 @@ axios.interceptors.response.use(res => {
     return Promise.reject(responseData.msg)
   }
 }, (error) => {
+  Vue.$vux.toast.show({
+    text: '系统发生了错误, 请联系客服',
+    type: 'warn'
+  })
   return Promise.reject(error)
 })
 
