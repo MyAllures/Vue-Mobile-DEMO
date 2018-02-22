@@ -45,12 +45,6 @@ if (token) {
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
-    if (responseData.data && responseData.data.trial_auth_req === 1) {
-      router.push({
-        path: '/login'
-      })
-      store.dispatch('openVerifyPopup')
-    }
     return responseData.data
   } else {
     if (responseData.code === 9007) {
@@ -77,6 +71,7 @@ Vue.config.productionTip = false
 const store = createStore()
 
 const toLogin = function (router) {
+  store.commit('RESET_USER')
   router.push({
     path: '/login'
   })

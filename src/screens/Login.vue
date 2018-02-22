@@ -60,45 +60,13 @@
         </flexbox-item>
       </flexbox>
     </div>
-    <div v-transfer-dom>
-      <popup v-model="$store.state.showVerifyPopup" :height="'calc(50vh + 100px)'" @on-show="fetchCaptcha()" is-transparent>
-        <div class="verify-popup">
-          <p class="text-center">请输入验证码以继续试玩</p>
-         <group>
-          <x-input
-            v-model="user.verification_code_1"
-            class="captcha-input"
-            title="验证码"
-            placeholder="请输入验证码"
-            label-width="100"
-            :show-clear="false"
-            :max="4">
-            <img slot="right"
-              v-if="captcha_src"
-              @click="fetchCaptcha()"
-              :src="captcha_src"
-              alt="captcha"
-              class="captcha">
-            <x-button type="primary"
-              @click.native="fetchCaptcha()"
-              slot="right"
-              mini
-              v-else>获取验证码</x-button>
-          </x-input>
-        </group>
-        <div class="continue">
-          <div :class="['trial-error', {'unvisible': !error }]">{{error}}</div>
-          <x-button class="trial-btn" type="primary" @click.native="tryDemo">继续试玩</x-button>
-        </div>
-      </div>
-      </popup>
-    </div>
   </form>
 </template>
 
 <script>
-  import { XInput, Group, XButton, Flexbox, FlexboxItem, Popup, TransferDom } from 'vux'
-  import { fetchCaptcha } from '../api'
+  import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
+  import { fetchCaptcha, register } from '../api'
+  import { msgFormatter } from '../utils'
 
   export default {
     name: 'Home',
@@ -158,18 +126,23 @@
         }
       },
       tryDemo () {
-        let verification = {
-          verification_code_0: this.user.verification_code_0,
-          verification_code_1: this.user.verification_code_1
-        }
-
-        this.$store.dispatch('tryDemo', verification).then(result => {
-          this.$router.push({ name: 'Home' })
+        register({ account_type: 0 }).then(user => {
+          if (user.trial_auth_req === 1) {
+            this.$store.dispatch('openVerifyPopup')
+            let msg = ''
+            return Promise.reject(msg)
+          }
+          return this.$store.dispatch('login', { user })
+        }).then(result => {
+          this.$router.push({name: 'Home'})
           this.$store.dispatch('fetchUser')
-          this.$store.dispatch('closeVerifyPopup')
-        }).catch(error => {
-          this.fetchCaptcha()
-          this.error = error.msg
+        }, errorMsg => {
+          if (errorMsg) {
+            this.$vux.toast.show({
+              text: msgFormatter(errorMsg),
+              type: 'warn'
+            })
+          }
         })
       }
     },
@@ -187,16 +160,7 @@
       Group,
       XButton,
       Flexbox,
-      FlexboxItem,
-      Popup
-    },
-    directives: {
-      TransferDom
-    },
-    beforeDestroy () {
-      if (this.$store.state.showVerifyPopup) {
-        this.$store.dispatch('closeVerifyPopup')
-      }
+      FlexboxItem
     }
   }
 </script>
@@ -226,27 +190,5 @@
 }
 .captcha-input {
   height: 30px;
-}
-
-.verify-popup {
-  width: 95%;
-  background-color: white;
-  height: 200px;
-  margin: 0 auto;
-  border-radius: 5px;
-  padding-top: 10px;
-}
-.continue {
-  padding: 25px 15px;
-}
-.trial-error {
-  color: @red;
-  text-align: center;
-  height: 20px;
-  line-height: 20px;
-  margin-bottom: 5px;
-  &.unvisible {
-    visibility: hidden;
-  }
 }
 </style>
