@@ -9,25 +9,18 @@
     <div ref="recordBox"
       class="record-box results"
       :style="{height: resultsH + 'px'}">
-      <table class="choose-head">
+      <div class="choose-head">
         <div class="choose-type">
           <div class="current-game" @click='selectGame()'>
-            <span>{{currentGame.display_name}}</span>
+            <span class="chosen">{{currentGame.display_name}}</span>
             <span class="arrow"></span>
           </div>
-          <x-address
-            style="display:none;"
-            title="title"
-            v-model="currentGameId"
-            :list="gameLists"
-            :show.sync="showGameMenu">
-          </x-address>
         </div>
         <group class="choose-date">
           <icon class='icon calendars' scale="1" name="calendar"></icon>
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
-      </table>
+      </div>
       <table class="history-table">
         <tr v-if="lotteryTime"
           v-for="(schedule, scheduleIndex) in dataNum.results"
@@ -80,6 +73,13 @@
         </tr>
       </table>
     </div>
+     <x-address
+            style="display:none;"
+            title="title"
+            v-model="currentGameId"
+            :list="gameLists"
+            :show.sync="showGameMenu">
+      </x-address>
   </div>
 </template>
 <script>
@@ -834,16 +834,20 @@ export default {
   background: #f1f1f1;
 }
 .choose-type{
-  float: left;
+  display: inline-block;
+  width: 100px;
+  border-bottom: 1px solid #D9D9D9;
   .current-game {
-    display: inline-block;
     width: 100%;
     height: 44px;
     line-height: 44px;
-    padding: 0 10px;
     color: @azul;
-    font-size: 14px;
     background-color: #fff;
+    .chosen {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 14px;
+    }
   }
   .arrow {
     display: inline-block;
@@ -857,8 +861,21 @@ export default {
     margin-bottom: 2px;
   }
 }
-.choose-head {
+
+.choose-date {
+  position: absolute;
   display: inline-block;
+  width: calc(~"100%" - 100px);
+  height: 45px;
+  .calendars {
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    color: #ccc;
+  }
+}
+
+.choose-head {
   width: 100%;
   box-shadow: 1px 1px 3px rgba(0,0,0, .5);
   .choose-type /deep/ .weui-cells,.choose-type /deep/ .vux-no-group-title, .choose-date /deep/ .weui-cells,.choose-date /deep/ .vux-no-group-title  {
@@ -877,21 +894,7 @@ export default {
     font-weight: 400;
   }
 }
-.choose-date {
-  width: calc(~"100%" - 91px);
-  height: 45px;
-  float: right;
-  .calendars {
-    position: absolute;
-    top: 13px;
-    left: 10px;
-    color: #ccc;
-  }
-  .lucky {
-    display: block;
-    width: 80%;
-  }
-}
+
 .choose-date /deep/ .vux-cell-value {
     display: block;
     text-align: left;
@@ -916,10 +919,11 @@ export default {
 .periods-right {
   border-right: 1px solid #c3bbbb;
 }
-.vux-flex-row {
-  border-bottom: 0.5px solid #e8dcdc;
-}
+
 .show-time {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 100px;
   height: 50px;
   padding: 0px 10px;
   border-right: 1px solid #dcd9d9;
@@ -940,7 +944,8 @@ export default {
   font-size: 13px;
 }
 .show-count {
-  width: 100%;
+  display: inline-block;
+  width: calc(~"100%" - 120px);
   height: 50px;
 }
 .lottery-result {
