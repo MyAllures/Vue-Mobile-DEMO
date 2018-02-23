@@ -5,7 +5,6 @@ import axios from 'axios'
 import {
   fetchUser,
   login as userLogin,
-  register,
   logout,
   fetchGames,
   fetchUnread,
@@ -38,23 +37,6 @@ const login = function ({ commit, state }, { user }) {
 
 export default {
   login: login,
-  tryDemo ({ commit, state }, verification) {
-    if (!verification) {
-      verification = {}
-    }
-    commit('UPDATE_LOADING', {isLoading: true})
-    return register({
-      account_type: 0,
-      verification_code_0: verification.verification_code_0,
-      verification_code_1: verification.verification_code_1
-    }).then(user => {
-      commit('UPDATE_LOADING', {isLoading: false})
-      return login({ commit, state }, { user })
-    }).catch(error => {
-      commit('UPDATE_LOADING', {isLoading: false})
-      return Promise.reject(error)
-    })
-  },
   logout: ({ commit, state }) => {
     return logout().then(
       res => {

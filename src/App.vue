@@ -74,6 +74,8 @@
       v-model="showRightMenu"
       :show-links="showRightMenuLinks"
       @handleClose="closeRightMenu" />
+    <tryplay-popup />
+    </div>
   </view-box>
 </template>
 
@@ -82,10 +84,11 @@ import './styles/fonts/icons.css'
 
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken } from './api'
+import { getToken, register } from './api'
 import axios from 'axios'
-import { setIndicator } from './utils'
+import { setIndicator, msgFormatter } from './utils'
 import RightMenu from './components/RightMenu'
+import TryplayPopup from './components/TryplayPopup'
 
 export default {
   name: 'app',
@@ -175,11 +178,22 @@ export default {
       }
     },
     tryDemo () {
-      this.$store.dispatch('tryDemo').then(result => {
-        this.$router.push({ name: 'Home' })
+      register({ account_type: 0 }).then(user => {
+        if (user.trial_auth_req === 1) {
+          this.$store.dispatch('openVerifyPopup')
+          let msg = ''
+          return Promise.reject(msg)
+        }
+        return this.$store.dispatch('login', { user })
+      }).then(result => {
         this.$store.dispatch('fetchUser')
-      }).catch(error => {
-        this.error = error
+      }, errorMsg => {
+        if (errorMsg) {
+          this.$vux.toast.show({
+            text: msgFormatter(errorMsg),
+            type: 'warn'
+          })
+        }
       })
     },
     replaceToken () {
@@ -246,7 +260,8 @@ export default {
     Loading,
     ViewBox,
     Actionsheet,
-    RightMenu
+    RightMenu,
+    TryplayPopup
   }
 }
 </script>
