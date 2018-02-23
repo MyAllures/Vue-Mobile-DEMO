@@ -9,8 +9,8 @@
     <div ref="recordBox"
       class="record-box results"
       :style="{height: resultsH + 'px'}">
-      <div class="choose-head">
-        <group class="choose-type">
+      <table class="choose-head">
+        <div class="choose-type">
           <div class="current-game" @click='selectGame()'>
             <span>{{currentGame.display_name}}</span>
             <span class="arrow"></span>
@@ -22,14 +22,12 @@
             :list="gameLists"
             :show.sync="showGameMenu">
           </x-address>
-        </group>
+        </div>
         <group class="choose-date">
           <icon class='icon calendars' scale="1" name="calendar"></icon>
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
-      </div>
-
-
+      </table>
       <table class="history-table">
         <tr v-if="lotteryTime"
           v-for="(schedule, scheduleIndex) in dataNum.results"
@@ -840,12 +838,12 @@ export default {
   .current-game {
     display: inline-block;
     width: 100%;
-    height: 45px;
+    height: 44px;
     line-height: 44px;
-    margin-left: 10px;
-    margin-right: 10px;
+    padding: 0 10px;
     color: @azul;
     font-size: 14px;
+    background-color: #fff;
   }
   .arrow {
     display: inline-block;
@@ -860,8 +858,9 @@ export default {
   }
 }
 .choose-head {
+  display: inline-block;
   width: 100%;
-  border-bottom: solid 1px #b5aaaa;
+  box-shadow: 1px 1px 3px rgba(0,0,0, .5);
   .choose-type /deep/ .weui-cells,.choose-type /deep/ .vux-no-group-title, .choose-date /deep/ .weui-cells,.choose-date /deep/ .vux-no-group-title  {
     margin-top: 0;
   }
@@ -880,7 +879,8 @@ export default {
 }
 .choose-date {
   width: calc(~"100%" - 91px);
-  float: left;
+  height: 45px;
+  float: right;
   .calendars {
     position: absolute;
     top: 13px;
