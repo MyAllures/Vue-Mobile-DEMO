@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <x-header  class='lottery-header'>
+  <div class="clear-viewbox-default-bottom">
+    <x-header  class="lottery-header">
       {{$t('misc.lotteryResult')}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
-        <icon scale="1" class='icon repeat-icon' @click.native='refresh' name="repeat"></icon>
+        <icon scale="1" class="icon repeat-icon" @click.native="refresh" name="repeat"></icon>
       </a>
     </x-header>
-    <div ref="recordBox" class="record-box results" :style="{height: resultsH + 'px'}">
+    <div ref="recordBox"
+      class="record-box results"
+      :style="{height: resultsH + 'px'}">
       <div class="choose-head">
         <group class="choose-type">
           <div class="current-game" @click='selectGame()'>
@@ -26,10 +28,13 @@
           <datetime v-model="dataTime" @on-change="change"></datetime>
         </group>
       </div>
-      <table class="results">
+
+
+      <table class="history-table">
         <tr v-if="lotteryTime"
           v-for="(schedule, scheduleIndex) in dataNum.results"
-          :key="'scheduleIndex' + scheduleIndex">
+          :key="'scheduleIndex' + scheduleIndex"
+          class="row">
           <td class="show-time">
             <p class="periods-number"
               v-for="(fieldsObject, fieldsIndex) in lotteryNum"
@@ -66,16 +71,16 @@
             </div>
           </td>
         </tr>
-      </table>
-      <box gap="10px 10px">
-        <x-button v-if="firstLimit >= 30"
+        <tr class="condition">
+          <x-button v-if="firstLimit >= 30"
                   type="primary"
-                  class="add-more"
+                  class="add-more m-t m-b"
                   @click.native='addMore'>
           <span>{{$t('misc.load_more')}}</span>
         </x-button>
-        <div class="no-more" v-else>{{$t('misc.no_more')}}</div>
-      </box>
+        <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -623,7 +628,7 @@ export default {
   },
   computed: {
     resultsH () {
-      return (document.documentElement.clientHeight || document.body.clientHeight) - 46 - 53
+      return (document.documentElement.clientHeight || document.body.clientHeight) - 45
     },
     ...mapGetters([
       'allGames'
@@ -795,8 +800,27 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.history-table {
+  display: inline-block;
+  width: 100%;
+  height: calc(~"100%" - 46px);
+  overflow: auto;
+  border-collapse: collapse;
+  .row, .condition {
+    display: inline-block;
+    width: 100%;
+  }
+  .row {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+  }
+  .condition {
+    box-sizing: border-box;
+    padding: 10px;
+  }
+}
 .results {
-  overflow-y: scroll;
+  overflow: hidden;
 }
 .lottery-header {
   position: fixed;
@@ -812,14 +836,16 @@ export default {
   background: #f1f1f1;
 }
 .choose-type{
-  width: 40%;
   float: left;
   .current-game {
-    width: 100%;
     display: inline-block;
+    width: 100%;
+    height: 45px;
     line-height: 44px;
-    text-indent: 10px;
-    height: 44px;
+    margin-left: 10px;
+    margin-right: 10px;
+    color: @azul;
+    font-size: 14px;
   }
   .arrow {
     display: inline-block;
@@ -834,20 +860,17 @@ export default {
   }
 }
 .choose-head {
-  position: fixed;
-  z-index: 100;
   width: 100%;
-  top: 26px;
   border-bottom: solid 1px #b5aaaa;
-  .choose-type /deep/ .weui-cell__hd {
-    display: none;
+  .choose-type /deep/ .weui-cells,.choose-type /deep/ .vux-no-group-title, .choose-date /deep/ .weui-cells,.choose-date /deep/ .vux-no-group-title  {
+    margin-top: 0;
   }
-  .choose-type /deep/ .vux-cell-bd {
+  .choose-type /deep/ .weui-cell__hd, .choose-type /deep/ .vux-cell-bd {
     display: none;
   }
   .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
     transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
-    right:-4px;
+    right: -4px;
   }
   .choose-type /deep/ .vux-cell-value {
     color: #156fd8;
@@ -856,8 +879,7 @@ export default {
   }
 }
 .choose-date {
-  position: relative;
-  width: 60%;
+  width: calc(~"100%" - 105px);
   float: left;
   .calendars {
     position: absolute;
@@ -873,7 +895,9 @@ export default {
 .choose-date /deep/ .vux-cell-value {
     display: block;
     text-align: left;
-    text-indent: 20px;
+    padding-left: 15px;
+    font-size: 14px;
+    line-height: 25px;
 }
 .choose-date /deep/ .weui-cell_access .weui-cell__ft:after {
     transform: matrix(0, 0, 0, 0, 0, 0);
@@ -896,10 +920,9 @@ export default {
   border-bottom: 0.5px solid #e8dcdc;
 }
 .show-time {
-  width: 25%;
   height: 50px;
+  padding: 0px 10px;
   border-right: 1px solid #dcd9d9;
-  border-bottom: 1px solid #f3ecec;
 }
 .periods-number {
   width: 100%;
@@ -917,9 +940,8 @@ export default {
   font-size: 13px;
 }
 .show-count {
-  width: 70%;
+  width: 100%;
   height: 50px;
-  border-bottom: 1px solid #f3ecec;
 }
 .lottery-result {
   width: 100%;
@@ -952,19 +974,10 @@ export default {
   height: 25px;
   text-align: center;
 }
-table {
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-  background: #FFFFFF;
-  top: 44px;
-  border-collapse:collapse;
-}
+
 .add-more, .no-more{
   position: relative;
-  top: 44px;
   font-size: 14px;
-  margin-bottom: 10px;
 }
 .no-more {
   text-align: center;
