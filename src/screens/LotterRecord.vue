@@ -1,6 +1,6 @@
 <template>
-  <div class="clear-viewbox-default-bottom">
-    <x-header  class="lottery-header">
+  <div>
+    <x-header class="lottery-header">
       {{$t('misc.lotteryResult')}}
       <a v-if='$route.name === "LotterRecord"' slot="right">
         <icon scale="1" class="icon repeat-icon" @click.native="refresh" name="repeat"></icon>
@@ -879,7 +879,7 @@ export default {
   }
 }
 .choose-date {
-  width: calc(~"100%" - 105px);
+  width: calc(~"100%" - 91px);
   float: left;
   .calendars {
     position: absolute;
