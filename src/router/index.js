@@ -201,7 +201,8 @@ export default new Router({
       meta: {
         title: '开奖结果',
         headerHidden: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
     },
