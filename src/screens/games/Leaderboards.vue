@@ -1,6 +1,6 @@
 <template>
-  <div class="leaderbaord clear-viewbox-default-bottom">
-    <div v-if="listItems.length">
+  <div class="leaderbaord-container clear-viewbox-default-bottom">
+    <div class="leaderbaord" v-if="listItems.length">
       <x-table full-bordered class="table">
         <thead>
           <tr>
@@ -148,8 +148,15 @@ export default {
 <style lang="less" scoped>
 @import '../../styles/vars.less';
 
-.leaderbaord {
-  padding-top: 46px;
+.leaderbaord-container {
+  height: 100%;
+  overflow-y: hidden;
+  .leaderbaord {
+    position: relative;
+    height: 100%;
+    top: 2px;
+    overflow-y: auto;
+  }
 }
 
 .table {

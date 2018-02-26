@@ -1,16 +1,19 @@
 <template>
-  <div>
-    <road-beads
-      v-if="currentGame && $route.name === 'RoadBeads'"
-      :gameCode="currentGame.code"
-      :resultStatistic="resultStatistic">
-    </road-beads>
+  <div class="wrapper">
     <div class="game-selector text-center" @click="selectGame()">
       <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
       <inline-loading v-if="loading"></inline-loading>
       <span class="arrow" v-else></span>
     </div>
+
+    <road-beads
+      v-if="currentGame && $route.name === 'RoadBeads'"
+      :gameCode="currentGame.code"
+      :resultStatistic="resultStatistic">
+    </road-beads>
+
     <leaderboards :listItems="leaderboard" v-if="currentGame && $route.name === 'Leaderboards'"></leaderboards>
+
     <x-address style="display: none"
       title="请选择"
       v-model="currentGameId"
@@ -178,9 +181,10 @@ export default {
 
 <style lang="less" scoped>
 @import '../../styles/vars.less';
-
+.wrapper {
+  height: 100%;
+}
 .game-selector {
-  position: fixed;
   width: 100%;
   height: 45px;
   line-height: 45px;
