@@ -12,7 +12,7 @@
       <div class="choose-head">
         <div class="choose-type">
           <div class="current-game" @click='selectGame()'>
-            <span class="chosen">{{currentGame.display_name}}</span>
+            <span :class="['chosen', {'small': currentGame.display_name.length > 5}]">{{currentGame.display_name}}</span>
             <span class="arrow"></span>
           </div>
         </div>
@@ -847,6 +847,9 @@ export default {
       display: inline-block;
       margin-left: 10px;
       font-size: 14px;
+      &.small {
+        font-size: 12px;
+      }
     }
   }
   .arrow {
