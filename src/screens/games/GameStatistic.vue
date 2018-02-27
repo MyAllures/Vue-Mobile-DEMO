@@ -163,6 +163,16 @@ export default {
           }
         )
       })
+    },
+    '$route.name': function () {
+      clearInterval(this.interval)
+      if (this.$route.name === 'Leaderboards') {
+        this.fetchLeaderboard()
+        this.pollLeaderboard()
+      } else {
+        this.fetchStatistic()
+        this.pollStatistic()
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
