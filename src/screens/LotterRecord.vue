@@ -849,6 +849,7 @@ export default {
       font-size: 14px;
       &.small {
         font-size: 12px;
+        margin-left: 5px;
       }
     }
   }
