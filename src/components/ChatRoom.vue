@@ -1,17 +1,19 @@
 <template>
   <div class="chat-box" id="chatBox">
     <p class="login-info" v-if="chatLoading">聊天室登陆中...</p>
-    <div v-else>
-      <div class="chat-announce" v-if="chatAnnounce">
-        <div class="annouce-info clearfix">
-          <icon class="volume-up" name="volume-up"></icon>
-          公告
-        </div>
+    <div class="chat-container" v-else>
+
+    <div class="chat-body">
+      <div class="chat-content">
+        <div class="chat-announce" v-if="chatAnnounce">
+          <div class="annouce-info clearfix">
+            <icon class="volume-up" name="volume-up"></icon>
+            公告
+          </div>
         <div class="scroll">
           <MarqueeTips :content="chatAnnounce" :speed="10"></MarqueeTips>
         </div>
-      </div>
-      <div class="chat-content">
+        </div>
         <ul class="lay-scroll">
           <li v-for="(item, index) in messages" :class="['clearfix', 'item', item.sender && ((item.sender.nickname && item.sender.nickname === user.nickname) || user.username === item.sender.username) ? 'item-right' : 'item-left', item.type < 0 ? 'sys-msg' : '']">
             <div class="lay-block clearfix" v-if="item.type >= 0">
@@ -23,7 +25,7 @@
                 <div class="msg-header">
                   <h4 v-html="item.type === 4 ? '计划消息' : item.sender && item.sender.username === user.username && user.nickname ? user.nickname : item.sender && (item.sender.nickname || item.sender.username)"></h4>
                   <span class="common-member" v-if="item.type !== 4">
-                    {{item.sender && item.sender.level_name && item.sender.level_name.indexOf('管理员') !== -1 ? '管理员' : '普通会员'}}
+                    {{roomManegers.indexOf(item.sender.id) !== -1 ? '管理员' : '普通会员'}}
                   </span>
                   <span class="msg-time">{{item.created_at | moment('HH:mm:ss')}}</span>
                 </div>
@@ -45,27 +47,28 @@
           <li ref="msgEnd" id="msgEnd" class="msgEnd"></li>
         </ul>
       </div>
-      <div class="footer" height="100">
+
+      <div class="footer">
         <div class="typing">
           <div class="control-bar">
             <a href="javascript:void(0)" class="btn-control btn-smile">
               <label for="imgUploadInput">
                 <span title="上传图片">
                   <icon scale="1.3" name="picture-o" class="text-center el-icon-picture"></icon>
-                  <input @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
+                  <input :disabled="!personal_setting.chat.status" @change="sendMsgImg" type="file" ref="fileImgSend" class="img-upload-input" id="imgUploadInput" accept=".jpg, .png, .gif, .jpeg, image/jpeg, image/png, image/gif">
                 </span>
               </label>
             </a>
           </div>
           <div class="txtinput el-textarea">
-            <textarea 
-              @keyup.enter="sendMsg" 
-              :placeholder="personal_setting.chat.status ? '' : sendMsgCondition" 
-              type="textarea" rows="2" 
-              autocomplete="off" 
-              validateevent="true" 
-              :class="['el-textarea-inner', !personal_setting.chat ? 'is-disabled' : '']" 
-              v-model="msgCnt" 
+            <textarea
+              @keyup.enter="sendMsg"
+              :placeholder="personal_setting.chat.status ? '' : sendMsgCondition"
+              type="textarea" rows="2"
+              autocomplete="off"
+              validateevent="true"
+              :class="['el-textarea-inner', !personal_setting.chat ? 'is-disabled' : '']"
+              v-model="msgCnt"
               :disabled="personal_setting.chat.status ? false : true">
             </textarea>
           </div>
@@ -74,6 +77,8 @@
           </div>
         </div>
       </div>
+    </div>
+
       <div v-transfer-dom>
         <popup v-model="showImageMsg" height="100%">
           <div class="close-pop-btn" @click="showImageMsg = false">完成</div>
@@ -93,7 +98,7 @@ import 'vue-awesome/icons/picture-o'
 import 'vue-awesome/icons/volume-up'
 import MarqueeTips from 'vue-marquee-tips'
 import { mapGetters } from 'vuex'
-import { sendImgToChat } from '../api'
+import { sendImgToChat, getChatUser } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import config from '../../config'
 const WSHOST = config.chatHost
@@ -121,6 +126,7 @@ export default {
       ws: null,
       chatAnnounce: '',
       messages: [],
+      roomManegers: [],
       msgCnt: '',
       showNickNameBox: false,
       nickname: this.$store.state.user.nickname,
@@ -170,6 +176,9 @@ export default {
       }
     },
     joinChatRoom () {
+      getChatUser(1).then(response => {
+        this.roomManegers = response.data.managers
+      })
       let token = Vue.cookie.get('access_token')
       if ((this.ws && this.ws.readyState === 1 && this.messages.length)) {
         return false
@@ -326,15 +335,11 @@ export default {
 @import '../styles/vars.less';
 
 .chat-box {
-  position: fixed;
-  top: 46px;
-  left: 0;
   width: 100%;
   height: 100%;
   background: url('../assets/chatbg.jpg') no-repeat right bottom;
   background-attachment: fixed;
   background-size: cover;
-  overflow-y: scroll;
   .login-info {
     color: red;
     border-top-color: rgb(204, 204, 204);
@@ -350,7 +355,7 @@ export default {
   top: 5px;
   margin: 0 5px;
   background: rgba(237,244,254,.9);
-  border: 1px solid #c2cfe2;
+  border: 1px solid #0a0d13;
   border-radius: 5px;
   padding-right: 10px;
   height: 29px;
@@ -376,13 +381,10 @@ export default {
     margin-left: 72px;
   }
 }
-.chat-content {
-  padding-bottom: 70px;
-}
 .lay-scroll {
   .block-user-info {
     text-align: center;
-    padding-top: 100px;
+    padding-top: 65px;
     font-size: 16px;
     color: red;
   }
@@ -492,7 +494,9 @@ export default {
     display: inline-block;
     font-weight: 400;
     max-width: 73px;
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-space: nowrap;
     line-height: 12px;
     float: left;
     padding-top: 2px;
@@ -505,9 +509,9 @@ export default {
   }
 }
 .bubble {
-  background: linear-gradient(to right, #1976D2, rgb(25, 158, 216)); 
-  border-left-color: rgb(25, 158, 216); 
-  border-right-color: #1976D2; 
+  background: linear-gradient(to right, #1976D2, rgb(25, 158, 216));
+  border-left-color: rgb(25, 158, 216);
+  border-right-color: #1976D2;
   color: rgb(255, 255, 255);
   margin-top: 3px;
   position: relative;
@@ -530,7 +534,7 @@ export default {
   p {
     display: inline-block;
     span {
-      white-space: pre-wrap; 
+      white-space: pre-wrap;
       word-break: break-all;
       font-size: 14px;
     }
@@ -551,9 +555,9 @@ export default {
   margin-top: -7px;
 }
 .footer {
-  position: fixed;
-  bottom: 0;
+  flex: 0 0 auto;
   width: 100%;
+  height: 65px;
   background: #f5f5f5;
   padding: 0;
 }
@@ -569,10 +573,10 @@ export default {
     border-radius: 4px;
     overflow: hidden;
     .img-upload-input {
-      width: 0.1px; 
-      height: 0.1px; 
-      opacity: 0; 
-      position: absolute; 
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      position: absolute;
       top: -20px;
     }
   }
@@ -642,5 +646,18 @@ export default {
   text-align: right;
   padding: 4px;
   color: #444;
+}
+.chat-container {
+  height: 100%;
+}
+.chat-content {
+  flex: 1 1 auto;
+  height: 100%;
+  overflow-y: auto;
+}
+.chat-body {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
 }
 </style>

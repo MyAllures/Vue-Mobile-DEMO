@@ -1,15 +1,15 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-title">{{groupName}}</div>
-    <div class="playgroup-odds">赔率：{{activePlay.odds}}</div>
+    <div class="playgroup-title" v-if="!activePlay.odds">{{groupName}}</div>
+    <div class="playgroup-odds" v-else>赔率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="2">
       <grid-item
         :class="['play', {active: option.active && !gameClosed}]"
         v-for="(option, index) in customOptions"
         :key="index"
         @on-item-click="toggleActive(option)">
-        <div class="play-area">
-          <span class="play-name">{{option.num}}</span>
+        <div class="text-center">
+          <span :class="['play-name', `${gameCode}-${option.num}` , {'plain': option.active && !gameClosed}]">{{option.num}}</span>
         </div>
       </grid-item>
     </grid>
@@ -21,6 +21,9 @@ import { Grid, GridItem } from 'vux'
 export default {
   name: 'fc3dIc',
   props: {
+    gameCode: {
+      type: String
+    },
     plays: {
       type: Array
     },
@@ -56,7 +59,7 @@ export default {
       activePlay: {
         id: '',
         display_name: '',
-        odds: '--'
+        odds: ''
       }
     }
   },
@@ -74,7 +77,7 @@ export default {
     'activedOptions': function () {
       if (this.activedOptions.length < this.maxOptionCount / 2) {
         this.updateForSubmit()
-        this.activePlay.odds = '--'
+        this.activePlay.odds = ''
         this.activePlay.id = ''
         this.activePlay.display_name = ''
         return

@@ -25,6 +25,7 @@
     }
   }
 }
+
 .play-area {
   display: flex;
   justify-content: space-between;
@@ -42,7 +43,7 @@
   }
 }
 .play-odds {
-  font-size: 15px;
+  font-size: 16px;
   color: #999;
   &.right {
     position: absolute;
@@ -59,8 +60,8 @@
   /deep/ .weui-grids:after {
     border: none;
   }
-  &.no-title {
-    margin-top: -1px;
+  &.no-title /deep/ .weui-grids:before{
+    border: none;
   }
 }
 
@@ -95,24 +96,17 @@
 
 .hk6-loop(1);
 
-// jsk3
 
-.under480(@rules) {
-  @media (max-width: 481px) { @rules(); }
-}
+// jsk3
 
 .jsk3-dice {
   display: inline-block;
   background: url(../assets/dice.png) no-repeat;
-  width: 42px;
-  height: 42px;
+  background-size: (42px * 0.8) (252px * 0.8);
+  width: (42px * 0.8);
+  height: (42px * 0.8);
   text-indent: -9999px;
   margin-right: 5px;
-  .under480({
-    background-size: (42px * 0.7) (252px * 0.7);
-    width: 42px * 0.7;
-    height: 42px * 0.7;
-  })
 }
 
 
@@ -121,10 +115,7 @@
 
   .jsk3-@{i} {
     &:extend(.jsk3-dice);
-    background-position: 0 (-42px * (@i - 1));
-    .under480({
-      background-position: 0 ((-42px * 0.7) * (@i - 1));
-    })
+    background-position: 0 ((-42px * 0.8) * (@i - 1));
   }
 }
 
@@ -135,8 +126,9 @@
 .racingicon {
   display: inline-block;
   background: url("../assets/racingicon.jpg") no-repeat;
-  width: 42px;
-  height: 42px;
+  background-size: (42px * 0.8) (420px * 0.8);
+  width: (42px * 0.8);
+  height: (42px * 0.8);
   text-indent: -9999px;
 }
 
@@ -155,7 +147,7 @@
   .number-loop(@num: @size) when (@num > 0) {
     .@{name}-@{num} {
       &:extend(.racingicon);
-      background-position: 0 -42px * (@num - 1) ;
+      background-position: 0 ((-42px * 0.8) * (@num - 1)) ;
     }
     .number-loop(@num - 1);
   }
@@ -169,16 +161,16 @@
 // plainball series
 .plainball {
   display: inline-block;
-  width: 42px;
-  height: 42px;
-  line-height: 42px;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
   background: radial-gradient(circle at 5px 5px, #fff, #ccc);
   border-radius: 100%;
   text-align: center;
   color: #333;
   font-weight: normal;
-  font-size: 24px;
-  margin: -5px;
+  font-size: 22px;
+  margin: -3px 0;
 }
 
 @plainballgames:

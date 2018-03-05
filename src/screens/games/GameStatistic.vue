@@ -1,16 +1,19 @@
 <template>
-  <div>
-    <road-beads
-      v-if="currentGame && $route.name === 'RoadBeads'"
-      :gameCode="currentGame.code"
-      :resultStatistic="resultStatistic">
-    </road-beads>
+  <div class="wrapper">
     <div class="game-selector text-center" @click="selectGame()">
       <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
       <inline-loading v-if="loading"></inline-loading>
       <span class="arrow" v-else></span>
     </div>
+
+    <road-beads
+      v-if="currentGame && $route.name === 'RoadBeads'"
+      :gameCode="currentGame.code"
+      :resultStatistic="resultStatistic">
+    </road-beads>
+
     <leaderboards :listItems="leaderboard" v-if="currentGame && $route.name === 'Leaderboards'"></leaderboards>
+
     <x-address style="display: none"
       title="请选择"
       v-model="currentGameId"
@@ -63,6 +66,11 @@ export default {
       const code = this.currentGame.code
       this.loading = true
       fetchStatistic(code).then(result => {
+        if (Array.isArray(result) && !result.length) {
+          this.leaderboardData = result
+          this.loading = false
+          return
+        }
         const translator = gameTranslator[code]
         const frequencyStats = result.frequency_stats
         const keys = Object.keys(frequencyStats)
@@ -130,17 +138,41 @@ export default {
     },
     'allGames': function (allGames) {
       const played = localStorage.getItem('lastGame')
-      this.currentGameId = played ? [played] : [allGames[0].id + '']
-      _.each(this.allGames, (game) => {
-        if (game.code !== 'hkl' && game.code !== 'fc3d') {
-          this.games.push(
-            {
-              name: game.display_name,
-              value: game.id + ''
-            }
-        )
+      const noRoadBeadGames = ['fc3d', 'hkl']
+      const current = _.find(allGames, game => (game.id + '') === played + '')
+      let formattedAllGames = _.clone(allGames)
+
+      if (this.$route.name === 'RoadBeads') {
+        if (played) {
+          this.currentGameId = noRoadBeadGames.includes(current.code) ? [allGames[0].id + ''] : [played]
+        } else {
+          this.currentGameId = [allGames[0].id + '']
         }
+
+        formattedAllGames = _.reject(formattedAllGames, (o) => { return _.includes(noRoadBeadGames, o.code) })
+      }
+
+      if (this.$route.name === 'Leaderboards') {
+        this.currentGameId = played ? [played] : [allGames[0].id + '']
+      }
+      _.each(formattedAllGames, (game) => {
+        this.games.push(
+          {
+            name: game.display_name,
+            value: game.id + ''
+          }
+        )
       })
+    },
+    '$route.name': function () {
+      clearInterval(this.interval)
+      if (this.$route.name === 'Leaderboards') {
+        this.fetchLeaderboard()
+        this.pollLeaderboard()
+      } else {
+        this.fetchStatistic()
+        this.pollStatistic()
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -159,9 +191,10 @@ export default {
 
 <style lang="less" scoped>
 @import '../../styles/vars.less';
-
+.wrapper {
+  height: 100%;
+}
 .game-selector {
-  position: fixed;
   width: 100%;
   height: 45px;
   line-height: 45px;

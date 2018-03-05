@@ -3,6 +3,7 @@ import urls from './urls'
 import qs from 'qs'
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+let axiosChat = axios.create()
 
 export function login (user) {
   return axios.post(urls.login, qs.stringify(user))
@@ -78,7 +79,7 @@ export function postWithdraw (option) {
 }
 
 export function register (user) {
-  return axios.post(urls.register, qs.stringify(user))
+  return axios.post(urls.register, qs.stringify(user), {withCredentials: true})
 }
 
 export function checkUserName (username) {
@@ -131,7 +132,7 @@ export function changeWpassword (password) {
 }
 
 export function changeUserInformation (id, member) {
-  return axios.put(urls.user + member.id + '/', member)
+  return axios.put(urls.user + id + '/', member)
 }
 
 export function fetchMessages (limit, page) {
@@ -151,11 +152,9 @@ export function onlinepaySuccess (transactionId) {
 }
 
 export function getGameData (codeType, dataTime, limit) {
-  if (limit) {
-    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}&ffset=${limit}`)
-  } else {
-    return axios.get(`${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`)
-  }
+  let url = `${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`
+  url = limit ? `${url}&offset=${limit}` : url
+  return axios.get(url)
 }
 
 export function fetchStatistic (code) {
@@ -181,4 +180,12 @@ export function sendImgToChat (data) {
 
 export function fetchPlaySetting (id) {
   return axios.get(`${urls.playSetting}?game=${id}`)
+}
+
+export function setCookie (cookie) {
+  return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
+}
+
+export function getChatUser (id) {
+  return axiosChat.get(`${urls.banUser}${id}/`)
 }

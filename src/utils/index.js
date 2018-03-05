@@ -1,3 +1,4 @@
+import isEmail from 'validator/lib/isEmail'
 export function setIndicator (onActivate, onInactivate) {
   let hidden = 'hidden'
 
@@ -70,11 +71,17 @@ export function msgFormatter (msgs) {
     })
     formatMsg = arr.join(', ')
   } else {
-    if (msgs.message) {
-      formatMsg = msgs.message
+    if (msgs.msg) {
+      formatMsg = msgs.msg
+      if (Array.isArray(formatMsg)) {
+        formatMsg = formatMsg[0]
+      }
       return formatMsg
+    } else if (typeof msgs === 'string') {
+      formatMsg = msgs
+    } else {
+      formatMsg = '系统发生了错误, 请联系客服'
     }
-    formatMsg = msgs
   }
   return formatMsg
 }
@@ -83,7 +90,7 @@ const pattern = {
   username: /^[a-zA-Z0-9]{6,15}$/,
   password: /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,15}$/,
   qq: /^[1-9]{4,8}$/,
-  phone: /^1[0-9]{10}$/,
+  phone: /^1[3|4|5|7|8|9][0-9]{9}$/,
   bankAccount: /^[0-9]{10,}$/,
   withdrawPassword: /^[0-9]{6}$/
 }
@@ -110,4 +117,8 @@ export function validateBankAccount (value) {
 
 export function validateWithdrawPassword (value) {
   return pattern.withdrawPassword.test(value)
+}
+
+export function validateEmail (value) {
+  return isEmail(value)
 }

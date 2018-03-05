@@ -36,25 +36,22 @@ export default new Router({
       component: resolve => { require(['../screens/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
-        tabbarHidden: true,
-        headerHidden: true
+        tabbarHidden: true
       },
       children: [
         {
           path: ':gameId',
           component: resolve => { require(['../screens/games/Game.vue'], resolve) },
-          name: 'GameDetail',
           meta: {
-            tabbarHidden: true,
-            headerHidden: true
+            tabbarHidden: true
           },
           children: [
             {
-              path: ':categoryName',
+              path: ':categoryId',
+              name: 'GameDetail',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
               meta: {
-                tabbarHidden: true,
-                headerHidden: true
+                tabbarHidden: true
               }
             }
           ]
@@ -204,7 +201,8 @@ export default new Router({
       meta: {
         title: '开奖结果',
         headerHidden: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
     },

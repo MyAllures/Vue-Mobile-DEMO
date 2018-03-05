@@ -7,16 +7,23 @@ import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
 import { createStore } from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage } from './api'
+import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
+import qs from 'qs'
+
+let url = window.location.href
+let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
+if (params.r) {
+  setCookie('r=' + params.r).catch(() => {})
+}
 
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
-Vue.use(ToastPlugin, {position: 'top'})
+Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 
 let navLang = navigator.language || navigator.userLanguage
 if (navLang === 'zh-CNN' || navLang === 'zh-cn') {
@@ -44,10 +51,18 @@ axios.interceptors.response.use(res => {
       router.push({
         path: '/login'
       })
+    } else if (responseData.code === 9011 || responseData.code === 9013) {
+      axios.defaults.withCredentials = true
+      Vue.cookie.set('sessionid', res.data.sessionid)
+      return Promise.reject(responseData)
     }
     return Promise.reject(responseData.msg)
   }
 }, (error) => {
+  Vue.$vux.toast.show({
+    text: '系统发生了错误, 请联系客服',
+    type: 'warn'
+  })
   return Promise.reject(error)
 })
 
@@ -56,6 +71,7 @@ Vue.config.productionTip = false
 const store = createStore()
 
 const toLogin = function (router) {
+  store.commit('RESET_USER')
   router.push({
     path: '/login'
   })

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="remitpayees.length">
-      <tab :line-width="2" :animate="false">
+      <tab :line-width="2">
         <tab-item v-for="(p,idx) in remitpayees" :key="idx" :selected="remit.remit_info.remit_payee === p.id" @click.native="togglePayee(p)">{{payeeName(p)}}</tab-item>
       </tab>
 
@@ -20,13 +20,20 @@
       </group>
 
       <group label-width="'100px'" :title="limitHint" >
+        <div v-if="inputErrors.length">
+          <ul class="input-errors">
+            <li class="text" v-for="(error, index) in inputErrors" :key="index">
+              {{error}}
+            </li>
+          </ul>
+        </div>
         <x-input
           autocapitalize="off"
           :title="$t('my.depositor')"
           required
           type="text"
           ref="depositor"
-          @on-blur="validate"
+          @on-blur="validateErrors"
           v-model="remit.remit_info.depositor">
         </x-input>
         <datetime
@@ -35,7 +42,11 @@
           v-model="remit.remit_info.deposited_at"
           format="YYYY-MM-DD HH:mm"
           :confirm-text="$t('my.ok')"
-          class="fix-arrow"
+          :placeholder="$t('my.select')"
+          :class="['fix-arrow', {warn:datetimeValidator.firstError}]"
+          @on-hide="datetimeValidator.validate"
+          @on-change="datetimeValidator.validate"
+          ref="datetime"
           :cancel-text="$t('my.cancel')">
         </datetime>
         <x-input
@@ -45,13 +56,15 @@
           type="number"
           keyboard="number"
           ref="amount"
-          @on-blur="validate"
+          @on-blur="validateErrors"
+          @on-change="validateErrors"
+          :is-type="amountValidator"
           v-model="remit.amount">
         </x-input>
         <x-textarea
           autocapitalize="off"
           :title="$t('my.memo')"
-          :placeholder="$t('my.memo')"
+          :placeholder="$t('my.memo_tip')"
           type="text"
           :rows="1"
           v-model="remit.memo">
@@ -60,7 +73,7 @@
 
       <div class="vux-group-tip text-danger">{{errorMsg}}</div>
       <div class="m-a" v-if="!remitSuccess">
-        <x-button type="primary" :disabled="!valid" @click.native="submit">
+        <x-button type="primary" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('deposit.process')}}</span>
         </x-button>
@@ -105,7 +118,7 @@
           remit_info: {
             remit_payee: '',
             depositor: '',
-            deposited_at: moment(new Date()).format('YYYY-MM-DD HH:mm')
+            deposited_at: ''
           },
           memo: '',
           amount: ''
@@ -116,9 +129,26 @@
         activePayee: '',
         isPayeeAvailable: true,
         errorMsg: '',
-        valid: false,
         remitSuccess: false,
-        responseLoading: true
+        responseLoading: true,
+        inputErrors: [],
+        datetimeValidator: {
+          firstError: '',
+          validate: () => {
+            let validator = this.datetimeValidator
+            if (!this.remit.remit_info.deposited_at) {
+              validator.firstError = validator.msg
+            } else {
+              validator.firstError = ''
+            }
+            this.validateErrors()
+          },
+          reset: () => {
+            this.remit.remit_info.deposited_at = ''
+            this.datetimeValidator.firstError = ''
+          },
+          msg: '必须输入存款日期'
+        }
       }
     },
     computed: {
@@ -154,12 +184,57 @@
       Cell
     },
     methods: {
-      validate () {
-        let valid = true
-        for (let x in this.$refs) {
-          valid = this.$refs[x].valid && valid
+      validateErrors () {
+        const inputErrors = []
+        if (this.$refs.amount.firstError) {
+          if (this.$refs.amount.firstError === '必填哦') {
+            inputErrors.push('必须输入金额')
+          } else {
+            inputErrors.push(this.$refs.amount.firstError)
+          }
         }
-        this.valid = valid && parseInt(this.remit.amount) >= this.limit.lower
+        if (this.$refs.depositor.firstError) {
+          inputErrors.push('必须输入存款人')
+        }
+        if (this.datetimeValidator.firstError) {
+          inputErrors.push(this.datetimeValidator.firstError)
+        }
+        this.inputErrors = inputErrors
+      },
+      amountValidator (value) {
+        let amount = parseInt(value)
+        let meetLower = !this.limit.lower || amount >= parseInt(this.limit.lower)
+        let meetUpper = !this.limit.upper || amount <= parseInt(this.limit.upper)
+        if (!meetLower) {
+          return {
+            valid: false,
+            msg: '必须大于最小取款金额'
+          }
+        } else if (!meetUpper) {
+          return {
+            valid: false,
+            msg: '必须小于最大取款金额'
+          }
+        } else {
+          return {
+            valid: true
+          }
+        }
+      },
+      validateAll () {
+        let amount = this.$refs.amount
+        amount.validate()
+        if (amount.firstError) {
+          amount.forceShowError = true
+        }
+        let depositor = this.$refs.depositor
+        depositor.validate()
+        if (depositor.firstError) {
+          depositor.forceShowError = true
+        }
+        this.datetimeValidator.validate()
+        this.validateErrors()
+        return depositor.valid && amount.valid && !this.datetimeValidator.firstError
       },
       payeeName (payee) {
         switch (payee.remit_type) {
@@ -176,15 +251,22 @@
         this.activePayee = payee
       },
       submit () {
-        if (this.valid) {
+        if (this.validateAll()) {
           this.errorMsg = ''
           this.loading = true
           postRemit(this.remit).then(response => {
             this.loading = false
             this.remitSuccess = true
-            this.remit.remit_info.depositor = ' '
-            this.remit.amount = ' '
+            this.remit.remit_info.deposited_at = ''
+            this.$refs.amount.reset()
+            this.$refs.depositor.reset()
             this.remit.memo = ''
+            this.$nextTick(() => {
+              this.$refs.amount.firstError = ''
+              this.$refs.depositor.firstError = ''
+              this.datetimeValidator.reset()
+              this.inputErrors = []
+            })
           }, (response) => {
             this.loading = false
             this.errorMsg = response[0].replace(':', ',')
@@ -199,7 +281,7 @@
 
   .scan-tip {
     color: #999;
-    margin: 10px 10px;
+    margin: 5px 10px;
     font-size: 14px;
     text-align: center;
   }
@@ -212,7 +294,7 @@
   }
 
   .qr-code {
-    margin: 20px auto 0;
+    margin: 10px auto 0;
 
     img {
       width: 150px;
@@ -247,15 +329,15 @@
     color: #4caf50;
   }
 
-  .text-danger {
-    color: #f44336;
-  }
-
   .vux-group-tip, .vux-group-tip p {
     font-size: 14px;
     text-align: center;
     padding-top: .3em;
     padding-left: 10px;
     padding-right: 5px;
+  }
+
+  .vux-datetime.warn /deep/ p {
+    color: #E64340;
   }
 </style>

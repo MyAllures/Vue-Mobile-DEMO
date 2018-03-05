@@ -64,6 +64,7 @@ export default {
     amount: '金额'
   },
   my: {
+    select: '请选择',
     name: '我的',
     balance: '余额',
     message: '未读消息',
@@ -72,6 +73,7 @@ export default {
     depositor: '存款人',
     deposited_at: '存款日期',
     memo: '备注',
+    memo_tip: '如有额外备注请填写',
     amount: '金额',
     withdraw: '取款',
     bank_name: '银行',
@@ -125,7 +127,7 @@ export default {
   },
   change_password: {
     title: '修改登录密码',
-    old: '旧密码',
+    old: '当前密码',
     old_hint: '请输入当前密码',
     new: '新密码',
     new_hint: '请输入新的密码',
@@ -135,8 +137,8 @@ export default {
     withdraw: '取款密码',
     change_withdraw: '重置取款密码',
     w_old: '当前取款密码',
-    w_new: '新的取款密码',
-    w_repeat: '确认新的密码'
+    w_new: '新取款密码',
+    w_repeat: '确认新密码'
   },
   withdraw: {
     title: '取款',

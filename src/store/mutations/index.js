@@ -28,6 +28,12 @@ export default {
     state.systemConfig = data
   },
   [types.SET_UNREAD]: (state, { unread }) => {
-    state.unread = unread
+    state.user.unread = unread
+  },
+  [types.SHOW_VERIFY_POPUP]: (state) => {
+    state.showVerifyPopup = true
+  },
+  [types.CLOSE_VERIFY_POPUP]: (state) => {
+    state.showVerifyPopup = false
   }
 }

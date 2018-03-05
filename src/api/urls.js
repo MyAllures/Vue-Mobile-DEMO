@@ -47,5 +47,6 @@ export default {
   sendImgToChat: host + '/v1/manage/attachment/',
   getRoomManagers: apiChat + '/v1/room/',
   chatRoomLogin: apiChat + '/chat/',
-  playSetting: apiv1 + '/game/playset/'
+  playSetting: apiv1 + '/game/playset/',
+  setCookie: host + '/set_cookie/'
 }

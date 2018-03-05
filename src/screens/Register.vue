@@ -2,32 +2,31 @@
   <div>
     <form class="container" autocomplete="off">
     <group>
-      <div v-if="!valid">
+      <div v-if="showInputErrors.length">
         <ul slot="after-title" class="input-errors">
-          <li class="text" v-for="(error, index) in inputErrors" :key="index">
+          <li class="text" v-for="(error, index) in showInputErrors" :key="index">
             {{error}}
           </li>
         </ul>
       </div>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['username']}"
         show-clear
-        :is-type="checkValid.checkUser"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'username')"
+        @on-blur="validate($event, 'username')"
         ref="username"
         :placeholder="$t('validate.username_validate')"
         :title="$t('misc.username')"
         label-width="100"
+        :debounce="1000"
         v-model="user.username">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['password']}"
         show-clear
-        :is-type="checkValid.checkPassword"
         type="password"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'password')"
+        @on-blur="validate($event, 'password')"
         ref="password"
         :placeholder="$t('validate.password_validate')"
         autocomplete="off"
@@ -36,73 +35,64 @@
         v-model="user.password">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['confirmation_password']}"
         show-clear
         type="password"
-        :is-type="checkValid.checkPasswordConfirmation"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'confirmation_password')"
+        @on-blur="validate($event, 'confirmation_password')"
         ref="confirmation_password"
         autocomplete="off"
         :title="$t('misc.confirm_password')"
         label-width="100"
         v-model="user.confirmation_password">
       </x-input>
-    </group>
-  </form>
-
-  <form class="container" autocomplete="off">
-    <group>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['real_name']}"
         show-clear
-        is-type="china-name"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'real_name')"
+        @on-blur="validate($event, 'real_name')"
         ref="real_name"
         :title="$t('misc.real_name')"
         label-width="100"
         v-model="user.real_name">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['phone']}"
         show-clear
-        is-type="china-mobile"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'phone')"
+        @on-blur="validate($event, 'phone')"
         ref="phone"
         :title="$t('misc.phone')"
         label-width="100"
         v-model="user.phone">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['email']}"
         show-clear
-        is-type="email"
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'email')"
+        @on-blur="validate($event, 'email')"
         ref="email"
         autocomplete="off"
         :title="'EMAIL'"
         label-width="100"
         v-model="user.email">
       </x-input>
-      <div class="withdraw-password">
-        <p class="m-b">{{$t('misc.withdraw_password')}}</p>
-        <Flexbox :justify="'center'">
-          <flexbox-item><selector v-model="rawWithdrawPassword[0]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[1]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[2]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[3]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[4]" :options="withdrawPwdOptions"></selector></flexbox-item>
-          <flexbox-item><selector v-model="rawWithdrawPassword[5]" :options="withdrawPwdOptions"></selector></flexbox-item>
-        </Flexbox>
-      </div>
       <x-input
-        required
+        :class="{'weui-cell_warn': inputErrors['withdraw_password']}"
         show-clear
-        @on-change="validate"
-        @on-blur="validate"
+        @on-change="validate($event, 'withdraw_password')"
+        @on-blur="validate($event, 'withdraw_password')"
+        autocomplete="off"
+        type="password"
+        :title="$t('misc.withdraw_password')"
+        label-width="100"
+        v-model="user.withdraw_password">
+      </x-input>
+      <x-input
+        :class="{'weui-cell_warn': inputErrors['verification_code_1']}"
+        show-clear
+        @on-change="validate($event, 'verification_code_1')"
+        @on-blur="validate($event, 'verification_code_1')"
         ref="verification_code_1"
         autocomplete="off"
         :title="$t('misc.captcha')"
@@ -112,7 +102,7 @@
       </x-input>
     </group>
     <div class="read-agreement m-t">
-      <check-icon :value.sync="agreement.isAgree">
+      <check-icon :value.sync="user.hasAgree">
         我已阅读并完全同意
       </check-icon>
       <span class="link" @click="agreement.showAgreement= true">用户协议</span>
@@ -124,7 +114,7 @@
                 :show-loading="false"
                 :disabled="false"
                 @click.native="submitForm">
-                {{$t('misc.submit')}}
+                注册
       </x-button>
     </div>
   </form>
@@ -152,18 +142,113 @@
 
 <script>
   import { fetchCaptcha, checkUserName, register } from '../api'
-  import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter } from '../utils'
+  import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateEmail, validatePhone } from '../utils'
   import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, Cell, Popup, CheckIcon, TransferDom } from 'vux'
 
 export default {
     name: 'Register',
     data () {
+      const usernameValidator = (value, type) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入用户名称')
+          } else if (!validateUserName(value)) {
+            resolve('请输入6~15位英数字')
+          } else {
+            checkUserName(value).then(response => {
+              if (response.length > 0) {
+                resolve('')
+              } else {
+                resolve('用户名已经存在')
+              }
+            })
+          }
+        })
+      }
+      const passwordValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入密码')
+          } else if (!validatePassword(value)) {
+            resolve('请输入8~15字元，其中至少包含一大写字母及一数字')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const repeatPasswordValidator = (repeatValue, value) => {
+        return new Promise((resolve, reject) => {
+          if (value !== repeatValue) {
+            resolve('两次输入密码不一致')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const withdrawPasswordValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入取款密码')
+          } else if (!validateWithdrawPassword(value)) {
+            resolve('请输入6位纯数字')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const emailValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入邮箱地址')
+          } else if (!validateEmail(value)) {
+            resolve('邮箱地址格式无效')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const phoneValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入手机号码')
+          } else if (!validatePhone(value)) {
+            resolve('手机号码格式无效')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const realnameValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入真实姓名')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const captchaValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请输入验证码')
+          } else {
+            resolve('')
+          }
+        })
+      }
+      const agreementValidator = (value) => {
+        return new Promise((resolve, reject) => {
+          if (!value) {
+            resolve('请阅读并同意用户协议')
+          } else {
+            resolve('')
+          }
+        })
+      }
       return {
         agreement: {
-          isAgree: true,
           showAgreement: false
         },
-        withdrawPwdOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
         user: {
           username: '',
           password: '',
@@ -172,51 +257,69 @@ export default {
           phone: '',
           email: '',
           withdraw_password: '',
+          hasAgree: true,
           verification_code_0: '',
           verification_code_1: ''
         },
-        rawWithdrawPassword: [],
-        checkValid: {
-          checkUser: (val) => {
-            if (validateUserName(val)) {
-              checkUserName(val).then(response => {
-                this.usernameNotUsed = response.length > 0
-              })
-            }
-            return {
-              valid: this.usernameNotUsed > 0 && validateUserName(val),
-              msg: !validateUserName(val) ? this.$t('validate.validate_error') : this.$t('validate.username_exist')
-            }
-          },
-          checkPassword: (val) => {
-            return {
-              valid: this.user.confirmation_password ? validatePassword(val) && this.user.confirmation_password === val : validatePassword(val),
-              msg: this.user.confirmation_password === val ? this.$t('validate.validate_error') : this.$t('validate.password_diff')
-            }
-          },
-          checkPasswordConfirmation: (val) => {
-            return {
-              valid: this.user.password === val,
-              msg: this.$t('validate.password_diff')
-            }
-          },
-          checkWithdrawPassword: (val) => {
-            return {
-              valid: validateWithdrawPassword(val),
-              msg: this.$t('validate.validate_error')
-            }
-          }
+        inputErrors: {
+          username: '',
+          password: '',
+          confirmation_password: '',
+          real_name: '',
+          phone: '',
+          email: '',
+          withdraw_password: '',
+          hasAgree: '',
+          verification_code_1: ''
+        },
+        validators: {
+          username: usernameValidator,
+          password: passwordValidator,
+          confirmation_password: repeatPasswordValidator,
+          email: emailValidator,
+          withdraw_password: withdrawPasswordValidator,
+          real_name: realnameValidator,
+          phone: phoneValidator,
+          hasAgree: agreementValidator,
+          verification_code_1: captchaValidator
         },
         captcha_src: '',
-        error: '',
-        valid: true,
-        inputErrors: []
+        error: ''
       }
     },
     methods: {
-      handleAgreementClick () {
-        this.agreement.showAgreement = false
-        this.agreement.isAgree = true
+      validate (value, input) {
+        let currentValue = value || this.user[input]
+        if (input === 'confirmation_password') {
+          this.validators['confirmation_password'](currentValue, this.user.password).then(msg => {
+            this.inputErrors[input] = msg
+          })
+        } else {
+          this.validators[input](currentValue).then(msg => {
+            this.inputErrors[input] = msg
+            if (input === 'password') {
+              this.validate(this.user.confirmation_password, 'confirmation_password')
+            }
+          })
+        }
+      },
+      validateAll () {
+        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'email', 'withdraw_password', 'hasAgree', 'verification_code_1']
+        const validatePromises = inputs.map(input => {
+          const currentValue = this.user[input]
+          if (input === 'confirmation_password') {
+            return this.validators['confirmation_password'](currentValue, this.user.password).then(msg => {
+              this.inputErrors['confirmation_password'] = msg
+              return msg
+            })
+          } else {
+            return this.validators[input](currentValue).then(msg => {
+              this.inputErrors[input] = msg
+              return msg
+            })
+          }
+        })
+        return Promise.all(validatePromises)
       },
       fetchCaptcha () {
         fetchCaptcha().then(res => {
@@ -225,50 +328,26 @@ export default {
         })
       },
       submitForm () {
-        if (!this.agreement.isAgree) {
-          this.valid = false
-          this.error = '请阅读并同意用户协议'
-          setTimeout(() => {
-            this.error = ''
-          }, 3000)
-          return
-        }
-
-        register(this.user).then(result => {
-          return this.$store.dispatch('login', {
-            user: {
-              username: this.user.username,
-              password: this.user.password
-            }
-          })
-        }).then(result => {
-          this.$router.push({ name: 'Home' })
-        }, errorMsg => {
-          this.fetchCaptcha()
-          this.error = msgFormatter(errorMsg)
-        })
-      },
-      validate () {
-        let valid = true
-        let msg = []
-        for (let x in this.$refs) {
-          let input = this.$refs[x]
-          valid = input.valid && valid
-          if (input && input.touched) {
-            let errors = input.errors
-            let title = input.title
-            let key = Object.keys(errors)[0]
-            if (errors[key] && !input.valid) {
-              if (errors[key].indexOf(title) === -1) {
-                msg.push(title + errors[key])
-              } else {
-                msg.push(errors[key])
-              }
-            }
+        this.validateAll().then(msgs => {
+          const isValid = msgs.filter(msg => { return msg }).length === 0
+          if (isValid) {
+            this.loading = true
+            register(this.user).then(result => {
+              return this.$store.dispatch('login', {
+                user: {
+                  username: this.user.username,
+                  password: this.user.password
+                }
+              })
+            }).then(result => {
+              this.$router.push({ name: 'Home' })
+              this.$store.dispatch('fetchUser')
+            }, errorMsg => {
+              this.fetchCaptcha()
+              this.error = msgFormatter(errorMsg.msg)
+            })
           }
-        }
-        this.inputErrors = msg
-        this.valid = valid && !!this.password.confirmation_password && this.agreement.isAgree
+        })
       }
     },
     computed: {
@@ -281,11 +360,22 @@ export default {
         } else {
           return true
         }
+      },
+      showInputErrors () {
+        const keys = Object.keys(this.inputErrors)
+        const errors = []
+        keys.forEach(key => {
+          const msg = this.inputErrors[key]
+          if (msg) {
+            errors.push(msg)
+          }
+        })
+        return errors
       }
     },
     watch: {
-      'rawWithdrawPassword': function () {
-        this.user.withdraw_password = this.rawWithdrawPassword.join('')
+      'user.hasAgree': function (hasAgree) {
+        this.validate(hasAgree, 'hasAgree')
       }
     },
     created () {
@@ -349,16 +439,6 @@ export default {
 }
 .weui-cell__hd /deep/ .weui-label {
   width: 80px;
-}
-.input-errors {
-  font-size: 14px;
-  margin-left: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  .text {
-    list-style: circle inside;
-    color: #ff9800;
-  }
 }
 
 .read-agreement {

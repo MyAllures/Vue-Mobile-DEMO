@@ -5,7 +5,6 @@ import axios from 'axios'
 import {
   fetchUser,
   login as userLogin,
-  register,
   logout,
   fetchGames,
   fetchUnread,
@@ -38,15 +37,6 @@ const login = function ({ commit, state }, { user }) {
 
 export default {
   login: login,
-  tryDemo ({ commit, state }) {
-    commit('UPDATE_LOADING', {isLoading: true})
-    return register({ account_type: 0 }).then(user => {
-      commit('UPDATE_LOADING', {isLoading: false})
-      return login({ commit, state }, { user })
-    }).catch(error => {
-      return Promise.reject(error)
-    })
-  },
   logout: ({ commit, state }) => {
     return logout().then(
       res => {
@@ -103,5 +93,11 @@ export default {
   },
   setSystemConfig: ({ commit }, data) => {
     commit(types.SET_SYSTEM_CONFIG, data)
+  },
+  openVerifyPopup: ({ commit }) => {
+    commit(types.SHOW_VERIFY_POPUP)
+  },
+  closeVerifyPopup: ({ commit }) => {
+    commit(types.CLOSE_VERIFY_POPUP)
   }
 }

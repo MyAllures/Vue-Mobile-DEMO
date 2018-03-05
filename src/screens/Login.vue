@@ -5,14 +5,16 @@
         required
         show-clear
         ref="username"
-      @on-change="validate"
-      :title="$t('misc.username')"
-      label-width="100"
-      v-model="user.username">
+        placeholder="请输入用户名"
+        @on-change="validate"
+        :title="$t('misc.username')"
+        label-width="100"
+        v-model="user.username">
       </x-input>
       <x-input
         required
         show-clear
+        placeholder="请输入密码"
         type="password"
         ref="password"
         autocomplete="off"
@@ -20,6 +22,16 @@
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
+      </x-input>
+      <x-input v-if="illegalTriedLogin"
+        v-model="user.verification_code_1"
+        class="captcha-input"
+        title="验证码"
+        placeholder="请输入验证码"
+        label-width="100"
+        :show-clear="false"
+        :max="4">
+        <img slot="right" @click="fetchCaptcha()" :src="captcha_src" class="captcha">
       </x-input>
     </group>
 
@@ -53,7 +65,8 @@
 
 <script>
   import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
-  import urls from '../api/urls'
+  import { fetchCaptcha, register } from '../api'
+  import { msgFormatter } from '../utils'
 
   export default {
     name: 'Home',
@@ -62,16 +75,21 @@
         user: {
           username: '',
           password: '',
-          verification_code_0: ''
+          verification_code_0: '',
+          verification_code_1: ''
         },
         valid: false,
-        captcha: '',
-        display_verification: false,
         loading: false,
-        error: ''
+        error: '',
+        illegalTriedLogin: false,
+        illegalTrial: false,
+        captcha_src: ''
       }
     },
     methods: {
+      handleClose () {
+        this.$store.dispatch('closeVerifyPopup')
+      },
       validate () {
         let valid = true
         for (let x in this.$refs) {
@@ -80,10 +98,9 @@
         this.valid = valid
       },
       fetchCaptcha () {
-        this.$http.get(urls.verification).then(response => {
-          this.captcha = urls.domain + response.data.captcha_src
-          this.user.verification_code_0 = response.data.captcha_val
-          this.display_verification = true
+        return fetchCaptcha().then(res => {
+          this.captcha_src = res.captcha_src
+          this.user.verification_code_0 = res.captcha_val
         })
       },
       submit () {
@@ -93,22 +110,49 @@
             user: this.user
           }).then(res => {
             this.$store.dispatch('fetchUser')
+            this.illegalTriedLogin = false
             this.error = ''
             this.loading = false
             this.$router.push('/')
           }, error => {
+            if (error.data.auth_req === 1) {
+              this.fetchCaptcha().then(res => {
+                this.illegalTriedLogin = true
+              })
+            }
             this.loading = false
-            this.error = error
+            this.error = error.msg
           })
         }
       },
       tryDemo () {
-        this.$store.dispatch('tryDemo').then(result => {
-          this.$router.push({ name: 'Home' })
+        register({ account_type: 0 }).then(user => {
+          if (user.trial_auth_req === 1) {
+            this.$store.dispatch('openVerifyPopup')
+            let msg = ''
+            return Promise.reject(msg)
+          }
+          return this.$store.dispatch('login', { user })
+        }).then(result => {
+          this.$router.push({name: 'Home'})
           this.$store.dispatch('fetchUser')
-        }).catch(error => {
-          this.error = error
+        }, errorMsg => {
+          if (errorMsg) {
+            this.$vux.toast.show({
+              text: msgFormatter(errorMsg),
+              type: 'warn'
+            })
+          }
         })
+      }
+    },
+    watch: {
+      'error': function (error) {
+        if (error) {
+          setTimeout(() => {
+            this.error = ''
+          }, 3000)
+        }
       }
     },
     components: {
@@ -138,5 +182,13 @@
 }
 .login-button {
   width: 100%;
+}
+.captcha {
+  width: 100px;
+  height: 40px;
+  vertical-align: middle;
+}
+.captcha-input {
+  height: 30px;
 }
 </style>

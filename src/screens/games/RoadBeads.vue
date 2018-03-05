@@ -1,26 +1,14 @@
 <template>
-  <div>
-    <div :class="['statistics', 'm-b', {'full-width': statistics.length === 0}]">
-      <ul class="consolidation-grid">
-        <li class="item" v-for="num in currentTableSetting" :key="num">
-          <div class="number text-center">{{num | fullDigits}}</div>
-          <div class="result text-center" v-if="currentTab">{{currentTab[num] | fullDigits}}</div>
+  <div class="roadbead-container">
+    <div class="aside" v-if="statistics.length > 0">
+      <ul :cols="1">
+        <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
+          <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
         </li>
       </ul>
-      <group title="累计次数">
-        <cell :title="item.key | typeFilter" v-for="(item, index) in cumulative" :key="index">
-          <div>
-            <span class="cumulative-number">{{item.value | fullDigits}}</span>
-          </div>
-        </cell>
-      </group>
-      <group>
-        <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex" class="item-cell">
-          <span v-for="(data, index) in datas" :key="index">{{data | typeFilter}} </span>
-        </cell>
-      </group>
     </div>
-    <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
+    <div :class="['statistics', {'full-width': statistics.length === 0}]">
+      <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
       <tab v-if="currentHistoryTag.length"
           :style="{width: currentHistoryTag.length > 5 ? `${currentHistoryTag.length * 75}px` : ''}"
           bar-active-color="#156fd8"
@@ -33,13 +21,28 @@
         </tab-item>
       </tab>
     </div>
-    <div class="aside" v-if="statistics.length > 0">
-      <ul :cols="1">
-        <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
-          <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
-        </li>
-      </ul>
+      <div class="data-container">
+        <ul class="consolidation-grid">
+          <li class="item" v-for="num in currentTableSetting" :key="num">
+            <div class="number text-center">{{num | fullDigits}}</div>
+            <div class="result text-center" v-if="currentTab">{{currentTab[num] | fullDigits}}</div>
+          </li>
+        </ul>
+        <group title="累计次数">
+          <cell :title="item.key | typeFilter" v-for="(item, index) in cumulative" :key="index">
+            <div>
+              <span class="cumulative-number">{{item.value | fullDigits}}</span>
+            </div>
+          </cell>
+        </group>
+        <group>
+          <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex" class="item-cell">
+            <span v-for="(data, index) in datas" :key="index">{{data | typeFilter}} </span>
+          </cell>
+        </group>
+      </div>
     </div>
+
     <x-address style="display: none"
       title="请选择"
       v-model="activeHistoryTagForXAddress"
@@ -427,42 +430,31 @@ export default {
 
 <style lang="less" scoped>
 @import '../../styles/vars.less';
-@headHeight: 45px;
+
+@headHeight: 46px;
+@gameSelectorHeight: 45px;
+@topHeight: @headHeight + @gameSelectorHeight;
 
 .larger480(@rules) {
     @media (min-width: 481px) { @rules(); }
 }
 
-.historydata-selector {
-  position: fixed;
-  right: 0;
-  margin-top: @headHeight;
-  width: calc(~"100% - @{asideWidth}");
-  overflow: scroll;
-  &.full-width {
-    width: 100%;
-  }
-  .ellipsis {
-    white-space: nowrap;
-    display: block;
-    width: 75px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
+
+.roadbead-container {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  height: calc(~"100%" - 46px);
+  top: 2px;
 }
-
-@asideWidth: 100px;
-
 .aside {
-  position: fixed;
   display: flex;
   align-items: center;
-  bottom: 0;
-  width: @asideWidth;
-  height: calc(~"100% - @{headHeight}*2"); // for fixed header & game-selector
+  box-sizing: border-box;
+  min-width: 100px;
+  height: 100%;
   overflow-y: auto;
   background-color: #f9f9f9;
-  box-sizing: border-box;
   border-width: 0 4px 0 0;
   border-style: solid;
   border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
@@ -489,21 +481,39 @@ export default {
     padding: 10px;
   }
 }
+
 .cumulative-number {
   color: #888888
 }
+
 .statistics {
-  position: absolute;
-  height: calc(~"100% - @{headHeight}*2");
-  overflow-y: auto;
-  right: 0;
-  padding-top: @headHeight * 2;
-  width: calc(~"100% - @{asideWidth}");
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  overflow-y: hidden;
   &.full-width {
     width: 100%;
   }
 }
 
+.historydata-selector {
+  overflow-x: auto;
+  &.full-width {
+    width: 100%;
+  }
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 75px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+.data-container {
+  height: calc(~"100%"- 45px);
+  overflow: auto;
+}
 .consolidation-grid {
   background-color: #fff;
   .item {
@@ -533,11 +543,9 @@ export default {
     margin-left: 5px;
   }
 }
+
 .item-cell {
   padding: 5px 10px;
   font-size: 14px;
 }
 </style>
-
-
-
