@@ -73,10 +73,10 @@ export default {
       this.fetchResult(gameid).then(res => { this.pollResult(this.gameid) })
     },
     'gameLatestResult.game_code': function (code) {
-      if (code === 'hkl') {
+      if (code === 'hkl' || code === 'luckl') {
         this.showZodiac = true
       }
-      if (code === 'pcdd') {
+      if (code === 'pcdd' || code === 'jnd28' || code === 'luckdd') {
         this.showSum = true
       }
     }
@@ -170,6 +170,9 @@ export default {
     font-size: 12px;
   }
   .wrapper-hkl span{
+    margin-bottom: 10px;
+  }
+  .wrapper-luckl span{
     margin-bottom: 10px;
   }
 }
