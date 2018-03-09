@@ -45,7 +45,9 @@ import jsssc from './rules/jsssc'
 import jspk10 from './rules/jspk10'
 import cqssc from './rules/cqssc'
 import pcdd from './rules/pcdd'
+import luckdd from './rules/luckdd'
 import hkl from './rules/hkl'
+import luckl from './rules/luckl'
 import xjssc from './rules/xjssc'
 import tjssc from './rules/tjssc'
 import bjkl8 from './rules/bjkl8'
@@ -122,7 +124,9 @@ export default {
     jspk10,
     cqssc,
     pcdd,
+    luckdd,
     hkl,
+    luckl,
     xjssc,
     tjssc,
     bjkl8,

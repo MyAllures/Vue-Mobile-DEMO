@@ -571,6 +571,10 @@ export default {
         table: pcddTable
       },
       {
+        code: 'luckdd',
+        table: pcddTable
+      },
+      {
         code: 'jsk3',
         table: jsk3Table
       },
@@ -588,6 +592,10 @@ export default {
       },
       {
         code: 'hkl',
+        table: hklTable
+      },
+      {
+        code: 'luckl',
         table: hklTable
       },
       {
@@ -1048,6 +1056,7 @@ export default {
   cqssc 10,
   jsssc 10,
   pcdd 27,
+  luckdd 27,
   bjkl8 80,
   auluck8 80,
   gd11x5 11,
@@ -1108,6 +1117,7 @@ export default {
 }
 
 .hkl-if(@i) when (@i < 10) {
+    .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
       background-position: 0 (-27px * (@i - 1));;
@@ -1117,6 +1127,7 @@ export default {
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
   .hkl-if(@i);
+  .lottery-luckl-@{i},
   .lottery-hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-27px * (@i - 1));;
