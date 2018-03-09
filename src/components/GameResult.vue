@@ -2,7 +2,9 @@
   <div class="result-balls">
     <div class="balls-text">{{gameLatestResult.issue_number}}{{$t('common.result_period')}}</div>
     <div :class="['balls-number', 'wrapper-' + gameLatestResult.game_code]" v-if="gameLatestResult">
+      <div v-if="invalid">官方开奖无效</div>
       <span
+        v-else
         v-for="(num, index) in resultNums"
         :key="gameLatestResult.issue_number + index"
         :class="getResultClass(num)">
@@ -35,7 +37,8 @@ export default {
       drawTimeGap: '',
       zodiacs: '',
       showZodiac: false,
-      showSum: false
+      showSum: false,
+      invalid: false
     }
   },
   created () {
@@ -78,6 +81,11 @@ export default {
       }
       if (code === 'pcdd' || code === 'jnd28' || code === 'luckdd') {
         this.showSum = true
+      }
+    },
+    'gameLatestResult.status': function (val) {
+      if (val) {
+        this.invalid = (val !== 'valid')
       }
     }
   },

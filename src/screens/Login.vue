@@ -115,13 +115,13 @@
             this.loading = false
             this.$router.push('/')
           }, error => {
-            if (error.data.auth_req === 1) {
+            if (error.data && error.data.auth_req === 1) {
               this.fetchCaptcha().then(res => {
                 this.illegalTriedLogin = true
               })
             }
             this.loading = false
-            this.error = error.msg
+            this.error = msgFormatter(error)
           })
         }
       },
