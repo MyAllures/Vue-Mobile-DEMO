@@ -81,8 +81,8 @@ export default {
     receiver: '收款人'
   },
   validate: {
-    username_validate: '6~15位英数字',
-    password_validate: '8~15字元，含大写字母及数字',
+    username_validate: '6~15位数字或字母',
+    password_validate: '6~15位数字或字母',
     withdraw_password_validate: '请输6位纯数字',
     phone_validate: '手机号码格式无效',
     account_validate: '该帐号格式无效',
