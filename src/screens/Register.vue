@@ -12,7 +12,6 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['username']}"
         show-clear
-        @on-change="validate($event, 'username')"
         @on-blur="validate($event, 'username')"
         ref="username"
         :placeholder="$t('validate.username_validate')"
@@ -25,7 +24,6 @@
         :class="{'weui-cell_warn': inputErrors['password']}"
         show-clear
         type="password"
-        @on-change="validate($event, 'password')"
         @on-blur="validate($event, 'password')"
         ref="password"
         :placeholder="$t('validate.password_validate')"
@@ -38,7 +36,6 @@
         :class="{'weui-cell_warn': inputErrors['confirmation_password']}"
         show-clear
         type="password"
-        @on-change="validate($event, 'confirmation_password')"
         @on-blur="validate($event, 'confirmation_password')"
         ref="confirmation_password"
         autocomplete="off"
@@ -49,7 +46,6 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['real_name']}"
         show-clear
-        @on-change="validate($event, 'real_name')"
         @on-blur="validate($event, 'real_name')"
         ref="real_name"
         :title="$t('misc.real_name')"
@@ -59,7 +55,6 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['phone']}"
         show-clear
-        @on-change="validate($event, 'phone')"
         @on-blur="validate($event, 'phone')"
         ref="phone"
         :title="$t('misc.phone')"
@@ -67,20 +62,18 @@
         v-model="user.phone">
       </x-input>
       <x-input
-        :class="{'weui-cell_warn': inputErrors['email']}"
+        :class="{'weui-cell_warn': inputErrors['qq']}"
         show-clear
-        @on-change="validate($event, 'email')"
-        @on-blur="validate($event, 'email')"
-        ref="email"
+        @on-blur="validate($event, 'qq')"
+        ref="qq"
         autocomplete="off"
-        :title="'EMAIL'"
+        :title="'QQ'"
         label-width="100"
-        v-model="user.email">
+        v-model="user.qq">
       </x-input>
       <x-input
         :class="{'weui-cell_warn': inputErrors['withdraw_password']}"
         show-clear
-        @on-change="validate($event, 'withdraw_password')"
         @on-blur="validate($event, 'withdraw_password')"
         autocomplete="off"
         type="password"
@@ -91,7 +84,6 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['verification_code_1']}"
         show-clear
-        @on-change="validate($event, 'verification_code_1')"
         @on-blur="validate($event, 'verification_code_1')"
         ref="verification_code_1"
         autocomplete="off"
@@ -142,7 +134,7 @@
 
 <script>
   import { fetchCaptcha, checkUserName, register } from '../api'
-  import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateEmail, validatePhone } from '../utils'
+  import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
   import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, Cell, Popup, CheckIcon, TransferDom } from 'vux'
 
 export default {
@@ -153,7 +145,7 @@ export default {
           if (!value) {
             resolve('请输入用户名称')
           } else if (!validateUserName(value)) {
-            resolve('请输入6~15位英数字')
+            resolve('请输入6~15位数字或字母')
           } else {
             checkUserName(value).then(response => {
               if (response.length > 0) {
@@ -170,7 +162,7 @@ export default {
           if (!value) {
             resolve('请输入密码')
           } else if (!validatePassword(value)) {
-            resolve('请输入8~15字元，其中至少包含一大写字母及一数字')
+            resolve('请输入6~15位数字或字母')
           } else {
             resolve('')
           }
@@ -196,12 +188,12 @@ export default {
           }
         })
       }
-      const emailValidator = (value) => {
+      const qqValidator = (value) => {
         return new Promise((resolve, reject) => {
           if (!value) {
-            resolve('请输入邮箱地址')
-          } else if (!validateEmail(value)) {
-            resolve('邮箱地址格式无效')
+            resolve('请输入QQ')
+          } else if (!validateQQ(value)) {
+            resolve('QQ号码格式无效')
           } else {
             resolve('')
           }
@@ -256,6 +248,7 @@ export default {
           real_name: '',
           phone: '',
           email: '',
+          qq: '',
           withdraw_password: '',
           hasAgree: true,
           verification_code_0: '',
@@ -267,7 +260,7 @@ export default {
           confirmation_password: '',
           real_name: '',
           phone: '',
-          email: '',
+          qq: '',
           withdraw_password: '',
           hasAgree: '',
           verification_code_1: ''
@@ -276,7 +269,7 @@ export default {
           username: usernameValidator,
           password: passwordValidator,
           confirmation_password: repeatPasswordValidator,
-          email: emailValidator,
+          qq: qqValidator,
           withdraw_password: withdrawPasswordValidator,
           real_name: realnameValidator,
           phone: phoneValidator,
@@ -297,14 +290,14 @@ export default {
         } else {
           this.validators[input](currentValue).then(msg => {
             this.inputErrors[input] = msg
-            if (input === 'password') {
+            if (input === 'password' && this.user.confirmation_password && this.user.password) {
               this.validate(this.user.confirmation_password, 'confirmation_password')
             }
           })
         }
       },
       validateAll () {
-        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'email', 'withdraw_password', 'hasAgree', 'verification_code_1']
+        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree', 'verification_code_1']
         const validatePromises = inputs.map(input => {
           const currentValue = this.user[input]
           if (input === 'confirmation_password') {

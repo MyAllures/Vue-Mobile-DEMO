@@ -138,7 +138,7 @@ export default {
     },
     'allGames': function (allGames) {
       const played = localStorage.getItem('lastGame')
-      const noRoadBeadGames = ['fc3d', 'hkl']
+      const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
       const current = _.find(allGames, game => (game.id + '') === played + '')
       let formattedAllGames = _.clone(allGames)
 

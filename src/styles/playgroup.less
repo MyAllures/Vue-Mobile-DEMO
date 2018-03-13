@@ -79,6 +79,7 @@
 }
 
 .hkl-if(@i) when (@i < 10) {
+    .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
       background-position: 0 (-27px * (@i - 1));;
@@ -88,6 +89,7 @@
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
   .hkl-if(@i);
+  .luckl-@{i},
   .hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-27px * (@i - 1));;
@@ -179,6 +181,7 @@
   cqssc 10,
   jsssc 10,
   pcdd 27,
+  luckdd 27,
   bjkl8 80,
   auluck8 80,
   gd11x5 11,

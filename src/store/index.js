@@ -81,6 +81,34 @@ export function createStore () {
           options: Array.from(Array(49).keys()).map(item => item + 1)
         },
         {
+          // 幸运六合彩 连码
+          id: 'luckl_ca-m_wc',
+          component: 'WithCode',
+          options: Array.from(Array(49).keys()).map(item => item + 1)
+        },
+        {
+          // 幸运六合彩 连肖
+          id: 'luckl_ca-m_exl',
+          component: 'hk6Exl'
+        },
+        {
+          // 幸运六合彩 连尾
+          id: 'luckl_ca-m_exltail',
+          component: 'hk6Exl'
+        },
+        {
+          // 幸运六合彩 和肖
+          id: 'luckl_ca-m_shxia',
+          component: 'shxiaZdc',
+          options: Array.from(Array(12).keys()).map(item => item)
+        },
+        {
+          // 幸运六合彩 自選不中
+          id: 'luckl_ca-m_ntinfvr',
+          component: 'shxiaZdc',
+          options: Array.from(Array(49).keys()).map(item => item + 1)
+        },
+        {
           // 福彩3D 组选三
           id: 'fc3d_ca-m_pic',
           component: 'fc3dIc',

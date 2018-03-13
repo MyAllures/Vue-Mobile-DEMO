@@ -39,7 +39,7 @@
             </p>
           </td>
           <td class="show-count">
-            <div>
+            <div v-if="schedule.result_status === 'valid' && schedule.result_category">
               <div class="lottery-result"
                 :class="{luckLotery: codeKl}"
                 v-for="(num, index) in lotteryResult"
@@ -52,14 +52,15 @@
                         :class="[`lottery-${codeType}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
                 </span>
               </div>
-              <div v-if='!codeKl' class="compare-content">
+              <div v-if="!codeKl" class="compare-content">
                 <span class="lottery-compare"
                   v-for="(subHead, index) in lotteryCompare"
                   :key="'subHead' + index">
-                  {{schedule.result_category[subHead.key] |changeDataType}}
+                  {{schedule.result_category[subHead.key] | changeDataType}}
                 </span>
               </div>
             </div>
+            <div class="invalid text-center" v-else>官方开奖无效</div>
           </td>
         </tr>
         <tr class="condition">
@@ -67,21 +68,22 @@
                   type="primary"
                   class="add-more m-t m-b"
                   @click.native='addMore'>
-          <span>{{$t('misc.load_more')}}</span>
-        </x-button>
-        <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
+            <span>{{$t('misc.load_more')}}</span>
+          </x-button>
+          <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
         </tr>
       </table>
     </div>
-     <x-address
-            style="display:none;"
-            title="title"
-            v-model="currentGameId"
-            :list="gameLists"
-            :show.sync="showGameMenu">
+      <x-address
+        style="display:none;"
+        title="title"
+        v-model="currentGameId"
+        :list="gameLists"
+        :show.sync="showGameMenu">
       </x-address>
   </div>
 </template>
+
 <script>
 import {XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box} from 'vux'
 import { getGameData } from '../api'
@@ -571,6 +573,10 @@ export default {
         table: pcddTable
       },
       {
+        code: 'luckdd',
+        table: pcddTable
+      },
+      {
         code: 'jsk3',
         table: jsk3Table
       },
@@ -588,6 +594,10 @@ export default {
       },
       {
         code: 'hkl',
+        table: hklTable
+      },
+      {
+        code: 'luckl',
         table: hklTable
       },
       {
@@ -992,6 +1002,10 @@ export default {
   text-align: center;
   color: #ccc;
 }
+
+.invalid {
+  line-height: 50px;
+}
 .jspbg {
   display: inline-block;
   margin-top: 8px;
@@ -1048,6 +1062,7 @@ export default {
   cqssc 10,
   jsssc 10,
   pcdd 27,
+  luckdd 27,
   bjkl8 80,
   auluck8 80,
   gd11x5 11,
@@ -1108,6 +1123,7 @@ export default {
 }
 
 .hkl-if(@i) when (@i < 10) {
+    .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
       background-position: 0 (-27px * (@i - 1));;
@@ -1117,6 +1133,7 @@ export default {
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
   .hkl-if(@i);
+  .lottery-luckl-@{i},
   .lottery-hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-27px * (@i - 1));;

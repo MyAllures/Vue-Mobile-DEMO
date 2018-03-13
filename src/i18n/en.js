@@ -80,8 +80,8 @@ export default {
     receiver: 'Payee'
   },
   validate: {
-    username_validate: 'User name should be 6-15 digit or character',
-    password_validate: 'Password must be 8-15 characters and must contain at least one capital letter and a digit',
+    username_validate: 'Username must be 6-15 digit or character',
+    password_validate: 'Password must be 6-15 digit or character',
     withdraw_password_validate: 'Withdraw Password shold be 6 digit',
     phone_validate: 'This phone number is invalid',
     account_validate: 'This Account number is invalid',
