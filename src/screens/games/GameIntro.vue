@@ -199,6 +199,7 @@ export default {
   li {
     margin-left: 20px;
     list-style: initial;
+    word-wrap: break-word;
   }
   a {
     text-decoration: underline;
