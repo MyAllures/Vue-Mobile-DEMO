@@ -6,6 +6,7 @@
         show-clear
         ref="username"
         placeholder="请输入用户名"
+        @on-blur="validate"
         @on-change="validate"
         :title="$t('misc.username')"
         label-width="100"
