@@ -32,12 +32,12 @@
         v-for="(game, index) in games"
         :key="'game' + index"
         v-if="index < 11">
-        <img slot="icon" :src="game.icon">
+        <img slot="icon" :src="game.icon" class="game-icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
       <a href="#" class="weui-grid" @click="openPClink()" v-if="games.length">
         <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/icon_pc.png" alt="PC">
+          <img slot="icon" src="../assets/icon_pc.png" alt="PC" class="game-icon">
         </div>
         <div class="weui-grid__label">
           <span>电脑版</span>
@@ -243,5 +243,9 @@ export default {
       padding: 5px 0;
     }
   }
+}
+
+.game-icon {
+  border-radius: 10px;
 }
 </style>

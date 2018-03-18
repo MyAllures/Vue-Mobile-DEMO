@@ -17,6 +17,7 @@
     <div class="buttons" v-else>
       <x-button class="xbutton" type="primary" @click.native="redirect('/fin/bet_record')" link="/fin/bet_record">{{$t('game.betrecord')}}</x-button>
       <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
+      <x-button type="primary" @click.native="location = redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
     </div>
     <group class="links" >
       <cell-box
@@ -105,8 +106,12 @@
         this.$store.dispatch('logout')
       },
       redirect (link) {
-        this.$router.push(link)
-        this.handleClose()
+        if (link[0] !== '/') {
+          window.location = link
+        } else {
+          this.$router.push(link)
+          this.handleClose()
+        }
       },
       handleClose () {
         this.$emit('handleClose')

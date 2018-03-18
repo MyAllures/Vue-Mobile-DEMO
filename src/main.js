@@ -48,9 +48,7 @@ axios.interceptors.response.use(res => {
     return responseData.data
   } else {
     if (responseData.code === 9007) {
-      router.push({
-        path: '/login'
-      })
+      toLogin(router)
     } else if (responseData.code === 9011 || responseData.code === 9013) {
       axios.defaults.withCredentials = true
       Vue.cookie.set('sessionid', res.data.sessionid)
