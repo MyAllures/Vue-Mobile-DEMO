@@ -110,7 +110,8 @@ export default {
       showDialog: false,
       games: [],
       showpromoPopup: false,
-      promotions: []
+      promotions: [],
+      today: this.$moment()
     }
   },
   created () {
@@ -122,7 +123,7 @@ export default {
             img: banner.image
           }
         })
-      })
+      }).catch(() => {})
 
     fetchAnnouncements()
       .then(res => {
@@ -132,7 +133,7 @@ export default {
       this.games = response
     })
     getPromotions().then(response => {
-      this.promotions = response.filter(item => item.image_mobile)
+      this.promotions = response.filter(item => item.image_mobile && this.today.isBetween(item.start_date, item.end_date, 'day', '[]'))
     })
   },
   methods: {

@@ -2,24 +2,23 @@
   <form class="container" autocomplete="off">
     <group :title="$t('login.welcome')">
       <x-input
-        required
+        :class="{'weui-cell_warn': !validators['username']}"
         show-clear
         ref="username"
         placeholder="请输入用户名"
-        @on-blur="validate"
-        @on-change="validate"
+        @on-change="validate($event, 'username')"
         :title="$t('misc.username')"
         label-width="100"
         v-model="user.username">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': !validators['password']}"
         show-clear
         placeholder="请输入密码"
         type="password"
         ref="password"
         autocomplete="off"
-        @on-change="validate"
+        @on-change="validate($event, 'password')"
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
@@ -68,7 +67,7 @@
   import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
   import { fetchCaptcha, register } from '../api'
   import { msgFormatter } from '../utils'
-
+  const inputs = ['username', 'password']
   export default {
     name: 'Home',
     data () {
@@ -79,24 +78,28 @@
           verification_code_0: '',
           verification_code_1: ''
         },
-        valid: false,
         loading: false,
         error: '',
         illegalTriedLogin: false,
         illegalTrial: false,
-        captcha_src: ''
+        captcha_src: '',
+        validators: {
+          'username': true,
+          'password': true
+        }
+      }
+    },
+    computed: {
+      valid () {
+        return inputs.every(input => this.validators[input] === true)
       }
     },
     methods: {
       handleClose () {
         this.$store.dispatch('closeVerifyPopup')
       },
-      validate () {
-        let valid = true
-        for (let x in this.$refs) {
-          valid = this.$refs[x].valid && valid
-        }
-        this.valid = valid
+      validate (value, input) {
+        this.validators[input] = !!value
       },
       fetchCaptcha () {
         return fetchCaptcha().then(res => {
