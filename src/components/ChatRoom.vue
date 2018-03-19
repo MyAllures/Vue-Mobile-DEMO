@@ -390,7 +390,8 @@ export default {
   }
 }
 .item {
-  padding: 0 5px;
+  margin-top: 15px;
+  padding: 5px;
   &.sys-msg {
     text-align: center;
     margin: 5px 0;
