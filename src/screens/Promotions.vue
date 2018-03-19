@@ -25,12 +25,13 @@ export default {
   name: 'Promotions',
   data () {
     return {
-      promotions: []
+      promotions: [],
+      today: this.$moment()
     }
   },
   created () {
-    getPromotions().then(promos => {
-      this.promotions = promos
+    getPromotions().then(response => {
+      this.promotions = response.filter(item => item.image_mobile && this.today.isBetween(item.start_date, item.end_date, 'day', '[]'))
     })
   },
   components: {
