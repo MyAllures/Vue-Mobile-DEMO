@@ -87,7 +87,9 @@
           'username': true,
           'password': true
         },
-        syncTimer: null
+        syncTimer: null,
+        usernameDom: null,
+        passwordDom: null
       }
     },
     computed: {
@@ -96,13 +98,14 @@
       }
     },
     mounted () {
-      const refs = this.$refs
+      this.usernameDom = this.$refs.username.$el.getElementsByClassName('weui-input')[0]
+      this.passwordDom = this.$refs.password.$el.getElementsByClassName('weui-input')[0]
       this.syncTimer = setInterval(() => {
-        if (refs.username.value !== this.user.username) {
-          this.user.username = refs.username.value
+        if (this.usernameDom.value !== this.user.username) {
+          this.user.username = this.usernameDom.value
         }
-        if (refs.password.value !== this.user.password) {
-          this.user.password = refs.password.value
+        if (this.passwordDom.value !== this.user.password) {
+          this.user.password = this.passwordDom.value
         }
       }, 500)
     },
@@ -121,25 +124,27 @@
       },
       submit () {
         this.loading = true
-        if (this.valid) {
-          this.$store.dispatch('login', {
-            user: this.user
-          }).then(res => {
-            this.$store.dispatch('fetchUser')
-            this.illegalTriedLogin = false
-            this.error = ''
-            this.loading = false
-            this.$router.push('/')
-          }, error => {
-            if (error.data && error.data.auth_req === 1) {
-              this.fetchCaptcha().then(res => {
-                this.illegalTriedLogin = true
-              })
-            }
-            this.loading = false
-            this.error = msgFormatter(error)
-          })
-        }
+        this.$nextTick(() => {
+          if (this.valid) {
+            this.$store.dispatch('login', {
+              user: this.user
+            }).then(res => {
+              this.$store.dispatch('fetchUser')
+              this.illegalTriedLogin = false
+              this.error = ''
+              this.loading = false
+              this.$router.push('/')
+            }, error => {
+              if (error.data && error.data.auth_req === 1) {
+                this.fetchCaptcha().then(res => {
+                  this.illegalTriedLogin = true
+                })
+              }
+              this.loading = false
+              this.error = msgFormatter(error)
+            })
+          }
+        })
       },
       tryDemo () {
         register({ account_type: 0 }).then(user => {
