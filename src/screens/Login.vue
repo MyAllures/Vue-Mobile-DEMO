@@ -2,24 +2,23 @@
   <form class="container" autocomplete="off">
     <group :title="$t('login.welcome')">
       <x-input
-        required
+        :class="{'weui-cell_warn': !validators['username']}"
         show-clear
         ref="username"
         placeholder="请输入用户名"
-        @on-blur="validate"
-        @on-change="validate"
+        @on-change="validate($event, 'username')"
         :title="$t('misc.username')"
         label-width="100"
         v-model="user.username">
       </x-input>
       <x-input
-        required
+        :class="{'weui-cell_warn': !validators['password']}"
         show-clear
         placeholder="请输入密码"
         type="password"
         ref="password"
         autocomplete="off"
-        @on-change="validate"
+        @on-change="validate($event, 'password')"
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
@@ -68,7 +67,7 @@
   import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
   import { fetchCaptcha, register } from '../api'
   import { msgFormatter } from '../utils'
-
+  const inputs = ['username', 'password']
   export default {
     name: 'Home',
     data () {
@@ -79,24 +78,43 @@
           verification_code_0: '',
           verification_code_1: ''
         },
-        valid: false,
         loading: false,
         error: '',
         illegalTriedLogin: false,
         illegalTrial: false,
-        captcha_src: ''
+        captcha_src: '',
+        validators: {
+          'username': true,
+          'password': true
+        },
+        syncTimer: null,
+        usernameDom: null,
+        passwordDom: null
       }
+    },
+    computed: {
+      valid () {
+        return inputs.every(input => this.validators[input] === true)
+      }
+    },
+    mounted () {
+      this.usernameDom = this.$refs.username.$el.getElementsByClassName('weui-input')[0]
+      this.passwordDom = this.$refs.password.$el.getElementsByClassName('weui-input')[0]
+      this.syncTimer = setInterval(() => {
+        if (this.usernameDom.value !== this.user.username) {
+          this.user.username = this.usernameDom.value
+        }
+        if (this.passwordDom.value !== this.user.password) {
+          this.user.password = this.passwordDom.value
+        }
+      }, 500)
     },
     methods: {
       handleClose () {
         this.$store.dispatch('closeVerifyPopup')
       },
-      validate () {
-        let valid = true
-        for (let x in this.$refs) {
-          valid = this.$refs[x].valid && valid
-        }
-        this.valid = valid
+      validate (value, input) {
+        this.validators[input] = !!value
       },
       fetchCaptcha () {
         return fetchCaptcha().then(res => {
@@ -106,25 +124,27 @@
       },
       submit () {
         this.loading = true
-        if (this.valid) {
-          this.$store.dispatch('login', {
-            user: this.user
-          }).then(res => {
-            this.$store.dispatch('fetchUser')
-            this.illegalTriedLogin = false
-            this.error = ''
-            this.loading = false
-            this.$router.push('/')
-          }, error => {
-            if (error.data && error.data.auth_req === 1) {
-              this.fetchCaptcha().then(res => {
-                this.illegalTriedLogin = true
-              })
-            }
-            this.loading = false
-            this.error = msgFormatter(error)
-          })
-        }
+        this.$nextTick(() => {
+          if (this.valid) {
+            this.$store.dispatch('login', {
+              user: this.user
+            }).then(res => {
+              this.$store.dispatch('fetchUser')
+              this.illegalTriedLogin = false
+              this.error = ''
+              this.loading = false
+              this.$router.push('/')
+            }, error => {
+              if (error.data && error.data.auth_req === 1) {
+                this.fetchCaptcha().then(res => {
+                  this.illegalTriedLogin = true
+                })
+              }
+              this.loading = false
+              this.error = msgFormatter(error)
+            })
+          }
+        })
       },
       tryDemo () {
         register({ account_type: 0 }).then(user => {
@@ -162,6 +182,10 @@
       XButton,
       Flexbox,
       FlexboxItem
+    },
+    beforeDestroy () {
+      clearInterval(this.syncTimer)
+      this.syncTimer = null
     }
   }
 </script>

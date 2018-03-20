@@ -21,7 +21,7 @@ export function updateUser (user, id) {
 }
 
 export function fetchBanner () {
-  return axios.get(urls.banner)
+  return axios.get(`${urls.banner}?platform=mobile`)
 }
 
 export function fetchAnnouncements () {
