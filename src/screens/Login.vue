@@ -9,8 +9,7 @@
         @on-change="validate($event, 'username')"
         :title="$t('misc.username')"
         label-width="100"
-        v-model="user.username"
-        @change.native="handleChange($event, 'username')">
+        v-model="user.username">
       </x-input>
       <x-input
         :class="{'weui-cell_warn': !validators['password']}"
@@ -22,8 +21,7 @@
         @on-change="validate($event, 'password')"
         :title="$t('misc.password')"
         label-width="100"
-        v-model="user.password"
-        @change.native="handleChange($event, 'password')">
+        v-model="user.password">
       </x-input>
       <x-input v-if="illegalTriedLogin"
         v-model="user.verification_code_1"
@@ -88,7 +86,8 @@
         validators: {
           'username': true,
           'password': true
-        }
+        },
+        syncTimer: null
       }
     },
     computed: {
@@ -96,14 +95,18 @@
         return inputs.every(input => this.validators[input] === true)
       }
     },
+    mounted () {
+      const refs = this.$refs
+      this.syncTimer = setInterval(() => {
+        if (refs.username.value !== this.user.username) {
+          this.user.username = refs.username.value
+        }
+        if (refs.password.value !== this.user.password) {
+          this.user.password = refs.password.value
+        }
+      }, 500)
+    },
     methods: {
-      handleChange (e, input) {
-        this.$nextTick(() => {
-          if (this.user[input] !== e.target.value) {
-            this.user[input] = e.target.value
-          }
-        })
-      },
       handleClose () {
         this.$store.dispatch('closeVerifyPopup')
       },
@@ -174,6 +177,10 @@
       XButton,
       Flexbox,
       FlexboxItem
+    },
+    beforeDestroy () {
+      clearInterval(this.syncTimer)
+      this.syncTimer = null
     }
   }
 </script>
