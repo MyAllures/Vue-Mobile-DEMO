@@ -1,8 +1,12 @@
 <template>
   <div class="deposit-box">
-    <tab :line-width="2" :animate="false">
-      <tab-item v-for="(payee,idx) in onlinepayees" :key="idx" :selected="payee.display_name === currentPay.display_name" @click.native="toggleTab(payee)">{{payee.display_name}}</tab-item>
-    </tab>
+    <div class="tab-selector">
+      <tab
+        :style="{width: onlinepayees.length > 4 ? `${onlinepayees.length * 25}%` : ''}"
+        :line-width="2" :animate="false">
+        <tab-item v-for="(payee,idx) in onlinepayees" :key="idx" :selected="payee.display_name === currentPay.display_name" @click.native="toggleTab(payee)">{{payee.display_name}}</tab-item>
+      </tab>
+    </div>
     <div v-if="description" class="text-danger m-l-md m-t m-r">
       {{description}}
     </div>
@@ -258,6 +262,11 @@ export default {
     text-align: center;
     border-bottom: 3px solid #04BE02;
   }
+}
+
+.tab-selector {
+  width: 100%;
+  overflow: scroll;
 }
 
 </style>
