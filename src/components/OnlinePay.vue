@@ -6,7 +6,13 @@
     <div v-if="description" class="text-danger m-l-md m-t m-r">
       {{description}}
     </div>
+      <group>
+        <radio :options="currentDetail" v-model="currentPay.payee_id" @on-change="selectPayment"></radio>
 
+      </group>
+      <div v-if="!showAll && currentDetail.length === 3" class="m-a text-center">
+        <x-button mini type="primary" @click.native="showAll = true">显示全部</x-button>
+      </div>
 
       <form :action="paymentUrl" method="post" target="_blank" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
@@ -50,7 +56,7 @@
   </div>
 </template>
 <script>
-import {Tab, TabItem, Group, XInput, XButton, Spinner} from 'vux'
+import {Tab, TabItem, Group, XInput, XButton, Spinner, Radio} from 'vux'
 import { getOnlinepayees } from '../api'
 import Vue from 'vue'
 import urls from '../api/urls'
@@ -71,7 +77,6 @@ export default {
         'token': '',
         'notifyPage': window.location.href.replace(this.$route.path, '/depositSuccess/')
       },
-      payDetail: {},
       errorMsg: '',
       paymentUrl: urls.payment,
       payBoradUrl: urls.paymentBoard,
@@ -84,7 +89,8 @@ export default {
         lower: '',
         upper: ''
       },
-      inputErrors: []
+      inputErrors: [],
+      showAll: false
     }
   },
   created () {
@@ -109,6 +115,20 @@ export default {
       let comma = (lower && upper ? ', ' : '')
       let upperHint = upper ? (`最高金额 ${upper}`) : ''
       return lowerHint + comma + upperHint
+    },
+    currentDetail () {
+      const displayName = this.currentTab.display_name
+      const currentDetail = this.currentTab.detail.map((payment, index) => {
+        return {
+          key: payment.payee_id,
+          value: `${displayName}${index + 1}`
+        }
+      })
+      if (this.showAll) {
+        return currentDetail
+      } else {
+        return currentDetail.slice(0, 3)
+      }
     }
   },
   components: {
@@ -117,11 +137,12 @@ export default {
     Group,
     XInput,
     XButton,
-    Spinner
+    Spinner,
+    Radio
   },
   methods: {
     toggleTab (payee) {
-      this.payDetail = payee.detail[0]
+      this.showAll = false
       this.currentPay = Object.assign({}, this.currentPay, {
         'type_id': payee.detail[0].payment_type,
         'payee_id': payee.detail[0].payee_id,
@@ -135,6 +156,10 @@ export default {
       this.defaultPayName = payee.detail[0].name
       this.onlineLimit = Object.assign({}, this.limit)
       this.onlineLimit.upper = payee.detail[0].online_limit
+    },
+    selectPayment (payeeId) {
+      const currentPayment = this.currentTab.detail.find(payment => payment.payee_id === payeeId)
+      this.currentPay.gateway_id = currentPayment.gateway_id
     },
     onChangeItem (name) {
       let detail = this.currentTab.detail.filter(function (obj, index, arr) {
