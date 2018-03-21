@@ -121,6 +121,7 @@ gethomePage().then(
         agentDashboardUrl: pref.agent_dashboard_url,
         global_preferences: pref,
         agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
+        isAllowNewPaymentWindow: pref.is_allow_new_payment_window,
         contactEmail: pref.contact_email,
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,

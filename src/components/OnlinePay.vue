@@ -17,7 +17,7 @@
         <x-button mini type="primary" @click.native="showAll = true">显示全部</x-button>
       </div>
 
-      <form :action="paymentUrl" method="post" target="_blank" ref="paymentform">
+      <form :action="paymentUrl" method="post" :target="isAllowNewPaymentWindow === 'true' ?'_blank':'_self'" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
         <input type="hidden" name="payment_type" :value="currentPay.type_id" />
         <input type="hidden" name="payee" :value="currentPay.payee_id" />
@@ -64,6 +64,16 @@ import { getOnlinepayees } from '../api'
 import Vue from 'vue'
 import urls from '../api/urls'
 export default {
+  name: 'OnlinePay',
+  components: {
+    Tab,
+    TabItem,
+    Group,
+    XInput,
+    XButton,
+    Spinner,
+    Radio
+  },
   data () {
     return {
       currentTab: {
@@ -95,9 +105,6 @@ export default {
       inputErrors: [],
       showAll: false
     }
-  },
-  created () {
-    this.getOnlinepayees()
   },
   computed: {
     currentPayNames () {
@@ -132,16 +139,13 @@ export default {
       } else {
         return currentDetail.slice(0, 3)
       }
+    },
+    isAllowNewPaymentWindow () {
+      return this.$store.state.systemConfig.isAllowNewPaymentWindow
     }
   },
-  components: {
-    Tab,
-    TabItem,
-    Group,
-    XInput,
-    XButton,
-    Spinner,
-    Radio
+  created () {
+    this.getOnlinepayees()
   },
   methods: {
     toggleTab (payee) {
