@@ -24,9 +24,9 @@ export function createStore () {
         siteName: '',
         global_preferences: {
           send_chat_conditions: '{}'
-        }
+        },
+        isAllowNewPaymentWindow: 'false'
       },
-
       customPlayGroups: [
         {
           // 广东11选5 连码
