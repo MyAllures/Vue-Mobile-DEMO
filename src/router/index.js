@@ -262,6 +262,10 @@ export default new Router({
           component: resolve => { require(['../screens/PromoDetail.vue'], resolve) }
         }
       ]
+    },
+    {
+      path: '*',
+      redirect: '/'
     }
   ]
 })
