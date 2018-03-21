@@ -26,6 +26,12 @@
         </marquee>
       </flexbox-item>
     </flexbox>
+    <flexbox-item>
+      <div class="game-title">
+        <h3 class="title">热门游戏</h3>
+        <router-link class="more" to="/game">更多游戏</router-link>
+      </div>
+    </flexbox-item>
     <grid :cols="3">
       <grid-item
         @click.native="chooseGame(game.id)"
@@ -44,7 +50,7 @@
         </div>
       </a>
     </grid>
-    <div class="activity">
+    <div v-if="promotions.length > 0" class="activity">
       <flexbox>
         <flexbox-item>
           <h3 class="title">优惠活动</h3>
@@ -170,6 +176,7 @@ export default {
 <style scoped lang="less">
 .announcement {
   height: 36px;
+  background: #fff;
 }
 .announcement {
   .speaker {
@@ -214,15 +221,27 @@ export default {
     font-size: 16px;
   }
 }
-
+.game-title {
+  display: flex;
+  justify-content: space-between;
+}
+.more {
+  width: 50%;
+  display: inline-block;
+  padding:10px 10px 0 0;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: right;
+  color: #0069b1;
+}
+.title {
+  display: inline-block;
+  font-weight: normal;
+  font-size: 16px;
+  color: #666;
+  padding:10px 0 0 10px;
+}
 .activity {
-  .title {
-    display: inline-block;
-    font-weight: normal;
-    font-size: 16px;
-    color: #666;
-    padding:10px 0 0 10px;
-  }
   .more:after {
     content: '';
     display: inline-block;
