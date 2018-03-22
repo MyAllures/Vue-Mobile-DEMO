@@ -50,7 +50,7 @@
       <x-icon
         type="chatbubble-working"
         size="30"
-        v-if="isGameHall &&!showChatRoom"
+        v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
         @click.native="showChatRoom = true"
         slot="right"></x-icon>
     </x-header>

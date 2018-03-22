@@ -125,6 +125,7 @@ gethomePage().then(
         contactEmail: pref.contact_email,
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,
+        chatroomEnabled: pref.chatroom_enabled,
         siteName: response.name
       })
   }
