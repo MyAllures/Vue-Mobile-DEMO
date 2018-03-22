@@ -54,7 +54,7 @@
         @click.native="showChatRoom = true"
         slot="right"></x-icon>
     </x-header>
-    <router-view :showChatRoom="showChatRoom" :showGameMenu="showGameMenu" @closeGameMenu="closeGameMenu"></router-view>
+    <router-view class="fixScroll":showChatRoom="showChatRoom" :showGameMenu="showGameMenu" @closeGameMenu="closeGameMenu"></router-view>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
@@ -334,5 +334,8 @@ export default {
   align-items: center;
   font-size: 15px;
   color: #fff;
+}
+.fixScroll {
+  min-height: calc(~"100% + "1px)
 }
 </style>
