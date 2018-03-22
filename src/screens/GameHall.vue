@@ -1,7 +1,7 @@
 <template>
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
-    <chat-room v-if="showChatRoom"></chat-room>
+    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
   </div>
 </template>
@@ -43,7 +43,10 @@ export default {
     },
     ...mapGetters([
       'allGames'
-    ])
+    ]),
+    chatroomEnabled () {
+      return this.$store.state.systemConfig.chatroomEnabled === 'true'
+    }
   },
   watch: {
     '$route': 'changeRoute'
