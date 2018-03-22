@@ -29,7 +29,7 @@
     <flexbox-item>
       <div class="game-title">
         <h3 class="title">热门游戏</h3>
-        <router-link class="more" to="/game">更多游戏</router-link>
+        <router-link class="more" to="/game">更多游戏<i class="arrow-right"></i></router-link>
       </div>
     </flexbox-item>
     <grid :cols="3">
@@ -218,9 +218,12 @@ export default {
 
   /deep/ .weui-grid__label {
     color: #666;
+    line-height: 1;
+    margin-top: 10px;
     font-size: 16px;
   }
 }
+
 .game-title {
   display: flex;
   justify-content: space-between;
@@ -228,18 +231,27 @@ export default {
 .more {
   width: 50%;
   display: inline-block;
-  padding:10px 10px 0 0;
-  font-weight: bold;
-  font-size: 16px;
+  line-height: 36px;
+  padding: 0 10px 0 0;
   text-align: right;
-  color: #0069b1;
+  margin-right: 10px;
+  position: relative;
+  color: #666;
+  &:visited, &:active {
+    color: #666;
+  }
+  .arrow-right:after {
+    margin-left: 5px;
+    border-color: #666;
+  }
 }
 .title {
   display: inline-block;
   font-weight: normal;
   font-size: 16px;
   color: #666;
-  padding:10px 0 0 10px;
+  line-height: 36px;
+  padding: 0 0 0 10px;
 }
 .activity {
   .more:after {
