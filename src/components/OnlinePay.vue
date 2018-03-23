@@ -17,7 +17,7 @@
         <x-button mini type="primary" @click.native="showAll = true">显示全部</x-button>
       </div>
 
-      <form :action="paymentUrl" method="post" :target="isAllowNewPaymentWindow === 'true' ?'_blank':'_self'" ref="paymentform">
+      <form @submit="submit" :action="paymentUrl" method="post" :target="isAllowNewPaymentWindow === 'true' ?'_blank':'_self'" ref="paymentform">
         <input type="hidden" name="payment_gateway" :value="currentPay.gateway_id" />
         <input type="hidden" name="payment_type" :value="currentPay.type_id" />
         <input type="hidden" name="payee" :value="currentPay.payee_id" />
@@ -41,15 +41,13 @@
             name="amount"
             ref="amount"
             action-type="button"
-            @on-change="validateErrors"
             @on-blur="validateErrors"
             :is-type="amountValidator"
-            v-model="currentPay.amount"
-            >
+            v-model.number="currentPay.amount">
           </x-input>
         </group>
         <div class="m-a">
-          <x-button type="primary" @click.native="submit">
+          <x-button type="primary">
             <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
             <span v-else>充值</span>
           </x-button>
@@ -163,6 +161,13 @@ export default {
       this.defaultPayName = payee.detail[0].name
       this.onlineLimit = Object.assign({}, this.limit)
       this.onlineLimit.upper = payee.detail[0].online_limit
+      Vue.nextTick(() => {
+        this.$refs.amount.reset()
+        Vue.nextTick(() => {
+          this.$refs.amount.firstError = ''
+          this.inputErrors = []
+        })
+      })
     },
     selectPayment (payeeId) {
       const currentPayment = this.currentTab.detail.find(payment => payment.payee_id === payeeId)
@@ -232,7 +237,7 @@ export default {
         }
       })
     },
-    submit () {
+    submit (e) {
       if (this.validateAll()) {
         let token = this.$cookie.get('access_token')
         if (!token) {
@@ -241,13 +246,14 @@ export default {
           return
         }
         Vue.nextTick(() => {
-          this.$refs.paymentform.submit()
           this.$refs.amount.reset()
           Vue.nextTick(() => {
             this.$refs.amount.firstError = ''
             this.inputErrors = []
           })
         })
+      } else {
+        e.preventDefault()
       }
     }
   }

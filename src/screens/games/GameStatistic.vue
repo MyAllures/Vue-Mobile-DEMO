@@ -137,6 +137,7 @@ export default {
       }
     },
     'allGames': function (allGames) {
+      this.games = []
       const played = localStorage.getItem('lastGame')
       const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
       const current = _.find(allGames, game => (game.id + '') === played + '')
