@@ -41,15 +41,13 @@
             name="amount"
             ref="amount"
             action-type="button"
-            @on-change="validateErrors"
             @on-blur="validateErrors"
             :is-type="amountValidator"
-            v-model="currentPay.amount"
-            >
+            v-model.number="currentPay.amount">
           </x-input>
         </group>
         <div class="m-a">
-          <x-button type="primary" @click.native="submit">
+          <x-button type="primary" @click.native="submit" action-type="button">
             <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
             <span v-else>充值</span>
           </x-button>
@@ -163,6 +161,13 @@ export default {
       this.defaultPayName = payee.detail[0].name
       this.onlineLimit = Object.assign({}, this.limit)
       this.onlineLimit.upper = payee.detail[0].online_limit
+      Vue.nextTick(() => {
+        this.$refs.amount.reset()
+        Vue.nextTick(() => {
+          this.$refs.amount.firstError = ''
+          this.inputErrors = []
+        })
+      })
     },
     selectPayment (payeeId) {
       const currentPayment = this.currentTab.detail.find(payment => payment.payee_id === payeeId)
