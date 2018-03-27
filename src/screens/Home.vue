@@ -29,7 +29,7 @@
     <flexbox-item>
       <div class="game-title">
         <h3 class="title">热门游戏</h3>
-        <router-link class="more" to="/game">更多游戏<i class="arrow-right"></i></router-link>
+        <router-link class="more" to="/game" @click.native="$emit('showGameMenu')">更多游戏<i class="arrow-right"></i></router-link>
       </div>
     </flexbox-item>
     <grid :cols="3">

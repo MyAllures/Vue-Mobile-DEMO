@@ -57,8 +57,7 @@
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import { changePassword } from '../../api'
-import { msgFormatter } from '../../utils'
-import { validatePassword } from '../../validate'
+import { msgFormatter, validatePassword } from '../../utils'
 
 export default {
   name: 'changepassword',
