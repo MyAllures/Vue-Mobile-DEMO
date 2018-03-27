@@ -21,7 +21,7 @@
       <div
         v-if="isGameHall && !showChatRoom"
         slot="overwrite-left"
-        @click="showGameMenu = true"
+        @click="isShowGameMenu = true"
         class="left-trigger">
         <x-icon
           type="navicon"
@@ -54,7 +54,7 @@
         @click.native="showChatRoom = true"
         slot="right"></x-icon>
     </x-header>
-    <router-view class="fixScroll":showChatRoom="showChatRoom" :showGameMenu="showGameMenu" @closeGameMenu="closeGameMenu"></router-view>
+    <router-view class="fixScroll":showChatRoom="showChatRoom" :showGameMenu="isShowGameMenu" @closeGameMenu="closeGameMenu" @showGameMenu="showGameMenu"></router-view>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
@@ -96,7 +96,7 @@ export default {
     return {
       showRightMenu: false,
       showChatRoom: false,
-      showGameMenu: false,
+      isShowGameMenu: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -232,7 +232,10 @@ export default {
       }, 11000)
     },
     closeGameMenu () {
-      this.showGameMenu = false
+      this.isShowGameMenu = false
+    },
+    showGameMenu () {
+      this.isShowGameMenu = true
     }
   },
   created () {
