@@ -13,7 +13,7 @@
       <group v-if="currentDetail.length>1">
         <radio :options="currentDetail" v-model="currentPay.payee_id" @on-change="selectPayment"></radio>
       </group>
-      <div v-if="!showAll && currentDetail.length === 3" class="m-a text-center">
+      <div v-if="!showAll && currentDetail.length === 4" class="m-a text-center">
         <x-button mini type="primary" @click.native="showAll = true">显示全部</x-button>
       </div>
 
@@ -135,7 +135,7 @@ export default {
       if (this.showAll) {
         return currentDetail
       } else {
-        return currentDetail.slice(0, 3)
+        return currentDetail.slice(0, 4)
       }
     },
     isAllowNewPaymentWindow () {

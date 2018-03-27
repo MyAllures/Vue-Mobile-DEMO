@@ -54,8 +54,7 @@
 <script>
 import { Group, Cell, XButton, XInput, Spinner } from 'vux'
 import { changeWpassword } from '../../api'
-import { msgFormatter } from '../../utils'
-import { validateWithdrawPassword } from '../../validate'
+import { msgFormatter, validateWithdrawPassword } from '../../utils'
 export default {
   data () {
     return {
