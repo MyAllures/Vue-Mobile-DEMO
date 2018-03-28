@@ -99,6 +99,10 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach(function (to) {
   store.commit(types.UPDATE_LOADING, {isLoading: false})
+  const gaTrackingId = store.state.systemConfig.gaTrackingId
+  if (gaTrackingId) {
+    window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path})
+  }
 })
 
 sync(store, router)
@@ -126,8 +130,17 @@ gethomePage().then(
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,
         chatroomEnabled: pref.chatroom_enabled,
-        siteName: response.name
+        siteName: response.name,
+        gaTrackingId: pref.ga_tracking_id
       })
+    if (pref.ga_tracking_id) {
+      const ga = document.createElement('script')
+      ga.type = 'text/javascript'
+      ga.async = true
+      ga.src = `https://www.googletagmanager.com/gtag/js?id=${pref.ga_tracking_id}`
+      const s = document.getElementsByTagName('script')[0]
+      s.parentNode.insertBefore(ga, s)
+    }
   }
 )
 
