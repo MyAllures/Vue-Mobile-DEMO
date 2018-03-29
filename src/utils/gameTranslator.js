@@ -195,6 +195,7 @@ export default {
   'er75ft': transformerTranslator,
   'cqssc': ssTranslator,
   'jsssc': ssTranslator,
+  'csffc': ssTranslator,
   'xjssc': ssTranslator,
   'tjssc': ssTranslator,
   'cqlf': cqlfTranslator,

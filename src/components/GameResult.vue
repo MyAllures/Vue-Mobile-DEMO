@@ -160,6 +160,7 @@ export default {
     flex: 1;
     align-self: center;
     text-align: center;
+    white-space: nowrap;
   }
   @media screen and (max-width: 320px) {
     .balls-text {

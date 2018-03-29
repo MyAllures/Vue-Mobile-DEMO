@@ -557,6 +557,10 @@ export default {
         table: sscTable
       },
       {
+        code: 'csffc',
+        table: sscTable
+      },
+      {
         code: 'cqlf',
         table: cqlfTable
       },
@@ -937,7 +941,7 @@ export default {
 .show-time {
   box-sizing: border-box;
   display: inline-block;
-  width: 100px;
+  width: 110px;
   height: 50px;
   padding: 0px 10px;
   border-right: 1px solid #dcd9d9;
@@ -959,7 +963,7 @@ export default {
 }
 .show-count {
   display: inline-block;
-  width: calc(~"100%" - 120px);
+  width: calc(~"100%" - 130px);
   height: 50px;
 }
 .lottery-result {
@@ -1061,6 +1065,7 @@ export default {
   xjssc 10 ,
   cqssc 10,
   jsssc 10,
+  csffc 10,
   pcdd 27,
   luckdd 27,
   bjkl8 80,
