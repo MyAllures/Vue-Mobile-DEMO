@@ -50,6 +50,7 @@ import hkl from './rules/hkl'
 import luckl from './rules/luckl'
 import xjssc from './rules/xjssc'
 import tjssc from './rules/tjssc'
+import csffc from './rules/csffc'
 import bjkl8 from './rules/bjkl8'
 import er75ft from './rules/er75ft'
 import auluck8 from './rules/auluck8'
@@ -129,6 +130,7 @@ export default {
     luckl,
     xjssc,
     tjssc,
+    csffc,
     bjkl8,
     er75ft,
     auluck8,

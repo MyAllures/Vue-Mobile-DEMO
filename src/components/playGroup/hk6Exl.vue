@@ -159,11 +159,6 @@ export default {
   text-align: center;
   font-size: 14px;
 }
-.play-nums {
-  .play-num {
-
-  }
-}
 @media screen and (max-width: 320px) {
   .play-nums {
     .play-num {

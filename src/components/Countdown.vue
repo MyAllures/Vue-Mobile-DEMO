@@ -67,6 +67,7 @@ export default {
   flex: 1;
   font-size: 14px;
   text-align: center;
+  white-space: nowrap;
 }
 @media screen and (max-width: 320px) {
   .issue {
