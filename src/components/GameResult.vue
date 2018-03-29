@@ -161,6 +161,11 @@ export default {
     align-self: center;
     text-align: center;
   }
+  @media screen and (max-width: 320px) {
+    .balls-text {
+      font-size: 12px;
+    }
+  }
   .balls-number {
     flex: 2.5;
     flex-wrap: wrap;

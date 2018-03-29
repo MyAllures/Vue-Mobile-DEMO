@@ -24,6 +24,16 @@ $ssc_length: length($results_ssc);
   .result-#{nth($results_ssc, $index)} {
     @extend %plain-ball;
   }
+  @media screen and (max-width: 320px) {
+    .result-#{nth($results_ssc, $index)} {
+      height: 19px;
+      line-height: 19px;
+      b {
+        width: 19px;
+        font-size: 14px;
+      }
+    }
+  }
 }
 
 /*specific: racing games, common: ball-pk.png*/
@@ -40,10 +50,17 @@ $racing_length: length($results_racing);
       text-indent: -9999px;
       width: 20px;
     }
-
     @for $num from 1 through 10 {
       &.resultnum-#{$num} {
         background-position: 0 (-21px * ($num - 1));
+      }
+    }
+  }
+  @media screen and (max-width: 320px) {
+    .result-#{nth($results_racing, $index)} {
+      height: 18px;
+      b {
+        width: 18px;
       }
     }
   }
@@ -102,6 +119,16 @@ $racing_length: length($results_racing);
   @for $num from 1 through 49 {
     &.resultnum-#{$num} {
       background-position: 0 (-27px * ($num - 1));
+    }
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .result-luckl,
+  .result-hkl {
+    height: 24px;
+    b {
+      width: 22px;
     }
   }
 }
