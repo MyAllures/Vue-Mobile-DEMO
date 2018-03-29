@@ -68,6 +68,11 @@ export default {
   font-size: 14px;
   text-align: center;
 }
+@media screen and (max-width: 320px) {
+  .issue {
+    font-size: 12px;
+  }
+}
 .countdown {
   font-size: 14px;
 }

@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="bet-input">
-      <flexbox>
+      <flexbox :gutter="0">
         <flexbox-item>
           <div class="balance">{{user.balance||0 | currency('￥')}}</div>
           <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>

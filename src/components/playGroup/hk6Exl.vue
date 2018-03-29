@@ -11,7 +11,7 @@
             <span class="play-odds">{{option.odds}}</span>
           </span>
           <span class="play-nums">
-            <span :class="`hkl-${num}`" v-for="num in option.value" :key="num"></span>
+            <span :class="[`hkl-${num}`, 'play-num']" v-for="num in option.value" :key="num"></span>
           </span>
         </div>
       </grid-item>
@@ -158,5 +158,17 @@ export default {
   height: 40px;
   text-align: center;
   font-size: 14px;
+}
+.play-nums {
+  .play-num {
+
+  }
+}
+@media screen and (max-width: 320px) {
+  .play-nums {
+    .play-num {
+      margin: 0 1px;
+    }
+  }
 }
 </style>
