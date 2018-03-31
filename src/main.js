@@ -18,7 +18,9 @@ let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
 }
-
+console.log('-----------------------------------------')
+console.log('---------------testtesttest--------------')
+console.log('-----------------------------------------')
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)
