@@ -113,9 +113,6 @@ export default {
       }
       return arr
     },
-    limit () {
-      return this.$store.state.user.level.online_limit
-    },
     limitHint () {
       let lower = this.onlineLimit.lower
       let upper = this.onlineLimit.upper
@@ -159,8 +156,7 @@ export default {
       this.description = payee.description
       this.currentTab = payee
       this.defaultPayName = payee.detail[0].name
-      this.onlineLimit = Object.assign({}, this.limit)
-      this.onlineLimit.upper = payee.detail[0].online_limit
+      this.onlineLimit = payee.detail[0].online_limit
       Vue.nextTick(() => {
         this.$refs.amount.reset()
         Vue.nextTick(() => {
@@ -172,6 +168,14 @@ export default {
     selectPayment (payeeId) {
       const currentPayment = this.currentTab.detail.find(payment => payment.payee_id === payeeId)
       this.currentPay.gateway_id = currentPayment.gateway_id
+      this.onlineLimit = currentPayment.online_limit
+      Vue.nextTick(() => {
+        this.$refs.amount.reset()
+        Vue.nextTick(() => {
+          this.$refs.amount.firstError = ''
+          this.inputErrors = []
+        })
+      })
     },
     onChangeItem (name) {
       let detail = this.currentTab.detail.filter(function (obj, index, arr) {
