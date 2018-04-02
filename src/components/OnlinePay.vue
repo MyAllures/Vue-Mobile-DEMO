@@ -116,9 +116,9 @@ export default {
     limitHint () {
       let lower = this.onlineLimit.lower
       let upper = this.onlineLimit.upper
-      let lowerHint = lower ? (`最低金额 ${lower}`) : ''
-      let comma = (lower && upper ? ', ' : '')
-      let upperHint = upper ? (`最高金额 ${upper}`) : ''
+      let lowerHint = lower ? '最低金额 ' + lower : ''
+      let comma = lower && upper ? ', ' : ''
+      let upperHint = upper ? '最高金额 ' + upper : ''
       return lowerHint + comma + upperHint
     },
     currentDetail () {
@@ -280,7 +280,7 @@ export default {
 
 .tab-selector {
   width: 100%;
-  overflow: scroll;
+  overflow-x: auto;
 }
 
 </style>
