@@ -1,10 +1,13 @@
 <template>
   <div>
     <div v-if="remitpayees.length">
-      <tab :line-width="2">
-        <tab-item v-for="(p,idx) in remitpayees" :key="idx" :selected="remit.remit_info.remit_payee === p.id" @click.native="togglePayee(p)">{{payeeName(p)}}</tab-item>
-      </tab>
-
+      <div class="tab-selector">
+        <tab
+          :style="{width: remitpayees.length > 4 ? `${remitpayees.length * 25}%` : ''}"
+          :line-width="2">
+          <tab-item v-for="(p,idx) in remitpayees" :key="idx" :selected="remit.remit_info.remit_payee === p.id" @click.native="togglePayee(p)">{{payeeName(p)}}</tab-item>
+        </tab>
+      </div>
       <div class="qr-code" v-if="activePayee.remit_type !== 1">
         <img :src="activePayee.qr_code">
         <div class="scan-tip text-muted">填写入款信息请前请先截屏并用{{payeeName(activePayee)}}扫描进行充值</div>
@@ -339,5 +342,9 @@
 
   .vux-datetime.warn /deep/ p {
     color: #E64340;
+  }
+  .tab-selector {
+    width: 100%;
+    overflow-x: auto;
   }
 </style>
