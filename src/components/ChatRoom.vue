@@ -63,7 +63,7 @@
           <div class="txtinput el-textarea">
             <textarea
               @keyup.enter="sendMsg"
-              :placeholder="personal_setting.chat.status ? '' : sendMsgCondition"
+              :placeholder="personal_setting.chat.status ? '' : chatConditionMessage"
               type="textarea" rows="2"
               autocomplete="off"
               validateevent="true"
@@ -152,12 +152,8 @@ export default {
     ...mapGetters([
       'user'
     ]),
-    sendMsgCondition () {
-      let condition = JSON.parse(this.$store.state.systemConfig.global_preferences.send_chat_conditions)
-      if (condition.length) {
-        return `发言条件：前${condition[0]['value']}天充值不少于${condition[1]['value']}元；投注打码量不少于${condition[2]['value']}元`
-      }
-      return ''
+    chatConditionMessage () {
+      return this.$store.state.systemConfig.global_preferences.chat_condition_message
     }
   },
   created () {
