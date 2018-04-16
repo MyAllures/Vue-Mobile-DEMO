@@ -309,6 +309,14 @@ export default {
       }
     }
   }
+  @media screen and (max-width: 320px) {
+    .actions {
+      right: -10px;
+      .link {
+        padding: 4px 2px;
+      }
+    }
+  }
 }
 .vux-header /deep/ .vux-header-right a.vux-header-more {
   float: right;
