@@ -97,3 +97,17 @@ html, body {
 .vux-input-icon.weui-icon.weui_icon_warn.weui-icon-warn {
   display: none;
 }
+
+.vux-header{
+  .vux-header-right{
+    a.vux-header-more {
+      font-size: 16px;
+      &::after {
+        display: inline-block;
+        transform: rotate(90deg);
+        content: '\2026';
+      }
+    }
+  }
+}
+

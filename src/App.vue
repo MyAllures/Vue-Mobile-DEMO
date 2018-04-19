@@ -12,11 +12,10 @@
         'z-index':'100'
         }"
       slot="header"
-      :right-options="{showMore: !!user.username}"
+      :right-options="{showMore: !!user.username&&isGameHall}"
       :left-options="{showBack: $route.meta.showBack || false}">
-      {{$route.meta.title}}
-      <div v-if="!isGameHall">
-        {{systemConfig.siteName}}
+      <div v-if="!isGameHall&&$route.path !== '/'">
+        {{$route.meta.title}}
       </div>
       <div
         v-if="isGameHall && !showChatRoom"
@@ -39,20 +38,32 @@
           退出聊天室
       </div>
       <div
+        v-else-if="$route.path === '/'"
+        slot="overwrite-left"
+        :style="{'font-size': '18px'}"
+        class="left-trigger">
+          {{systemConfig.siteName}}
+      </div>
+      <div
         v-if="showLinks"
         class="actions"
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <a class="link try" @click="tryDemo">试玩</a>
+        <div class="link" @click="tryDemo">
+          <div class="try">试玩</div>
+        </div>
       </div>
-      <span slot="right" class="username fr" v-else-if="!isGameHall">{{ user.account_type === 0 ? '游客' : user.username}}</span>
-      <x-icon
-        type="chatbubble-working"
-        size="30"
-        v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
-        @click.native="showChatRoom = true"
-        slot="right"></x-icon>
+      <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
+      <div class="chatbubble"
+        slot="right"
+        @click="showChatRoom = true">
+        <x-icon
+          type="chatbubble-working"
+          size="30"
+          v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
+          ></x-icon>
+      </div>
     </x-header>
     <router-view class="fixScroll":showChatRoom="showChatRoom" :showGameMenu="isShowGameMenu" @closeGameMenu="closeGameMenu" @showGameMenu="showGameMenu"></router-view>
     <tabbar
@@ -296,14 +307,23 @@ export default {
 }
 .vux-header-right {
    .actions {
+    height: 46px;
     position: relative;
-    top: -5px;
-    right: -5px;
+    box-sizing: border-box;
+    padding-right: 5px;
     .link {
+      box-sizing: border-box;
+      padding: 5px 5px;
+      height: 46px;
+      line-height: 36px;
       color: #fff;
-      padding: 4px 5px;
-      border-radius: 2px;
-      &.try {
+      float: left;
+      margin-left: 5px;
+      .try {
+        box-sizing: border-box;
+        padding: 0 5px;
+        margin: 0 -5px;
+        height: 100%;
         background: #fff;
         color: #666;
       }
@@ -311,15 +331,40 @@ export default {
   }
   @media screen and (max-width: 320px) {
     .actions {
-      right: -10px;
       .link {
-        padding: 4px 2px;
+
       }
     }
   }
 }
-.vux-header /deep/ .vux-header-right a.vux-header-more {
-  float: right;
+
+.vux-header /deep/ .vux-header-right{
+  top: 0;
+  right: 0;
+  height: 46px;
+  line-height: 46px;
+  svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+  }
+  .chatbubble {
+    position: relative;
+    height: 100%;
+    width: 46px;
+    float: right;
+  }
+  a.vux-header-more{
+    box-sizing: border-box;
+    padding-left: 10px;
+    text-align: center;
+    height: 46px;
+    line-height: 46px;
+    width: 46px;
+    float: right;
+    margin: 0;
+  }
 }
 
 .vux-header.gamehall /deep/ .vux-header-left {
@@ -327,24 +372,26 @@ export default {
   top: 7px;
   line-height: 100%;
 }
-.vux-header.gamehall /deep/ .vux-header-right{
-  top: 7px;
-  a {
-    margin-left: 20px;
-    float: right;
-  }
-  .vux-header-more {
-    margin-top: 6px;
-  }
-}
 
-.username {
+.balance {
+  position: relative;
   color: #fff;
   overflow: hidden;
   display: inline-block;
   white-space: nowrap;
-  max-width: 100px;
+  max-width: 120px;
   text-overflow: ellipsis;
+  box-sizing: border-box;
+  padding-right: 15px;
+  &::after {
+    position: absolute;
+    right: -5px;
+    display: inline-block;
+    transform: rotate(90deg);
+    content: '\2026';
+    font-size: 16px;
+    margin-left: 5px;
+  }
 }
 .left-trigger {
   float: left;
