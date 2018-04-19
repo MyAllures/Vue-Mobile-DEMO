@@ -1,6 +1,9 @@
 <template>
   <popup :value="value" position="right" @on-hide="handleClose" class="popup" v-transfer-dom width="180px">
     <group class="head">
+      <cell :title="$t('profile.username')" :border-intent="false">
+        <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
+      </cell>
       <cell :title="$t('my.balance')" :border-intent="false">
         <div class="balance">{{user.balance | currency('￥')}}</div>
       </cell>
@@ -137,6 +140,12 @@
 .weui-cell {
   padding: 10px 20px;
   margin-top: 0;
+}
+.username {
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .balance {
   padding-left: 10px;
