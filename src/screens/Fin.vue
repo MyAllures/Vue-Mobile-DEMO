@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab>
+    <tab v-if="tabs.length && $route.name !== 'DetailBetRecord'">
       <tab-item
         :line-width="1"
         v-for="(tab,index) in tabs"
@@ -19,7 +19,7 @@
 <script>
 import { Tab, TabItem, XButton } from 'vux'
 const tabs = [{
-  label: '注单',
+  label: '投注记录',
   name: 'BetRecord'
 }, {
   label: '充值记录',
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     tabs () {
-      return this.$store.state.user.account_type === 0 ? tabs.slice(0, 1) : tabs
+      return this.$store.state.user.account_type === 0 ? [] : tabs
     }
   },
   methods: {

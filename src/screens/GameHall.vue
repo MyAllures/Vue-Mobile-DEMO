@@ -2,7 +2,6 @@
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
   </div>
 </template>
 <script>
@@ -10,7 +9,6 @@ import { XHeader, Tab, TabItem } from 'vux'
 import { mapGetters } from 'vuex'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
-import GameMenu from '../components/GameMenu.vue'
 import ChatRoom from '../components/ChatRoom'
 
 export default {
@@ -26,7 +24,6 @@ export default {
   components: {
     Icon,
     XHeader,
-    GameMenu,
     Tab,
     TabItem,
     ChatRoom
@@ -59,14 +56,6 @@ export default {
           currentGameId = localStorage.getItem('lastGame') || vm.allGames[0].id
           vm.$router.replace(`/game/${currentGameId}`)
         }
-      } else {
-        vm.$store.dispatch('fetchGames').then(res => {
-          let currentGameId = vm.$route.params.gameId
-          if (!currentGameId) {
-            currentGameId = localStorage.getItem('lastGame') || res[0].id
-            vm.$router.replace(`/game/${currentGameId}`)
-          }
-        }).catch(() => { })
       }
     })
   },
@@ -81,9 +70,6 @@ export default {
       if (!this.$route.params.gameId) {
         this.$router.replace(`/game/${this.allGames[0].id}`)
       }
-    },
-    closeGameMenu () {
-      this.$emit('closeGameMenu')
     }
   }
 

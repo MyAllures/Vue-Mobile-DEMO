@@ -38,6 +38,7 @@
         type="password"
         @on-blur="validate($event, 'confirmation_password')"
         ref="confirmation_password"
+        placeholder="再次输入密码"
         autocomplete="off"
         :title="$t('misc.confirm_password')"
         label-width="100"
@@ -46,6 +47,7 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['real_name']}"
         show-clear
+        placeholder="用于取款"
         @on-blur="validate($event, 'real_name')"
         ref="real_name"
         :title="$t('misc.real_name')"
@@ -78,6 +80,7 @@
         autocomplete="off"
         type="password"
         :title="$t('misc.withdraw_password')"
+        placeholder="6位数字，用于取款"
         label-width="100"
         v-model="user.withdraw_password">
       </x-input>

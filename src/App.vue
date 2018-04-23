@@ -1,7 +1,11 @@
 <template>
-  <view-box ref="viewBox" body-padding-top="46px" :body-padding-bottom="$route.meta.tabbarHidden?0:'55px'" >
+  <view-box 
+    ref="viewBox" 
+    body-padding-top="46px" 
+    :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'"
+    v-touch:swipe.right.native="swipeRight" >
     <x-header
-      :class="isGameHall?'gamehall':''"
+      :class="isGameHall ? 'gamehall' : ''"
       v-show="!$route.meta.headerHidden"
       @on-click-more="showRightMenu=true"
       :style="{
@@ -10,7 +14,7 @@
         left:'0',
         top:'0',
         'z-index':'100'
-        }"
+      }"
       slot="header"
       :right-options="{showMore: !!user.username&&isGameHall}"
       :left-options="{showBack: $route.meta.showBack || false}">
@@ -18,14 +22,14 @@
         {{$route.meta.title}}
       </div>
       <div
-        v-if="isGameHall && !showChatRoom"
+        v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="isShowGameMenu = true"
+        @click="showGameMenu = true"
         class="left-trigger">
-        <x-icon
+          <x-icon
           type="navicon"
           size="32"></x-icon>
-        {{currentGame.display_name}}
+          <a class="vux-header-name">{{headerLeftTitle}}</a> 
       </div>
       <div
         v-else-if="isGameHall && showChatRoom"
@@ -36,13 +40,6 @@
           type="ios-close-empty"
           size="32"></x-icon>
           退出聊天室
-      </div>
-      <div
-        v-else-if="$route.path === '/'"
-        slot="overwrite-left"
-        :style="{'font-size': '18px'}"
-        class="left-trigger">
-          {{systemConfig.siteName}}
       </div>
       <div
         v-if="showLinks"
@@ -65,7 +62,7 @@
           ></x-icon>
       </div>
     </x-header>
-    <router-view class="fixScroll":showChatRoom="showChatRoom" :showGameMenu="isShowGameMenu" @closeGameMenu="closeGameMenu" @showGameMenu="showGameMenu"></router-view>
+    <router-view class="fixScroll" :showChatRoom="showChatRoom" ></router-view>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
@@ -83,10 +80,10 @@
     <loading v-model="isLoading"></loading>
     <right-menu
       v-model="showRightMenu"
-      :show-links="showRightMenuLinks"
-      @handleClose="closeRightMenu" />
+      @handleClose="closeRightMenu"
+      :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    </div>
+    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
   </view-box>
 </template>
 
@@ -95,11 +92,13 @@ import './styles/fonts/icons.css'
 
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, register } from './api'
+import { getToken } from './api'
 import axios from 'axios'
-import { setIndicator, msgFormatter } from './utils'
+import { setIndicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
+import freetrial from './mixins/freetrial.js'
+import GameMenu from './components/GameMenu.vue'
 
 export default {
   name: 'app',
@@ -107,7 +106,7 @@ export default {
     return {
       showRightMenu: false,
       showChatRoom: false,
-      isShowGameMenu: false,
+      showGameMenu: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -135,6 +134,7 @@ export default {
       error: ''
     }
   },
+  mixins: [freetrial],
   watch: {
     'user.logined' (newStatus, old) {
       if (!newStatus) {
@@ -181,9 +181,19 @@ export default {
     },
     systemConfig () {
       return this.$store.state.systemConfig
+    },
+    headerLeftTitle () {
+      return this.currentGame.display_name || (this.$route.name === 'Home' ? this.systemConfig.siteName : '')
     }
   },
   methods: {
+    swipeRight () {
+      this.showGameMenu = true
+    },
+    closeMenus () {
+      this.showRightMenu = false
+      this.showGameMenu = false
+    },
     closeRightMenu () {
       this.showRightMenu = false
     },
@@ -194,25 +204,6 @@ export default {
         }
         this.$router.push(item.link)
       }
-    },
-    tryDemo () {
-      register({ account_type: 0 }).then(user => {
-        if (user.trial_auth_req === 1) {
-          this.$store.dispatch('openVerifyPopup')
-          let msg = ''
-          return Promise.reject(msg)
-        }
-        return this.$store.dispatch('login', { user })
-      }).then(result => {
-        this.$store.dispatch('fetchUser')
-      }, errorMsg => {
-        if (errorMsg) {
-          this.$vux.toast.show({
-            text: msgFormatter(errorMsg),
-            type: 'warn'
-          })
-        }
-      })
     },
     replaceToken () {
       return new Promise((resolve, reject) => {
@@ -243,13 +234,15 @@ export default {
       }, 11000)
     },
     closeGameMenu () {
-      this.isShowGameMenu = false
-    },
-    showGameMenu () {
-      this.isShowGameMenu = true
+      this.showGameMenu = false
     }
   },
   created () {
+    this.$router.afterEach((to) => {
+      this.closeMenus()
+    })
+
+    this.$store.dispatch('fetchGames')
     if (this.$cookie.get('access_token')) {
       this.$store.dispatch('fetchUser').then(() => {
       }, errRes => {
@@ -282,7 +275,8 @@ export default {
     ViewBox,
     Actionsheet,
     RightMenu,
-    TryplayPopup
+    TryplayPopup,
+    GameMenu
   }
 }
 </script>
@@ -312,17 +306,17 @@ export default {
     box-sizing: border-box;
     padding-right: 5px;
     .link {
+      margin-top: 2px;
       box-sizing: border-box;
       padding: 5px 5px;
-      height: 46px;
-      line-height: 36px;
+      height: 42px;
+      line-height: 32px;
       color: #fff;
       float: left;
       margin-left: 5px;
       .try {
         box-sizing: border-box;
-        padding: 0 5px;
-        margin: 0 -5px;
+        padding: 0 10px;
         height: 100%;
         background: #fff;
         color: #666;
@@ -361,16 +355,10 @@ export default {
     text-align: center;
     height: 46px;
     line-height: 46px;
-    width: 46px;
+    width: 36px;
     float: right;
     margin: 0;
   }
-}
-
-.vux-header.gamehall /deep/ .vux-header-left {
-  left: 8px;
-  top: 7px;
-  line-height: 100%;
 }
 
 .balance {
@@ -382,11 +370,12 @@ export default {
   max-width: 120px;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  padding-right: 15px;
+  padding-right: 20px;
   &::after {
     position: absolute;
-    right: -5px;
+    right: -2px;
     display: inline-block;
+    font-weight: bold;
     transform: rotate(90deg);
     content: '\2026';
     font-size: 16px;
@@ -394,11 +383,13 @@ export default {
   }
 }
 .left-trigger {
-  float: left;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
+  font-size: 16px;
   color: #fff;
+  .vux-x-icon {
+    margin: -6px 0 0 -5px;
+    float: left;
+    display: inline-block;
+  }
 }
 .fixScroll {
   min-height: calc(~"100% + "1px)
