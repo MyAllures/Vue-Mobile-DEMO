@@ -20,7 +20,10 @@
           </td>
           <td>
             <p class="play">{{record.play.playgroup}} - {{record.play.display_name}}</p>
-            <span class="red odds">@ {{record.odds}}</span>
+            <div class="odds">
+              <span class="red">@ {{record.odds}}</span>
+              <span>{{record.play.return_rate && record.return_amount ? `${record.play.return_rate*100}%(￥${record.return_amount})`: ''}}</span>
+            </div>
           </td>
           <td>
             <span>
