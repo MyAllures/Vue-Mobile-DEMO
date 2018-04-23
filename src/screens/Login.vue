@@ -60,134 +60,119 @@
         </flexbox-item>
       </flexbox>
     </div>
+    <tryplay-popup />
   </form>
 </template>
 
 <script>
-  import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
-  import { fetchCaptcha, register } from '../api'
-  import { msgFormatter } from '../utils'
-  const inputs = ['username', 'password']
-  export default {
-    name: 'Home',
-    data () {
-      return {
-        user: {
-          username: '',
-          password: '',
-          verification_code_0: '',
-          verification_code_1: ''
-        },
-        loading: false,
-        error: '',
-        illegalTriedLogin: false,
-        illegalTrial: false,
-        captcha_src: '',
-        validators: {
-          'username': true,
-          'password': true
-        },
-        syncTimer: null,
-        usernameDom: null,
-        passwordDom: null
-      }
-    },
-    computed: {
-      valid () {
-        return inputs.every(input => this.validators[input] === true)
-      }
-    },
-    mounted () {
-      this.usernameDom = this.$refs.username.$el.getElementsByClassName('weui-input')[0]
-      this.passwordDom = this.$refs.password.$el.getElementsByClassName('weui-input')[0]
-      this.syncTimer = setInterval(() => {
-        if (this.usernameDom.value !== this.user.username) {
-          this.user.username = this.usernameDom.value
-        }
-        if (this.passwordDom.value !== this.user.password) {
-          this.user.password = this.passwordDom.value
-        }
-      }, 500)
-    },
-    methods: {
-      handleClose () {
-        this.$store.dispatch('closeVerifyPopup')
+import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
+import { fetchCaptcha } from '../api'
+import { msgFormatter } from '../utils'
+import TryplayPopup from '../components/TryplayPopup'
+import freetrial from '../mixins/freetrial.js'
+const inputs = ['username', 'password']
+export default {
+  name: 'Home',
+  data () {
+    return {
+      user: {
+        username: '',
+        password: '',
+        verification_code_0: '',
+        verification_code_1: ''
       },
-      validate (value, input) {
-        this.validators[input] = !!value
+      loading: false,
+      error: '',
+      illegalTriedLogin: false,
+      illegalTrial: false,
+      captcha_src: '',
+      validators: {
+        'username': true,
+        'password': true
       },
-      fetchCaptcha () {
-        return fetchCaptcha().then(res => {
-          this.captcha_src = res.captcha_src
-          this.user.verification_code_0 = res.captcha_val
-        })
-      },
-      submit () {
-        this.loading = true
-        this.$nextTick(() => {
-          if (this.valid) {
-            this.$store.dispatch('login', {
-              user: this.user
-            }).then(res => {
-              this.$store.dispatch('fetchUser')
-              this.illegalTriedLogin = false
-              this.error = ''
-              this.loading = false
-              this.$router.push('/')
-            }, error => {
-              if (error.data && error.data.auth_req === 1) {
-                this.fetchCaptcha().then(res => {
-                  this.illegalTriedLogin = true
-                })
-              }
-              this.loading = false
-              this.error = msgFormatter(error)
-            })
-          }
-        })
-      },
-      tryDemo () {
-        register({ account_type: 0 }).then(user => {
-          if (user.trial_auth_req === 1) {
-            this.$store.dispatch('openVerifyPopup')
-            let msg = ''
-            return Promise.reject(msg)
-          }
-          return this.$store.dispatch('login', { user })
-        }).then(result => {
-          this.$router.push({name: 'Home'})
-          this.$store.dispatch('fetchUser')
-        }, errorMsg => {
-          if (errorMsg) {
-            this.$vux.toast.show({
-              text: msgFormatter(errorMsg),
-              type: 'warn'
-            })
-          }
-        })
-      }
-    },
-    watch: {
-      'error': function (error) {
-        if (error) {
-          setTimeout(() => {
-            this.error = ''
-          }, 3000)
-        }
-      }
-    },
-    components: {
-      XInput,
-      Group,
-      XButton,
-      Flexbox,
-      FlexboxItem
-    },
-    beforeDestroy () {
-      clearInterval(this.syncTimer)
-      this.syncTimer = null
+      syncTimer: null,
+      usernameDom: null,
+      passwordDom: null
     }
+  },
+  mixins: [freetrial],
+  computed: {
+    valid () {
+      return inputs.every(input => this.validators[input] === true)
+    }
+  },
+  mounted () {
+    this.usernameDom = this.$refs.username.$el.getElementsByClassName('weui-input')[0]
+    this.passwordDom = this.$refs.password.$el.getElementsByClassName('weui-input')[0]
+    this.syncTimer = setInterval(() => {
+      if (this.usernameDom.value !== this.user.username) {
+        this.user.username = this.usernameDom.value
+      }
+      if (this.passwordDom.value !== this.user.password) {
+        this.user.password = this.passwordDom.value
+      }
+    }, 500)
+  },
+  methods: {
+    handleClose () {
+      this.$store.dispatch('closeVerifyPopup')
+    },
+    validate (value, input) {
+      this.validators[input] = !!value
+    },
+    fetchCaptcha () {
+      return fetchCaptcha().then(res => {
+        this.captcha_src = res.captcha_src
+        this.user.verification_code_0 = res.captcha_val
+      })
+    },
+    submit () {
+      this.loading = true
+      this.$nextTick(() => {
+        if (this.valid) {
+          this.$store.dispatch('login', {
+            user: this.user
+          }).then(res => {
+            this.$store.dispatch('fetchUser')
+            this.illegalTriedLogin = false
+            this.error = ''
+            this.loading = false
+            this.$router.push('/')
+          }, error => {
+            if (error.data && error.data.auth_req === 1) {
+              this.fetchCaptcha().then(res => {
+                this.illegalTriedLogin = true
+              })
+            }
+            this.loading = false
+            this.error = msgFormatter(error)
+          })
+        }
+      })
+    }
+  },
+  watch: {
+    'error': function (error) {
+      if (error) {
+        setTimeout(() => {
+          this.error = ''
+        }, 3000)
+      }
+    }
+  },
+  components: {
+    XInput,
+    Group,
+    XButton,
+    Flexbox,
+    FlexboxItem,
+    TryplayPopup
+  },
+  beforeDestroy () {
+    clearInterval(this.syncTimer)
+    this.syncTimer = null
   }
+}
 </script>
 
 <style lang="less" scoped>

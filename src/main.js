@@ -11,6 +11,7 @@ import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
+import Vue2TouchEvents from 'vue2-touch-events'
 import qs from 'qs'
 
 let url = window.location.href
@@ -25,6 +26,7 @@ if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
 }
 
+Vue.use(Vue2TouchEvents)
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)

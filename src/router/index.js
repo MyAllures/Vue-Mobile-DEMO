@@ -89,7 +89,7 @@ export default new Router({
           path: 'bet_record/:date',
           name: 'DetailBetRecord',
           meta: {
-            title: '注單',
+            title: '投注详情',
             requiresAuth: true,
             tabbarHidden: true,
             showBack: true
@@ -100,7 +100,7 @@ export default new Router({
           path: 'bet_record',
           name: 'BetRecord',
           meta: {
-            title: '注單',
+            title: '投注记录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }

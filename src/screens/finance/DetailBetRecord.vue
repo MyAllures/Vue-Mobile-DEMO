@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="title">{{date}} 投注记录</div>
     <x-table :cell-bordered="false" class="betrecord-table">
       <thead>
         <tr class="betrecord-thead">
@@ -92,7 +93,7 @@ export default {
   methods: {
     initFetchBetHistory () {
       this.loading = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: 0, limit: this.chunkSize })
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: 0, limit: this.chunkSize })
         .then(data => {
           this.totalCount = data.count
           this.betRecords = data.results
@@ -106,7 +107,7 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: this.betRecords.length, limit: 10 }).then(data => {
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
         this.loadingMore = false
@@ -119,8 +120,8 @@ export default {
     }
   },
   computed: {
-    getDate () {
-      return this.$route.path.split('/').pop()
+    date () {
+      return this.$route.params.date
     }
   },
   filters: {
@@ -135,6 +136,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.title {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+}
 .betrecord-table {
   margin-top: 10px;
   background-color: #fff;
