@@ -119,11 +119,6 @@
       handleClose () {
         this.$emit('handleClose')
       }
-    },
-    watch: {
-      'value': function () {
-        this.$store.dispatch('fetchUser')
-      }
     }
   }
 </script>
