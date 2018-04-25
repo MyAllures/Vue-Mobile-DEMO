@@ -30,15 +30,10 @@
               ￥{{record.bet_amount}}
             </span>
           </td>
-          <td v-if="!record.remarks">
-            <span :class="statusColor(record.profit)">
-              {{record.profit | profitFilter | currency('￥')}}
-            </span>
-          </td>
-          <td v-else>
-            <span>
-              {{record.remarks}}
-              <!-- if status of betrecord is 'no_draw' or 'canclled', the field remarks will show status -->
+          <td>
+            <span v-if="record.profit===null">{{record.remarks | statusFilter}}</span>
+            <span v-else :class="statusColor(record.profit)">
+              {{record.profit | currency('￥')}}
             </span>
           </td>
         </tr>
@@ -69,6 +64,17 @@ import { msgFormatter } from '../../utils'
 
 export default {
   name: 'DetailBetRecord',
+  filters: {
+    statusFilter (value) {
+      if (value === 'no_draw') {
+        return '官方未开'
+      } else if (value === 'cancelled') {
+        return '已取消'
+      } else {
+        return '未结'
+      }
+    }
+  },
   data () {
     return {
       betRecords: [],
@@ -124,11 +130,6 @@ export default {
   computed: {
     getDate () {
       return this.$route.path.split('/').pop()
-    }
-  },
-  filters: {
-    profitFilter (val) {
-      return val && typeof val === 'number' ? val.toFixed(2) : 0
     }
   },
   created () {
