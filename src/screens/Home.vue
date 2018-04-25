@@ -58,12 +58,15 @@
         </div>
       </a>
       <a class="weui-grid" @click="tryDemo" >
-        <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/icon_try.png" alt="trial" class="game-icon">
+        <div  v-if="!$store.state.user.logined">
+          <div class="weui-grid__icon"  >
+            <img slot="icon" src="../assets/icon_try.png" alt="trial" class="game-icon">
+          </div>
+          <div class="weui-grid__label">
+            <span>免费试玩</span>
+          </div>
         </div>
-        <div class="weui-grid__label">
-          <span>免费试玩</span>
-        </div>
+        <div class="grid-placeholder" v-else></div>
       </a>
     </grid>
     <div class="game-loading" v-else>
@@ -207,6 +210,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.grid-placeholder {
+  height: 89px;
+}
 .announcement {
   height: 36px;
   background: #fff;
