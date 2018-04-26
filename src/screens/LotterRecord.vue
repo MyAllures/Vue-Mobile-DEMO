@@ -818,19 +818,19 @@ export default {
   height: calc(~"100%" - 46px);
   overflow: auto;
   border-collapse: collapse;
-  .row, .condition {
+  .condition {
     display: inline-block;
+    box-sizing: border-box;
     width: 100%;
+    padding: 10px;
   }
   .row {
+    display: flex;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
   }
-  .condition {
-    box-sizing: border-box;
-    padding: 10px;
-  }
 }
+
 .results {
   overflow: hidden;
 }
@@ -940,10 +940,10 @@ export default {
 
 .show-time {
   box-sizing: border-box;
-  display: inline-block;
-  width: 110px;
+  flex: 0 0 100px;
+  width: auto;
   height: 50px;
-  padding: 0px 10px;
+  padding: 0px 5px;
   border-right: 1px solid #dcd9d9;
 }
 .periods-number {
@@ -962,8 +962,7 @@ export default {
   font-size: 13px;
 }
 .show-count {
-  display: inline-block;
-  width: calc(~"100%" - 130px);
+  flex: 1 0 auto;
   height: 50px;
 }
 .lottery-result {
