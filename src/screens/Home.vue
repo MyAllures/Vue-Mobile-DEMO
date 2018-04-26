@@ -26,11 +26,13 @@
         </marquee>
       </flexbox-item>
     </flexbox>
-    <flexbox-item v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
-      <div class="register-money">
-        现在注册立领{{systemConfig.regPresentAmount|currency('￥')}}红包
-      </div>
-    </flexbox-item>
+    <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
+      <cell
+        is-link
+        link="/register">
+        <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥')}}红包</div>
+      </cell>
+    </group>
     <flexbox-item>
       <div class="game-title">
         <h3 class="title">热门游戏</h3>
@@ -131,7 +133,9 @@ import {
   FlexboxItem,
   InlineLoading,
   Masker,
-  Alert
+  Alert,
+  Group,
+  Cell
 } from 'vux'
 import { mapGetters, mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
@@ -208,7 +212,9 @@ export default {
     Grid,
     GridItem,
     InlineLoading,
-    TryplayPopup
+    TryplayPopup,
+    Group,
+    Cell
   }
 }
 </script>
@@ -268,13 +274,11 @@ export default {
   }
 }
 .register-money {
-  width: 100%;
-  height: 36px;
-  line-height: 36px;
-  margin-top: 10px;
+  /deep/ .weui-cells.vux-no-group-title {
+    margin-top: 10px;
+  }
   color: @red;
   text-align: center;
-  background: #fff;
 }
 .game-title {
   display: flex;
