@@ -31,7 +31,7 @@
           <td>
             <div>
               <span :class="['profit-text', statusColor(record.profit)]">
-                {{record.profit | profitFilter | currency('￥')}}
+                {{record.profit | currency('￥')}}
               </span>
               <i class="arrow-right icon"></i>
             </div>
@@ -124,11 +124,6 @@ export default {
   filters: {
     dateFilter (value) {
       return dateFormat(new Date(value), 'YYYY-MM-DD')
-    },
-    profitFilter (val) {
-      if (val && typeof val === 'number') {
-        return val.toFixed(2)
-      }
     }
   },
   created () {
