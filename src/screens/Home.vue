@@ -26,6 +26,11 @@
         </marquee>
       </flexbox-item>
     </flexbox>
+    <flexbox-item v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
+      <div class="register-money">
+        现在注册立领{{systemConfig.regPresentAmount|currency('￥')}}红包
+      </div>
+    </flexbox-item>
     <flexbox-item>
       <div class="game-title">
         <h3 class="title">热门游戏</h3>
@@ -128,13 +133,12 @@ import {
   Masker,
   Alert
 } from 'vux'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
 import freetrial from '../mixins/freetrial.js'
-
 export default {
   name: 'Home',
   data () {
@@ -153,9 +157,9 @@ export default {
     ...mapGetters([
       'allGames'
     ]),
-    systemConfig () {
-      return this.$store.state.systemConfig
-    }
+    ...mapState([
+      'user', 'systemConfig'
+    ])
   },
   created () {
     fetchBanner()
@@ -210,6 +214,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import '../styles/vars.less';
 .grid-placeholder {
   height: 89px;
 }
@@ -262,7 +267,15 @@ export default {
     font-size: 16px;
   }
 }
-
+.register-money {
+  width: 100%;
+  height: 36px;
+  line-height: 36px;
+  margin-top: 10px;
+  color: @red;
+  text-align: center;
+  background: #fff;
+}
 .game-title {
   display: flex;
   justify-content: space-between;

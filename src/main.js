@@ -139,7 +139,8 @@ gethomePage().then(
         openAccountConsultingQQ: pref.open_account_consulting_qq,
         chatroomEnabled: pref.chatroom_enabled,
         siteName: response.name,
-        gaTrackingId: pref.ga_tracking_id
+        gaTrackingId: pref.ga_tracking_id,
+        regPresentAmount: response.reg_present_amount
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')

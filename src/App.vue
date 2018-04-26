@@ -323,13 +323,6 @@ export default {
       }
     }
   }
-  @media screen and (max-width: 320px) {
-    .actions {
-      .link {
-
-      }
-    }
-  }
 }
 
 .vux-header /deep/ .vux-header-right{
