@@ -26,7 +26,8 @@ export function createStore () {
           send_chat_conditions: '{}'
         },
         chatroomEnabled: 'false',
-        isAllowNewPaymentWindow: 'false'
+        isAllowNewPaymentWindow: 'false',
+        regPresentAmount: undefined
       },
       customPlayGroups: [
         {

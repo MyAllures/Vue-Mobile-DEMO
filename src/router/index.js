@@ -86,6 +86,15 @@ export default new Router({
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
         {
+          path: 'promotion_record',
+          name: 'PromotionRecord',
+          meta: {
+            title: '优惠和红包',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+        },
+        {
           path: 'bet_record/:date',
           name: 'DetailBetRecord',
           meta: {

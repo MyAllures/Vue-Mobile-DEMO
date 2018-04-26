@@ -133,10 +133,13 @@ export default {
   },
   computed: {
     transactionType () {
-      if (this.$route.name === 'PaymentRecord') {
+      const routeName = this.$route.name
+      if (routeName === 'PaymentRecord') {
         return 'online_pay,remit'
-      } else {
+      } else if (routeName === 'WithdrawRecord') {
         return 'withdraw'
+      } else {
+        return 'discount'
       }
     }
   },

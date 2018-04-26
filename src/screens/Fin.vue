@@ -27,6 +27,9 @@ const tabs = [{
 }, {
   label: '取款记录',
   name: 'WithdrawRecord'
+}, {
+  label: '优惠和红包',
+  name: 'PromotionRecord'
 }]
 export default {
   name: 'Home',
