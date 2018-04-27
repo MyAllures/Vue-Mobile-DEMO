@@ -10,7 +10,7 @@ export static_container=static
 # Needed to avoid piling up of data in image and Azure file storage
 rm -rf dist
 
-npm install
+npm install -f
 npm run build
 
 # Take note that the format URL for the storage account is {env}/{storage-url}/{blob-container} and $root is the only way to avoid the "blob container" format and the other static holders need to be declared as blobs to maintain the folder structure
