@@ -41,9 +41,9 @@
           <x-input
             class="weui-vcode"
             keyboard="number"
-            type="number"
             placeholder="金额"
-            v-model.number="amount"
+            v-model="amount"
+            @on-change="inputAomunt"
             label-width="100px"
             :show-clear="false">
           </x-input>
@@ -140,7 +140,7 @@ export default {
       },
       currentPlays: [],
       dialogVisible: false,
-      amount: parseInt(localStorage.getItem('amount')) || 1,
+      amount: localStorage.getItem('amount') || '10',
       validPlays: [],
       activePlays: [],
       playReset: false,
@@ -202,6 +202,12 @@ export default {
     this.init()
   },
   methods: {
+    inputAomunt (val) {
+      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
+      this.$nextTick(() => {
+        this.amount = formatted
+      })
+    },
     init () {
       this.updateSchedule()
       this.$store.dispatch('fetchCategories', this.gameId).then(res => {

@@ -26,30 +26,59 @@
         </marquee>
       </flexbox-item>
     </flexbox>
+    <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
+      <cell
+        is-link
+        link="/register">
+        <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
+      </cell>
+    </group>
     <flexbox-item>
       <div class="game-title">
         <h3 class="title">热门游戏</h3>
         <router-link class="more" to="/game" @click.native="$emit('showGameMenu')">更多游戏<i class="arrow-right"></i></router-link>
       </div>
     </flexbox-item>
-    <grid :cols="3">
+    <grid :cols="3" v-if="allGames.length">
       <grid-item
         @click.native="chooseGame(game.id)"
-        v-for="(game, index) in games"
+        v-for="(game, index) in allGames"
         :key="'game' + index"
-        v-if="index < 11">
+        v-if="index < game_count">
         <img slot="icon" :src="game.icon" class="game-icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
-      <a href="#" class="weui-grid" @click="openPClink()" v-if="games.length">
+      <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" @click="openPClink()" v-if="systemConfig.customerServiceUrl">
         <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/icon_pc.png" alt="PC" class="game-icon">
+          <img slot="icon" src="../assets/icon_cs.png" alt="custom service" class="game-icon">
+        </div>
+        <div class="weui-grid__label">
+          <span>联系客服</span>
+        </div>
+      </a>
+      <a class="weui-grid" @click="openPClink" >
+        <div class="weui-grid__icon">
+          <img slot="icon" src="../assets/icon_desktop.png" alt="desktop" class="game-icon" >
         </div>
         <div class="weui-grid__label">
           <span>电脑版</span>
         </div>
       </a>
+      <a class="weui-grid" @click="tryDemo" >
+        <div  v-if="!$store.state.user.logined">
+          <div class="weui-grid__icon"  >
+            <img slot="icon" src="../assets/icon_try.png" alt="trial" class="game-icon">
+          </div>
+          <div class="weui-grid__label">
+            <span>免费试玩</span>
+          </div>
+        </div>
+        <div class="grid-placeholder" v-else></div>
+      </a>
     </grid>
+    <div class="game-loading" v-else>
+      <InlineLoading  />
+    </div>
     <div v-if="promotions.length > 0" class="activity">
       <flexbox>
         <flexbox-item>
@@ -86,6 +115,7 @@
         </swiper-item>
       </swiper>
     </x-dialog>
+    <tryplay-popup />
   </div>
 </template>
 
@@ -101,12 +131,18 @@ import {
   XDialog,
   Flexbox,
   FlexboxItem,
+  InlineLoading,
   Masker,
-  Alert
+  Alert,
+  Group,
+  Cell
 } from 'vux'
-import { fetchBanner, fetchAnnouncements, fetchGames, getPromotions } from '../api'
+import { mapGetters, mapState } from 'vuex'
+import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
+import TryplayPopup from '../components/TryplayPopup'
+import freetrial from '../mixins/freetrial.js'
 export default {
   name: 'Home',
   data () {
@@ -114,11 +150,20 @@ export default {
       banners: [],
       announcements: [],
       showDialog: false,
-      games: [],
+      game_count: 15,
       showpromoPopup: false,
       promotions: [],
       today: this.$moment()
     }
+  },
+  mixins: [freetrial],
+  computed: {
+    ...mapGetters([
+      'allGames'
+    ]),
+    ...mapState([
+      'user', 'systemConfig'
+    ])
   },
   created () {
     fetchBanner()
@@ -135,9 +180,6 @@ export default {
       .then(res => {
         this.announcements = res
       })
-    fetchGames().then(response => {
-      this.games = response
-    })
     getPromotions().then(response => {
       this.promotions = response.filter(item => item.image_mobile && this.today.isBetween(item.start_date, item.end_date, 'day', '[]'))
     })
@@ -168,12 +210,20 @@ export default {
     Alert,
     Card,
     Grid,
-    GridItem
+    GridItem,
+    InlineLoading,
+    TryplayPopup,
+    Group,
+    Cell
   }
 }
 </script>
 
 <style scoped lang="less">
+@import '../styles/vars.less';
+.grid-placeholder {
+  height: 89px;
+}
 .announcement {
   height: 36px;
   background: #fff;
@@ -223,7 +273,13 @@ export default {
     font-size: 16px;
   }
 }
-
+.register-money {
+  /deep/ .weui-cells.vux-no-group-title {
+    margin-top: 10px;
+  }
+  color: @red;
+  text-align: center;
+}
 .game-title {
   display: flex;
   justify-content: space-between;
@@ -276,7 +332,11 @@ export default {
     }
   }
 }
-
+.game-loading {
+  text-align: center;
+  background: #fff;
+  padding: 100px 0;
+}
 .game-icon {
   border-radius: 10px;
 }

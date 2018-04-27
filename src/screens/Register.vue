@@ -2,6 +2,11 @@
   <div>
     <form class="container" autocomplete="off">
     <group>
+      <cell-box v-if="parseInt(systemConfig.regPresentAmount)">
+        <div class="register-money">
+          现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
+        </div>
+      </cell-box>
       <div v-if="showInputErrors.length">
         <ul slot="after-title" class="input-errors">
           <li class="text" v-for="(error, index) in showInputErrors" :key="index">
@@ -38,6 +43,7 @@
         type="password"
         @on-blur="validate($event, 'confirmation_password')"
         ref="confirmation_password"
+        placeholder="再次输入密码"
         autocomplete="off"
         :title="$t('misc.confirm_password')"
         label-width="100"
@@ -46,6 +52,7 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['real_name']}"
         show-clear
+        placeholder="用于取款"
         @on-blur="validate($event, 'real_name')"
         ref="real_name"
         :title="$t('misc.real_name')"
@@ -78,6 +85,7 @@
         autocomplete="off"
         type="password"
         :title="$t('misc.withdraw_password')"
+        placeholder="6位数字，用于取款"
         label-width="100"
         v-model="user.withdraw_password">
       </x-input>
@@ -135,10 +143,24 @@
 <script>
   import { fetchCaptcha, checkUserName, register } from '../api'
   import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
-  import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, Cell, Popup, CheckIcon, TransferDom } from 'vux'
-
+  import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, CellBox, Popup, CheckIcon, TransferDom } from 'vux'
+  import { mapState } from 'vuex'
 export default {
     name: 'Register',
+    components: {
+      XInput,
+      Group,
+      XButton,
+      Flexbox,
+      FlexboxItem,
+      Selector,
+      CellBox,
+      Popup,
+      CheckIcon
+    },
+    directives: {
+      TransferDom
+    },
     data () {
       const usernameValidator = (value, type) => {
         return new Promise((resolve, reject) => {
@@ -280,6 +302,40 @@ export default {
         error: ''
       }
     },
+    computed: {
+      ...mapState([
+        'systemConfig'
+      ]),
+      nextStepDisabled () {
+        if (this.user.username && this.user.password && this.user.confirmation_password) {
+          let usernameValid = this.$refs.username.valid
+          let passwordValid = this.$refs.password.valid && this.$refs.confirmation_password.valid
+
+          return !(usernameValid && passwordValid)
+        } else {
+          return true
+        }
+      },
+      showInputErrors () {
+        const keys = Object.keys(this.inputErrors)
+        const errors = []
+        keys.forEach(key => {
+          const msg = this.inputErrors[key]
+          if (msg) {
+            errors.push(msg)
+          }
+        })
+        return errors
+      }
+    },
+    watch: {
+      'user.hasAgree': function (hasAgree) {
+        this.validate(hasAgree, 'hasAgree')
+      }
+    },
+    created () {
+      this.fetchCaptcha()
+    },
     methods: {
       validate (value, input) {
         let currentValue = value || this.user[input]
@@ -342,56 +398,12 @@ export default {
           }
         })
       }
-    },
-    computed: {
-      nextStepDisabled () {
-        if (this.user.username && this.user.password && this.user.confirmation_password) {
-          let usernameValid = this.$refs.username.valid
-          let passwordValid = this.$refs.password.valid && this.$refs.confirmation_password.valid
-
-          return !(usernameValid && passwordValid)
-        } else {
-          return true
-        }
-      },
-      showInputErrors () {
-        const keys = Object.keys(this.inputErrors)
-        const errors = []
-        keys.forEach(key => {
-          const msg = this.inputErrors[key]
-          if (msg) {
-            errors.push(msg)
-          }
-        })
-        return errors
-      }
-    },
-    watch: {
-      'user.hasAgree': function (hasAgree) {
-        this.validate(hasAgree, 'hasAgree')
-      }
-    },
-    created () {
-      this.fetchCaptcha()
-    },
-    components: {
-      XInput,
-      Group,
-      XButton,
-      Flexbox,
-      FlexboxItem,
-      Selector,
-      Cell,
-      Popup,
-      CheckIcon
-    },
-    directives: {
-      TransferDom
     }
   }
 </script>
 
 <style lang="less" scoped>
+@import '../styles/vars.less';
 .error {
   color: #ff9800;
   text-align: center;
@@ -445,5 +457,12 @@ export default {
 .agreement {
   color: #4a4a4a;
   padding: 1em;
+}
+
+.register-money {
+  width: 100%;
+  color: @red;
+  text-align: center;
+  background: #fff;
 }
 </style>

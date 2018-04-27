@@ -8,6 +8,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
@@ -50,6 +52,19 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true
     }),
+    new FaviconsWebpackPlugin({
+      logo: './src/assets/favicon.png',
+      icons: {
+        android: false,
+        appleIcon: false,
+        appleStartup: false,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        windows: false,
+        yandex: false
+      }
+    })
   ]
 })
 

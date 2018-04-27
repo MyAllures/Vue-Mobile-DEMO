@@ -40,10 +40,8 @@ export default {
   logout: ({ commit, state }) => {
     return logout().then(
       res => {
-        router.push('/')
-        Vue.cookie.delete('access_token')
-        Vue.cookie.delete('refresh_token')
         commit(types.RESET_USER)
+        router.push('/')
       },
       errRes => Promise.reject(errRes)
     )

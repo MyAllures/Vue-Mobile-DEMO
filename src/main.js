@@ -11,6 +11,7 @@ import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
+import Vue2TouchEvents from 'vue2-touch-events'
 import qs from 'qs'
 
 let url = window.location.href
@@ -25,6 +26,7 @@ if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
 }
 
+Vue.use(Vue2TouchEvents)
 Vue.use(require('vue-moment'))
 Vue.use(Vue2Filters)
 Vue.use(VueI18n)
@@ -137,7 +139,8 @@ gethomePage().then(
         openAccountConsultingQQ: pref.open_account_consulting_qq,
         chatroomEnabled: pref.chatroom_enabled,
         siteName: response.name,
-        gaTrackingId: pref.ga_tracking_id
+        gaTrackingId: pref.ga_tracking_id,
+        regPresentAmount: response.reg_present_amount
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
@@ -146,6 +149,14 @@ gethomePage().then(
       ga.src = `https://www.googletagmanager.com/gtag/js?id=${pref.ga_tracking_id}`
       const s = document.getElementsByTagName('script')[0]
       s.parentNode.insertBefore(ga, s)
+    }
+    if (pref.script_content) {
+      const dynamicScript = document.createElement('script')
+      dynamicScript.type = 'text/javascript'
+      dynamicScript.async = true
+      dynamicScript.text = `try{${pref.script_content}}catch(e){console.log(e)}`
+      const s = document.getElementsByTagName('script')[0]
+      s.parentNode.insertBefore(dynamicScript, s)
     }
   }
 )

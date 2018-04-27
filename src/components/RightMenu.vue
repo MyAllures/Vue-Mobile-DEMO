@@ -1,7 +1,7 @@
 <template>
   <popup :value="value" position="right" @on-hide="handleClose" class="popup" v-transfer-dom width="180px">
     <group class="head">
-      <cell :title="$t('profile.username')" :border-intent="false">
+      <cell title="账号" :border-intent="false" :link="'/my'">
         <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
       </cell>
       <cell :title="$t('my.balance')" :border-intent="false">
@@ -118,11 +118,6 @@
       },
       handleClose () {
         this.$emit('handleClose')
-      }
-    },
-    watch: {
-      'value': function () {
-        this.$store.dispatch('fetchUser')
       }
     }
   }

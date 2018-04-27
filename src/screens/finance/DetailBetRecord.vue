@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="title">{{date}} 投注记录</div>
     <x-table :cell-bordered="false" class="betrecord-table">
       <thead>
         <tr class="betrecord-thead">
@@ -30,15 +31,10 @@
               ￥{{record.bet_amount}}
             </span>
           </td>
-          <td v-if="!record.remarks">
-            <span :class="statusColor(record.profit)">
-              {{record.profit | profitFilter | currency('￥')}}
-            </span>
-          </td>
-          <td v-else>
-            <span>
-              {{record.remarks}}
-              <!-- if status of betrecord is 'no_draw' or 'canclled', the field remarks will show status -->
+          <td>
+            <span v-if="record.profit===null">{{record.remarks | statusFilter}}</span>
+            <span v-else :class="statusColor(record.profit)">
+              {{record.profit | currency('￥')}}
             </span>
           </td>
         </tr>
@@ -69,6 +65,17 @@ import { msgFormatter } from '../../utils'
 
 export default {
   name: 'DetailBetRecord',
+  filters: {
+    statusFilter (value) {
+      if (value === 'no_draw') {
+        return '官方未开'
+      } else if (value === 'cancelled') {
+        return '已取消'
+      } else {
+        return '未结'
+      }
+    }
+  },
   data () {
     return {
       betRecords: [],
@@ -95,7 +102,7 @@ export default {
   methods: {
     initFetchBetHistory () {
       this.loading = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: 0, limit: this.chunkSize })
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: 0, limit: this.chunkSize })
         .then(data => {
           this.totalCount = data.count
           this.betRecords = data.results
@@ -109,7 +116,7 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.getDate, offset: this.betRecords.length, limit: 10 }).then(data => {
+      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
         this.loadingMore = false
@@ -122,13 +129,8 @@ export default {
     }
   },
   computed: {
-    getDate () {
-      return this.$route.path.split('/').pop()
-    }
-  },
-  filters: {
-    profitFilter (val) {
-      return val && typeof val === 'number' ? val.toFixed(2) : 0
+    date () {
+      return this.$route.params.date
     }
   },
   created () {
@@ -138,6 +140,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.title {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+  color: #666;
+}
 .betrecord-table {
   margin-top: 10px;
   background-color: #fff;

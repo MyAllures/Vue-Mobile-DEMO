@@ -1,6 +1,6 @@
 <template>
   <div class="chat-box" id="chatBox">
-    <p class="login-info" v-if="chatLoading">聊天室登陆中...</p>
+    <p class="login-info" v-if="chatLoading">聊天室登录中...</p>
     <div class="chat-container" v-else>
 
     <div class="chat-body">
@@ -351,7 +351,7 @@ export default {
   top: 5px;
   margin: 0 5px;
   background: rgba(237,244,254,.9);
-  border: 1px solid #0a0d13;
+  border: 1px solid #cdcdce;
   border-radius: 5px;
   padding-right: 10px;
   height: 29px;
