@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
@@ -120,7 +121,20 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new FaviconsWebpackPlugin({
+      logo: './src/assets/favicon.png',
+      icons: {
+        android: true,
+        appleIcon: true,
+        appleStartup: true,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        windows: false,
+        yandex: false
+      }
+    })
   ]
 })
 
