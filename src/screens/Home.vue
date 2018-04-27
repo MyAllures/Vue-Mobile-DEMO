@@ -48,7 +48,7 @@
         <img slot="icon" :src="game.icon" class="game-icon">
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
-      <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" @click="openPClink()" v-if="systemConfig.customerServiceUrl">
+      <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
         <div class="weui-grid__icon">
           <img slot="icon" src="../assets/icon_cs.png" alt="custom service" class="game-icon">
         </div>
