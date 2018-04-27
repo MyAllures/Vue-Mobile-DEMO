@@ -4,7 +4,7 @@
     <group>
       <cell-box v-if="parseInt(systemConfig.regPresentAmount)">
         <div class="register-money">
-          现在注册立领{{systemConfig.regPresentAmount|currency('￥')}}红包
+          现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
         </div>
       </cell-box>
       <div v-if="showInputErrors.length">

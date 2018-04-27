@@ -30,7 +30,7 @@
       <cell
         is-link
         link="/register">
-        <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥')}}红包</div>
+        <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
       </cell>
     </group>
     <flexbox-item>
