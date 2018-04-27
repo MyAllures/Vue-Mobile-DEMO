@@ -124,6 +124,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]),
     new FaviconsWebpackPlugin({
       logo: './src/assets/favicon.png',
+      prefix: 'static/icons-[hash]/',
       icons: {
         android: true,
         appleIcon: true,
