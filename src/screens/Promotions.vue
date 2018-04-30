@@ -31,7 +31,7 @@ export default {
   },
   created () {
     getPromotions().then(response => {
-      this.promotions = response.filter(item => item.image_mobile && this.today.isBetween(item.start_date, item.end_date, 'day', '[]'))
+      this.promotions = response.filter(item => item.image_mobile)
     })
   },
   components: {
