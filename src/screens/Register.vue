@@ -393,7 +393,7 @@ export default {
               this.$store.dispatch('fetchUser')
             }, errorMsg => {
               this.fetchCaptcha()
-              this.error = msgFormatter(errorMsg.msg)
+              this.error = msgFormatter(errorMsg)
             })
           }
         })
