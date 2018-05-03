@@ -123,19 +123,20 @@ export default {
 
       let oldIssue = this.gameLatestResult.issue_number
       this.timer = setTimeout(() => {
-        this.loading = true
         clearInterval(this.interval)
         this.interval = setInterval(() => {
           this.fetchResult(gameid).then(result => {
             if (!result || !result[0]) {
               clearInterval(this.interval)
             }
-
             let newIssue = result[0].issue_number
             if (newIssue !== oldIssue) {
               clearInterval(this.interval)
               clearInterval(this.timer)
-              this.loading = false
+              this.loading = true
+              setTimeout(() => {
+                this.loading = false
+              }, 3000)
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
