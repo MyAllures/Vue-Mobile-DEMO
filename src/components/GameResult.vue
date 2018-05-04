@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{gameLatestResult.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameLatestResult.game_code]" v-if="gameLatestResult">
+    <div :class="['balls-number', 'wrapper-' + gameLatestResult.game_code]" v-if="gameLatestResult&&!loading">
       <div v-if="invalid">官方开奖无效</div>
       <span
         v-else
@@ -18,11 +18,13 @@
         </span>
       </div>
     </div>
+    <game-result-animate v-else-if="gameLatestResult" :gameCode="gameLatestResult.game_code" :resultNums="resultNums" />
   </div>
 </template>
 
 <script>
 import {fetchGameResult} from '../api'
+import GameResultAnimate from './GameResultAnimate'
 import _ from 'lodash'
 
 export default {
@@ -31,6 +33,9 @@ export default {
       type: String
     }
   },
+  components: {
+    GameResultAnimate
+  },
   data () {
     return {
       gameLatestResult: '',
@@ -38,7 +43,8 @@ export default {
       zodiacs: '',
       showZodiac: false,
       showSum: false,
-      invalid: false
+      invalid: false,
+      loading: false
     }
   },
   created () {
@@ -123,11 +129,14 @@ export default {
             if (!result || !result[0]) {
               clearInterval(this.interval)
             }
-
             let newIssue = result[0].issue_number
             if (newIssue !== oldIssue) {
               clearInterval(this.interval)
               clearInterval(this.timer)
+              this.loading = true
+              setTimeout(() => {
+                this.loading = false
+              }, 3000)
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
