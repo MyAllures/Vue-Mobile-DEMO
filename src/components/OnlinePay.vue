@@ -58,11 +58,15 @@
 </template>
 <script>
 import {Tab, TabItem, Group, XInput, XButton, Spinner, Radio} from 'vux'
-import { getOnlinepayees } from '../api'
 import Vue from 'vue'
 import urls from '../api/urls'
 export default {
   name: 'OnlinePay',
+  props: {
+    onlinepayees: {
+      type: Array
+    }
+  },
   components: {
     Tab,
     TabItem,
@@ -78,7 +82,6 @@ export default {
         display_name: '',
         detail: [{name: ''}]
       },
-      onlinepayees: [],
       currentPay: {
         'type_id': '',
         'payee_id': '',
@@ -140,7 +143,7 @@ export default {
     }
   },
   created () {
-    this.getOnlinepayees()
+    this.toggleTab(this.onlinepayees[0])
   },
   methods: {
     toggleTab (payee) {
@@ -223,23 +226,6 @@ export default {
       }
       this.validateErrors()
       return amount.valid
-    },
-    formatOnlinepayees (onlinepayees) {
-      let arr = onlinepayees.filter(function (item, index, arr) {
-        return item.detail.length
-      })
-      return arr
-    },
-    getOnlinepayees () {
-      getOnlinepayees().then(response => {
-        if (response) {
-          this.onlinepayees = this.formatOnlinepayees(response)
-          let _this = this
-          setTimeout(() => {
-            _this.toggleTab(this.onlinepayees[0])
-          }, 100)
-        }
-      })
     },
     submit (e) {
       if (this.validateAll()) {
