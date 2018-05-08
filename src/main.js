@@ -1,3 +1,6 @@
+// polyfill for older browsers like: Safari 8
+// eslint-disable-next-line
+import "babel-polyfill"
 import Vue from 'vue'
 import axios from 'axios'
 import App from './App'
