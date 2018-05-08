@@ -1,7 +1,7 @@
 <template>
-  <view-box 
-    ref="viewBox" 
-    body-padding-top="46px" 
+  <view-box
+    ref="viewBox"
+    body-padding-top="46px"
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'"
     v-touch:swipe.right.native="swipeRight" >
     <x-header
@@ -29,7 +29,7 @@
           <x-icon
           type="navicon"
           size="32"></x-icon>
-          <a class="vux-header-name">{{headerLeftTitle}}</a> 
+          <a class="vux-header-name">{{headerLeftTitle}}</a>
       </div>
       <div
         v-else-if="isGameHall && showChatRoom"
@@ -69,9 +69,9 @@
       class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
+        :selected="selectedTab===menu.name"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :selected="`/${$route.path.split('/')[1]}` === menu.link || $route.path === menu.link"
         :key="'tabbar' + index">
         <i :class="menu.icon" slot="icon"></i>
         <span slot="label">{{menu.label}}</span>
@@ -111,22 +111,32 @@ export default {
         label: this.$t('home.name'),
         icon: 'icon-home',
         link: '/',
-        route: 'Home'
+        route: 'Home',
+        name: 'home'
       }, {
         label: this.$t('game.name'),
         icon: 'icon-list',
         link: '/game',
-        route: 'Game'
+        route: 'Game',
+        name: 'game'
+      }, {
+        label: this.$t('deposit.process'),
+        icon: 'icon-bank',
+        link: '/my/deposit',
+        route: 'Deposit',
+        name: 'deposit'
       }, {
         label: this.$t('fin.name'),
         icon: 'icon-fin',
         link: '/fin/bet_record',
-        route: 'Fin'
+        route: 'Fin',
+        name: 'fin'
       }, {
         label: this.$t('my.name'),
         icon: 'icon-my',
         link: '/my',
         route: 'My',
+        name: 'my',
         unreadBadge: true
       }],
       logo: '',
@@ -184,6 +194,16 @@ export default {
     },
     headerLeftTitle () {
       return this.currentGame.display_name || (this.$route.name === 'Home' ? this.systemConfig.siteName : '')
+    },
+    selectedTab () {
+      const path = this.$route.path
+      if (path === '/') {
+        return 'home'
+      }
+      if (path === '/my/deposit') {
+        return 'deposit'
+      }
+      return path.split('/')[1]
     }
   },
   methods: {

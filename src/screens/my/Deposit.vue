@@ -1,21 +1,30 @@
 <template>
   <div>
-    <button-tab v-if="onlinepayees.length">
+    <button-tab v-if="onlinepayees.length&&user.account_type">
       <button-tab-item selected @on-item-click="switchView(onlinePayComponent)">在线存款</button-tab-item>
       <button-tab-item @on-item-click="switchView(remitComponent)">公司入款</button-tab-item>
     </button-tab>
     <div class="divide"></div>
-    <transition name="component-fade" mode="out-in">
+    <transition v-if="user.account_type" name="component-fade" mode="out-in">
       <component v-if="!loading" :is="view" :onlinepayees="onlinepayees"></component>
     </transition>
+    <div v-else>
+      <div class="text-center text-danger text">请先注册</div>
+      <div class="m-a text-center">
+        <x-button type="primary" @click.native="$router.push('/register')">
+          立即注册
+        </x-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { ButtonTab, ButtonTabItem } from 'vux'
+import { ButtonTab, ButtonTabItem, XButton } from 'vux'
 import Remit from '../../components/Remit.vue'
 import OnlinePay from '../../components/OnlinePay.vue'
 import { getOnlinepayees } from '../../api'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -30,7 +39,13 @@ export default {
     ButtonTab,
     ButtonTabItem,
     Remit,
-    OnlinePay
+    OnlinePay,
+    XButton
+  },
+  computed: {
+    ...mapState([
+      'user'
+    ])
   },
   created () {
     getOnlinepayees().then(response => {
@@ -65,5 +80,8 @@ export default {
 	.vux-button-group{
 		padding: 15px 40px;
 		border-bottom: 1px solid #ccc;
-	}
+  }
+  .text {
+    margin-top: 50px;
+  }
 </style>

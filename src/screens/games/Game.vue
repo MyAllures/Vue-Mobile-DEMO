@@ -92,7 +92,7 @@
         </flexbox>
       </div>
     </popup>
-    <toast v-model="showMessage" :type="msgType" :time="2000" :position="'middle'">{{errors||'成功下单'}}</toast>
+    <toast v-model="showMessage" :type="msgType" :time="5000" :position="'middle'">{{errors||'成功下单'}}</toast>
   </div>
 </template>
 
@@ -102,6 +102,7 @@ import { mapGetters } from 'vuex'
 import { fetchSchedule, placeBet } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
+import { msgFormatter } from '../../utils'
 import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox } from 'vux'
 export default {
   name: 'Game',
@@ -334,7 +335,7 @@ export default {
           }
         },
         errRes => {
-          this.errors = errRes.join()
+          this.errors = msgFormatter(errRes)
           setTimeout(() => {
             this.showMessage = true
             this.loading = false
