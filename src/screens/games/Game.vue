@@ -92,7 +92,7 @@
         </flexbox>
       </div>
     </popup>
-    <toast v-model="showMessage" :type="msgType" :time="2000" :position="'middle'">{{errors||'成功下单'}}</toast>
+    <toast v-model="showMessage" :type="msgType" :time="5000" :position="'middle'">{{errors||'成功下单'}}</toast>
   </div>
 </template>
 
