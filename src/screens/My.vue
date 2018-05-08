@@ -25,7 +25,7 @@
         @click.native="$router.push('/my/bankinfo')"
         :title="$t('misc.bank')"
         is-link>
-        <i class="icon-bank icon" slot="icon"></i>
+        <i :style="{color: '#7586d8'}" class="icon-bank icon" slot="icon"></i>
         <span>{{bankAccount}}</span>
       </cell>
     </group>
