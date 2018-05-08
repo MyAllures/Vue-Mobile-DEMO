@@ -33,11 +33,9 @@
         <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
       </cell>
     </group>
-    <flexbox-item>
-      <div class="game-title">
-        <h3 class="title">热门游戏</h3>
-        <router-link class="more" to="/game" @click.native="$emit('showGameMenu')">更多游戏<i class="arrow-right"></i></router-link>
-      </div>
+    <flexbox-item >
+      <h3 class="title">热门游戏</h3>
+      <router-link class="more" to="/game" @click.native="$emit('showGameMenu')">更多游戏<i class="arrow-right"></i></router-link>
     </flexbox-item>
     <grid :cols="3" v-if="allGames.length">
       <grid-item
@@ -234,9 +232,15 @@ export default {
     justify-content: center;
     margin-left: 10px;
     color: #666;
+    .fa-icon {
+      margin: 7px 0;
+    }
   }
   /deep/ .vux-marquee-box {
     color: #666;
+  }
+  /deep/ .vux-marquee {
+    height: 36px;
   }
 }
 
@@ -252,6 +256,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 36px;
 }
 .weui-grids {
   &:after{
@@ -285,8 +290,7 @@ export default {
   justify-content: space-between;
 }
 .more {
-  width: 50%;
-  display: inline-block;
+  float: right;
   line-height: 36px;
   padding: 0 10px 0 0;
   text-align: right;

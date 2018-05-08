@@ -75,18 +75,17 @@ export default {
   background-color: #fff;
 }
 .home-link {
-  display: flex;
-  align-items: center;
+  display: block;
   background: @azul;
-  align-items: center;
   border-bottom: 1px solid #f1f1f1;
   height: 44px;
   line-height: 44px;
   width: 100%;
   color: #fff;
   .vux-x-icon {
+    float: left;
     fill: #fff;
-    margin-left: 10px;
+    margin: 10px 0 0 10px;
   }
 }
 .shorter {
@@ -95,6 +94,9 @@ export default {
 .icon {
   border-radius: 4px;
   margin-right: 10px;
+  vertical-align: middle;
+  display: inline-block;
+  margin-top: -3px;
 }
 .popup-content {
   width: 60vw;
@@ -103,8 +105,6 @@ export default {
   color: #4a4a4a;
   li {
     position: relative;
-    display: flex;
-    align-items: center;
     box-sizing: border-box;
     height: 50px;
     line-height: 50px;
