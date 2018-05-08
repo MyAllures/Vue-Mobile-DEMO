@@ -11,7 +11,7 @@
             <span class="play-odds">{{option.odds}}</span>
           </span>
           <span class="play-nums">
-            <span :class="[`hkl-${num}`, 'play-num']" v-for="num in option.value" :key="num"></span>
+            <span :class="[`hkl-${num}`, 'play-num']" v-for="num in zodiacMap&&zodiacMap[option.display_name]||tailMap[option.display_name]" :key="num"></span>
           </span>
         </div>
       </grid-item>
@@ -22,7 +22,7 @@
 import _ from 'lodash'
 import { Grid, GridItem } from 'vux'
 import Combinatorics from 'js-combinatorics'
-import { zodiacMap, tailMap } from '../../utils/hk6'
+import { tailMap } from '../../utils/hk6'
 export default {
   name: 'hk6Exl',
   props: {
@@ -40,6 +40,9 @@ export default {
     },
     playReset: {
       type: Boolean
+    },
+    zodiacMap: {
+      type: Object
     }
   },
   components: {
@@ -50,7 +53,8 @@ export default {
     return {
       customOptions: [],
       diffOddsOption: '',
-      valid: false
+      valid: false,
+      tailMap
     }
   },
   created () {
@@ -95,7 +99,6 @@ export default {
           id: play.id,
           odds: play.odds,
           display_name: play.display_name,
-          value: zodiacMap[play.display_name] || tailMap[play.display_name],
           active: false
         }
         customOptions.push(option)
@@ -158,12 +161,5 @@ export default {
   height: 40px;
   text-align: center;
   font-size: 14px;
-}
-@media screen and (max-width: 320px) {
-  .play-nums {
-    .play-num {
-      margin: 0 1px;
-    }
-  }
 }
 </style>

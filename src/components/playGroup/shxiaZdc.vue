@@ -10,15 +10,14 @@
         v-for="(option, index) in options"
         :key="index"
         @on-item-click="toggleActive(option)">
-       <flexbox class="play-area" v-if="zodiacs">
-          <flexbox-item class="play-name">{{zodiacs[index]}}</flexbox-item>
-          <flexbox-item v-if="option.value" class="play-name text-right"  :span="8">
-            <span v-for="number in option.value"
-              :key="number"
-              :class="`${gameCode}-${number}`">
-            </span>
-          </flexbox-item>
-        </flexbox>
+       <div class="play-area" v-if="zodiacs">
+          <span class="play-name">{{option.displayName}}
+            <span class="play-odds">{{option.odds}}</span>
+          </span>
+          <span class="play-nums">
+            <span :class="[`hkl-${num}`, 'play-num']" v-for="num in zodiacMap&&zodiacMap[option.displayName]" :key="num"></span>
+          </span>
+        </div>
         <div v-else>
           <span :class="['play-name', `${gameCode}-${option.num}`]"></span>
         </div>
@@ -31,7 +30,6 @@
 <script>
 import _ from 'lodash'
 import { Grid, GridItem, Toast, Flexbox, FlexboxItem } from 'vux'
-import { zodiacMap } from '../../utils/hk6'
 
 export default {
   name: 'shixaZdc',
@@ -53,6 +51,9 @@ export default {
     },
     groupName: {
       type: String
+    },
+    zodiacMap: {
+      type: Object
     }
   },
   data () {
@@ -65,7 +66,6 @@ export default {
     })
 
     return {
-      zodiacMap,
       rawOptions,
       valid: false,
       illegal: false,
@@ -77,7 +77,6 @@ export default {
       if (this.zodiacs) {
         _.each(this.rawOptions, (option) => {
           option.displayName = this.zodiacs[option.num]
-          option.value = this.zodiacMap[option.displayName]
         })
       }
       return this.rawOptions

@@ -112,11 +112,11 @@ export default {
   vertical-align: bottom;
   .scroll-odd {
     width: 100%;
-    animation: 2s scrollUp linear infinite normal;
+    animation: 1s scrollUp linear infinite normal;
   }
   .scroll-even {
     width: 100%;
-    animation: 2.5s scrollDown linear infinite normal;
+    animation: 1.5s scrollDown linear infinite normal;
   }
   .step-odd {
     width: 100%;
