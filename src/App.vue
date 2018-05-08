@@ -120,6 +120,12 @@ export default {
         route: 'Game',
         name: 'game'
       }, {
+        label: this.$t('deposit.process'),
+        icon: 'icon-bank',
+        link: '/my/deposit',
+        route: 'Deposit',
+        name: 'deposit'
+      }, {
         label: this.$t('fin.name'),
         icon: 'icon-fin',
         link: '/fin/bet_record',
@@ -132,12 +138,6 @@ export default {
         route: 'My',
         name: 'my',
         unreadBadge: true
-      }, {
-        label: this.$t('deposit.process'),
-        icon: 'icon-bank',
-        link: '/my/deposit',
-        route: 'Deposit',
-        name: 'deposit'
       }],
       logo: '',
       userLoading: true,
