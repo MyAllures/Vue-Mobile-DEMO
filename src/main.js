@@ -33,16 +33,8 @@ Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 
-let navLang = navigator.language || navigator.userLanguage
-if (navLang === 'zh-CNN' || navLang === 'zh-cn') {
-  Vue.config.lang = 'cn'
-} else if (navLang === 'en-US' || navLang === 'en-us') {
-  Vue.config.lang = 'en'
-} else {
-  Vue.config.lang = 'cn'
-}
 const i18n = new VueI18n({
-  locale: Vue.config.lang,
+  locale: 'cn',
   messages: locales
 })
 
