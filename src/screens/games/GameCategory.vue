@@ -34,8 +34,18 @@
                 {{dice}}
               </span>
             </div>
-            <span v-else :class="getPlayClass(play)">{{play.display_name}}</span>
-            <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
+            <template v-else-if="zodiacMap">
+              <span class="play-name">{{play.display_name}}
+                <span class="play-odds">{{play.odds}}</span>
+              </span>
+              <span class="play-nums">
+                <span :class="[`hkl-${num}`, 'play-num']" v-for="num in zodiacMap[play.display_name]" :key="num"></span>
+              </span>
+            </template>
+            <template v-else>
+              <span :class="getPlayClass(play)">{{play.display_name}}</span>
+              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
+            </template>
           </div>
         </grid-item>
       </grid>
@@ -50,7 +60,8 @@
       :setting="customPlayGroupsSetting"
       :plays="groups[0].plays"
       :groupName="groups[0].name"
-      :gameClosed="gameClosed" />
+      :gameClosed="gameClosed"
+      :zodiacMap="zodiacMap"/>
   </div>
 </template>
 
@@ -132,7 +143,20 @@ export default {
     },
     ...mapGetters([
       'categories'
-    ])
+    ]),
+    zodiacMap () {
+      if (!this.categories || this.categories.length === 0) {
+        return null
+      } else {
+        for (let i = 0, len = this.categories.length; i < len; i++) {
+          const category = this.categories[i]
+          if (category.extra_info) {
+            return category.extra_info.shaw
+          }
+        }
+      }
+      return null
+    }
   },
   watch: {
     // update amount of active plays

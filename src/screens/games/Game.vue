@@ -320,26 +320,37 @@ export default {
         .then(res => {
           if (res && res[0].member) {
             this.$set(this, 'playReset', !this.playReset)
-            this.showMessage = true
+            this.$vux.toast.show({
+              text: '成功下单',
+              type: 'success'
+            })
             this.dialogVisible = false
             this.loading = false
             this.$store.dispatch('fetchUser')
           } else {
-            let messages = []
-            res.msg.forEach(error => {
-              messages.push(error)
+            this.$vux.toast.show({
+              text: msgFormatter(res.msg),
+              type: 'warn'
             })
-            this.errors = messages.join(', ')
-            this.showMessage = true
             this.loading = false
           }
         },
         errRes => {
-          this.errors = msgFormatter(errRes)
-          setTimeout(() => {
-            this.showMessage = true
-            this.loading = false
-          }, 3000)
+          const errStr = msgFormatter(errRes)
+          if (errStr.length > 20) {
+            this.$vux.toast.show({
+              text: msgFormatter(errRes),
+              type: 'warn',
+              time: 5000,
+              width: '12em'
+            })
+          } else {
+            this.$vux.toast.show({
+              text: msgFormatter(errRes),
+              type: 'warn'
+            })
+          }
+          this.loading = false
         })
     },
     updatePlays (plays) {
@@ -369,6 +380,7 @@ export default {
 
 .game {
   display: flex;
+  overflow-x: hidden;
   flex-direction: column;
   height: 100%;
 }
@@ -390,7 +402,7 @@ export default {
     overflow-y: auto;
     justify-content: safe center;
     align-items: safe center;
-    width: 110px;
+    width: 100px;
     border-width: 0 4px 0 0;
     border-style: solid;
     border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
@@ -398,10 +410,11 @@ export default {
     color: #9b9b9b;
   }
   .main {
-    width: calc(~"100%" - 80px);
-    overflow-y: auto;
+    width: calc(~"100%" - 104px);
+    overflow-y: scroll;
     overflow-x: hidden;
     background-color: #fff;
+    -webkit-overflow-scrolling: touch;
   }
 }
 .bet-input {
