@@ -1,5 +1,5 @@
 <template>
-  <div v-transfer-dom v-touch:swipe.left="handleClose">
+  <div v-transfer-dom>
     <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
       <div :class="['popup-content', isGamePage ? 'shorter' : '']">
         <ul class="popup-menu">
