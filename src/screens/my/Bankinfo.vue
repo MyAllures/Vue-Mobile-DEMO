@@ -1,5 +1,18 @@
 <template>
   <div>
+    <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
+      添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}} 
+      <icon type="info" @click.native="showInfo=true"></icon>
+      <div>
+        <alert v-model="showInfo" title="注意">
+          <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
+            <li>同一银行卡信息最多仅可领取一次</li>
+            <li>同一 IP 最多仅可领取一次，请勿重复注册</li>
+            <li>本平台保留对本次活动的全部解释权</li>
+          </ul>
+        </alert>
+      </div>
+    </div>
     <group label-width="100px" :title="$t('profile.bankinfo_hint')" v-if="!user.bank">
       <div v-if="inputErrors.length">
         <ul slot="after-title" class="input-errors">
@@ -74,13 +87,14 @@
   </div>
 </template>
 <script>
-import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress } from 'vux'
+import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'bankinfo',
   data () {
     return {
+      showInfo: false,
       banks: [],
       loading: false,
       errorMsg: '',
@@ -102,6 +116,9 @@ export default {
     ...mapGetters([
       'user'
     ]),
+    systemConfig () {
+      return this.$store.state.systemConfig
+    },
     bankName () {
       let currentBank = this.banks.find(item => {
         return item.value === this.selectedBank[0]
@@ -205,7 +222,9 @@ export default {
     Datetime,
     Selector,
     Spinner,
-    XAddress
+    XAddress,
+    Alert,
+    Icon
   }
 }
 </script>
@@ -216,5 +235,11 @@ export default {
   width: 100%;
   height: 100;
   text-align: center;
+}
+.register-money {
+  width: 100%;
+  color: @red;
+  text-align: center;
+  margin-top: 15px;
 }
 </style>
