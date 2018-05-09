@@ -136,6 +136,12 @@
   padding: 10px 20px;
   margin-top: 0;
 }
+@media screen and (max-width: 320px) {
+  .weui-cell {
+    padding: 8px 20px;
+    margin-top: 0;
+  }
+}
 .username {
   white-space: nowrap;
   max-width: 80px;
@@ -150,6 +156,11 @@
   margin: 10px 10px 0;
   /deep/ .weui-btn {
     font-size: 15px;
+  }
+  @media screen and (max-width: 320px) {
+    /deep/ .weui-btn + .weui-btn{
+      margin-top: 8px;
+    }
   }
 }
 .links {

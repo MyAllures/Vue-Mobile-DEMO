@@ -13,7 +13,7 @@ import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
-import { ToastPlugin } from 'vux'
+import { ToastPlugin, ConfigPlugin } from 'vux'
 import qs from 'qs'
 
 let url = window.location.href
@@ -33,6 +33,9 @@ Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
+Vue.use(ConfigPlugin, {
+  $layout: 'VIEW_BOX'
+})
 
 const i18n = new VueI18n({
   locale: 'cn',
