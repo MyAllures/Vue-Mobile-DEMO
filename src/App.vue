@@ -3,7 +3,7 @@
     ref="viewBox"
     body-padding-top="46px"
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'"
-    v-touch:swipe.right.native="swipeRight" >
+    >
     <x-header
       :class="isGameHall ? 'gamehall' : ''"
       v-show="!$route.meta.headerHidden"
@@ -207,9 +207,6 @@ export default {
     }
   },
   methods: {
-    swipeRight () {
-      this.showGameMenu = true
-    },
     closeMenus () {
       this.showRightMenu = false
       this.showGameMenu = false
