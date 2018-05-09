@@ -204,7 +204,7 @@ export default {
     depositor: '存款人',
     deposited_at: '存款日期',
     remit_success: '公司入款已提交',
-    bankinfo_hint: '银行资讯提交后不可自行更改',
+    bankinfo_hint: '提交后不可自行更改，如需修改请联系客服',
     bankinfo_confirm: '确认提交银行资讯吗？首次提交之后不可自行更改，如需更改，需联系客服',
     bankinfo_update_tip: '如需更改银行资讯请联系客服',
     profile_hint: '如需修改真实姓名或手机号码请联系客服'
