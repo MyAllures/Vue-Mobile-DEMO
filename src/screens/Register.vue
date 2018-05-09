@@ -1,12 +1,26 @@
 <template>
   <div>
     <form class="container" autocomplete="off">
-    <group>
-      <cell-box v-if="parseInt(systemConfig.regPresentAmount)">
-        <div class="register-money">
-          现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
+    <div v-if="parseInt(systemConfig.regPresentAmount)">
+      <div class="register-money" v-if="!systemConfig.needBankinfo">
+        现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
+      </div>
+      <div v-else class="register-money">
+        注册账号并填写银行信息即可领取 {{systemConfig.regPresentAmount | currency('￥', 0)}} 红包 
+        <icon type="info" @click.native="showInfo=true"></icon>
+        <div v-transfer-dom>
+          <alert v-model="showInfo" title="注意">
+            <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
+              <li>登录后请到「我的」> 「取款账号」填写</li>
+              <li>同一银行卡信息最多仅可领取一次</li>
+              <li>同一 IP 最多仅可领取一次，请勿重复注册</li>
+              <li>本平台保留对本次活动的全部解释权</li>
+            </ul>
+          </alert>
         </div>
-      </cell-box>
+      </div>
+    </div>
+    <group>
       <div v-if="showInputErrors.length">
         <ul slot="after-title" class="input-errors">
           <li class="text" v-for="(error, index) in showInputErrors" :key="index">
@@ -143,7 +157,10 @@
 <script>
   import { fetchCaptcha, checkUserName, register } from '../api'
   import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
-  import { XInput, Group, XButton, Flexbox, FlexboxItem, Selector, CellBox, Popup, CheckIcon, TransferDom } from 'vux'
+  import { XInput, Group, XButton, Flexbox,
+    FlexboxItem, Selector, CellBox,
+    Popup, CheckIcon, TransferDom,
+    Icon, Alert } from 'vux'
   import { mapState } from 'vuex'
 export default {
     name: 'Register',
@@ -156,7 +173,9 @@ export default {
       Selector,
       CellBox,
       Popup,
-      CheckIcon
+      CheckIcon,
+      Icon,
+      Alert
     },
     directives: {
       TransferDom
@@ -260,6 +279,7 @@ export default {
         })
       }
       return {
+        showInfo: false,
         agreement: {
           showAgreement: false
         },
@@ -463,6 +483,6 @@ export default {
   width: 100%;
   color: @red;
   text-align: center;
-  background: #fff;
+  margin-top: 15px;
 }
 </style>

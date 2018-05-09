@@ -133,7 +133,8 @@ gethomePage().then(
         chatroomEnabled: pref.chatroom_enabled,
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
-        regPresentAmount: response.reg_present_amount
+        regPresentAmount: response.reg_present_amount,
+        needBankinfo: response.need_bankinfo
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
