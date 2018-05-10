@@ -53,6 +53,10 @@ export default {
 }
 
 .article {
+  width: 100%;
   word-break: break-all;
+  /deep/ img {
+    width: 100%;
+  }
 }
 </style>
