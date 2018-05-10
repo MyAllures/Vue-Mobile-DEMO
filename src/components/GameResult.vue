@@ -124,6 +124,7 @@ export default {
       let oldIssue = this.gameLatestResult.issue_number
       this.timer = setTimeout(() => {
         clearInterval(this.interval)
+        let isGetResult = false
         this.interval = setInterval(() => {
           this.fetchResult(gameid).then(result => {
             if (!result || !result[0]) {
@@ -131,16 +132,19 @@ export default {
             }
             let newIssue = result[0].issue_number
             if (newIssue !== oldIssue) {
-              clearInterval(this.interval)
-              clearInterval(this.timer)
-              this.loading = true
-              setTimeout(() => {
-                this.loading = false
-              }, 3000)
-              setTimeout(() => {
-                this.$store.dispatch('fetchUser')
-              }, 2000)
-              this.pollResult(gameid)
+              if (!isGetResult) {
+                isGetResult = true
+                clearInterval(this.interval)
+                clearInterval(this.timer)
+                this.loading = true
+                setTimeout(() => {
+                  this.loading = false
+                }, 3000)
+                setTimeout(() => {
+                  this.$store.dispatch('fetchUser')
+                }, 2000)
+                this.pollResult(gameid)
+              }
             }
           })
         }, 1000)
