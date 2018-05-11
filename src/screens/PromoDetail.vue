@@ -57,6 +57,7 @@ export default {
   word-break: break-all;
   /deep/ img {
     width: 100%;
+    height: auto
   }
 }
 </style>
