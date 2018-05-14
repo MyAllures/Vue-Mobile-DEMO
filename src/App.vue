@@ -80,7 +80,7 @@
     <loading v-model="isLoading"></loading>
     <right-menu
       v-model="showRightMenu"
-      @handleClose="closeRightMenu"
+      @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
     <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
@@ -90,6 +90,7 @@
 <script>
 import './styles/fonts/icons.css'
 
+import Vue from 'vue'
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
@@ -255,6 +256,11 @@ export default {
     }
   },
   created () {
+    this.$root.bus = new Vue()
+    this.$root.bus.$on('showGameMenu', () => {
+      this.showGameMenu = true
+    })
+
     this.$router.afterEach((to) => {
       this.closeMenus()
     })
