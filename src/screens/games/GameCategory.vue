@@ -74,6 +74,7 @@ const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'],
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
 const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
+const fc3dCa2df = (resolve) => require(['../../components/playGroup/fc3dCa2df'], resolve)
 
 export default {
   name: 'GameCategory',
@@ -106,7 +107,8 @@ export default {
     gd11x5Seq,
     hk6Exl,
     shxiaZdc,
-    fc3dIc
+    fc3dIc,
+    fc3dCa2df
   },
   data () {
     return {
