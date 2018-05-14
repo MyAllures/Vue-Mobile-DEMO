@@ -121,6 +121,18 @@ export function createStore () {
           id: 'fc3d_ca-m_msic',
           component: 'fc3dIc',
           options: Array.from(Array(10).keys())
+        },
+        {
+          // 福彩3D 二字定位
+          id: 'fc3d_ca-m_2df',
+          component: 'fc3dCa2df',
+          options: Array.from(Array(10).keys()).map(item => item)
+        },
+        {
+          // 福彩3D 三字定位
+          id: 'fc3d_ca-m_3df',
+          component: 'fc3dCa2df',
+          options: Array.from(Array(10).keys()).map(item => item)
         }
       ]
     },
