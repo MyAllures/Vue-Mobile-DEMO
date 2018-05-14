@@ -1,36 +1,7 @@
 <template>
-  <div class="clear-viewbox-default-bottom">
-    <div class="intro-container">
-      <h2 class="rules-sub-title m-b m-t">游戏资讯：</h2>
-      <x-table :cell-bordered="false" :content-bordered="true" class="playsetting-table">
-        <thead>
-          <tr>
-            <th class="gameplay-field"></th>
-            <th>赔率</th>
-            <th>反水</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(set, index) in playSet" :key="index">
-            <td>{{set.display_name}}</td>
-            <td>{{set.odds}}</td>
-            <td>{{set.return_rate+'%'}}</td>
-          </tr>
-        </tbody>
-      </x-table>
-      <h2 class="rules-sub-title m-b m-t">具体规则：</h2>
-      <component :is="currentGame.code"></component>
-    </div>
-    <div class="intro-selector text-center" @click="selectGame()">
-      <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
-      <span class="arrow"></span>
-    </div>
-    <x-address style="display: none"
-      title="请选择"
-      v-model="currentGameId"
-      :list="games"
-      :show.sync="showGameMenu">
-    </x-address>
+  <div class="intro-container" v-if="currentGame.id">
+    <div class="title vux-1px-b ">{{currentGame.display_name}} 游戏介绍</div>
+    <component :is="currentGame.code" v-if="currentGame"></component>
   </div>
 </template>
 
@@ -63,6 +34,16 @@ import _ from 'lodash'
 
 export default {
   name: 'GameIntro',
+  props: {
+    currentGame: {
+      type: Object,
+      default: function () {
+        return {
+          id: ''
+        }
+      }
+    }
+  },
   data () {
     return {
       currentGameId: [],
@@ -84,11 +65,7 @@ export default {
   computed: {
     ...mapGetters([
       'allGames'
-    ]),
-    currentGame () {
-      let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
-      return code || { display_name: '请选择' }
-    }
+    ])
   },
   watch: {
     'allGames': function (allGames) {
@@ -140,11 +117,16 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import '../../styles/vars.less';
-.rules-sub-title {
-  font-size: 14px;
-  color: black;
+@import '~vux/src/styles/1px.less';
+.title {
+  font-size: 16px;
+  line-height: 40px;
+  text-align: center;
+  position: sticky;
+  background-color: #f5f5f5;
+  top: 0;
 }
 
 .playsetting-table{
@@ -156,54 +138,30 @@ export default {
   width: 200px;
 }
 
-.intro-selector {
-  position: fixed;
-  top: 45px;
-  width: 100%;
-  height: 45px;
-  line-height: 45px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  .option {
-    font-size: 14px;
-  }
-  .arrow {
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    transform: rotate(135deg);
-    margin-left: 3px;
-    margin-bottom: 2px;
-  }
-}
-
 .intro-container {
   background-color: #fff;
-  margin-top: 45px;
-  padding: 10px;
+  padding: 0 0 60px;
 }
 
 .rule-details {
+  padding: 10px;
   font-size: 14px;
   line-height: 2.0;
   color: #4a4a4a;
   letter-spacing: 1.6px;
-  .warn {
+  /deep/ .warn {
     color: @red;
   }
-  h3 {
+  /deep/ h3 {
     font-size: 14px;
     font-weight: normal;
   }
-  li {
+  /deep/ li {
     margin-left: 20px;
     list-style: initial;
     word-wrap: break-word;
   }
-  a {
+  /deep/ a {
     text-decoration: underline;
   }
 }
