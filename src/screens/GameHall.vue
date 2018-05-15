@@ -1,7 +1,7 @@
 <template>
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
-    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
+    <chat-room v-if="chatroomEnabled&&showChatRoom" @closeChatRoom="$emit('closeChatRoom')"></chat-room>
     <popup v-model="showGameIntro" height="90%">
       <div class="game-intro">
         <GameIntro :currentGame="currentGame"/>
