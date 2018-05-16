@@ -27,8 +27,11 @@ export function createStore () {
         },
         chatroomEnabled: 'false',
         isAllowNewPaymentWindow: 'false',
-        regPresentAmount: undefined
+        regPresentAmount: undefined,
+        envelopeSettings: {},
+        stickerGroups: []
       },
+      emojis: null,
       customPlayGroups: [
         {
           // 广东11选5 连码

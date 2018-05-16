@@ -17,6 +17,7 @@
     "babel-polyfill": "^6.26.0",
     "js-combinatorics": "^0.5.3",
     "lodash": "^4.17.4",
+    "lrz": "^4.9.40",
     "moment": "^2.20.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",

@@ -45,19 +45,27 @@ if (token) {
 }
 axios.interceptors.response.use(res => {
   let responseData = res.data
-  if (responseData.code === 2000) {
-    return responseData.data
-  } else {
-    if (responseData.code === 9007) {
-      toLogin(router)
-    } else if (responseData.code === 9011 || responseData.code === 9013) {
-      axios.defaults.withCredentials = true
-      Vue.cookie.set('sessionid', res.data.sessionid)
-      return Promise.reject(responseData)
+  if (responseData.code) {
+    if (responseData.code === 2000) {
+      return responseData.data
+    } else {
+      if (responseData.code === 9007) {
+        toLogin(router)
+      } else if (responseData.code === 9011 || responseData.code === 9013) {
+        axios.defaults.withCredentials = true
+        Vue.cookie.set('sessionid', res.data.sessionid)
+        return Promise.reject(responseData)
+      }
+      return Promise.reject(responseData.msg)
     }
-    return Promise.reject(responseData.msg)
+  } else {
+    return responseData
   }
 }, (error) => {
+  let msg = error.response.data.error
+  if (msg) {
+    return Promise.reject(msg)
+  }
   Vue.$vux.toast.show({
     text: '系统发生了错误, 请联系客服',
     type: 'warn'
@@ -134,7 +142,9 @@ gethomePage().then(
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
         regPresentAmount: response.reg_present_amount,
-        needBankinfo: response.need_bankinfo
+        needBankinfo: response.need_bankinfo,
+        stickerGroups: response.sticker_groups || [],
+        envelopeSettings: pref.envelope_settings || {}
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
