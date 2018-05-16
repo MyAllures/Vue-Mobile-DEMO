@@ -1,86 +1,57 @@
 <template>
-  <div>
-    <x-header class="lottery-header">
-      {{$t('misc.lotteryResult')}}
-      <a v-if='$route.name === "LotterRecord"' slot="right">
-        <icon scale="1" class="icon repeat-icon" @click.native="refresh" name="repeat"></icon>
-      </a>
-    </x-header>
-    <div ref="recordBox"
-      class="record-box results"
-      :style="{height: resultsH + 'px'}">
-      <div class="choose-head">
-        <div class="choose-type">
-          <div class="current-game" @click='selectGame()'>
-            <span :class="['chosen', {'small': currentGame.display_name.length > 5}]">{{currentGame.display_name}}</span>
-            <span class="arrow"></span>
-          </div>
-        </div>
-        <group class="choose-date">
-          <icon class='icon calendars' scale="1" name="calendar"></icon>
-          <datetime v-model="dataTime" @on-change="change"></datetime>
-        </group>
-      </div>
-      <table class="history-table">
-        <tr v-if="lotteryTime"
-          v-for="(schedule, scheduleIndex) in dataNum.results"
-          :key="'scheduleIndex' + scheduleIndex"
-          class="row">
-          <td class="show-time">
-            <p class="periods-number"
-              v-for="(fieldsObject, fieldsIndex) in lotteryNum"
-              :key="'fieldsIndex' + fieldsIndex">
-              {{schedule[fieldsObject.keyNum]}}
-            </p>
-            <p class="periods-time"
-              v-for="(timeObject, timeIndex) in lotteryTime"
-              :key="'timeIndex' + timeIndex">
-              {{schedule[timeObject.keyTime] |dateFilter}}
-            </p>
-          </td>
-          <td class="show-count">
-            <div v-if="schedule.result_status === 'valid' && schedule.result_category">
-              <div class="lottery-result"
-                :class="{luckLotery: codeKl}"
-                v-for="(num, index) in lotteryResult"
-                :key="'lotteryResult' + index">
-                <span v-for="(loteryData, lotteryIndex) in (schedule[num.key1]).split(',')"
-                :key="'lotteryIndex' + lotteryIndex">
-                  <span v-if='codeType != "bjkl8" && codeType != "auluck8"'
-                        :class="`lottery-${codeType}-${~~loteryData}`">{{~~loteryData}}</span>
-                  <span v-if='codeType === "bjkl8" || codeType === "auluck8"'
-                        :class="[`lottery-${codeType}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
-                </span>
-              </div>
-              <div v-if="!codeKl" class="compare-content">
-                <span class="lottery-compare"
-                  v-for="(subHead, index) in lotteryCompare"
-                  :key="'subHead' + index">
-                  {{schedule.result_category[subHead.key] | changeDataType}}
-                </span>
-              </div>
+  <div ref="recordBox" class="history-container">
+    <table class="history-table">
+      <tr v-if="lotteryTime"
+        v-for="(schedule, scheduleIndex) in dataNum.results"
+        :key="'scheduleIndex' + scheduleIndex"
+        class="row">
+        <td class="show-time">
+          <p class="periods-number"
+            v-for="(fieldsObject, fieldsIndex) in lotteryNum"
+            :key="'fieldsIndex' + fieldsIndex">
+            {{schedule[fieldsObject.keyNum]}}
+          </p>
+          <p class="periods-time"
+            v-for="(timeObject, timeIndex) in lotteryTime"
+            :key="'timeIndex' + timeIndex">
+            {{schedule[timeObject.keyTime] |dateFilter}}
+          </p>
+        </td>
+        <td class="show-count">
+          <div v-if="schedule.result_status === 'valid' && schedule.result_category">
+            <div class="lottery-result"
+              :class="{luckLotery: codeKl}"
+              v-for="(num, index) in lotteryResult"
+              :key="'lotteryResult' + index">
+              <span v-for="(loteryData, lotteryIndex) in (schedule[num.key1]).split(',')"
+              :key="'lotteryIndex' + lotteryIndex">
+                <span v-if='gameCode != "bjkl8" && gameCode != "auluck8"'
+                      :class="`lottery-${gameCode}-${~~loteryData}`">{{~~loteryData}}</span>
+                <span v-if='gameCode === "bjkl8" || gameCode === "auluck8"'
+                      :class="[`lottery-${gameCode}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
+              </span>
             </div>
-            <div class="invalid text-center" v-else>官方开奖无效</div>
-          </td>
-        </tr>
-        <tr class="condition">
-          <x-button v-if="firstLimit >= 30"
-                  type="primary"
-                  class="add-more m-t m-b"
-                  @click.native='addMore'>
-            <span>{{$t('misc.load_more')}}</span>
-          </x-button>
-          <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
-        </tr>
-      </table>
-    </div>
-      <x-address
-        style="display:none;"
-        title="title"
-        v-model="currentGameId"
-        :list="gameLists"
-        :show.sync="showGameMenu">
-      </x-address>
+            <div v-if="!codeKl" class="compare-content">
+              <span class="lottery-compare"
+                v-for="(subHead, index) in lotteryCompare"
+                :key="'subHead' + index">
+                {{schedule.result_category[subHead.key] | changeDataType}}
+              </span>
+            </div>
+          </div>
+          <div class="invalid text-center" v-else>官方开奖无效</div>
+        </td>
+      </tr>
+      <tr class="condition">
+        <x-button v-if="firstLimit >= 30"
+                type="primary"
+                class="add-more m-t m-b"
+                @click.native='addMore'>
+          <span>{{$t('misc.load_more')}}</span>
+        </x-button>
+        <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -91,9 +62,20 @@ import _ from 'lodash'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/calendar'
 import 'vue-awesome/icons/repeat'
-import { mapGetters } from 'vuex'
 
 export default {
+  props: {
+    gameCode: {
+      type: String,
+      required: true
+    },
+    currentGame: {
+      type: Object
+    },
+    date: {
+      type: String
+    }
+  },
   data () {
     const TransformerTable =
       [
@@ -613,9 +595,6 @@ export default {
     return {
       game: [],
       gameLists: [],
-      currentGameId: [],
-      dataTime: '',
-      codeType: '',
       limit: 30,
       firstLimit: 30,
       games: '',
@@ -637,23 +616,6 @@ export default {
       lotteryResult: '',
       lotteryCompare: ''
     }
-  },
-  computed: {
-    resultsH () {
-      return (document.documentElement.clientHeight || document.body.clientHeight) - 45
-    },
-    ...mapGetters([
-      'allGames'
-    ]),
-    currentGame () {
-      let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
-      return code || { display_name: '请选择' }
-    }
-  },
-  created () {
-    let data = new Date()
-    data = dateFormat(new Date(data), 'YYYY-MM-DD')
-    this.dataTime = data
   },
   filters: {
     dateFilter (value) {
@@ -724,54 +686,37 @@ export default {
       }
     }
   },
+  created () {
+    this.getGameList()
+  },
   watch: {
-    'allGames': function (allGames) {
-      const played = localStorage.getItem('lastGame')
-      this.currentGameId = played ? [played] : [allGames[0].id + '']
-      _.each(this.allGames, (game) => {
-        this.gameLists.push(
-          {
-            name: game.display_name,
-            value: game.id + '',
-            code: game.code
-          }
-        )
-      })
-    },
-    currentGame () {
+    'currentGame': function () {
       this.limit = 0
       this.$refs.recordBox.scrollTop = 0
-      this.gameLists.forEach((game, i) => {
-        if (this.currentGame.display_name === game.name) {
-          this.codeType = game.code
-          this.getGameList()
-        }
-      })
+      this.getGameList()
+    },
+    'date': function (date) {
+      this.limit = 0
+      this.$refs.recordBox.scrollTop = 0
+      this.getGameList()
     }
   },
   methods: {
-    change (value) {
-      this.dataTime = value
-      this.getGameList()
-    },
-    selectGame () {
-      this.showGameMenu = true
-    },
     getGameList () {
-      getGameData(this.codeType, this.dataTime).then((response) => {
+      getGameData(this.gameCode, this.date).then((response) => {
         this.firstLimit = response.results.length
         this.codeKl = false
         this.dataNum = response
         this.nowGameTable = _.find(this.gameTable, item => {
-          return item.code === this.codeType
+          return item.code === this.gameCode
         })
-        if (this.codeType === 'auluck8' || this.codeType === 'bjkl8') {
+        if (this.gameCode === 'auluck8' || this.gameCode === 'bjkl8') {
           this.codeKl = true
         }
         this.lotteryNum = this.nowGameTable.table[0].subNum
         this.lotteryTime = this.nowGameTable.table[1].subTime
         this.lotteryResult = this.nowGameTable.table[2].resultNum
-        if (this.codeType !== 'auluck8' || this.codeType !== 'bjkl8') {
+        if (this.gameCode !== 'auluck8' || this.gameCode !== 'bjkl8') {
           this.lotteryCompare = this.nowGameTable.table[3].subHeads
         }
       })
@@ -779,20 +724,11 @@ export default {
     addMore () {
       this.limit = this.limit + 30
 
-      getGameData(this.codeType, this.dataTime, this.limit).then((response) => {
+      getGameData(this.gameCode, this.date, this.limit).then((response) => {
         this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
       })
-    },
-    refresh () {
-      this.getGameList()
-      this.$refs.recordBox.scrollTop = 0
     }
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.$store.dispatch('fetchGames')
-    })
   },
   components: {
     XHeader,
@@ -812,10 +748,13 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.history-container {
+  height: calc(~"100% - "40px);
+}
 .history-table {
   display: inline-block;
   width: 100%;
-  height: calc(~"100%" - 46px);
+  height: 100%;
   overflow: auto;
   border-collapse: collapse;
   .condition {
@@ -831,113 +770,6 @@ export default {
   }
 }
 
-.results {
-  overflow: hidden;
-}
-.lottery-header {
-  position: fixed;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  height: 46px;
-  .repeat-icon {
-    color: #FFFFFF;
-  }
-}
-.record-box{
-  background: #f1f1f1;
-}
-.choose-type{
-  display: inline-block;
-  width: 100px;
-  border-bottom: 1px solid #D9D9D9;
-  .current-game {
-    width: 100%;
-    height: 44px;
-    line-height: 44px;
-    color: @azul;
-    background-color: #fff;
-    .chosen {
-      display: inline-block;
-      margin-left: 10px;
-      font-size: 14px;
-      &.small {
-        font-size: 12px;
-        margin-left: 5px;
-      }
-    }
-  }
-  .arrow {
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    transform: rotate(135deg);
-    margin-left: 3px;
-    margin-bottom: 2px;
-  }
-}
-
-.choose-date {
-  position: absolute;
-  display: inline-block;
-  width: calc(~"100%" - 100px);
-  height: 45px;
-  .calendars {
-    position: absolute;
-    top: 13px;
-    left: 10px;
-    color: #ccc;
-  }
-}
-
-.choose-head {
-  width: 100%;
-  box-shadow: 1px 1px 3px rgba(0,0,0, .5);
-  .choose-type /deep/ .weui-cells,.choose-type /deep/ .vux-no-group-title, .choose-date /deep/ .weui-cells,.choose-date /deep/ .vux-no-group-title  {
-    margin-top: 0;
-  }
-  .choose-type /deep/ .weui-cell__hd, .choose-type /deep/ .vux-cell-bd {
-    display: none;
-  }
-  .choose-type /deep/ .weui-cell_access .weui-cell__ft:after {
-    transform: matrix(0.71,0.71, 0.71, -0.71, 0, 0);
-    right: -4px;
-  }
-  .choose-type /deep/ .vux-cell-value {
-    color: #156fd8;
-    font-size: 16px;
-    font-weight: 400;
-  }
-}
-
-.choose-date /deep/ .vux-cell-value {
-    display: block;
-    text-align: left;
-    padding-left: 15px;
-    font-size: 14px;
-    line-height: 25px;
-}
-.choose-date /deep/ .weui-cell_access .weui-cell__ft:after {
-    transform: matrix(0, 0, 0, 0, 0, 0);
-}
-.periods {
-  text-align: center;
-  font-size: 14px;
-}
-.periods-list {
-  color: #327bce;
-  font-weight: bold;
-}
-.blod {
-  font-weight: bold;
-}
-.periods-right {
-  border-right: 1px solid #c3bbbb;
-}
-
 .show-time {
   box-sizing: border-box;
   flex: 0 0 100px;
@@ -945,56 +777,58 @@ export default {
   height: 50px;
   padding: 0px 5px;
   border-right: 1px solid #dcd9d9;
+  .periods-number {
+    width: 100%;
+    line-height: 38px;
+    font-size: 14px;
+    text-align: center;
+    height: 25px;
+  }
+  .periods-time {
+    color: #999;
+    width: 100%;
+    line-height: 25px;
+    text-align: center;
+    height: 25px;
+    font-size: 13px;
+  }
 }
-.periods-number {
-  width: 100%;
-  line-height: 38px;
-  font-size: 14px;
-  text-align: center;
-  height: 25px;
-}
-.periods-time {
-  color: #999;
-  width: 100%;
-  line-height: 25px;
-  text-align: center;
-  height: 25px;
-  font-size: 13px;
-}
+
+
 .show-count {
   flex: 1 0 auto;
   height: 50px;
-}
-.lottery-result {
-  width: 100%;
-  height: 25px;
-  text-align: center;
-  color: #327bce;
-  line-height: 25px;
-  .bjkl-class {
-    margin-top: 0px;
+  .lottery-result {
+    width: 100%;
+    height: 25px;
+    text-align: center;
+    color: #327bce;
+    line-height: 25px;
+    .bjkl-class {
+      margin-top: 0px;
+    }
   }
-}
-.luckLotery {
-  height: 50px;
-  width: 230px;
-  margin:  0 auto;
-  overflow: hidden;
-}
-.lottery-compare {
-  color: #999;
-  width: 100%;
-  height: 25px;
-  text-align: center;
-  line-height: 25px;
-  margin-right: 5px;
-  font-size: 14px;
-}
-.compare-content {
-  width: 100%;
-  line-height: 25px;
-  height: 25px;
-  text-align: center;
+  .luckLotery {
+    height: 50px;
+    width: 230px;
+    margin:  0 auto;
+    overflow: hidden;
+  }
+  .lottery-compare {
+    color: #999;
+    width: 100%;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+    margin-right: 5px;
+    font-size: 14px;
+  }
+  .compare-content {
+    width: 100%;
+    line-height: 25px;
+    height: 25px;
+    text-align: center;
+  }
 }
 
 .add-more, .no-more{
@@ -1009,6 +843,7 @@ export default {
 .invalid {
   line-height: 50px;
 }
+
 .jspbg {
   display: inline-block;
   margin-top: 8px;

@@ -205,54 +205,6 @@ export default new Router({
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
     },
     {
-      path: '/results',
-      name: 'Results',
-      meta: {
-        title: '开奖结果',
-        headerHidden: true,
-        requiresAuth: true,
-        tabbarHidden: true
-      },
-      component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
-    },
-    {
-      path: '/stastics/roadbeads',
-      name: 'RoadBeads',
-      meta: {
-        title: '路珠',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
-    },
-    {
-      path: '/stastics',
-      redirect: '/stastics/leaderboards'
-    },
-    {
-      path: '/stastics/leaderboards',
-      name: 'Leaderboards',
-      meta: {
-        title: '长龙',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
-    },
-    {
-      path: '/gameintro',
-      name: 'GameIntro',
-      meta: {
-        title: '游戏介绍',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameIntro.vue'], resolve) }
-    },
-    {
       path: '/promotions',
       name: 'Promotions',
       meta: {
