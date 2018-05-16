@@ -31,6 +31,7 @@ export function createStore () {
         envelopeSettings: {},
         stickerGroups: []
       },
+      envelope: {},
       emojis: null,
       customPlayGroups: [
         {

@@ -33,7 +33,7 @@ export default {
   },
   data () {
     return {
-
+      today: this.$moment()
     }
   },
   computed: {
@@ -66,8 +66,7 @@ export default {
         users: envelopeStatus.users,
         total: envelopeStatus.total
       }
-
-      if (envelopeStatus.expired) {
+      if (this.today.isAfter(envelopeStatus.expired_time)) {
         status = 1
       } else {
         const me = envelopeStatus.users.find(user => this.user.id === user.receiver_id)

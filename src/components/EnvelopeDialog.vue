@@ -5,16 +5,7 @@
       :show.sync="isShowDialog"
       :hide-on-blur="true"
       @on-hide="reset"
-      :dialog-style="{
-        'max-width': '355px',
-        width: '355px',
-        'box-sizing': 'border-box',
-        'padding': '15px 10px 10px 10px',
-        'background-image': `url('${require('../assets/envelop-top.png')}'), linear-gradient(to right, #de5547, #de5547)`,
-        'background-size': 'contain, cover',
-        'background-position': 'top, center',
-        'background-repeat': 'no-repeat, no-repeat'
-      }">
+      :dialog-style="dialogStyle">
       <div class="close-btn" @click="$emit('update:isShowEnvelopeDialog', false)"></div>
       <div class="envelope-avatar">
         <div class="money"></div>
@@ -95,9 +86,23 @@ export default {
   props: {
     isShowEnvelopeDialog: {
       type: Boolean
+    },
+    roomId: {
+      type: Number
     }
   },
   data () {
+    const width = window.innerWidth <= 320 ? window.innerWidth + 'px' : '355px'
+    const dialogStyle = {
+      'max-width': width,
+      width: width,
+      'box-sizing': 'border-box',
+      'padding': '15px 10px 10px 10px',
+      'background-image': `url('${require('../assets/envelop-top.png')}'), linear-gradient(to right, #de5547, #de5547)`,
+      'background-size': 'contain, cover',
+      'background-position': 'top, center',
+      'background-repeat': 'no-repeat, no-repeat'
+    }
     return {
       isShowDialog: false,
       envelope: {
@@ -107,6 +112,7 @@ export default {
       },
       loading: false,
       error: '',
+      dialogStyle,
       validators: {
         'pack_amount': {
           error: '',
@@ -157,6 +163,13 @@ export default {
     }
   },
   methods: {
+    inputnum (val, input) {
+      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
+      this.$nextTick(() => {
+        this.envelope[input] = formatted
+        this.validate(formatted, input)
+      })
+    },
     submit () {
       if (this.loading) {
         return
@@ -168,14 +181,13 @@ export default {
           pack_amount: parseInt(this.envelope.pack_amount),
           pack_nums: parseInt(this.envelope.pack_nums),
           content: this.envelope.content,
-          sender_id: this.user.id,
-          room_id: this.roomId
+          room: this.roomId
         }
         if (!envelope.content) {
           envelope.content = '恭喜发财，大吉大利'
         }
         sendEnvelope(envelope).then(data => {
-          this.hidePanel()
+          this.$emit('hidePanel')
           this.loading = false
           this.$emit('update:isShowEnvelopeDialog', false)
           this.$store.dispatch('fetchUser')
