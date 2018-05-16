@@ -12,7 +12,6 @@
         <tab v-if="currentHistoryTag.length"
           bar-active-color="#156fd8"
           :animate="false"
-          :scroll-threshold="4"
           active-color="#156fd8" >
           <tab-item v-for="(item, index) in  currentHistoryTag"
             @on-item-click="changeActiveHistoryTag(item)"
@@ -21,8 +20,8 @@
             <span :class="{'ellipsis': currentHistoryTag.length > 4}">{{item.key}}</span>
           </tab-item>
         </tab>
-    </div>
-      <div class="data-container">
+      </div>
+      <div class="data-container" @touchStart="onTouchStart">
         <ul class="consolidation-grid">
           <li class="item" v-for="num in currentTableSetting" :key="num">
             <div class="number text-center">{{num | fullDigits}}</div>
@@ -42,12 +41,14 @@
           </cell>
         </group>
       </div>
+
     </div>
+
   </div>
 </template>
 
 <script>
-import { Group, Cell, Tab, TabItem, GridItem, Grid } from 'vux'
+import { Group, Cell, Tab, TabItem, GridItem, Grid, Swiper, SwiperItem } from 'vux'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
@@ -156,6 +157,9 @@ export default {
     }
   },
   methods: {
+    onTouchStart (e) {
+      console.log(e)
+    },
     changeActiveName (item) {
       this.activeName = item.key
       this.createHistoryTag()
@@ -395,7 +399,7 @@ export default {
     deep: true
   },
   components: {
-    Group, Cell, Tab, TabItem, Grid, GridItem
+    Group, Cell, Tab, TabItem, Grid, GridItem, Swiper, SwiperItem
   }
 }
 </script>
@@ -438,6 +442,8 @@ export default {
   }
   ul {
     width: 100%;
+    height: 100%;
+    overflow-y: auto;
     border-bottom: 1px solid #d8d8d8;
   }
   .category {
@@ -504,7 +510,7 @@ export default {
   }
   .result {
     font-size: 14px;
-    width: (11/ 18) * 100%;
+    width: 55%;
     color: #999;
   }
   .number {
@@ -517,9 +523,5 @@ export default {
 .item-cell {
   padding: 5px 10px;
   font-size: 14px;
-}
-
-.vux-tab-wrap {
-  padding-top: 48px;
 }
 </style>
