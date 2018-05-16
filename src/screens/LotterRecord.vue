@@ -62,7 +62,6 @@ import _ from 'lodash'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/calendar'
 import 'vue-awesome/icons/repeat'
-import { mapGetters } from 'vuex'
 
 export default {
   props: {

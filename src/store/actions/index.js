@@ -97,5 +97,11 @@ export default {
   },
   closeVerifyPopup: ({ commit }) => {
     commit(types.CLOSE_VERIFY_POPUP)
+  },
+  updateEnvelope: ({commit}, setting) => {
+    commit(types.UPDATE_ENVELOPE, setting)
+  },
+  initEmoji: ({commit}, emoji) => {
+    commit(types.INIT_EMOJI, emoji)
   }
 }

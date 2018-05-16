@@ -35,5 +35,24 @@ export default {
   },
   [types.CLOSE_VERIFY_POPUP]: (state) => {
     state.showVerifyPopup = false
+  },
+  [types.UPDATE_ENVELOPE]: (state, {id, data}) => {
+    const envelope = state.envelope[id]
+    if (!envelope) {
+      Vue.set(state.envelope, id, data)
+    } else {
+      // 不能用優先度較低的狀態更新較高的 例如已領完不能覆蓋掉已領取
+      if (envelope.status && data.status && data.status > envelope.status) {
+        data.status = envelope.status
+      }
+      // 以人數多的為主
+      if (envelope.users && data.users && data.users.length < envelope.users.length) {
+        data.users = envelope.users
+      }
+      Object.assign(envelope, data)
+    }
+  },
+  [types.INIT_EMOJI]: (state, emojis) => {
+    state.emojis = emojis
   }
 }
