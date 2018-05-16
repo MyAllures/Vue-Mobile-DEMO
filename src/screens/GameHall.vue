@@ -2,7 +2,7 @@
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="showGameInfo" height="90%">
+    <popup v-model="showGameInfo" height="90%" v-transfer-dom>
       <div class="game-intro">
         <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
         <x-button class="button-close" type="primary" @click.native="showGameInfo = false">返回游戏</x-button>
@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import { XHeader, Tab, TabItem, Popup, XButton } from 'vux'
+import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
 import { mapGetters } from 'vuex'
 import GameInfo from './games/GameInfo'
 import 'vue-awesome/icons/navicon'
@@ -34,6 +34,9 @@ export default {
     ChatRoom,
     GameInfo,
     XButton
+  },
+  directives: {
+    TransferDom
   },
   data () {
     return {
@@ -105,9 +108,10 @@ export default {
 
 .button-close {
   position: fixed;
-  bottom: 5px;
+  bottom: 10px;
   margin: 0 auto;
   width: 90%;
+  height: 40px;
   left: 60%;
   margin-left: -55%;
 }
