@@ -1,10 +1,10 @@
 <template>
   <div class="intro-container" v-if="currentGame.id">
-    <div class="title vux-1px-b ">
+    <div class="title vux-1px-b" :class="contentType === 'history' ? 'left' : 'text-center'" >
       <span>{{currentGame.display_name}}</span>
       <span v-if="contentType === 'history'" class="date-picker">
-        <icon class='icon calendars' scale="1" name="calendar"></icon>
-        <datetime v-model="date" @on-change="change"></datetime>
+        <datetime class="date-picker-input" v-model="date" @on-change="change"></datetime>
+        <icon class="caret-down arrow" name="caret-down"></icon>
       </span>
     </div>
     <component :is="showing"
@@ -42,6 +42,7 @@ import fc3d from './rules/fc3d'
 import GameStatistic from './GameStatistic'
 import LotterRecord from '../LotterRecord'
 import Icon from 'vue-awesome/components/Icon'
+import 'vue-awesome/icons/caret-down'
 import { Datetime, dateFormat } from 'vux'
 
 export default {
@@ -122,11 +123,14 @@ export default {
 .title {
   font-size: 16px;
   line-height: 40px;
-  text-align: center;
   position: sticky;
   background-color: #f5f5f5;
   top: 0;
   z-index: 2;
+  &.left {
+    text-align: left;
+    padding-left: 10px;
+  }
 }
 
 .intro-container {
@@ -165,20 +169,25 @@ export default {
   right: 0;
   width: 135px;
   height: 40px;
-  .calendars {
+  &-input {
+    padding: 0 5px 0 0;
+  }
+  .arrow {
     position: absolute;
-    top: 13px;
-    left: 10px;
-    color: #ccc;
+    width: 20px;
+    right: 0;
+    top: 12px;
+    color: #aaa;
   }
 }
 
 .date-picker /deep/ .vux-cell-value {
-  display: block;
-  text-align: left;
-  padding-left: 15px;
   font-size: 14px;
-  line-height: 25px;
+}
+
+.date-picker /deep/ .weui-cell {
+  height: 40px;
+  line-height: 40px;
 }
 
 .date-picker /deep/ .weui-cell_access .weui-cell__ft:after {

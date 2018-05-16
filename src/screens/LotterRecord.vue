@@ -44,10 +44,12 @@
       </tr>
       <tr class="condition">
         <x-button v-if="firstLimit >= 30"
-                type="primary"
-                class="add-more m-t m-b"
-                @click.native='addMore'>
-          <span>{{$t('misc.load_more')}}</span>
+          type="default"
+          action-type="button"
+          class="add-more"
+          @click.native='addMore'>
+          <inline-loading v-if="loading"></inline-loading>
+          <span v-else>{{$t('misc.load_more')}}</span>
         </x-button>
         <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
       </tr>
@@ -56,7 +58,7 @@
 </template>
 
 <script>
-import {XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box} from 'vux'
+import {XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box, InlineLoading} from 'vux'
 import { getGameData } from '../api'
 import _ from 'lodash'
 import Icon from 'vue-awesome/components/Icon'
@@ -704,6 +706,7 @@ export default {
   },
   methods: {
     getGameList () {
+      this.loading = true
       getGameData(this.gameCode, this.date).then((response) => {
         this.firstLimit = response.results.length
         this.codeKl = false
@@ -720,14 +723,16 @@ export default {
         if (this.gameCode !== 'auluck8' || this.gameCode !== 'bjkl8') {
           this.lotteryCompare = this.nowGameTable.table[3].subHeads
         }
+        this.loading = false
       })
     },
     addMore () {
       this.limit = this.limit + 30
-
+      this.loading = true
       getGameData(this.gameCode, this.date, this.limit).then((response) => {
         this.firstLimit = response.results.length
         this.dataNum.results.push(...response.results)
+        this.loading = false
       })
     }
   },
@@ -744,11 +749,15 @@ export default {
     Group,
     XInput,
     XButton,
-    Box
+    Box,
+    InlineLoading
   }
 }
 </script>
 <style lang="less" scoped>
+.smaller320(@rules) {
+  @media (max-width: 321px) { @rules(); }
+}
 .history-container {
   height: calc(~"100% - "40px);
 }
@@ -762,7 +771,8 @@ export default {
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
-    padding: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
   }
   .row {
     display: flex;
@@ -834,6 +844,7 @@ export default {
 
 .add-more, .no-more{
   position: relative;
+  width: 90%;
   font-size: 14px;
 }
 .no-more {
@@ -854,7 +865,11 @@ export default {
   margin-right: 1px;
   background-size: 20px 210px;
   text-indent: -9999px;
+  .smaller320({
+    margin-right: -3px;
+  });
 }
+
 @racinggames:
   jspk10 10,
   bcr 10 ,
