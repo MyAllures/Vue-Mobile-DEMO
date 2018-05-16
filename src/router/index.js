@@ -242,15 +242,15 @@ export default new Router({
       component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
     },
     {
-      path: '/gameintro',
-      name: 'GameIntro',
+      path: '/gameinfo',
+      name: 'GameInfo',
       meta: {
         title: '游戏介绍',
         requiresAuth: true,
         tabbarHidden: true,
         showBack: true
       },
-      component: resolve => { require(['../screens/games/GameIntro.vue'], resolve) }
+      component: resolve => { require(['../screens/games/GameInfo.vue'], resolve) }
     },
     {
       path: '/promotions',

@@ -1,25 +1,14 @@
 <template>
   <div class="wrapper">
-    <div class="game-selector text-center" @click="selectGame()">
-      <span :class="['option', {'selected': currentGame.id}]">{{currentGame.display_name}}</span>
-      <inline-loading v-if="loading"></inline-loading>
-      <span class="arrow" v-else></span>
-    </div>
-
     <road-beads
-      v-if="currentGame && $route.name === 'RoadBeads'"
-      :gameCode="currentGame.code"
+      v-if="gameCode && contentType === 'roadbeads'"
+      :gameCode="gameCode"
       :resultStatistic="resultStatistic">
     </road-beads>
-
-    <leaderboards :listItems="leaderboard" v-if="currentGame && $route.name === 'Leaderboards'"></leaderboards>
-
-    <x-address style="display: none"
-      title="请选择"
-      v-model="currentGameId"
-      :list="games"
-      :show.sync="showGameMenu">
-    </x-address>
+    <leaderboards :listItems="leaderboard"
+      :gameCode="gameCode"
+      v-if="gameCode && contentType === 'leaderboard'">
+    </leaderboards>
   </div>
 </template>
 
@@ -34,25 +23,26 @@ import _ from 'lodash'
 
 export default {
   name: 'GameStastics',
+  props: {
+    gameCode: {
+      type: String
+    },
+    contentType: {
+      type: String
+    }
+  },
   data () {
     return {
       currentGameId: [],
       games: [],
-      showGameMenu: false,
       resultStatistic: {},
       leaderboardData: [],
       loading: false
     }
   },
   methods: {
-    selectGame () {
-      if (this.loading) {
-        return
-      }
-      this.showGameMenu = true
-    },
     fetchStatistic () {
-      const code = this.currentGame.code
+      const code = this.gameCode
       this.loading = true
       fetchStatistic(code).then(result => {
         this.resultStatistic = {
@@ -63,7 +53,7 @@ export default {
       })
     },
     fetchLeaderboard () {
-      const code = this.currentGame.code
+      const code = this.gameCode
       this.loading = true
       fetchStatistic(code).then(result => {
         if (Array.isArray(result) && !result.length) {
@@ -115,10 +105,6 @@ export default {
     ...mapGetters([
       'allGames'
     ]),
-    currentGame () {
-      let code = _.find(this.allGames, game => (game.id + '') === this.currentGameId[0])
-      return code || { display_name: '请选择' }
-    },
     leaderboard () {
       return this.leaderboardData.sort((a, b) => {
         return b.num - a.num
@@ -126,9 +112,9 @@ export default {
     }
   },
   watch: {
-    'currentGame.code': function (to) {
+    'gameCode': function (to) {
       clearInterval(this.interval)
-      if (this.$route.name === 'Leaderboards') {
+      if (this.contentType === 'leaderboard') {
         this.fetchLeaderboard()
         this.pollLeaderboard()
       } else {
@@ -143,7 +129,7 @@ export default {
       const current = _.find(allGames, game => (game.id + '') === played + '')
       let formattedAllGames = _.clone(allGames)
 
-      if (this.$route.name === 'RoadBeads') {
+      if (this.contentType === 'roadbeads') {
         if (played) {
           this.currentGameId = noRoadBeadGames.includes(current.code) ? [allGames[0].id + ''] : [played]
         } else {
@@ -153,7 +139,7 @@ export default {
         formattedAllGames = _.reject(formattedAllGames, (o) => { return _.includes(noRoadBeadGames, o.code) })
       }
 
-      if (this.$route.name === 'Leaderboards') {
+      if (this.contentType === 'leaderboard') {
         this.currentGameId = played ? [played] : [allGames[0].id + '']
       }
       _.each(formattedAllGames, (game) => {
@@ -165,9 +151,9 @@ export default {
         )
       })
     },
-    '$route.name': function () {
+    'contentType': function (type) {
       clearInterval(this.interval)
-      if (this.$route.name === 'Leaderboards') {
+      if (type === 'leaderboard') {
         this.fetchLeaderboard()
         this.pollLeaderboard()
       } else {
@@ -176,10 +162,16 @@ export default {
       }
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.$store.dispatch('fetchGames')
-    })
+  created () {
+    this.$store.dispatch('fetchGames')
+    clearInterval(this.interval)
+    if (this.contentType === 'leaderboard') {
+      this.fetchLeaderboard()
+      this.pollLeaderboard()
+    } else {
+      this.fetchStatistic()
+      this.pollStatistic()
+    }
   },
   beforeDestroy () {
     clearInterval(this.interval)
@@ -193,25 +185,7 @@ export default {
 <style lang="less" scoped>
 @import '../../styles/vars.less';
 .wrapper {
-  height: 100%;
-}
-.game-selector {
-  width: 100%;
-  height: 45px;
-  line-height: 45px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
-  .arrow {
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    transform: rotate(135deg);
-    margin-left: 3px;
-    margin-bottom: 2px;
-  }
+  height: calc(~"100% - "40px);
 }
 
 </style>
