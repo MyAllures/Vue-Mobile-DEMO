@@ -442,10 +442,10 @@ export default {
   }
   ul {
     width: 100%;
-    height: 100%;
-    overflow-y: auto;
+    max-height: 100%;
     border-bottom: 1px solid #d8d8d8;
   }
+
   .category {
     height: 40px;
     line-height: 40px;
@@ -484,6 +484,9 @@ export default {
     width: 75px;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+  /deep/ .vux-tab {
+    overflow-x: auto;
   }
 }
 .data-container {
