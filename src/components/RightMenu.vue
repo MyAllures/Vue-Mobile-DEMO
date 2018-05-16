@@ -25,7 +25,7 @@
     <group class="links" >
       <cell-box
         v-if="showLinks"
-        @click.native="link.route ? redirect(link.route) : showGameIntro()"
+        @click.native="showGameInfo(link)"
         :border-intent="false"
         v-for="(link, index) in links"
         :key="index">
@@ -69,19 +69,25 @@
     data () {
       return {
         logoutDialogShow: false,
-        links: [{
-          display_name: '路珠',
-          route: '/stastics/roadbeads'
-        }, {
-          display_name: '长龙排行榜',
-          route: '/stastics/leaderboards'
-        }, {
-          display_name: '历史开奖',
-          event: '/results'
-        }, {
-          display_name: '游戏介绍',
-          event: 'showGameIntro'
-        }]
+        links: [
+          {
+            display_name: '路珠',
+            type: 'roadbeads'
+          },
+          {
+            display_name: '长龙排行榜',
+            type: 'leaderboard'
+          },
+          {
+            display_name: '历史开奖',
+            type: 'history',
+            route: '/results'
+          },
+          {
+            display_name: '游戏介绍',
+            type: 'intro'
+          }
+        ]
       }
     },
     directives: {
@@ -108,9 +114,9 @@
         this.closeRightMenu()
         this.$store.dispatch('logout')
       },
-      showGameIntro () {
+      showGameInfo (link) {
         this.closeRightMenu()
-        this.$root.bus.$emit('showGameIntro')
+        this.$root.bus.$emit('showGameInfo', link.type)
       },
       redirect (link) {
         if (link[0] !== '/') {

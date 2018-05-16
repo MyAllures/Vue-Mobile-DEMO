@@ -1,7 +1,19 @@
 <template>
   <div class="intro-container" v-if="currentGame.id">
-    <div class="title vux-1px-b ">{{currentGame.display_name}} 游戏介绍</div>
-    <component :is="currentGame.code" v-if="currentGame"></component>
+    <div class="title vux-1px-b ">
+      <span>{{currentGame.display_name}}</span>
+      <span v-if="contentType === 'history'" class="date-picker">
+        <icon class='icon calendars' scale="1" name="calendar"></icon>
+        <datetime v-model="date" @on-change="change"></datetime>
+      </span>
+    </div>
+    <component :is="showing"
+      :gameCode="currentGame.code"
+      :contentType="contentType"
+      :currentGame="currentGame"
+      :date="date"
+      v-if="currentGame">
+    </component>
   </div>
 </template>
 
@@ -27,10 +39,10 @@ import er75ft from './rules/er75ft'
 import auluck8 from './rules/auluck8'
 import jnd28 from './rules/jnd28'
 import fc3d from './rules/fc3d'
-import { XAddress, XTable } from 'vux'
-import { mapGetters } from 'vuex'
-import { fetchPlaySetting } from '../../api'
-import _ from 'lodash'
+import GameStatistic from './GameStatistic'
+import LotterRecord from '../LotterRecord'
+import Icon from 'vue-awesome/components/Icon'
+import { Datetime, dateFormat } from 'vux'
 
 export default {
   name: 'GameIntro',
@@ -42,56 +54,38 @@ export default {
           id: ''
         }
       }
+    },
+    contentType: {
+      type: String,
+      required: true
     }
   },
   data () {
     return {
-      currentGameId: [],
-      games: [],
-      showGameMenu: false,
-      playSet: ''
+      date: dateFormat(new Date(), 'YYYY-MM-DD')
     }
   },
   methods: {
-    selectGame () {
-      this.showGameMenu = true
-    },
-    fetchPlaySetting (id) {
-      fetchPlaySetting(id).then(res => {
-        this.playSet = res
-      })
+    change (date) {
+      this.date = date
     }
   },
   computed: {
-    ...mapGetters([
-      'allGames'
-    ])
-  },
-  watch: {
-    'allGames': function (allGames) {
-      const played = localStorage.getItem('lastGame')
-      this.currentGameId = played ? [played] : [allGames[0].id + '']
-      _.each(this.allGames, (game) => {
-        this.games.push(
-          {
-            name: game.display_name,
-            value: game.id + ''
-          }
-        )
-      })
-    },
-    'currentGameId': function (id) {
-      this.fetchPlaySetting(id[0])
+    showing () {
+      let type = this.contentType
+      switch (type) {
+        case 'roadbeads':
+          return GameStatistic
+        case 'leaderboard':
+          return GameStatistic
+        case 'history':
+          return LotterRecord
+        case 'intro':
+          return this.currentGame.code
+      }
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.$store.dispatch('fetchGames')
-    })
-  },
   components: {
-    XAddress,
-    XTable,
     cqlf,
     gd11x5,
     jsk3,
@@ -112,7 +106,12 @@ export default {
     er75ft,
     auluck8,
     jnd28,
-    fc3d
+    fc3d,
+    GameStatistic,
+    LotterRecord,
+    Icon,
+    Datetime,
+    dateFormat
   }
 }
 </script>
@@ -127,25 +126,20 @@ export default {
   position: sticky;
   background-color: #f5f5f5;
   top: 0;
-}
-
-.playsetting-table{
-  font-size: 14px;
-  color: #4a4a4a;
-}
-
-.gameplay-field {
-  width: 200px;
+  z-index: 2;
 }
 
 .intro-container {
   background-color: #fff;
+  height: calc(~"100% - "60px);
   padding: 0 0 60px;
 }
 
 .rule-details {
   padding: 10px;
   font-size: 14px;
+  height: calc(~"100% - "60px);
+  overflow: auto;
   line-height: 2.0;
   color: #4a4a4a;
   letter-spacing: 1.6px;
@@ -165,4 +159,30 @@ export default {
     text-decoration: underline;
   }
 }
+
+.date-picker {
+  position: absolute;
+  right: 0;
+  width: 135px;
+  height: 40px;
+  .calendars {
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    color: #ccc;
+  }
+}
+
+.date-picker /deep/ .vux-cell-value {
+  display: block;
+  text-align: left;
+  padding-left: 15px;
+  font-size: 14px;
+  line-height: 25px;
+}
+
+.date-picker /deep/ .weui-cell_access .weui-cell__ft:after {
+  transform: matrix(0, 0, 0, 0, 0, 0);
+}
+
 </style>

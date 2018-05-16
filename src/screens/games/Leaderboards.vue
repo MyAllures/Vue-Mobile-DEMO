@@ -1,5 +1,5 @@
 <template>
-  <div class="leaderbaord-container clear-viewbox-default-bottom">
+  <div class="leaderbaord-container">
     <div class="leaderbaord" v-if="listItems.length">
       <x-table full-bordered class="table">
         <thead>
@@ -152,9 +152,7 @@ export default {
   height: 100%;
   overflow-y: hidden;
   .leaderbaord {
-    position: relative;
     height: 100%;
-    top: 2px;
     overflow-y: auto;
   }
 }
@@ -179,6 +177,10 @@ export default {
   line-height: calc(100vh / 2);
   font-size: 18px;
   color: #9b9b9b;
+}
+
+.vux-table {
+  position: static;
 }
 </style>
 

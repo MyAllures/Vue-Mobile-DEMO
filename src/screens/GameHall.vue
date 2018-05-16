@@ -2,10 +2,10 @@
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="showGameIntro" height="90%">
+    <popup v-model="showGameInfo" height="90%">
       <div class="game-intro">
-        <GameIntro :currentGame="currentGame"/>
-        <x-button class="button-close" type="primary" @click.native="showGameIntro=false">返回游戏</x-button>
+        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
+        <x-button class="button-close" type="primary" @click.native="showGameInfo = false">返回游戏</x-button>
       </div>
     </popup>
   </div>
@@ -13,7 +13,7 @@
 <script>
 import { XHeader, Tab, TabItem, Popup, XButton } from 'vux'
 import { mapGetters } from 'vuex'
-import GameIntro from './games/GameIntro'
+import GameInfo from './games/GameInfo'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import ChatRoom from '../components/ChatRoom'
@@ -32,14 +32,15 @@ export default {
     Tab,
     TabItem,
     ChatRoom,
-    GameIntro,
+    GameInfo,
     XButton
   },
   data () {
     return {
-      showGameIntro: false,
+      showGameInfo: false,
       sidebarShow: false,
-      showRightMenu: false
+      showRightMenu: false,
+      contentType: ''
     }
   },
   computed: {
@@ -57,12 +58,13 @@ export default {
     '$route': 'changeRoute'
   },
   created () {
-    this.$root.bus.$on('showGameIntro', () => {
-      this.showGameIntro = true
+    this.$root.bus.$on('showGameInfo', (type) => {
+      this.showGameInfo = true
+      this.contentType = type
     })
   },
   beforeDestroy () {
-    this.$root.bus.$off('showGameIntro')
+    this.$root.bus.$off('showGameInfo')
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -96,21 +98,11 @@ export default {
 .vux-x-icon {
   fill: #fff;
 }
+
 .gamehall {
   height: 100%;
 }
-.tab-box {
-  background-color: #006bb3;
-  height: 32px;
-  .vux-tab-item {
-    line-height: 32px;
-    background: #006bb3;
-  }
-  .tab-item {
-    background: rgba(255, 255, 255, .3);
-    line-height: 32px;
-  }
-}
+
 .button-close {
   position: fixed;
   bottom: 5px;
@@ -118,5 +110,10 @@ export default {
   width: 90%;
   left: 60%;
   margin-left: -55%;
+}
+
+.game-intro {
+  background-color: #fff;
+  height: 100%;
 }
 </style>
