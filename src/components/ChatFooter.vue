@@ -133,12 +133,6 @@ export default {
   props: {
     roomId: {
       type: Number
-    },
-    ws: {
-      type: WebSocket
-    },
-    personalSetting: {
-      type: Object
     }
   },
   data () {
@@ -156,10 +150,10 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'emojis'
+      'user', 'systemConfig', 'emojis', 'ws', 'personal_setting'
     ]),
     noPermission () {
-      return this.personalSetting.chat.status === 0
+      return !this.personal_setting.chatable && this.personal_setting.banned && this.personal_setting.blocked
     },
     emojiSeries () {
       if (!this.emojis) {
@@ -178,7 +172,7 @@ export default {
       return _.chunk(emojis.stickers, 8)
     },
     chatConditionMessage () {
-      if (this.personalSetting.chat.status === 0) {
+      if (!this.personal_setting.chatable) {
         return this.$store.state.systemConfig.global_preferences.chat_condition_message || ''
       } else {
         return ''
@@ -227,11 +221,11 @@ export default {
       this.isShowEmojiPanel = false
     },
     sendMsgImg (e) {
-      if (!this.personalSetting.chat) { return false }
+      if (this.noPermission) { return false }
       let fileInp = this.$refs.fileImgSend
       let file = fileInp.files[0]
 
-      if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileInp.value) || this.noPermission) {
+      if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileInp.value)) {
         this.$vux.toast.show({
           text: '文件格式不正确或您目前尚不符合发言条件',
           type: 'warn'
@@ -259,13 +253,13 @@ export default {
       })
     },
     sendMsg () {
-      if (!this.msgCnt.trim() || !this.personalSetting.chat) { return false }
-      this.ws.send(JSON.stringify({
+      if (this.noPermission || !this.msgCnt.trim()) { return false }
+      this.ws.send({
         'command': 'send',
         'receivers': [this.roomId],
         'type': 0,
         'content': this.msgCnt
-      }))
+      })
       this.msgCnt = ''
     },
     sendEmojiSymbol (e) {
@@ -278,13 +272,13 @@ export default {
       let target = e.target
       while (target.nodeName !== 'UL') {
         if (target.nodeName === 'LI') {
-          this.ws.send(JSON.stringify({
+          this.ws.send({
             'command': 'send',
             'receivers': [this.roomId],
             'type': 7,
             'content': target.dataset.content,
             'sticker': target.dataset.stickerid
-          }))
+          })
           this.hidePanel()
           break
         }

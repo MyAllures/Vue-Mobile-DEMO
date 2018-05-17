@@ -43,7 +43,7 @@
           {{item.content}}
         </div>
       </li>
-      <li v-if="personalSetting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。<li>
+      <li v-if="personal_setting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。<li>
       <li ref="msgEnd" id="msgEnd" class="msgEnd"></li>
     </ul>
     <div v-transfer-dom>
@@ -116,14 +116,8 @@ export default {
     TransferDom
   },
   props: {
-    messages: {
-      default: ''
-    },
     roomId: {
       default: ''
-    },
-    personalSetting: {
-      type: Object
     }
   },
   name: 'ChatBody',
@@ -156,10 +150,10 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'envelope'
+      'user', 'envelope', 'ws', 'personal_setting', 'messages'
     ]),
     noPermission () {
-      return this.personalSetting.chat.status === 0
+      return !this.personal_setting.chatable && this.personal_setting.banned && this.personal_setting.blocked
     },
     statistic () {
       if (this.selectedEnvelope.users) {

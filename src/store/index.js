@@ -33,6 +33,14 @@ export default new Vuex.Store({
     envelope: {},
     emojis: null,
     keepAlivePage: [],
+    ws: null,
+    messages: [],
+    announce: [],
+    personal_setting: {
+      chat: {
+        status: 0
+      }
+    },
     customPlayGroups: [
       {
         // 广东11选5 连码

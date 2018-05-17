@@ -112,5 +112,23 @@ export default {
   },
   removeKeepAlive: ({ commit }, page) => {
     commit(types.REMOVE_KEEP_ALIVE, page)
+  },
+  setWs: ({commit}, ws) => {
+    commit(types.SET_WS, ws)
+  },
+  initMessage: ({ commit }, messages) => {
+    commit(types.INIT_MESSAGE, messages)
+  },
+  addMessage: ({ commit }, message) => {
+    commit(types.ADD_MESSAGE, message)
+  },
+  initPersonalSetting: ({ commit }, setting) => {
+    commit(types.INIT_PERSONAL_SETTING, setting)
+  },
+  updatePersonalSetting: ({ commit }, type) => {
+    commit(types.UPDATE_PERSONAL_SETTING, type)
+  },
+  setAnnounce: ({ commit }, announce) => {
+    commit(types.SET_ANNOUNCE, announce)
   }
 }
