@@ -7,9 +7,6 @@
         <tab-item v-for="(payee,idx) in onlinepayees" :key="idx" :selected="payee.display_name === currentPay.display_name" @click.native="toggleTab(payee)">{{payee.display_name}}</tab-item>
       </tab>
     </div>
-    <div v-if="description" class="text-danger m-l-md m-t m-r">
-      {{description}}
-    </div>
       <group v-if="currentDetail.length>1">
         <radio :options="currentDetail" v-model="currentPay.payee_id" @on-change="selectPayment"></radio>
       </group>
@@ -98,7 +95,6 @@ export default {
       loading: '',
       success: false,
       defaultPayName: '',
-      description: '',
       onlineLimit: {
         lower: '',
         upper: ''
@@ -156,7 +152,6 @@ export default {
         'amount': '',
         'token': this.$cookie.get('access_token')
       })
-      this.description = payee.description
       this.currentTab = payee
       this.defaultPayName = payee.detail[0].name
       this.onlineLimit = payee.detail[0].online_limit
