@@ -11,16 +11,8 @@
     </div>
     <p class="login-info" v-if="chatLoading">聊天室登录中...</p>
     <div class="chat-container" v-else>
-      <chat-body :messages="messages" :roomId="1" @click.native="hidePanel" :personalSetting="personal_setting"/>
-      <chat-footer ref="chatFooter" :roomId="1" :openEnvelopeDialog="openEnvelopeDialog" :ws="ws" :personalSetting="personal_setting"/>
-    </div>
-    <div v-transfer-dom>
-      <popup v-model="showImageMsg" height="100%">
-        <div class="close-pop-btn" @click="showImageMsg = false">完成</div>
-        <div>
-          <img :src="showImageMsgUrl" width="100%">
-        </div>
-      </popup>
+      <chat-body :messages="messages" :roomId="RECEIVER" @click.native="hidePanel" :personalSetting="personal_setting"/>
+      <chat-footer ref="chatFooter" :roomId="RECEIVER" :openEnvelopeDialog="openEnvelopeDialog" :ws="ws" :personalSetting="personal_setting"/>
     </div>
   </div>
 </template>
@@ -38,7 +30,7 @@ import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
 import config from '../../config'
 const WSHOST = config.chatHost
-const RECEIVER = 1
+const RECEIVER = 100000
 
 export default {
   components: {
@@ -67,8 +59,6 @@ export default {
       msgCnt: '',
       showNickNameBox: false,
       nickname: this.$store.state.user.nickname,
-      showImageMsg: false,
-      showImageMsgUrl: '',
       announcement: '',
       personal_setting: {
         chat: {
@@ -79,7 +69,8 @@ export default {
       showCheckUser: false,
       checkUser: {},
       chatLoading: true,
-      routeHasChange: this.routeChanged
+      routeHasChange: this.routeChanged,
+      RECEIVER: RECEIVER
     }
   },
   watch: {
@@ -151,10 +142,10 @@ export default {
               this.personal_setting = data.personal_setting
             } else if (!data.error_type) {
               if (data.latest_message) {
-                if (data.latest_message[data.latest_message.length - 1].type === 3) {
-                  let annouce = data.latest_message.pop()
-                  this.chatAnnounce = annouce.content
-                }
+                // if (data.latest_message[data.latest_message.length - 1].type === 3) {
+                //   let annouce = data.latest_message.pop()
+                //   this.chatAnnounce = annouce.content
+                // }
                 this.messages = this.messages.concat(data.latest_message.reverse())
                 return
               } else {
@@ -175,6 +166,21 @@ export default {
                     break
                   case 3:
                     this.announcement = data.content
+                    break
+                  case 5:
+                    this.messages.push(data)
+                    break
+                  case 6:
+                    const envelopeStatue = data.envelope_status
+                    const setting = {users: envelopeStatue.users, total: envelopeStatue.total}
+                    if (envelopeStatue.total === envelopeStatue.users.length) {
+                      setting.status = 3
+                    }
+                    this.$store.dispatch('updateEnvelope', {id: envelopeStatue.id, data: setting})
+                    const nickname = data.get_envelope_user.username === this.user.username ? '你' : data.get_envelope_user.nickname
+                    if (data.sender.username === this.user.username) {
+                      this.$store.dispatch('addMessage', {roomId: RECEIVER, message: {type: -1, content: nickname + '领取了你的红包'}})
+                    }
                     break
                   default:
                     this.messages.push(data)

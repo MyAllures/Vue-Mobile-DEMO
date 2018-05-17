@@ -43,7 +43,7 @@
           {{item.content}}
         </div>
       </li>
-      <li v-if="roomId===user.default_room_id&&personalSetting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。<li>
+      <li v-if="personalSetting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。<li>
       <li ref="msgEnd" id="msgEnd" class="msgEnd"></li>
     </ul>
     <div v-transfer-dom>
@@ -59,16 +59,7 @@
         class="envelope-dialog"
         :show.sync="showEnvelopeDialog"
         :hide-on-blur="true"
-        :dialog-style="{
-          'max-width': '355px',
-          width: '355px',
-          'box-sizing': 'border-box',
-          'padding-top': '15px',
-          'background-image': `url('${require('../assets/envelop-top.png')}'), linear-gradient(to right, #de5547, #de5547)`,
-          'background-size': 'contain, cover',
-          'background-position': 'top, center',
-          'background-repeat': 'no-repeat, no-repeat'
-        }">
+        :dialog-style="dialogStyle">
         <div class="close-btn" @click="showEnvelopeDialog = false"></div>
         <div class="envelope-avatar">
           <div v-if="selectedEnvelope.avatar" class="avatar" :style="{'background-image': `url('${host+selectedEnvelope.avatar}')`}"></div>
@@ -137,6 +128,17 @@ export default {
   },
   name: 'ChatBody',
   data () {
+    const width = window.innerWidth <= 320 ? window.innerWidth + 'px' : '355px'
+    const dialogStyle = {
+      'max-width': width,
+      width: width,
+      'box-sizing': 'border-box',
+      'padding-top': '15px',
+      'background-image': `url('${require('../assets/envelop-top.png')}'), linear-gradient(to right, #de5547, #de5547)`,
+      'background-size': 'contain, cover',
+      'background-position': 'top, center',
+      'background-repeat': 'no-repeat, no-repeat'
+    }
     return {
       showImageMsg: false,
       showImageMsgUrl: '',
@@ -148,7 +150,8 @@ export default {
       busy: false,
       imgLoadCount: 0,
       notNeedScroll: true,
-      userLoading: false
+      userLoading: false,
+      dialogStyle
     }
   },
   computed: {

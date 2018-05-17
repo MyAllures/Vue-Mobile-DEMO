@@ -88,7 +88,7 @@
       </div>
     </div>
     <div v-show="isShowControlPanel" class="control-panel">
-      <label v-if="systemConfig.envelopeSettings.enabled === '1' && roomId === user.default_room_id" class="control-btn" @click="openEnvelopeDialog">
+      <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
         <div class="icon-bg">
           <div class="envelope-icon"></div>
         </div>
@@ -108,6 +108,7 @@
       </label>
     </div>
   </div>
+  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" :roomId="roomId" @hidePanel="hidePanel"/>
 </div>
 </template>
 
@@ -120,19 +121,18 @@ import 'vue-awesome/icons/paper-plane'
 import { Swiper, SwiperItem } from 'vux'
 import { sendImgToChat } from '../api'
 import lrz from 'lrz'
+import EnvelopeDialog from './EnvelopeDialog'
 export default {
   name: 'ChatFooter',
   components: {
     Swiper,
     SwiperItem,
-    Icon
+    Icon,
+    EnvelopeDialog
   },
   props: {
     roomId: {
       type: Number
-    },
-    openEnvelopeDialog: {
-      type: Function
     },
     ws: {
       type: WebSocket
@@ -147,7 +147,8 @@ export default {
       isShowControlPanel: false,
       isShowEmojiPanel: false,
       msgCnt: '',
-      activeSeries: 'symbol'
+      activeSeries: 'symbol',
+      isShowEnvelopeDialog: false
     }
   },
   created () {
@@ -297,6 +298,15 @@ export default {
       if (this.noPermission) {
         e.preventDefault()
       }
+    },
+    openEnvelopeDialog () {
+      if (!this.user.account_type) {
+        return
+      }
+      if (this.noPermission) {
+        return
+      }
+      this.isShowEnvelopeDialog = true
     }
   },
   beforeDestroy () {

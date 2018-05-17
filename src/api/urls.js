@@ -50,5 +50,5 @@ export default {
   playSetting: apiv1 + '/game/playset/',
   setCookie: host + '/set_cookie/',
   stickers: apiChat + '/v1/stickers/',
-  envelope: apiChat + '/v1/envelope/'
+  envelope: apiv1 + '/red_envelope/'
 }
