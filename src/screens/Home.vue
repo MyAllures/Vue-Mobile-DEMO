@@ -35,7 +35,9 @@
     </group>
     <flexbox-item >
       <h3 class="title">热门游戏</h3>
-      <router-link class="more" to="/game" @click.native="$emit('showGameMenu')">更多游戏<i class="arrow-right"></i></router-link>
+      <span class="more" @click="$root.bus.$emit('showGameMenu')">
+        更多游戏<i class="arrow-right"></i>
+      </span>
     </flexbox-item>
     <grid :cols="3" v-if="allGames.length">
       <grid-item

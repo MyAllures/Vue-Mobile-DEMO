@@ -9,19 +9,19 @@
     </div>
     <div :class="['statistics', {'full-width': statistics.length === 0}]">
       <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-      <tab v-if="currentHistoryTag.length"
-          :style="{width: currentHistoryTag.length > 5 ? `${currentHistoryTag.length * 75}px` : ''}"
+        <tab v-if="currentHistoryTag.length"
           bar-active-color="#156fd8"
+          :animate="false"
           active-color="#156fd8" >
-        <tab-item v-for="(item, index) in  currentHistoryTag"
-          @on-item-click="changeActiveHistoryTag(item)"
-          :key="index"
-          :selected="item.key === activeHistoryTag">
-          <span :class="{'ellipsis': currentHistoryTag.length > 5}">{{item.key}}</span>
-        </tab-item>
-      </tab>
-    </div>
-      <div class="data-container">
+          <tab-item v-for="(item, index) in  currentHistoryTag"
+            @on-item-click="changeActiveHistoryTag(item)"
+            :key="index"
+            :selected="item.key === activeHistoryTag">
+            <span :class="{'ellipsis': currentHistoryTag.length > 4}">{{item.key}}</span>
+          </tab-item>
+        </tab>
+      </div>
+      <div class="data-container" @touchStart="onTouchStart">
         <ul class="consolidation-grid">
           <li class="item" v-for="num in currentTableSetting" :key="num">
             <div class="number text-center">{{num | fullDigits}}</div>
@@ -41,20 +41,14 @@
           </cell>
         </group>
       </div>
+
     </div>
 
-    <x-address style="display: none"
-      title="请选择"
-      v-model="activeHistoryTagForXAddress"
-      :list="currentHistoryTagForXAddress"
-      @on-hide="handleSelectorHide"
-      :show.sync="showHistorySelector">
-    </x-address>
   </div>
 </template>
 
 <script>
-import { Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress, GridItem, Grid } from 'vux'
+import { Group, Cell, Tab, TabItem, GridItem, Grid, Swiper, SwiperItem } from 'vux'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
@@ -107,9 +101,7 @@ export default {
       },
       currentHistoryTag: [],
       currentHistory: [],
-      cumulative: '',
-      showHistorySelector: false,
-      activeHistoryTagForXAddress: [this.activeHistoryTagIndex + '']
+      cumulative: ''
     }
   },
   filters: {
@@ -165,6 +157,9 @@ export default {
     }
   },
   methods: {
+    onTouchStart (e) {
+      console.log(e)
+    },
     changeActiveName (item) {
       this.activeName = item.key
       this.createHistoryTag()
@@ -175,13 +170,6 @@ export default {
       this.activeHistoryTag = item.key
       this.createHistoryData()
       this.createCumulative()
-    },
-    handleSelectorHide (checked) {
-      if (checked) {
-        this.activeHistoryTag = this.currentHistoryTag[this.activeHistoryTagForXAddress[0]].key
-        this.createHistoryData()
-        this.createCumulative()
-      }
     },
     createHistoryTag () {
       this.currentHistoryTag = _.filter(this.historyTag, (tag) => {
@@ -250,25 +238,12 @@ export default {
         return this.tableSetting[this.gameCode]
       }
     },
-    currentHistoryTagForXAddress () {
-      let formatted = []
-      _.each(this.currentHistoryTag, (item, index) => {
-        formatted.push({
-          name: item.key,
-          value: index + ''
-        })
-      })
-      return formatted
-    },
     activeHistoryTagIndex () {
       return this.activeHistoryTag ? _.findIndex(this.currentHistoryTag, o => o.key === this.activeHistoryTag) + '' : '0'
     }
 
   },
   watch: {
-    'activeHistoryTag': function () {
-      this.activeHistoryTagForXAddress[0] = this.activeHistoryTagIndex
-    },
     'resultStatistic': {
       handler: function (resultStatistic) {
         const resultSingleStatistic = resultStatistic.resultSingleStatistic
@@ -424,7 +399,7 @@ export default {
     deep: true
   },
   components: {
-    Group, Cell, Flexbox, FlexboxItem, Tab, TabItem, XTable, Sticky, XAddress, Grid, GridItem
+    Group, Cell, Tab, TabItem, Grid, GridItem, Swiper, SwiperItem
   }
 }
 </script>
@@ -442,18 +417,16 @@ export default {
 
 
 .roadbead-container {
-  position: relative;
   display: inline-flex;
   width: 100%;
-  height: calc(~"100%" - 46px);
-  top: 2px;
+  height: 100%;
 }
 .aside {
   display: flex;
+  height: 100%;
   align-items: center;
   box-sizing: border-box;
   min-width: 100px;
-  height: 100%;
   overflow-y: auto;
   background-color: #f9f9f9;
   border-width: 0 4px 0 0;
@@ -469,8 +442,10 @@ export default {
   }
   ul {
     width: 100%;
+    max-height: 100%;
     border-bottom: 1px solid #d8d8d8;
   }
+
   .category {
     height: 40px;
     line-height: 40px;
@@ -489,6 +464,7 @@ export default {
 
 .statistics {
   display: flex;
+  width: calc(~"100% - "100px);
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
@@ -499,7 +475,6 @@ export default {
 }
 
 .historydata-selector {
-  overflow-x: auto;
   &.full-width {
     width: 100%;
   }
@@ -510,9 +485,12 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
+  /deep/ .vux-tab {
+    overflow-x: auto;
+  }
 }
 .data-container {
-  height: calc(~"100%"- 45px);
+  height: 100%;
   overflow: auto;
 }
 .consolidation-grid {
@@ -535,7 +513,7 @@ export default {
   }
   .result {
     font-size: 14px;
-    width: (11/ 18) * 100%; // from design
+    width: 55%;
     color: #999;
   }
   .number {

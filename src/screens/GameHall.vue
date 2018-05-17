@@ -2,11 +2,18 @@
   <div class="gamehall">
     <router-view v-show="!showChatRoom" />
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
+    <popup v-model="showGameInfo" height="90%" v-transfer-dom>
+      <div class="game-intro">
+        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
+        <x-button class="button-close" type="primary" @click.native="showGameInfo = false">返回游戏</x-button>
+      </div>
+    </popup>
   </div>
 </template>
 <script>
-import { XHeader, Tab, TabItem } from 'vux'
+import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
 import { mapGetters } from 'vuex'
+import GameInfo from './games/GameInfo'
 import 'vue-awesome/icons/navicon'
 import Icon from 'vue-awesome/components/Icon'
 import ChatRoom from '../components/ChatRoom'
@@ -16,22 +23,27 @@ export default {
   props: {
     showChatRoom: {
       type: Boolean
-    },
-    showGameMenu: {
-      type: Boolean
     }
   },
   components: {
     Icon,
+    Popup,
     XHeader,
     Tab,
     TabItem,
-    ChatRoom
+    ChatRoom,
+    GameInfo,
+    XButton
+  },
+  directives: {
+    TransferDom
   },
   data () {
     return {
+      showGameInfo: false,
       sidebarShow: false,
-      showRightMenu: false
+      showRightMenu: false,
+      contentType: ''
     }
   },
   computed: {
@@ -47,6 +59,15 @@ export default {
   },
   watch: {
     '$route': 'changeRoute'
+  },
+  created () {
+    this.$root.bus.$on('showGameInfo', (type) => {
+      this.showGameInfo = true
+      this.contentType = type
+    })
+  },
+  beforeDestroy () {
+    this.$root.bus.$off('showGameInfo')
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -80,19 +101,23 @@ export default {
 .vux-x-icon {
   fill: #fff;
 }
+
 .gamehall {
   height: 100%;
 }
-.tab-box {
-  background-color: #006bb3;
-  height: 32px;
-  .vux-tab-item {
-    line-height: 32px;
-    background: #006bb3;
-  }
-  .tab-item {
-    background: rgba(255, 255, 255, .3);
-    line-height: 32px;
-  }
+
+.button-close {
+  position: fixed;
+  bottom: 10px;
+  margin: 0 auto;
+  width: 90%;
+  height: 40px;
+  left: 60%;
+  margin-left: -55%;
+}
+
+.game-intro {
+  background-color: #fff;
+  height: 100%;
 }
 </style>
