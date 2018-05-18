@@ -62,7 +62,9 @@
           ></x-icon>
       </div>
     </x-header>
-    <router-view class="fixScroll" :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false" ></router-view>
+    <keep-alive :include="$store.state.keepAlivePage">
+      <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
+    </keep-alive>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"
@@ -406,8 +408,5 @@ export default {
     float: left;
     display: inline-block;
   }
-}
-.fixScroll {
-  min-height: calc(~"100% + "1px)
 }
 </style>

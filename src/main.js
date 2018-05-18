@@ -8,7 +8,7 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
-import { createStore } from './store'
+import store from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie } from './api'
 import * as types from './store/mutations/mutation-types'
@@ -68,8 +68,6 @@ axios.interceptors.response.use(res => {
 })
 
 Vue.config.productionTip = false
-
-const store = createStore()
 
 const toLogin = function (router) {
   store.commit('RESET_USER')

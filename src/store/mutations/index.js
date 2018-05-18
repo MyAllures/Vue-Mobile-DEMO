@@ -54,5 +54,19 @@ export default {
   },
   [types.INIT_EMOJI]: (state, emojis) => {
     state.emojis = emojis
+  },
+  [types.SET_REMIT]: (state, remitPayee) => {
+    state.remitPayee = remitPayee
+  },
+  [types.ADD_KEEP_ALIVE]: (state, page) => {
+    if (!state.keepAlivePage.includes(page)) {
+      state.keepAlivePage.push(page)
+    }
+  },
+  [types.REMOVE_KEEP_ALIVE]: (state, page) => {
+    let index = state.keepAlivePage.indexOf(page)
+    if (index > -1) {
+      state.keepAlivePage.splice(index, 1)
+    }
   }
 }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store'
 
 Vue.use(Router)
 
@@ -133,7 +134,30 @@ export default new Router({
         showBack: true,
         requiresAuth: true
       },
+      beforeEnter: (to, from, next) => {
+        if (from.path !== '/my/remit') {
+          store.dispatch('removeKeepAlive', 'Deposit')
+        }
+        next()
+      },
       component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
+    },
+    {
+      path: '/my/remit',
+      name: 'Remit',
+      meta: {
+        title: '转帐',
+        showBack: true,
+        requiresAuth: true
+      },
+      beforeEnter: (to, from, next) => {
+        if (store.state.remitPayee) {
+          next()
+        } else {
+          next('/my/deposit')
+        }
+      },
+      component: resolve => { require(['../components/Remit.vue'], resolve) }
     },
     {
       path: '/my/password',
