@@ -246,7 +246,7 @@ export default {
       this.unreadInterval = setInterval(() => {
         if (!this.$cookie.get('access_token')) {
           clearInterval(this.unreadInterval)
-        } else {
+        } else if (this.user.account_type) {
           this.$store.dispatch('fetchUnread')
         }
       }, 11000)
