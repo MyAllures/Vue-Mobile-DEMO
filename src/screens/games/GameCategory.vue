@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-if="tabKeys.length>1" class="tab-selector">
-      <tab
-          :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
+      <tab :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
+          :animate="false"
           active-color="#156fd8" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
@@ -38,7 +38,8 @@
               <span class="play-odds">{{play.odds}}</span>
             </div>
             <template v-else-if="zodiacMap">
-              <span class="play-name">{{play.display_name}}
+              <span class="play-name">
+                <span :class="getPlayClass(play)">{{play.display_name}}</span>
                 <span class="play-odds">{{play.odds}}</span>
               </span>
               <span class="play-nums">
@@ -323,6 +324,12 @@ export default {
     width: 75px;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+  .vux-tab {
+    overflow-x: auto;
+  }
+  .scrollable .vux-tab-item {
+    flex: 0;
   }
 }
 
