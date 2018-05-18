@@ -47,6 +47,8 @@ axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
     return responseData.data
+  } else if (responseData.code === 9001) {
+    return responseData
   } else {
     if (responseData.code === 9007) {
       toLogin(router)
