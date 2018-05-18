@@ -97,5 +97,14 @@ export default {
   },
   closeVerifyPopup: ({ commit }) => {
     commit(types.CLOSE_VERIFY_POPUP)
+  },
+  setRemit: ({ commit }, remitPayee) => {
+    commit(types.SET_REMIT, remitPayee)
+  },
+  addKeepAlive: ({ commit }, page) => {
+    commit(types.ADD_KEEP_ALIVE, page)
+  },
+  removeKeepAlive: ({ commit }, page) => {
+    commit(types.REMOVE_KEEP_ALIVE, page)
   }
 }
