@@ -175,7 +175,7 @@ export function getToken (oldToken) {
 }
 
 export function sendImgToChat (data) {
-  return axios.post(`${urls.sendImgToChat}`, data)
+  return axios.post(urls.sendImgToChat, data)
 }
 
 export function fetchPlaySetting (id) {
@@ -188,4 +188,26 @@ export function setCookie (cookie) {
 
 export function getChatUser (id) {
   return axiosChat.get(`${urls.banUser}${id}/`)
+}
+
+export function fetchStickers (name) {
+  return axios.get(urls.stickers)
+}
+
+export function fetchChatEmoji () {
+  return axios.get(urls.chatEmoji)
+}
+
+export function sendEnvelope (data) {
+  return axios.post(urls.envelope, data, {
+    'Content-Type': 'application/json'
+  })
+}
+
+export function takeEnvelope (envelopId, userId) {
+  return axios.put(`${urls.envelope}${envelopId}/`, {
+    receiver_id: userId
+  }, {
+    'Content-Type': 'application/json'
+  })
 }

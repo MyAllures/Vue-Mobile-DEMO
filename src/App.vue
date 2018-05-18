@@ -62,7 +62,7 @@
           ></x-icon>
       </div>
     </x-header>
-    <router-view class="fixScroll" :showChatRoom="showChatRoom" ></router-view>
+    <router-view class="fixScroll" :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false" ></router-view>
     <tabbar
       slot="bottom"
       v-show="!$route.meta.tabbarHidden"

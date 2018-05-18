@@ -134,7 +134,9 @@ gethomePage().then(
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
         regPresentAmount: response.reg_present_amount,
-        needBankinfo: response.need_bankinfo
+        needBankinfo: response.need_bankinfo,
+        stickerGroups: response.sticker_groups || [],
+        envelopeSettings: pref.red_envelope_settings || {}
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
