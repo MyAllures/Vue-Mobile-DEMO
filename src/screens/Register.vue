@@ -6,7 +6,7 @@
         现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
       </div>
       <div v-else class="register-money">
-        注册账号并填写银行信息即可领取 {{systemConfig.regPresentAmount | currency('￥', 0)}} 红包 
+        注册账号并填写银行信息即可领取 {{systemConfig.regPresentAmount | currency('￥', 0)}} 红包
         <icon type="info" @click.native="showInfo=true"></icon>
         <div v-transfer-dom>
           <alert v-model="showInfo" title="注意">
@@ -402,6 +402,12 @@ export default {
           if (isValid) {
             this.loading = true
             register(this.user).then(result => {
+              if (result.code === 9001) {
+                this.$vux.toast.show({
+                  text: result.msg,
+                  type: 'warn'
+                })
+              }
               return this.$store.dispatch('login', {
                 user: {
                   username: this.user.username,
