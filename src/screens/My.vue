@@ -26,7 +26,8 @@
         :title="$t('misc.bank')"
         is-link>
         <i :style="{color: '#7586d8'}" class="icon-bank icon" slot="icon"></i>
-        <span>{{bankAccount}}</span>
+        <span v-if="bankAccount">{{bankAccount}}</span>
+        <span class="warn-tip" v-else>未填写</span>
       </cell>
     </group>
     <group>
@@ -156,6 +157,9 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
+.warn-tip {
+  color: @red;
+}
 .weui-cell /deep/ .weui-cell__hd {
   line-height: 1;
 }
