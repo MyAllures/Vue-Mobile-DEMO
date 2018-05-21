@@ -168,6 +168,7 @@
     },
     created () {
       this.remit.amount = this.remitPayee.amount
+      this.remit.remit_info.remit_payee = this.remitPayee.remit_payee
     },
     methods: {
       validateErrors () {

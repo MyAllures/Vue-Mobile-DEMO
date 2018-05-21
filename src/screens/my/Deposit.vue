@@ -86,8 +86,6 @@
 
 <script>
 import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle } from 'vux'
-import Remit from '../../components/Remit.vue'
-import OnlinePay from '../../components/OnlinePay.vue'
 import { getOnlinepayees, getRemitPayees } from '../../api'
 import { mapState } from 'vuex'
 import urls from '../../api/urls'
@@ -95,9 +93,6 @@ export default {
   name: 'Deposit',
   data () {
     return {
-      view: OnlinePay,
-      remitComponent: Remit,
-      onlinePayComponent: OnlinePay,
       payees: [],
       loading: false,
       selectedPayee: null,
@@ -117,8 +112,6 @@ export default {
   components: {
     ButtonTab,
     ButtonTabItem,
-    Remit,
-    OnlinePay,
     XButton,
     Radio,
     Cell,
@@ -310,6 +303,7 @@ export default {
         if (this.selectedPayee.remit_type) {
           e.preventDefault()
           this.$store.dispatch('setRemit', {
+            remit_payee: this.selectedPayee.id,
             account: this.selectedPayee.account,
             remit_type: this.selectedPayee.remit_type,
             qr_code: this.selectedPayee.qr_code,
@@ -344,7 +338,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .payment-types {
- 
+
   /deep/ .weui-cells {
     font-size: 16px;
     line-height: 1.2;
@@ -373,7 +367,7 @@ export default {
   .sub-group {
     width: 100%;
     position: relative;
-    
+
     .option {
       margin-left: 41px;
       font-size: 14px;
