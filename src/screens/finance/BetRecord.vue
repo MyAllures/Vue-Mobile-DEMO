@@ -94,8 +94,14 @@ export default {
       this.loading = true
       fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: 0, limit: this.chunkSize })
         .then(data => {
-          this.totalCount = data.count
-          this.betRecords = data.results
+          if (data.results) {
+            this.totalCount = data.count
+            this.betRecords = data.results
+          } else {
+            this.totalCount = data.length
+            this.betRecords = data
+          }
+
           this.currentPage = 1
           this.loading = false
         }, errorMsg => {
@@ -108,7 +114,8 @@ export default {
       this.loadingMore = true
       fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
-        this.betRecords.push(...data.results)
+        let received = data.results || data
+        this.betRecords.push(...received)
         this.loadingMore = false
       }, () => {
         this.loadingMore = false
