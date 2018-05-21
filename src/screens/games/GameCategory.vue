@@ -325,7 +325,6 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
-
   .vux-tab {
     overflow-x: auto;
   }
