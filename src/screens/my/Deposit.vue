@@ -53,12 +53,12 @@
             :title="'存款金额'"
             :show-clear="true"
             required
-            type="number"
-            keyboard="number"
+            :type="selectedPayee && selectedPayee.remit_type ? '' : 'number'"
+            :keyboard="selectedPayee && selectedPayee.remit_type ? '' : 'number'"
             name="amount"
             ref="amount"
             action-type="button"
-            @on-blur="validateErrors"
+            @on-blur="handleAmountBlur"
             :is-type="amountValidator"
             v-model.number="currentPay.amount">
           </x-input>
@@ -224,6 +224,17 @@ export default {
       })
   },
   methods: {
+    handleAmountBlur () {
+      if (this.selectedPayee && this.selectedPayee.remit_type && !isNaN(this.currentPay.amount)) {
+        this.currentPay.amount = !(this.currentPay.amount + '') ? '0' : (this.currentPay.amount + '').replace(/^[0]|[^0-9\\.]/g, '')
+
+        this.$nextTick(() => {
+          this.currentPay.amount = Math.floor(parseFloat(this.currentPay.amount) * 100) / 100 || 0
+        })
+      }
+
+      this.$nextTick(() => { this.validateErrors() })
+    },
     toggleGroup (group) {
       group.folded = !group.folded
     },

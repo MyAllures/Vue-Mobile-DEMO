@@ -109,8 +109,14 @@ export default {
         limit: this.chunkSize
       })
         .then(data => {
-          this.totalCount = data.length
-          this.betRecords = data
+          if (data.results) {
+            this.totalCount = data.count
+            this.betRecords = data.results
+          } else {
+            this.totalCount = data.length
+            this.betRecords = data
+          }
+
           this.currentPage = 1
           this.loading = false
         }, errorMsg => {
@@ -128,7 +134,8 @@ export default {
         limit: 10
       }).then(data => {
         this.currentChunk += 1
-        this.betRecords.push(...data)
+        let received = data.results || data
+        this.betRecords.push(...received)
         this.loadingMore = false
       }, () => {
         this.loadingMore = false
