@@ -87,7 +87,7 @@
     <tryplay-popup />
     <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
     <div v-transfer-dom>
-      <div class="feature-guide" v-if="!showFeatureGuide" @click="showFeatureGuide=false">
+      <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
           <div class="arrow">
             <div class="curve"></div>
