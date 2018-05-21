@@ -46,10 +46,8 @@
         autocapitalize="off"
         :title="$t('my.amount')"
         required
-        type="number"
-        keyboard="number"
         ref="amount"
-        @on-blur="validateErrors"
+        @on-blur="validateErrors, remit.amount = Math.floor(remit.amount * 100)/100"
         @on-change="validateErrors"
         :is-type="amountValidator"
         v-model="remit.amount">

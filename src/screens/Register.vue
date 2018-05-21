@@ -417,6 +417,11 @@ export default {
             }).then(result => {
               this.$router.push({ name: 'Home' })
               this.$store.dispatch('fetchUser')
+              if (this.systemConfig.regPresentAmount && this.systemConfig.needBankinfo) {
+                setTimeout(() => {
+                  this.$root.bus.$emit('showFeatureGuide')
+                }, 200)
+              }
             }, errorMsg => {
               this.fetchCaptcha()
               this.error = msgFormatter(errorMsg)

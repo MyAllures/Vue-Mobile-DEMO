@@ -86,6 +86,17 @@
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
     <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
+    <div v-transfer-dom>
+      <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
+        <div class="content">
+          <div class="arrow">
+            <div class="curve"></div>
+            <div class="point"></div>
+          </div>
+          <div class="txt">在这里添加银行卡，即可领注册彩金</div>
+        </div> 
+      </div>
+    </div>
   </view-box>
 </template>
 
@@ -93,7 +104,7 @@
 import './styles/fonts/icons.css'
 
 import Vue from 'vue'
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
@@ -105,11 +116,15 @@ import GameMenu from './components/GameMenu.vue'
 
 export default {
   name: 'app',
+  directives: {
+    TransferDom
+  },
   data () {
     return {
       showRightMenu: false,
       showChatRoom: false,
       showGameMenu: false,
+      showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
         icon: 'icon-home',
@@ -263,6 +278,10 @@ export default {
       this.showGameMenu = true
     })
 
+    this.$root.bus.$on('showFeatureGuide', () => {
+      this.showFeatureGuide = true
+    })
+
     this.$router.afterEach((to) => {
       this.closeMenus()
     })
@@ -313,6 +332,75 @@ export default {
 </style>
 <style lang="less" scoped>
 @import './styles/vars.less';
+
+.feature-guide {
+  position: fixed;
+  background: radial-gradient(
+    circle at bottom right,
+    rgba(0, 0, 0, 0) 9%,
+    rgba(0, 0, 0, 0.7) 9%
+  );
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  .txt {
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+  }
+  .content {
+    width: 100%;
+    height: 350px;
+    bottom: 0;
+    position: absolute;
+  }
+  .arrow {
+    transform: rotate(-30deg);
+    position: absolute;
+    bottom: 0;
+    right: 25%;
+    margin: 0 auto;
+    width: 100px;
+  }
+
+  .arrow .curve {
+    border: 6px solid #fff;
+    border-radius: 10px;
+    border-color: transparent transparent transparent #fff;
+    height: 360px;
+    width: 220px;
+    border-radius: 230px 0 0 150px;
+  }
+
+  .arrow .point {
+    position: absolute;
+    left: 40px;
+    top: 315px;
+  }
+
+  .arrow .point:before, .arrow .point:after {
+    border: 3px solid #fff;
+    border-radius: 10px;
+    height: 20px;
+    content: "";
+    position: absolute;
+  }
+
+  .arrow .point:before {
+    top: -4px;
+    left: -11px;
+    transform:rotate(-74deg);
+  }
+
+  .arrow .point:after {
+    top: -11px;
+    left: 3px;
+    transform:rotate(12deg);
+  }
+}
+
 .tabbar {
   position: fixed;
 }
