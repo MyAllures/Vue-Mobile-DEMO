@@ -86,14 +86,16 @@
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
     <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
-    <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
-      <div class="content">
-        <div class="arrow">
-          <div class="curve"></div>
-          <div class="point"></div>
-        </div>
-        <div class="txt">在这里添加银行卡，即可领注册彩金</div>
-      </div> 
+    <div v-transfer-dom>
+      <div class="feature-guide" v-if="!showFeatureGuide" @click="showFeatureGuide=false">
+        <div class="content">
+          <div class="arrow">
+            <div class="curve"></div>
+            <div class="point"></div>
+          </div>
+          <div class="txt">在这里添加银行卡，即可领注册彩金</div>
+        </div> 
+      </div>
     </div>
   </view-box>
 </template>
@@ -102,7 +104,7 @@
 import './styles/fonts/icons.css'
 
 import Vue from 'vue'
-import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet } from 'vux'
+import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
@@ -114,6 +116,9 @@ import GameMenu from './components/GameMenu.vue'
 
 export default {
   name: 'app',
+  directives: {
+    TransferDom
+  },
   data () {
     return {
       showRightMenu: false,
@@ -385,13 +390,13 @@ export default {
 
   .arrow .point:before {
     top: -4px;
-    left: -12px;
+    left: -11px;
     transform:rotate(-74deg);
   }
 
   .arrow .point:after {
-    top: -12px;
-    left: 2px;
+    top: -11px;
+    left: 3px;
     transform:rotate(12deg);
   }
 }
