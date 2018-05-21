@@ -14,7 +14,7 @@ export default {
     register: '注册',
     register_now: '立即注册',
     try: '试玩',
-    bank: '取款账号',
+    bank: '取款银行卡',
     real_name: '真实姓名',
     phone: '手机号码',
     email: '邮箱',
