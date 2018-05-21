@@ -1,36 +1,37 @@
 <template>
   <div>
     <template v-if="user.account_type">
-      <group v-show="$route.path==='/my/deposit'">
+      <group title="请选择支付方式" v-show="$route.path==='/my/deposit'"  class="payment-types">
         <template v-for="(payeeGroup,payeeGroupIndex) in payees">
           <div v-if="payeeGroup.detail.length>1" :class="['sub-group', payeeGroup.folded?'folded': '']" :key="payeeGroupIndex">
             <cell
-              class="title"
+              :class="[payeeGroup === selectedGroup ? 'selected' : '', 'title']"
               :title="payeeGroup.display_name"
               is-link
               :inline-desc="payeeGroup.client_description"
               :arrow-direction="payeeGroup.folded?'down':'up'"
               @click.native="toggleGroup(payeeGroup)">
               <div slot="icon" class="payee-icon" :style="{'background-image': `url(${payeeGroup.icon})`}"></div>
+              <span class="weui-icon-checked" v-if="payeeGroup === selectedGroup"></span>
             </cell>
             <cell
               v-for="(payee, index) in payeeGroup.detail"
-              :class="['option', payee.selected?'selected':'']"
+              :class="['option', payee === selectedPayee ? 'selected' : '']"
               :title="`${payeeGroup.display_name}${index+1}`"
               :key="index"
               @click.native="selectPayee(payee)">
-              <span :class="payee.selected?'weui-icon-checked':''"></span>
+              <span :class="payee === selectedPayee ? 'weui-icon-checked' : ''"></span>
             </cell>
           </div>
           <cell
             v-else
-            :class="[payeeGroup.detail[0].selected?'selected':'']"
+            :class="[payeeGroup === selectedGroup ? 'selected' : '']"
             :title="payeeGroup.display_name"
             :inline-desc="payeeGroup.client_description"
             :key="payeeGroupIndex"
-            @click.native="selectPayee(payeeGroup.detail[0])">
+            @click.native="selectPayee(payeeGroup.detail[0]);toggleGroup(payeeGroup);">
             <div slot="icon" class="payee-icon" :style="{'background-image': `url(${payeeGroup.icon})`}"></div>
-            <span :class="payeeGroup.detail[0].selected?'weui-icon-checked':''"></span>
+            <span :class="selectedPayee === payeeGroup.detail[0] ? 'weui-icon-checked':''"></span>
           </cell>
         </template>
       </group>
@@ -84,7 +85,7 @@
 </template>
 
 <script>
-import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput } from 'vux'
+import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle } from 'vux'
 import Remit from '../../components/Remit.vue'
 import OnlinePay from '../../components/OnlinePay.vue'
 import { getOnlinepayees, getRemitPayees } from '../../api'
@@ -100,6 +101,7 @@ export default {
       payees: [],
       loading: false,
       selectedPayee: null,
+      selectedGroup: null,
       paymentUrl: urls.payment,
       currentPay: {
         'type_id': '',
@@ -121,7 +123,8 @@ export default {
     Radio,
     Cell,
     Group,
-    XInput
+    XInput,
+    GroupTitle
   },
   computed: {
     ...mapState([
@@ -175,17 +178,14 @@ export default {
               switch (res.remit_type) {
                 case 1:
                   res.display_name = res.bank.name
-                  res.selected = false
                   bankRemit.push(res)
                   break
                 case 2:
                   res.display_name = '微信'
-                  res.selected = false
                   wexinRemit.push(res)
                   break
                 case 3:
                   res.display_name = '支付宝'
-                  res.selected = false
                   alipayRemit.push()
                   break
                 default:
@@ -221,16 +221,21 @@ export default {
           this.selectedPayee = payees[0].detail[0]
           this.payees = payees
         }
+        this.selectedGroup = payees[0]
+        this.selectedPayee = this.selectedGroup.detail[0]
       })
   },
   methods: {
     toggleGroup (group) {
+      if (this.selectedGroup !== group) {
+        this.selectedGroup.folded = true
+        this.selectPayee(group.detail[0])
+        this.selectedGroup = group
+      }
       group.folded = !group.folded
     },
     selectPayee (payee) {
       this.$refs.amount.$el.scrollIntoView()
-      this.selectedPayee.selected = false
-      payee.selected = true
       this.selectedPayee = payee
       if (this.currentPay.amount) {
         this.$nextTick(() => {
@@ -327,32 +332,42 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.vux-button-group{
-		padding: 15px 40px;
-		border-bottom: 1px solid #ccc;
-  }
-  .hint-text {
-    margin-top: 50px;
-  }
-  .weui-icon-checked::before{
-    display: block;
-    content: "\EA08";
-    color: #f90;
+.payment-types {
+ 
+  /deep/ .weui-cells {
     font-size: 16px;
+    line-height: 1.2;
+    > .weui-cell {
+      padding: 5px 15px;
+    }
   }
-
-  .weui-cell.title{
-    padding: 3px 15px;
+  /deep/ .weui-cell {
+    .vux-label-desc {
+      font-size: 13px;
+      color: #999;
+    }
+    &.title{
+      padding: 6px 15px;
+      &.selected .vux-label-desc {
+        color:  #f90;
+      }
+    }
   }
   .weui-cell.selected {
     /deep/ .vux-label {
       color: #f90;
     }
   }
+
   .sub-group {
     width: 100%;
     position: relative;
-    &::before{
+    
+    .option {
+      margin-left: 41px;
+      font-size: 14px;
+    }
+    &::before {
       content: " ";
       position: absolute;
       left: 0;
@@ -365,17 +380,27 @@ export default {
       transform: scaleY(0.5);
       left: 15px;
     }
-    &.folded{
+    &.folded {
       .option {
         display: none;
       }
     }
   }
-  .payee-icon {
-    margin-right: 5px;
-    width: 36px;
-    height: 36px;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
+}
+.hint-text {
+  margin-top: 50px;
+}
+.weui-icon-checked::before{
+  display: block;
+  content: "\EA08";
+  color: #f90;
+  font-size: 15px;
+}
+.payee-icon {
+  margin-right: 5px;
+  width: 36px;
+  height: 36px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
 </style>
