@@ -337,8 +337,8 @@ export default {
   position: fixed;
   background: radial-gradient(
     circle at bottom right,
-    rgba(0, 0, 0, 0) 9%,
-    rgba(0, 0, 0, 0.7) 9%
+    rgba(0, 0, 0, 0) 11%,
+    rgba(0, 0, 0, 0.7) 11%
   );
   width: 100%;
   height: 100%;
