@@ -3,9 +3,9 @@
   <div :class="['footer', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
       <div id="more-btn" class="more-btn"></div>
-      <div id="emoji-btn" class="emoji-btn btn">
+      <!-- <div id="emoji-btn" class="emoji-btn btn">
         <icon scale="1.5" name="smile-o"></icon>
-      </div>
+      </div> -->
       <textarea
         @focus="isFocus = true"
         @blur="isFocus = false"
@@ -25,9 +25,9 @@
   <div :class="['footer', 'fake', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
       <div id="more-btn" class="more-btn"></div>
-      <div id="emoji-btn" class="emoji-btn btn">
+      <!-- <div id="emoji-btn" class="emoji-btn btn">
         <icon scale="1.5" name="smile-o"></icon>
-      </div>
+      </div> -->
       <textarea
         @focus="triggerRealInput"
         ref="chatpannel"
@@ -88,12 +88,12 @@
       </div>
     </div>
     <div v-show="isShowControlPanel" class="control-panel">
-      <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
+      <!-- <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
         <div class="icon-bg">
           <div class="envelope-icon"></div>
         </div>
         <div class="title">发红包</div>
-      </label>
+      </label> -->
       <label class="control-btn" for="capture" @click="clickSendImg">
         <div class="icon-bg">
           <div class="picture-icon"></div>

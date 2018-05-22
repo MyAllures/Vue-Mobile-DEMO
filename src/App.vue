@@ -52,14 +52,14 @@
         </div>
       </div>
       <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
-      <div class="chatbubble"
+      <div
+        v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
+        class="chatbubble"
         slot="right"
         @click="showChatRoom = true">
         <x-icon
           type="chatbubble-working"
-          size="30"
-          v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
-          ></x-icon>
+          size="30"></x-icon>
       </div>
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
@@ -94,7 +94,7 @@
             <div class="point"></div>
           </div>
           <div class="txt">在这里添加银行卡，即可领注册彩金</div>
-        </div> 
+        </div>
       </div>
     </div>
   </view-box>

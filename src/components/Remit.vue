@@ -95,6 +95,7 @@
   } from 'vux'
   import moment from 'moment'
   import { postRemit } from '../api'
+  import { msgFormatter } from '../utils'
   export default {
     props: {
       paypee: {
@@ -242,7 +243,7 @@
             })
           }, (response) => {
             this.loading = false
-            this.errorMsg = response[0].replace(':', ',')
+            this.errorMsg = msgFormatter(response)
           })
         }
       }
