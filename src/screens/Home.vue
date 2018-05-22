@@ -17,7 +17,7 @@
       </flexbox-item>
       <flexbox-item>
         <div class="content">
-          <span :style="{ position:'relative', left: `-${leftOffset}px`}" ref="announcement">{{announcements[currentAnnouncementIndex]}}</span>
+          <span class="text" :style="{ position:'relative', left: `-${leftOffset}px`}" ref="announcement">{{announcements[currentAnnouncementIndex]}}</span>
         </div>
       </flexbox-item>
     </flexbox>
@@ -106,7 +106,7 @@
         <swiper-item
           :key="'swiper-anmt' + index"
           v-for="(a, index) in announcements">
-          <p class="m-t swiper-announcement">{{a.announcement}}</p>
+          <p class="m-t swiper-announcement">{{a}}</p>
         </swiper-item>
       </swiper>
     </x-dialog>
@@ -148,6 +148,7 @@ export default {
       leftOffset: 0,
       currentAnnouncementIndex: 0,
       showDialog: false,
+      announcementTimer: null,
       game_count: 15,
       showpromoPopup: false,
       promotions: [],
@@ -188,7 +189,9 @@ export default {
           })
         }
         this.announcements = datas.map(data => data.announcement)
-        this.setAnnouncement()
+        this.$nextTick(() => {
+          this.setAnnouncement()
+        })
       }
     )
     getPromotions().then(response => {
@@ -208,22 +211,20 @@ export default {
       this.$router.push(`/game/${gameId}`)
     },
     setAnnouncement () {
-      this.$nextTick(() => {
-        this.announcementWidth = this.$refs.announcement.getBoundingClientRect().width
-        setTimeout(() => {
-          this.scrollAnnouncement()
-        }, 1000)
-      })
+      this.announcementWidth = this.$refs.announcement.getBoundingClientRect().width
+      this.announcementTimer = setTimeout(() => {
+        this.scrollAnnouncement()
+      }, 1000)
     },
     scrollAnnouncement () {
-      setTimeout(() => {
+      this.announcementTimer = setTimeout(() => {
         this.leftOffset += 1
         if (this.leftOffset > this.announcementWidth) {
           let idx = this.currentAnnouncementIndex + 1
           if (idx >= this.announcements.length) {
             idx = idx % this.announcements.length
           }
-          setTimeout(() => {
+          this.announcementTimer = setTimeout(() => {
             this.currentAnnouncementIndex = idx
             this.leftOffset = 0
             this.setAnnouncement()
@@ -233,6 +234,9 @@ export default {
         }
       }, 17)
     }
+  },
+  beforeDestroy () {
+    clearTimeout(this.announcementTimer)
   },
   components: {
     Swiper,
@@ -279,7 +283,9 @@ export default {
     overflow: hidden;
     height: 36px;
     line-height: 36px;
-    text-align: left;
+    .text {
+      white-space: nowrap;
+    }
   }
 }
 
