@@ -30,7 +30,7 @@ import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
 import config from '../../config'
 const WSHOST = config.chatHost
-const RECEIVER = 100000
+const RECEIVER = 1
 
 export default {
   components: {
@@ -142,10 +142,10 @@ export default {
               this.personal_setting = data.personal_setting
             } else if (!data.error_type) {
               if (data.latest_message) {
-                // if (data.latest_message[data.latest_message.length - 1].type === 3) {
-                //   let annouce = data.latest_message.pop()
-                //   this.chatAnnounce = annouce.content
-                // }
+                if (data.latest_message[data.latest_message.length - 1].type === 3) {
+                  let annouce = data.latest_message.pop()
+                  this.chatAnnounce = annouce.content
+                }
                 this.messages = this.messages.concat(data.latest_message.reverse())
                 return
               } else {
