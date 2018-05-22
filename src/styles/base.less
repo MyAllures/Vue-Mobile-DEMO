@@ -112,3 +112,32 @@ html, body {
   }
 }
 
+.emoji.vux-indicator.vux-indicator-center {
+  bottom: 5px;
+  .vux-icon-dot.active {
+    background: #9b9b9b;
+  }
+}
+
+.close-btn {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  &::before, &::after {
+    position: absolute;
+    content: ' ';
+    top: 5px;
+    right: 15px;
+    height: 20px;
+    width: 2px;
+    background-color: #fff;
+  }
+  &::before {
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    transform: rotate(-45deg);
+  }
+}
+

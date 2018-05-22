@@ -13,8 +13,6 @@
     </group>
     <div class="buttons" v-if="$store.state.user.account_type !== 0">
       <x-button type="primary" @click.native="redirect('/fin/bet_record')">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="redirect('/my')">{{$t('profile.profile')}}</x-button>
-      <x-button type="primary" @click.native="redirect('/my/deposit')">{{$t('game.deposit')}}</x-button>
       <x-button type="primary" @click.native="redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
     </div>
     <div class="buttons" v-else>
