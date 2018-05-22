@@ -12,7 +12,6 @@
       </thead>
       <tbody>
         <tr class="text-sm"
-            v-if="betRecords.length"
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
@@ -38,7 +37,7 @@
             </span>
           </td>
         </tr>
-        <tr v-else>
+        <tr v-if="!betRecords.length">
           <td>{{$t('misc.no_data_yet')}}</td>
         </tr>
       </tbody>
@@ -104,8 +103,13 @@ export default {
       this.loading = true
       fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: 0, limit: this.chunkSize })
         .then(data => {
-          this.totalCount = data.count
-          this.betRecords = data.results
+          if (data.results) {
+            this.totalCount = data.count
+            this.betRecords = data.results
+          } else {
+            this.totalCount = data.length
+            this.betRecords = data
+          }
           this.currentPage = 1
           this.loading = false
         }, errorMsg => {
@@ -118,7 +122,8 @@ export default {
       this.loadingMore = true
       fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: this.betRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
-        this.betRecords.push(...data.results)
+        let received = data.results || data
+        this.betRecords.push(...received)
         this.loadingMore = false
       }, () => {
         this.loadingMore = false
