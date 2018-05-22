@@ -189,9 +189,7 @@ export default {
           })
         }
         this.announcements = datas.map(data => data.announcement)
-        this.$nextTick(() => {
-          this.setAnnouncement()
-        })
+        this.setAnnouncement()
       }
     )
     getPromotions().then(response => {
@@ -211,10 +209,12 @@ export default {
       this.$router.push(`/game/${gameId}`)
     },
     setAnnouncement () {
-      this.announcementWidth = this.$refs.announcement.getBoundingClientRect().width
-      this.announcementTimer = setTimeout(() => {
-        this.scrollAnnouncement()
-      }, 1000)
+      this.$nextTick(() => {
+        this.announcementWidth = this.$refs.announcement.offsetWidth
+        this.announcementTimer = setTimeout(() => {
+          this.scrollAnnouncement()
+        }, 1000)
+      })
     },
     scrollAnnouncement () {
       this.announcementTimer = setTimeout(() => {
