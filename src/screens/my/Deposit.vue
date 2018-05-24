@@ -270,9 +270,9 @@ export default {
       this.inputErrors = inputErrors
     },
     amountValidator (value) {
-      let amount = parseInt(value)
-      let meetLower = !this.onlineLimit.lower || amount >= parseInt(this.onlineLimit.lower)
-      let meetUpper = !this.onlineLimit.upper || amount <= parseInt(this.onlineLimit.upper)
+      let amount = parseFloat(value)
+      let meetLower = !this.onlineLimit.lower || amount >= parseFloat(this.onlineLimit.lower)
+      let meetUpper = !this.onlineLimit.upper || amount <= parseFloat(this.onlineLimit.upper)
       if (!meetLower) {
         return {
           valid: false,

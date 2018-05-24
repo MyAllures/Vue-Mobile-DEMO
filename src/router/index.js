@@ -131,7 +131,6 @@ export default new Router({
       name: 'Deposit',
       meta: {
         title: '充值',
-        showBack: true,
         requiresAuth: true
       },
       beforeEnter: (to, from, next) => {

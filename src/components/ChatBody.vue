@@ -28,7 +28,7 @@
             </div>
             <div v-else :class="['bubble', 'bubble' + item.type]">
               <p>
-                <span v-if="item.type === 0 || item.type === 4 || item.type === 8">{{item.content}}</span>
+                <span v-if="item.type === 4 || item.type === 8">{{item.content}}</span>
                 <img-async
                   @click.native="showImageMsg = true; showImageMsgUrl = item.content"
                   v-else-if="item.type === 1"
