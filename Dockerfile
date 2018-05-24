@@ -22,7 +22,7 @@ ARG SITE_TITLE
 # using multiple copies to continously keep the environment and avoid the maximum image layer error
 COPY --from=bison /root /root
 
-COPY --from=rico /usr/src/app/node_modules node_modules
+COPY --from=bison /usr/src/app/node_modules node_modules
 COPY package.json package.json
 RUN npm install
 
