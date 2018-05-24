@@ -151,9 +151,8 @@ export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }
 
-export function getGameData (codeType, dataTime, limit) {
-  let url = `${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`
-  url = limit ? `${url}&offset=${limit}` : url
+export function getGameHistoryData (data) {
+  let url = `${urls.gamehistory}?game_code=${data.gameCode}&limit=${data.limit}&offset=${data.offset}&date=${data.time}`
   return axios.get(url)
 }
 

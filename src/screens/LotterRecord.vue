@@ -2,7 +2,7 @@
   <div ref="recordBox" class="history-container">
     <table class="history-table">
       <tr v-if="lotteryTime"
-        v-for="(schedule, scheduleIndex) in dataNum.results"
+        v-for="(schedule, scheduleIndex) in records.results"
         :key="'scheduleIndex' + scheduleIndex"
         class="row">
         <td class="show-time">
@@ -20,7 +20,7 @@
         <td class="show-count">
           <div v-if="schedule.result_status === 'valid' && schedule.result_category">
             <div class="lottery-result"
-              :class="{luckLotery: codeKl}"
+              :class="{'luck-lottery': codeKl}"
               v-for="(num, index) in lotteryResult"
               :key="'lotteryResult' + index">
               <span v-for="(loteryData, lotteryIndex) in (schedule[num.key1]).split(',')"
@@ -42,28 +42,32 @@
           <div class="invalid text-center" v-else>官方开奖无效</div>
         </td>
       </tr>
-      <tr class="condition">
-        <x-button v-if="firstLimit >= 30"
+      <tr class="condition text-center" v-if="loading">
+        <inline-loading></inline-loading>
+      </tr>
+
+      <tr class="condition" v-else>
+        <x-button v-if="(pagination.total > records.results.length)"
           type="default"
           action-type="button"
           class="add-more"
-          @click.native='addMore'>
-          <inline-loading v-if="loading"></inline-loading>
+          @click.native="addMore">
+          <inline-loading v-if="addMoreLoading"></inline-loading>
           <span v-else>{{$t('misc.load_more')}}</span>
         </x-button>
-        <div class="no-more m-t m-b" v-else>{{$t('misc.no_more')}}</div>
+
+        <div class="no-more" v-else>
+          <span>{{$t('misc.no_more')}}</span>
+        </div>
       </tr>
     </table>
   </div>
 </template>
 
 <script>
-import {XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box, InlineLoading} from 'vux'
-import { getGameData } from '../api'
+import { XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box, InlineLoading } from 'vux'
+import { getGameHistoryData } from '../api'
 import _ from 'lodash'
-import Icon from 'vue-awesome/components/Icon'
-import 'vue-awesome/icons/calendar'
-import 'vue-awesome/icons/repeat'
 
 export default {
   props: {
@@ -595,28 +599,19 @@ export default {
     ]
 
     return {
-      game: [],
-      gameLists: [],
-      limit: 30,
-      firstLimit: 30,
-      games: '',
-      dataNum: {
-        count: '',
-        next: '',
-        results: {
-          issue_number: '',
-          result_str: '',
-          schedule_result: ''
-        }
-      },
+      records: { results: [] },
       codeKl: false,
       gameTable,
       nowGameTable: '',
-      showGameMenu: false,
       lotteryTime: '',
       lotteryNum: '',
       lotteryResult: '',
-      lotteryCompare: ''
+      lotteryCompare: '',
+      pagination: {
+        total: 0,
+        offset: 0
+      },
+      addMoreLoading: false
     }
   },
   filters: {
@@ -689,49 +684,79 @@ export default {
     }
   },
   created () {
-    this.getGameList()
+    this.initRecords()
   },
   watch: {
     'currentGame': function () {
-      this.limit = 0
-      this.$refs.recordBox.scrollTop = 0
-      this.getGameList()
+      this.initRecords()
     },
     'date': function (date) {
-      this.limit = 0
-      this.$refs.recordBox.scrollTop = 0
-      this.getGameList()
+      this.initRecords()
     }
   },
   methods: {
-    getGameList () {
+    initRecords () {
+      this.records.results = []
+      this.pagination = {
+        offset: 0,
+        total: 0
+      }
+      this.getGameRecords()
+    },
+    getGameRecords () {
+      if (this.loading) {
+        return
+      }
       this.loading = true
-      getGameData(this.gameCode, this.date).then((response) => {
-        this.firstLimit = response.results.length
+      let data = {
+        gameCode: this.gameCode,
+        limit: 30,
+        offset: this.pagination.offset,
+        time: this.date
+      }
+      getGameHistoryData(data).then((response) => {
+        this.pagination.total = response.count
+
         this.codeKl = false
-        this.dataNum = response
+        this.records = response
         this.nowGameTable = _.find(this.gameTable, item => {
           return item.code === this.gameCode
         })
+
         if (this.gameCode === 'auluck8' || this.gameCode === 'bjkl8') {
           this.codeKl = true
         }
+
         this.lotteryNum = this.nowGameTable.table[0].subNum
         this.lotteryTime = this.nowGameTable.table[1].subTime
         this.lotteryResult = this.nowGameTable.table[2].resultNum
+
         if (this.gameCode !== 'auluck8' || this.gameCode !== 'bjkl8') {
           this.lotteryCompare = this.nowGameTable.table[3].subHeads
         }
+
         this.loading = false
+        this.$refs.recordBox && this.$refs.recordBox.scrollIntoView()
       })
     },
     addMore () {
-      this.limit = this.limit + 30
-      this.loading = true
-      getGameData(this.gameCode, this.date, this.limit).then((response) => {
-        this.firstLimit = response.results.length
-        this.dataNum.results.push(...response.results)
-        this.loading = false
+      if (this.loading) {
+        return
+      }
+      this.addMoreLoading = true
+      this.pagination.offset += 30
+
+      let data = {
+        gameCode: this.gameCode,
+        limit: 30,
+        offset: this.pagination.offset,
+        time: this.date
+      }
+
+      getGameHistoryData(data).then((response) => {
+        this.pagination.total = response.count
+        this.records.results.push(...response.results)
+        this.addMoreLoading = false
       })
     }
   },
@@ -744,7 +769,6 @@ export default {
     PopupRadio,
     dateFormat,
     TabItem,
-    Icon,
     Group,
     XInput,
     XButton,
@@ -818,7 +842,7 @@ export default {
       margin-top: 0px;
     }
   }
-  .luckLotery {
+  .luck-lottery {
     height: 50px;
     width: 230px;
     margin:  0 auto;
@@ -843,7 +867,6 @@ export default {
 
 .add-more, .no-more{
   position: relative;
-  width: 90%;
   font-size: 14px;
 }
 .no-more {
