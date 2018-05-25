@@ -99,5 +99,11 @@ export default {
   },
   [types.SET_ANNOUNCE]: (state, announce) => {
     state.announce = announce
+  },
+  [types.UPDATE_GAME_INFO]: (state, info) => {
+    state.gameInfo = {...state.gameInfo, ...info}
+  },
+  [types.SET_ROOM_INFO]: (state, info) => {
+    state.roomInfo = info
   }
 }

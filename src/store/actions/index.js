@@ -8,7 +8,9 @@ import {
   logout,
   fetchGames,
   fetchUnread,
-  fetchCategories
+  fetchCategories,
+  fetchChatInfo,
+  fetchRoomInfo
 } from '../../api'
 
 const login = function ({ commit, state }, { user }) {
@@ -49,10 +51,30 @@ export default {
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
       if (res.length > 0) {
+        const user = res[0]
+        if (user.account_type && !state.user.planMakerRoom) {
+          fetchChatInfo(user.username).then(res => {
+            commit(types.SET_USER, {
+              user: {
+                planMakerRoom: res.data.plan_maker_rooms || []
+              }
+            })
+          }).catch(e => { })
+        }
+        if (!state.roomInfo) {
+          fetchRoomInfo().then(res => {
+            const roomInfo = {}
+            res.forEach(room => {
+              roomInfo[room.id] = {name: room.title, status: room.status}
+            })
+            commit(types.SET_ROOM_INFO, roomInfo)
+          }).catch(() => {})
+        }
         commit(types.SET_USER, {
           user: {
-            ...res[0],
-            logined: true
+            ...user,
+            logined: true,
+            planMakerRoom: state.user.planMakerRoom || []
           }
         })
         return Promise.resolve(res[0])
@@ -130,5 +152,8 @@ export default {
   },
   setAnnounce: ({ commit }, announce) => {
     commit(types.SET_ANNOUNCE, announce)
+  },
+  updateGameInfo: ({commit}, info) => {
+    commit(types.UPDATE_GAME_INFO, info)
   }
 }

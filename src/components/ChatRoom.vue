@@ -1,17 +1,17 @@
 <template>
   <div class="chat-box" id="chatBox">
-    <div class="chat-announce" v-if="announce">
-      <div class="annouce-info clearfix">
+    <div class="chat-announce" v-if="ws&&announce&&announce.length>0">
+      <div class="annouce-info">
         <icon class="volume-up" name="volume-up"></icon>
-        公告
+        公告：
       </div>
       <div class="scroll">
         <MarqueeTips :content="announce[announceIndex]" :speed="10"></MarqueeTips>
       </div>
     </div>
-    <!-- <p class="login-info" v-if="ws.status!=='connect'">聊天室登录中...</p> -->
+    <p class="login-info" v-if="!ws">聊天室登录中...</p>
     <div class="chat-container" v-else>
-      <chat-body :roomId="RECEIVER" @click.native="hidePanel"/>
+      <chat-body :roomId="RECEIVER" :gameInfo="gameInfo" @click.native="hidePanel"/>
       <chat-footer ref="chatFooter" :roomId="RECEIVER"/>
     </div>
   </div>
@@ -28,8 +28,7 @@ import { fetchChatEmoji, fetchStickers } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
-import WebSocketObj from '../webSocketObj'
-const RECEIVER = 100000
+import WebSocketObj from '../wsObj'
 
 export default {
   components: {
@@ -46,8 +45,8 @@ export default {
     TransferDom
   },
   props: {
-    routeChanged: {
-      default: false
+    gameInfo: {
+      type: Object
     }
   },
   data () {
@@ -60,8 +59,7 @@ export default {
       showCheckUser: false,
       checkUser: {},
       chatLoading: true,
-      routeHasChange: this.routeChanged,
-      RECEIVER: RECEIVER
+      RECEIVER: parseInt(this.$route.params.gameId) || 100000
     }
   },
   watch: {
@@ -82,14 +80,13 @@ export default {
   },
   created () {
     if (this.ws) {
-      this.ws.joinRoom(this.$route.params.gameId)
+      this.ws.joinRoom(this.RECEIVER)
     } else {
       let token = Vue.cookie.get('access_token')
       if (!token) {
-        this.$store.commit('CLEAR_MEMBER')
         return this.$router.push('/login?next=' + this.$route.path)
       }
-      this.$store.dispatch('setWs', new WebSocketObj(token, this.$route.params.gameId))
+      this.$store.dispatch('setWs', new WebSocketObj(token, this.RECEIVER))
     }
     if (!this.$store.state.emojis) {
       Promise.all([fetchChatEmoji(), fetchStickers()]).then(resArr => {
@@ -132,38 +129,38 @@ export default {
 }
 .chat-announce {
   position: absolute;
-  top: 5px;
-  margin: 0 5px;
-  width: calc(~"100%" - 12px);
-  background: rgba(237,244,254,.9);
-  border: 1px solid #c2cfe2;
-  border-radius: 5px;
-  height: 29px;
+  display: flex;
+  width: 100%;
+  height: 32px;
+  padding: 0 6px;
+  box-sizing: border-box;
   overflow: hidden;
   z-index: 1;
   .annouce-info {
+    flex: 0 0 auto;
     display: flex;
+    height: 32px;
     align-items: center;
-    float: left;
-    background: #e1edfd;
     color: @red;
-    padding: 0 8px;
-    line-height: 29px;
+    padding-left: 11px;
     font-size: 14px;
     .volume-up {
       margin-right: 4px;
     }
   }
   .scroll {
-    line-height: 30px;
+    flex: 1 1 auto;
+    height: 32px;
+    line-height: 32px;
     font-size: 14px;
-    display: block;
-    margin-left: 72px;
+    color: #999999;
   }
 }
 .chat-container {
   display: flex;
   height: 100%;
+  box-sizing: border-box;
+  padding-top: 32px;
   flex-direction: column;
 }
 </style>

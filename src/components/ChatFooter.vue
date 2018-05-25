@@ -2,45 +2,59 @@
 <div class="container">
   <div :class="['footer', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
-      <div id="more-btn" class="more-btn"></div>
-      <!-- <div id="emoji-btn" class="emoji-btn btn">
-        <icon scale="1.5" name="smile-o"></icon>
-      </div> -->
-      <textarea
-        @focus="isFocus = true"
-        @blur="isFocus = false"
-        ref="realChatpannel"
-        type="textarea"
-        autocomplete="off"
-        validateevent="true"
-        :class="['el-textarea', noPermission ? 'is-disabled' : '']"
-        v-model="msgCnt"
-        :disabled="noPermission">
-      </textarea>
-      <div class="send-btn btn" @click="sendMsg" >
-        <icon scale="1" name="paper-plane"></icon>
+      <div id="more-btn" class="touch-box more-btn">
+        <div class="btn"></div>
+      </div>
+      <div id="emoji-btn" class="touch-box emoji-btn">
+        <div class="btn">
+        </div>
+      </div>
+      <label class="touch-input">
+        <textarea
+          @focus="isFocus = true"
+          @blur="isFocus = false"
+          ref="realChatpannel"
+          type="textarea"
+          autocomplete="off"
+          validateevent="true"
+          :class="['el-textarea', noPermission ? 'is-disabled' : '']"
+          v-model="msgCnt"
+          :disabled="noPermission">
+        </textarea>
+      </label>
+      <div class="touch-box send-btn" @click="sendMsg">
+        <div class="btn" >
+          <icon scale="1" name="paper-plane"></icon>
+        </div>
       </div>
     </div>
   </div>
   <div :class="['footer', 'fake', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
-      <div id="more-btn" class="more-btn"></div>
-      <!-- <div id="emoji-btn" class="emoji-btn btn">
-        <icon scale="1.5" name="smile-o"></icon>
-      </div> -->
-      <textarea
-        @focus="triggerRealInput"
-        ref="chatpannel"
-        type="textarea"
-        autocomplete="off"
-        :placeholder="chatConditionMessage"
-        validateevent="true"
-        :class="['el-textarea', noPermission ? 'is-disabled' : '']"
-        v-model="msgCnt"
-        :disabled="noPermission">
-      </textarea>
-      <div class="send-btn btn" @click="sendMsg" >
-        <icon scale="1" name="paper-plane"></icon>
+      <div id="more-btn" class="touch-box more-btn">
+        <div class="btn"></div>
+      </div>
+      <div id="emoji-btn" class="touch-box emoji-btn">
+        <div class="btn">
+        </div>
+      </div>
+      <label class="touch-input">
+        <textarea
+          @focus="triggerRealInput"
+          ref="chatpannel"
+          type="textarea"
+          autocomplete="off"
+          :placeholder="chatConditionMessage"
+          validateevent="true"
+          :class="['el-textarea', noPermission ? 'is-disabled' : '']"
+          v-model="msgCnt"
+          :disabled="noPermission">
+        </textarea>
+      </label>
+      <div class="touch-box send-btn" @click="sendMsg">
+        <div class="btn" >
+          <icon scale="1" name="paper-plane"></icon>
+        </div>
       </div>
     </div>
     <div v-show="isShowEmojiPanel" class="emoji-panel">
@@ -88,15 +102,15 @@
       </div>
     </div>
     <div v-show="isShowControlPanel" class="control-panel">
-      <!-- <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
-        <div class="icon-bg">
-          <div class="envelope-icon"></div>
+      <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
+        <div class="icon-bg envelope-icon">
+          <div class="icon"></div>
         </div>
         <div class="title">发红包</div>
-      </label> -->
+      </label>
       <label class="control-btn" for="capture" @click="clickSendImg">
-        <div class="icon-bg">
-          <div class="picture-icon"></div>
+        <div class="icon-bg picture-icon">
+          <div class="icon"></div>
         </div>
         <div class="title">图片</div>
         <input @change="sendMsgImg"
@@ -116,7 +130,6 @@
 import Icon from 'vue-awesome/components/Icon'
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import 'vue-awesome/icons/smile-o'
 import 'vue-awesome/icons/paper-plane'
 import { Swiper, SwiperItem } from 'vux'
 import { sendImgToChat } from '../api'
@@ -153,7 +166,7 @@ export default {
       'user', 'systemConfig', 'emojis', 'ws', 'personal_setting'
     ]),
     noPermission () {
-      return !this.personal_setting.chatable && this.personal_setting.banned && this.personal_setting.blocked
+      return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
     },
     emojiSeries () {
       if (!this.emojis) {
@@ -255,8 +268,6 @@ export default {
     sendMsg () {
       if (this.noPermission || !this.msgCnt.trim()) { return false }
       this.ws.send({
-        'command': 'send',
-        'receivers': [this.roomId],
         'type': 0,
         'content': this.msgCnt
       })
@@ -273,8 +284,6 @@ export default {
       while (target.nodeName !== 'UL') {
         if (target.nodeName === 'LI') {
           this.ws.send({
-            'command': 'send',
-            'receivers': [this.roomId],
             'type': 7,
             'content': target.dataset.content,
             'sticker': target.dataset.stickerid
@@ -330,63 +339,79 @@ export default {
     }
   }
   .typing {
-    height: 50px;
+    height: 60px;
     display: flex;
+    align-items: center;
     box-sizing: border-box;
-    padding: 5px;
     width: 100%;
-    .more-btn {
+    .touch-box {
       flex: 0 0 auto;
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      margin-right: 5px;
-      background-color: #dfdfdf;
-      &::before,&::after {
-        position: absolute;
-        left: 19px;
-        top: 12px;
-        content: ' ';
-        height: 16px;
-        width: 2px;
-        background-color: #9b9b9b;
-      }
-      &::before {
-        transform: rotate(90deg);
+      height: 100%;
+      padding: 12px 4px;
+      box-sizing: border-box;
+    }
+    .more-btn {
+      padding-left: 16px;
+      .btn {
+        position: relative;
+        border: solid 1px #e5e5e5;
+        &::before,&::after {
+          position: absolute;
+          left: 17px;
+          top: 7px;
+          content: ' ';
+          height: 20px;
+          width: 2px;
+          background-color: #666666;
+        }
+        &::before {
+          transform: rotate(90deg);
+        }
       }
     }
     .btn {
-      flex: 0 0 auto;
       display: flex;
+      width: 36px;
+      height: 36px;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      box-sizing: border-box;
       border-radius: 4px;
     }
     .emoji-btn {
-      margin-right: 5px;
-      background-color: #dfdfdf;
-      color: #9b9b9b;
+      .btn {
+        border: solid 1px #e5e5e5;
+        background: url('../assets/smile.png') no-repeat center center;
+        background-size: 75% 75%;
+      }
+      &:active {
+        .btn{
+          background-image: url('../assets/smile_pressed.png')
+        }
+      }
     }
 
     .send-btn {
-      font-size: 14px;
-      line-height: 52px;
-      background: #4a90e2;
-      color: #fff;
+      padding-right: 16px;
+      .btn {
+        font-size: 14px;
+        background-color: #0269b1;
+        color: #fff;
+      }
+    }
+    .touch-input{
+      flex: 1 1 auto;
+      height: 100%;
+      padding: 12px 4px;
+      box-sizing: border-box;
     }
 
     .el-textarea {
-      flex: 1 1 auto;
-      margin-right: 5px;
+      width: 100%;
+      height: 100%;
       resize: none;
       outline: none;
       display: block;
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
       font-size: 14px;
       @media screen and (max-width: 320px) {
         font-size: 13px;
@@ -496,17 +521,31 @@ export default {
         background-color: #ffffff;
         border: solid 1px #dfdfdf;
         box-sizing: border-box;
-        .envelope-icon {
+      }
+      .envelope-icon {
+        .icon {
           background: url('../assets/envelope_btn.png') no-repeat center;
           background-size: contain;
           height: 30px;
           width: 38px;
         }
-        .picture-icon {
+        &:active {
+          .icon {
+            background-image: url('../assets/envelope_pressed.png');
+          }
+        }
+      }
+      .picture-icon {
+        .icon {
           background: url('../assets/picture.png') no-repeat center;
           background-size: contain;
           height: 30px;
           width: 38px;
+        }
+        &:active {
+          .icon {
+            background-image: url('../assets/picture_pressed.png');
+          }
         }
       }
       .title {

@@ -10,33 +10,35 @@
             <img :src="getAvatarSrc(item.sender)" v-else>
           </div>
           <div class="lay-content">
-            <div class="msg-header">
+            <div class="msg-header" >
               <h4>{{item.type === 4 ? '计划消息' : item.sender.nickname}}</h4>
               <span
-                v-if="item.type !== 4"
-                :class="['common-member', item.sender.level_name==='管理员'?'manager':'']">
-                {{item.sender.level_name==='管理员'?'管理员':'普通会员'}}
+                v-if="item.type !== 4 && item.sender.level_name!=='member'"
+                :class="['badage', getRole(item.sender.level_name).className]">
+                {{getRole(item.sender.level_name).displayName}}
               </span>
-              <span class="msg-time">{{item.created_at | moment('HH:mm:ss')}}</span>
             </div>
-            <envelope v-if="item.type === 5" :item="item" @click.native="openEnvelop(item.envelope_status.id)"></envelope>
-            <div v-else-if="item.type === 7" class="picture">
+            <envelope class="component" v-if="item.type === 5" :item="item" @click.native="openEnvelop(item.envelope_status.id)"></envelope>
+            <div v-else-if="item.type === 1" class="picture">
+              <img-async
+                  @click.native="showImageMsg = true; showImageMsgUrl = item.content"
+                  :src="item.content"
+                  @imgStart="imgLoadCount++"
+                  @imgLoad="imgLoadCount--"/>
+            </div>
+            <div v-else-if="item.type === 7" class="sticker">
               <img-async
                 :src="item.content"
                 @imgStart="imgLoadCount++"
                 @imgLoad="imgLoadCount--"/>
             </div>
+            <chat-plan class="component" v-else-if="item.type === 8" :betInfo="item.bet_info" @showBetDialog="showBetDialog"></chat-plan>
             <div v-else :class="['bubble', 'bubble' + item.type]">
               <p>
-                <span v-if="item.type === 4 || item.type === 8">{{item.content}}</span>
-                <img-async
-                  @click.native="showImageMsg = true; showImageMsgUrl = item.content"
-                  v-else-if="item.type === 1"
-                  :src="item.content"
-                  @imgStart="imgLoadCount++"
-                  @imgLoad="imgLoadCount--"/>
+                <span>{{item.content}}</span>
               </p>
             </div>
+            <span v-if="item.type!==8" class="msg-time">{{item.created_at | moment('HH:mm:ss')}}</span>
           </div>
         </div>
         <div v-else>
@@ -94,14 +96,17 @@
         </div>
       </x-dialog>
     </div>
+    <bet-dialog :isShowDialog="isShowBetDialog" :betInfo="betInfo" @toggleDialog="toggleBetDialog"/>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { TransferDom, Popup, XDialog, XTable } from 'vux'
+import { TransferDom, Popup, XDialog } from 'vux'
 import { takeEnvelope } from '../api'
 import Envelope from './Envelope'
+import BetDialog from './BetDialog'
+import ChatPlan from './ChatPlan'
 import ImgAsync from './ImgAsync'
 import urls from '../api/urls'
 export default {
@@ -109,8 +114,9 @@ export default {
     Popup,
     Envelope,
     XDialog,
-    XTable,
-    ImgAsync
+    ImgAsync,
+    ChatPlan,
+    BetDialog
   },
   directives: {
     TransferDom
@@ -118,6 +124,9 @@ export default {
   props: {
     roomId: {
       default: ''
+    },
+    gameInfo: {
+      type: Object
     }
   },
   name: 'ChatBody',
@@ -145,7 +154,9 @@ export default {
       imgLoadCount: 0,
       notNeedScroll: true,
       userLoading: false,
-      dialogStyle
+      dialogStyle,
+      isShowBetDialog: false,
+      betInfo: null
     }
   },
   computed: {
@@ -153,7 +164,7 @@ export default {
       'user', 'envelope', 'ws', 'personal_setting', 'messages'
     ]),
     noPermission () {
-      return !this.personal_setting.chatable && this.personal_setting.banned && this.personal_setting.blocked
+      return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
     },
     statistic () {
       if (this.selectedEnvelope.users) {
@@ -260,13 +271,41 @@ export default {
           }).catch(() => { this.busy = false })
         }
       }
+    },
+    getRole (levelname) {
+      switch (levelname) {
+        case 'manager':
+          return {
+            className: 'manager',
+            displayName: '管理员'
+          }
+        case 'plan_maker':
+          return {
+            className: 'planmaker',
+            displayName: '计划员'
+          }
+        default:
+          return {
+            className: '',
+            displayName: levelname
+          }
+      }
+    },
+    showBetDialog (betInfo) {
+      this.isShowBetDialog = true
+      this.betInfo = betInfo
+    },
+    toggleBetDialog (status) {
+      this.isShowBetDialog = status
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@import '../styles/vars.less';
 .chat-body {
+  position: relative;
   flex: 1 1 auto;
   height: 100%;
   overflow-y: auto;
@@ -280,9 +319,8 @@ export default {
   }
 }
 .item {
-  padding: 0 5px;
-  margin-top: 20px;
-  overflow: hidden;
+  padding: 0 16px;
+  margin-bottom: 20px;
   &.sys-msg {
     text-align: center;
     color: #eee;
@@ -301,8 +339,11 @@ export default {
     }
   }
   .lay-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
     width: calc(~"100%" - 62px);
-    .picture {
+    .sticker {
       width: 55%;
       img {
         width: 100%;
@@ -313,51 +354,50 @@ export default {
     .lay-block {
       .lay-content {
         float: left;
-        margin-left: 15px;
-        .bubble:after {
-          left: 0;
-          border-left: 0;
-          margin-left: -8px;
-          border-right-color: inherit;
+        margin-left: 8px;
+        .component {
+          border-top-left-radius: 0;
+        }
+        .bubble {
+          border-top-left-radius: 0;
+        }
+        .picture {
+          img {
+            border-top-left-radius: 0;
+          }
         }
       }
     }
   }
   &.item-right {
+    text-align: right;
     .lay-block {
       .avatar {
         float: right;
       }
       .lay-content {
         float: right;
-        margin-right: 15px;
+        flex-direction: row-reverse;
+        margin-right: 8px;
         margin-left: 0;
         .msg-header {
-          h4 {
-            text-align: right;
-            float: right;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-top: 2px;
-            font-size: 12px;
-          }
-
-          span {
-            float: right;
-          }
-        }
-        .picture {
-          float: right;
+          display: none;
         }
         .bubble {
-          float: right;
+          border-top-right-radius: 0;
+          background: #0269b1;
+          color: #fff;
         }
-        .bubble:after {
-          right: 0;
-          border-right: 0;
-          margin-right: -9px;
-          border-left-color: inherit;
+        .component {
+          border-top-right-radius: 0;
+        }
+        .msg-time {
+          vertical-align: bottom;
+        }
+        .picture {
+          img {
+            border-top-right-radius: 0;
+          }
         }
       }
     }
@@ -380,7 +420,7 @@ export default {
   }
 }
 
-.common-member {
+.badage {
   float: left;
   width: auto;
   height: auto;
@@ -391,21 +431,29 @@ export default {
   font-weight: 400;
   font-size: 10px;
   color: #fff;
+  line-height: 20px;
+  height: 20px;
   &.manager {
-    background: #d6a254;
-    padding: 0 6px;
-    width: auto;
-    height: auto;
-    margin: 0 5px;
+    background: #62adcd;
+  }
+  &.planmaker {
+    background: #e58364
   }
 }
+.component {
+  margin-top: 3px;
+  border-radius: 10px;
+}
 .msg-header {
+  width: 100%;
+  line-height: 20px;
+  height: 20px;
   overflow: hidden;
   h4 {
     float: left;
     max-width: 150px;
     font-size: 14px;
-    color: #4f77ab;
+    color: #0269b1;
     font-weight: 400;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -413,28 +461,26 @@ export default {
     line-height: 12px;
     padding-top: 2px;
   }
-  .msg-time {
-    color: #9f9f9f;
-    float: left;
-    font-size: 12px;
+}
+.picture {
+  width: 55%;
+  img {
+    height: auto;
+    width: 100%;
+    border-radius: 10px;
   }
 }
 .bubble {
-  background: linear-gradient(to right, #1976D2, rgb(25, 158, 216));
-  border-left-color: rgb(25, 158, 216);
-  border-right-color: #1976D2;
-  color: rgb(255, 255, 255);
+  background: #e5e5e5;
+  color: #333333;
   margin-top: 3px;
   position: relative;
-  border-radius: 5px;
+  border-radius: 10px;
   padding: 5px 8px;
-  font-size: 13px;
-  display: inline-block;
+  font-size: 16px;
+  text-align: left;
   p {
     width: 100%;
-  }
-  &.bubble1 {
-    width: 55%;
   }
   &.bubble4 {
     background: #ab47bc;
@@ -442,18 +488,11 @@ export default {
     border-left-color: #5169de;
     border-right-color: #ab47bc;
   }
-  &.bubble8 {
-    background: linear-gradient(to right, #1976D2, rgb(25, 158, 216));
-    border-left-color: rgb(25, 158, 216);
-    border-right-color: #1976D2;
-    color: rgb(255, 255, 255);
-  }
   p {
     display: inline-block;
     span {
       white-space: pre-wrap;
       word-break: break-all;
-      font-size: 14px;
     }
     img {
       width: 100%;
@@ -461,15 +500,12 @@ export default {
     }
   }
 }
-.bubble:after {
-  content: '';
-  position: absolute;
-  top: 14px;
-  width: 0;
-  height: 0;
-  border: 9px solid transparent;
-  border-top: 0;
-  margin-top: -7px;
+
+.msg-time {
+  vertical-align: bottom;
+  color: #bfbfbf;
+  font-size: 12px;
+  margin: 0 5px;
 }
 .close-pop-btn {
   text-align: right;
@@ -558,14 +594,14 @@ export default {
   .userlist {
     box-sizing: border-box;
     width: 100%;
-    height: 260px;
+    height: 220px;
     padding:0 35px;
     background: #fff;
     font-size: 14px;
     color: #4a4a4a;
     .count {
-      height: 50px;
-      line-height: 50px;
+      height: 30px;
+      line-height: 30px;
       font-size: 12px;
       color: #de5547;
     }

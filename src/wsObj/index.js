@@ -1,8 +1,9 @@
 import store from '../store'
 import config from '../../config'
 import {AlertModule} from 'vux'
+import Vue from 'vue'
 
-const DEFAULT_ROOM_ID = 1000000
+const DEFAULT_ROOM_ID = 100000
 function WebSocketObj (token, roomId) {
   this.ws = new WebSocket(`${config.chatHost}/chat/stream?username=${store.state.user.username}&token=${token}`)
   this.roomId = roomId
@@ -12,11 +13,11 @@ function WebSocketObj (token, roomId) {
       'receivers': [roomId]
     }))
   }
-  this.ws.onclose = () => {
+  this.ws.onclose = (e) => {
     store.dispatch('setWs', null)
   }
 
-  this.ws.onerror = () => {
+  this.ws.onerror = (e) => {
     store.dispatch('setWs', null)
   }
   this.ws.onmessage = (resData) => {
@@ -46,10 +47,10 @@ function WebSocketObj (token, roomId) {
                 const command = data.command
                 if (command === 'unbanned' || command === 'unblock') {
                   this.$store.dispatch('updatePersonalSetting', command)
+                  AlertModule.show({
+                    content: data.content
+                  })
                 }
-                AlertModule.show({
-                  content: data.content
-                })
                 break
               case 3:
                 this.announcement = data.content
@@ -64,8 +65,8 @@ function WebSocketObj (token, roomId) {
                   setting.status = 3
                 }
                 store.dispatch('updateEnvelope', {id: envelopeStatue.id, data: setting})
-                const nickname = data.get_envelope_user === this.user.username ? '你' : data.sender.nickname
-                if (data.sender.username === this.user.username) {
+                const nickname = data.get_envelope_user.username === store.state.user.username ? '你' : data.get_envelope_user.nickname
+                if (data.sender.username === store.state.user.username) {
                   store.dispatch('addMessage', {type: -1, content: nickname + '领取了你的红包'})
                 }
                 break
@@ -77,7 +78,7 @@ function WebSocketObj (token, roomId) {
           switch (data.error_type) {
             case 4:
               AlertModule.show({
-                content: '您已被聊天室管理员禁言，在' + this.$moment(data.msg).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
+                content: '您已被聊天室管理员禁言，在' + Vue.moment(data.msg).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
               })
               store.dispatch('updatePersonalSetting', 'banned')
               break
@@ -89,6 +90,10 @@ function WebSocketObj (token, roomId) {
               })
               break
             case 6:
+              if (this.roomId === DEFAULT_ROOM_ID) {
+                break
+              }
+              this.roomId = undefined
               this.joinRoom(DEFAULT_ROOM_ID)
               break
             default:
@@ -111,6 +116,9 @@ WebSocketObj.prototype.joinRoom = function (roomId) {
     this.leaveRoom(this.roomId)
   }
   this.roomId = roomId
+  if (store.state.roomInfo && !store.state.roomInfo[this.roomId].status) {
+    this.roomId = DEFAULT_ROOM_ID
+  }
   this.ws.send(JSON.stringify({
     'command': 'join',
     'receivers': [roomId]
@@ -123,11 +131,13 @@ WebSocketObj.prototype.leaveRoom = function () {
     'receivers': [this.roomId]
   }))
   this.roomId = undefined
-  store.dispatch('initMessage': [])
-  store.dispatch('setAnnounce': [])
+  store.dispatch('initMessage', [])
+  store.dispatch('setAnnounce', [])
 }
 
 WebSocketObj.prototype.send = function (data) {
+  data.command = 'send'
+  data.receivers = [this.roomId]
   this.ws.send(JSON.stringify(data))
 }
 
