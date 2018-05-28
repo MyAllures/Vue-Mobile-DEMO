@@ -16,6 +16,9 @@ import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
 import qs from 'qs'
 
+// 移动端触发active
+document.addEventListener('touchstart', function () {}, true)
+
 let url = window.location.href
 const HTTPS = process.env.HTTPS
 if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
@@ -119,6 +122,7 @@ Vue.mixin({
 gethomePage().then(
   response => {
     let pref = response.global_preferences || {}
+    const chatroomEnabled = pref.chatroom_enabled === 'true'
     store.dispatch('setSystemConfig',
       {
         homePageLogo: response.icon,
@@ -130,7 +134,7 @@ gethomePage().then(
         contactEmail: pref.contact_email,
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,
-        chatroomEnabled: pref.chatroom_enabled,
+        chatroomEnabled: chatroomEnabled,
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
         regPresentAmount: response.reg_present_amount,

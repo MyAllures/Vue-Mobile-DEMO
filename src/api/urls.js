@@ -40,15 +40,15 @@ export default {
   readMessage: apiv1 + '/message/read/',
   messages: apiv1 + '/messages/',
   unread: apiv1 + '/message/count/',
-  gamehistory: apiv1 + /history/,
+  gamehistory: apiv1 + '/history/',
   statistic: apiv1 + '/statistic/',
   chatEmoji: apiChat + '/v1/emoji/',
-  banUser: apiChat + '/v1/room/',
   sendImgToChat: host + '/v1/manage/attachment/',
-  getRoomManagers: apiChat + '/v1/room/',
   chatRoomLogin: apiChat + '/chat/',
   playSetting: apiv1 + '/game/playset/',
   setCookie: host + '/set_cookie/',
   stickers: apiChat + '/v1/stickers/',
-  envelope: apiv1 + '/red_envelope/'
+  envelope: apiv1 + '/red_envelope/',
+  chatinfo: apiChat + '/v1/user/',
+  roomInfo: apiChat + '/v1/member/room/'
 }

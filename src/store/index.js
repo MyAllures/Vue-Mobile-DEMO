@@ -15,6 +15,16 @@ export default new Vuex.Store({
     isLoading: false,
     showVerifyPopup: false,
     games: [],
+    gameInfo: {
+      display_name: '',
+      countdown: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+      },
+      issue_number: ''
+    },
     categories: [],
     systemConfig: {
       customerServiceUrl: '',
@@ -24,7 +34,7 @@ export default new Vuex.Store({
       global_preferences: {
         send_chat_conditions: '{}'
       },
-      chatroomEnabled: 'false',
+      chatroomEnabled: false,
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
       envelopeSettings: {},
@@ -33,6 +43,15 @@ export default new Vuex.Store({
     envelope: {},
     emojis: null,
     keepAlivePage: [],
+    ws: null,
+    roomInfo: null,
+    messages: [],
+    announce: [],
+    personal_setting: {
+      chat: {
+        status: 0
+      }
+    },
     customPlayGroups: [
       {
         // 广东11选5 连码
