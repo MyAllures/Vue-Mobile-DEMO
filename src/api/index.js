@@ -210,3 +210,17 @@ export function takeEnvelope (envelopId, userId) {
     'Content-Type': 'application/json'
   })
 }
+
+export function fetchChatInfo (username) {
+  return axiosChat.get(`${urls.chatinfo}${username}/`)
+}
+
+export function fetchRoomInfo () {
+  return axios.get(urls.roomInfo)
+}
+
+export function sendSMSCode (phoneNumber) {
+  return axios.put(urls.smscode, {phone_number: phoneNumber}, {
+    'Content-Type': 'application/json'
+  })
+}
