@@ -82,19 +82,9 @@
         label-width="100"
         v-model="user.phone">
       </x-input>
-      <div class="weui-cell" :style="{padding: '10px'}">
-        <x-button
-          v-if="smsValidationEnabled"
-          type="primary"
-          action-type ="button"
-          :disabled="!user.phone||!!inputErrors['phone']"
-          :show-loading="SMSLoading"
-          @click.native="sendSMSCode">发送验证码</x-button>
-      </div>
        <x-input
         v-if="smsValidationEnabled"
         :class="{'weui-cell_warn': inputErrors['sms_code']}"
-        placeholder="请输入短信验证码"
         show-clear
         @on-blur="validate($event, 'sms_code')"
         ref="sms_code"
@@ -102,6 +92,13 @@
         :title="$t('misc.captcha')"
         label-width="100"
         v-model="user.sms_code">
+        <x-button
+          slot="right"
+          type="primary"
+          mini
+          action-type ="button"
+          :disabled="!user.phone||!!inputErrors['phone']||SMSLoading"
+          @click.native="sendSMSCode">发送验证码</x-button>
       </x-input>
       <x-input
         :class="{'weui-cell_warn': inputErrors['qq']}"
