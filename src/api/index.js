@@ -214,3 +214,9 @@ export function fetchChatInfo (username) {
 export function fetchRoomInfo () {
   return axios.get(urls.roomInfo)
 }
+
+export function sendSMSCode (phoneNumber) {
+  return axios.put(urls.smscode, {phone_number: phoneNumber}, {
+    'Content-Type': 'application/json'
+  })
+}

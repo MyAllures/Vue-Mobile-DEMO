@@ -38,7 +38,8 @@ export default new Vuex.Store({
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
       envelopeSettings: {},
-      stickerGroups: []
+      stickerGroups: [],
+      smsValidationEnabled: false
     },
     envelope: {},
     emojis: null,

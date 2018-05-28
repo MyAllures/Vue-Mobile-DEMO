@@ -140,7 +140,8 @@ gethomePage().then(
         regPresentAmount: response.reg_present_amount,
         needBankinfo: response.need_bankinfo,
         stickerGroups: response.sticker_groups || [],
-        envelopeSettings: pref.red_envelope_settings || {}
+        envelopeSettings: pref.red_envelope_settings || {},
+        smsValidationEnabled: pref.sms_validation_enabled === 'true'
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
