@@ -50,5 +50,6 @@ export default {
   stickers: apiChat + '/v1/stickers/',
   envelope: apiv1 + '/red_envelope/',
   chatinfo: apiChat + '/v1/user/',
-  roomInfo: apiChat + '/v1/member/room/'
+  roomInfo: apiChat + '/v1/member/room/',
+  smscode: apiv1 + '/sms_verification/'
 }
