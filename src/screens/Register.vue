@@ -87,6 +87,7 @@
         :class="{'weui-cell_warn': inputErrors['sms_code']}"
         @on-blur="validate($event, 'sms_code')"
         ref="sms_code"
+        show-clear
         autocomplete="off"
         :title="$t('misc.captcha')"
         label-width="100"
@@ -95,7 +96,6 @@
           class="sms-btn"
           slot="right"
           type="primary"
-          :show-clear="false"
           mini
           action-type ="button"
           :disabled="!user.phone||!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
