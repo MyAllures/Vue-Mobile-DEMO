@@ -39,7 +39,7 @@
         <x-icon
           type="ios-close-empty"
           size="32"></x-icon>
-          {{roomInfo&&roomInfo[$route.params.gameId].name}}
+          {{roomInfo&&roomId&&roomInfo[roomId].name}}
       </div>
       <div
         v-if="showLinks"
@@ -192,7 +192,7 @@ export default {
       'user'
     ]),
     ...mapState([
-      'isLoading', 'ws', 'roomInfo'
+      'isLoading', 'ws', 'roomInfo', 'roomId'
     ]),
     unread () {
       return this.$store.state.user.unread

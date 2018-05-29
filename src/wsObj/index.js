@@ -6,12 +6,8 @@ import Vue from 'vue'
 const DEFAULT_ROOM_ID = 100000
 function WebSocketObj (token, roomId) {
   this.ws = new WebSocket(`${config.chatHost}/chat/stream?username=${store.state.user.username}&token=${token}`)
-  this.roomId = roomId
   this.ws.onopen = () => {
-    this.ws.send(JSON.stringify({
-      'command': 'join',
-      'receivers': [roomId]
-    }))
+    this.joinRoom(roomId)
   }
   this.ws.onclose = (e) => {
     store.dispatch('setWs', null)
@@ -26,12 +22,12 @@ function WebSocketObj (token, roomId) {
       try {
         data = JSON.parse(resData.data)
         if (data.personal_setting) {
-          const bannedTime = data.personal_setting.banned[this.roomId]
+          const bannedTime = data.personal_setting.banned[store.state.roomId]
           const setting = {
             chatable: data.personal_setting.chat.status === 1,
             banned: !!bannedTime,
             bannedTime: bannedTime,
-            blocked: data.personal_setting.blocked.includes(this.roomId)
+            blocked: data.personal_setting.blocked.includes(store.state.roomId)
           }
           store.dispatch('initPersonalSetting', setting)
         } else if (!data.error_type) {
@@ -90,10 +86,10 @@ function WebSocketObj (token, roomId) {
               })
               break
             case 6:
-              if (this.roomId === DEFAULT_ROOM_ID) {
+              if (store.state.roomId === DEFAULT_ROOM_ID) {
                 break
               }
-              this.roomId = undefined
+              store.commit('SET_ROOM_ID', undefined)
               this.joinRoom(DEFAULT_ROOM_ID)
               break
             default:
@@ -112,32 +108,33 @@ function WebSocketObj (token, roomId) {
 }
 
 WebSocketObj.prototype.joinRoom = function (roomId) {
-  if (this.roomId) {
-    this.leaveRoom(this.roomId)
+  if (store.state.roomId) {
+    this.leaveRoom(store.state.roomId)
   }
-  this.roomId = roomId
-  if (store.state.roomInfo && !store.state.roomInfo[this.roomId].status) {
-    this.roomId = DEFAULT_ROOM_ID
+  if (store.state.roomInfo && !store.state.roomInfo[roomId].status) {
+    store.commit('SET_ROOM_ID', DEFAULT_ROOM_ID)
+  } else {
+    store.commit('SET_ROOM_ID', roomId)
   }
   this.ws.send(JSON.stringify({
     'command': 'join',
-    'receivers': [roomId]
+    'receivers': [store.state.roomId]
   }))
 }
 
 WebSocketObj.prototype.leaveRoom = function () {
   this.ws.send(JSON.stringify({
     'command': 'leave',
-    'receivers': [this.roomId]
+    'receivers': [store.state.roomId]
   }))
-  this.roomId = undefined
+  store.commit('SET_ROOM_ID', undefined)
   store.dispatch('initMessage', [])
   store.dispatch('setAnnounce', [])
 }
 
 WebSocketObj.prototype.send = function (data) {
   data.command = 'send'
-  data.receivers = [this.roomId]
+  data.receivers = [store.state.roomId]
   this.ws.send(JSON.stringify(data))
 }
 

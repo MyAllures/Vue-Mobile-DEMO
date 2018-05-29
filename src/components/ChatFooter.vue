@@ -122,7 +122,7 @@
       </label>
     </div>
   </div>
-  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" :roomId="roomId" @hidePanel="hidePanel"/>
+  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" @hidePanel="hidePanel"/>
 </div>
 </template>
 
@@ -143,11 +143,6 @@ export default {
     Icon,
     EnvelopeDialog
   },
-  props: {
-    roomId: {
-      type: Number
-    }
-  },
   data () {
     return {
       isFocus: false,
@@ -163,7 +158,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'emojis', 'ws', 'personal_setting'
+      'user', 'systemConfig', 'emojis', 'ws', 'personal_setting', 'roomId'
     ]),
     noPermission () {
       return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
@@ -347,20 +342,19 @@ export default {
     .touch-box {
       flex: 0 0 auto;
       height: 100%;
-      padding: 12px 4px;
+      padding: 5px 0 5px 5px;
       box-sizing: border-box;
     }
     .more-btn {
-      padding-left: 16px;
       .btn {
         position: relative;
-        border: solid 1px #e5e5e5;
+        border: solid 1px #ccc;
         &::before,&::after {
           position: absolute;
-          left: 17px;
-          top: 7px;
+          left: 23px;
+          top: 11px;
           content: ' ';
-          height: 20px;
+          height: 25px;
           width: 2px;
           background-color: #666666;
         }
@@ -371,8 +365,8 @@ export default {
     }
     .btn {
       display: flex;
-      width: 36px;
-      height: 36px;
+      width: 50px;
+      height: 50px;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
@@ -380,9 +374,9 @@ export default {
     }
     .emoji-btn {
       .btn {
-        border: solid 1px #e5e5e5;
+        border: solid 1px #ccc;
         background: url('../assets/smile.png') no-repeat center center;
-        background-size: 75% 75%;
+        background-size: 60% 60%;
       }
       &:active {
         .btn{
@@ -392,7 +386,7 @@ export default {
     }
 
     .send-btn {
-      padding-right: 16px;
+      padding-right: 5px;
       .btn {
         font-size: 14px;
         background-color: #0269b1;
@@ -402,20 +396,20 @@ export default {
     .touch-input{
       flex: 1 1 auto;
       height: 100%;
-      padding: 12px 4px;
+      padding: 5px 0 5px 5px;
       box-sizing: border-box;
     }
 
     .el-textarea {
       width: 100%;
       height: 100%;
+      box-sizing: border-box;
+      padding: 0 5px;
+      line-height: 25px;
       resize: none;
       outline: none;
       display: block;
-      font-size: 14px;
-      @media screen and (max-width: 320px) {
-        font-size: 13px;
-      }
+      font-size: 16px;
       color: #1f2d3d;
       background-color: #fff;
       border: 1px solid #bfcbd9;

@@ -86,9 +86,6 @@ export default {
   props: {
     isShowEnvelopeDialog: {
       type: Boolean
-    },
-    roomId: {
-      type: Number
     }
   },
   data () {
@@ -151,7 +148,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig'
+      'user', 'systemConfig', 'roomId'
     ])
   },
   watch: {
