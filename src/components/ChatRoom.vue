@@ -11,8 +11,8 @@
     </div>
     <p class="login-info" v-if="!ws">聊天室登录中...</p>
     <div class="chat-container" v-else>
-      <chat-body :roomId="RECEIVER" :gameInfo="gameInfo" @click.native="hidePanel"/>
-      <chat-footer ref="chatFooter" :roomId="RECEIVER"/>
+      <chat-body @click.native="hidePanel"/>
+      <chat-footer ref="chatFooter"/>
     </div>
   </div>
 </template>
@@ -43,11 +43,6 @@ export default {
   },
   directives: {
     TransferDom
-  },
-  props: {
-    gameInfo: {
-      type: Object
-    }
   },
   data () {
     return {

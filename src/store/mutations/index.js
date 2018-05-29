@@ -105,5 +105,8 @@ export default {
   },
   [types.SET_ROOM_INFO]: (state, info) => {
     state.roomInfo = info
+  },
+  [types.SET_ROOM_ID]: (state, id) => {
+    state.roomId = id
   }
 }

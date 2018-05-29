@@ -45,6 +45,7 @@ export default new Vuex.Store({
     emojis: null,
     keepAlivePage: [],
     ws: null,
+    roomId: undefined,
     roomInfo: null,
     messages: [],
     announce: [],

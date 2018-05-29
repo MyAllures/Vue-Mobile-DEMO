@@ -13,9 +13,9 @@
             <div class="msg-header" >
               <h4>{{item.type === 4 ? '计划消息' : item.sender.nickname}}</h4>
               <span
-                v-if="item.type !== 4 && item.sender.level_name!=='member'"
-                :class="['badage', getRole(item.sender.level_name).className]">
-                {{getRole(item.sender.level_name).displayName}}
+                v-if="item.type !== 4 && item.sender.level!=='member'"
+                :class="['badage', getRole(item.sender.level).className]">
+                {{getRole(item.sender.level).displayName}}
               </span>
             </div>
             <envelope class="component" v-if="item.type === 5" :item="item" @click.native="openEnvelop(item.envelope_status.id)"></envelope>
@@ -38,15 +38,14 @@
                 <span>{{item.content}}</span>
               </p>
             </div>
-            <span v-if="item.type!==8" class="msg-time">{{item.created_at | moment('HH:mm:ss')}}</span>
+            <span v-if="item.type!==8" class="msg-time">{{item.created_at | moment('HH:mm')}}</span>
           </div>
         </div>
         <div v-else>
           {{item.content}}
         </div>
       </li>
-      <li v-if="personal_setting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。<li>
-      <li ref="msgEnd" id="msgEnd" class="msgEnd"></li>
+      <li v-if="personal_setting.blocked" class="block-user-info">您已被管理员拉黑，请联系客服。</li>
     </ul>
     <div v-transfer-dom>
       <popup v-model="showImageMsg" height="100%">
@@ -120,14 +119,6 @@ export default {
   },
   directives: {
     TransferDom
-  },
-  props: {
-    roomId: {
-      default: ''
-    },
-    gameInfo: {
-      type: Object
-    }
   },
   name: 'ChatBody',
   data () {
@@ -320,10 +311,10 @@ export default {
 }
 .item {
   padding: 0 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   &.sys-msg {
     text-align: center;
-    color: #eee;
+    color: #333;
     font-size: 12px;
     .type-warning {
       color: #f60;
@@ -477,7 +468,7 @@ export default {
   position: relative;
   border-radius: 10px;
   padding: 5px 8px;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   p {
     width: 100%;
