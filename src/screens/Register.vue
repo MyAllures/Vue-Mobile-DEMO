@@ -85,20 +85,21 @@
        <x-input
         v-if="smsValidationEnabled"
         :class="{'weui-cell_warn': inputErrors['sms_code']}"
-        show-clear
         @on-blur="validate($event, 'sms_code')"
         ref="sms_code"
+        show-clear
         autocomplete="off"
         :title="$t('misc.captcha')"
         label-width="100"
         v-model="user.sms_code">
         <x-button
+          class="sms-btn"
           slot="right"
           type="primary"
           mini
           action-type ="button"
-          :disabled="!user.phone||!!inputErrors['phone']||SMSLoading"
-          @click.native="sendSMSCode">发送验证码</x-button>
+          :disabled="!user.phone||!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
+          @click.native="sendSMSCode">{{countdown!=='stop'?`(${countdown}s)`:SMSText}}</x-button>
       </x-input>
       <x-input
         :class="{'weui-cell_warn': inputErrors['qq']}"
@@ -344,7 +345,10 @@ export default {
         captcha_src: '',
         error: '',
         loading: false,
-        SMSLoading: false
+        SMSLoading: false,
+        SMSText: '获取验证码',
+        countdown: 'stop',
+        countdownInterval: null
       }
     },
     computed: {
@@ -425,6 +429,17 @@ export default {
           this.user.verification_code_0 = res.captcha_val
         })
       },
+      setCountdown () {
+        this.countdown = 60
+        this.countdownInterval = setInterval(() => {
+          this.countdown--
+          if (this.countdown <= 0) {
+            clearInterval(this.countdownInterval)
+            this.countdown = 'stop'
+            this.SMSText = '重新获取'
+          }
+        }, 1000)
+      },
       sendSMSCode () {
         if (this.SMSLoading) {
           return
@@ -433,6 +448,7 @@ export default {
         sendSMSCode(this.user.phone).then(res => {
           this.SMSLoading = false
           this.error = res.msg
+          this.setCountdown()
           this.$nextTick(() => {
             this.$refs.submit.$el.scrollIntoView(false)
           })
@@ -491,6 +507,9 @@ export default {
           }
         })
       }
+    },
+    beforeDestroy () {
+      clearInterval(this.countdownInterval)
     }
   }
 </script>
@@ -557,5 +576,9 @@ export default {
   color: @red;
   text-align: center;
   margin-top: 15px;
+}
+
+.sms-btn {
+  width: 100px;
 }
 </style>
