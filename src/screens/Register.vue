@@ -99,7 +99,7 @@
           mini
           action-type ="button"
           :disabled="!user.phone||!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
-          @click.native="sendSMSCode">{{countdown!=='stop'?`(${countdown}s)`:SMSText}}</x-button>
+          @click.native="sendSMSCode">{{countdown!=='stop'?`${countdown}s`:SMSText}}</x-button>
       </x-input>
       <x-input
         :class="{'weui-cell_warn': inputErrors['qq']}"
