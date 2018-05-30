@@ -82,6 +82,25 @@
         label-width="100"
         v-model="user.phone">
       </x-input>
+       <x-input
+        v-if="smsValidationEnabled"
+        :class="{'weui-cell_warn': inputErrors['sms_code']}"
+        @on-blur="validate($event, 'sms_code')"
+        ref="sms_code"
+        show-clear
+        autocomplete="off"
+        :title="$t('misc.captcha')"
+        label-width="100"
+        v-model="user.sms_code">
+        <x-button
+          class="sms-btn"
+          slot="right"
+          type="primary"
+          mini
+          action-type ="button"
+          :disabled="!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
+          @click.native="sendSMSCode">{{countdown!=='stop'?`${countdown}s`:SMSText}}</x-button>
+      </x-input>
       <x-input
         :class="{'weui-cell_warn': inputErrors['qq']}"
         show-clear
@@ -104,6 +123,7 @@
         v-model="user.withdraw_password">
       </x-input>
       <x-input
+        v-if="!smsValidationEnabled"
         :class="{'weui-cell_warn': inputErrors['verification_code_1']}"
         show-clear
         @on-blur="validate($event, 'verification_code_1')"
@@ -124,8 +144,9 @@
     <div class="actions">
       <div v-if="error" class="error">{{error}}</div>
       <x-button type="primary"
+                ref="submit"
                 action-type ="button"
-                :show-loading="false"
+                :show-loading="loading"
                 :disabled="false"
                 @click.native="submitForm">
                 注册
@@ -155,10 +176,10 @@
 </template>
 
 <script>
-  import { fetchCaptcha, checkUserName, register } from '../api'
+  import { fetchCaptcha, checkUserName, register, sendSMSCode } from '../api'
   import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
   import { XInput, Group, XButton, Flexbox,
-    FlexboxItem, Selector, CellBox,
+    FlexboxItem, Selector, CellBox, Cell,
     Popup, CheckIcon, TransferDom,
     Icon, Alert } from 'vux'
   import { mapState } from 'vuex'
@@ -171,6 +192,7 @@ export default {
       Flexbox,
       FlexboxItem,
       Selector,
+      Cell,
       CellBox,
       Popup,
       CheckIcon,
@@ -289,12 +311,12 @@ export default {
           confirmation_password: '',
           real_name: '',
           phone: '',
-          email: '',
           qq: '',
           withdraw_password: '',
           hasAgree: true,
           verification_code_0: '',
-          verification_code_1: ''
+          verification_code_1: '',
+          sms_code: ''
         },
         inputErrors: {
           username: '',
@@ -305,7 +327,8 @@ export default {
           qq: '',
           withdraw_password: '',
           hasAgree: '',
-          verification_code_1: ''
+          verification_code_1: '',
+          sms_code: ''
         },
         validators: {
           username: usernameValidator,
@@ -316,10 +339,16 @@ export default {
           real_name: realnameValidator,
           phone: phoneValidator,
           hasAgree: agreementValidator,
-          verification_code_1: captchaValidator
+          verification_code_1: captchaValidator,
+          sms_code: captchaValidator
         },
         captcha_src: '',
-        error: ''
+        error: '',
+        loading: false,
+        SMSLoading: false,
+        SMSText: '获取验证码',
+        countdown: 'stop',
+        countdownInterval: null
       }
     },
     computed: {
@@ -346,6 +375,9 @@ export default {
           }
         })
         return errors
+      },
+      smsValidationEnabled () {
+        return this.systemConfig.smsValidationEnabled
       }
     },
     watch: {
@@ -373,7 +405,7 @@ export default {
         }
       },
       validateAll () {
-        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree', 'verification_code_1']
+        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree', this.smsValidationEnabled ? 'sms_code' : 'verification_code_1']
         const validatePromises = inputs.map(input => {
           const currentValue = this.user[input]
           if (input === 'confirmation_password') {
@@ -391,29 +423,85 @@ export default {
         return Promise.all(validatePromises)
       },
       fetchCaptcha () {
+        if (this.smsValidationEnabled) { return }
         fetchCaptcha().then(res => {
           this.captcha_src = res.captcha_src
           this.user.verification_code_0 = res.captcha_val
         })
       },
+      setCountdown () {
+        this.countdown = 60
+        this.countdownInterval = setInterval(() => {
+          this.countdown--
+          if (this.countdown <= 0) {
+            clearInterval(this.countdownInterval)
+            this.countdown = 'stop'
+            this.SMSText = '重新获取'
+          }
+        }, 1000)
+      },
+      sendSMSCode () {
+        if (this.SMSLoading) {
+          return
+        }
+        this.validators['phone'](this.user.phone).then(msg => {
+          this.inputErrors['phone'] = msg
+          if (!msg) {
+            this.SMSLoading = true
+            sendSMSCode(this.user.phone).then(res => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(res)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'success'
+              })
+              this.setCountdown()
+            }).catch(errorMsg => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(errorMsg)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'warn'
+              })
+            })
+          }
+        })
+      },
       submitForm () {
+        if (this.loading) {
+          return
+        }
         this.validateAll().then(msgs => {
           const isValid = msgs.filter(msg => { return msg }).length === 0
           if (isValid) {
             this.loading = true
-            register(this.user).then(result => {
+            const userInfo = {}
+            Object.keys(this.user).forEach(key => {
+              let value = this.user[key]
+              if (value !== undefined && value !== '') {
+                userInfo[key] = value
+              }
+            })
+            register(userInfo).then(result => {
+              this.loading = false
               if (result.code === 9001) {
-                this.$vux.toast.show({
-                  text: result.msg,
-                  type: 'warn'
+                this.error = result.msg
+                this.$nextTick(() => {
+                  this.$refs.submit.$el.scrollIntoView(false)
                 })
               }
+
               return this.$store.dispatch('login', {
                 user: {
                   username: this.user.username,
                   password: this.user.password
                 }
               })
+            }).catch(errorMsg => {
+              this.loading = false
+              this.fetchCaptcha()
+              this.error = msgFormatter(errorMsg)
+              throw new Error(this.error)
             }).then(result => {
               this.$router.push({ name: 'Home' })
               this.$store.dispatch('fetchUser')
@@ -422,13 +510,13 @@ export default {
                   this.$root.bus.$emit('showFeatureGuide')
                 }, 200)
               }
-            }, errorMsg => {
-              this.fetchCaptcha()
-              this.error = msgFormatter(errorMsg)
-            })
+            }).catch(() => {})
           }
         })
       }
+    },
+    beforeDestroy () {
+      clearInterval(this.countdownInterval)
     }
   }
 </script>
@@ -495,5 +583,13 @@ export default {
   color: @red;
   text-align: center;
   margin-top: 15px;
+}
+
+.sms-btn {
+  margin: -10px -15px -10px 0px;
+  width: 110px;
+  height: 44px;
+  font-size: 14px;
+  border-radius: 0;
 }
 </style>
