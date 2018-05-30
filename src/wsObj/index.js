@@ -138,4 +138,8 @@ WebSocketObj.prototype.send = function (data) {
   this.ws.send(JSON.stringify(data))
 }
 
+WebSocketObj.prototype.disconnect = function (data) {
+  this.ws.close()
+}
+
 export default WebSocketObj
