@@ -6,7 +6,7 @@
         公告：
       </div>
       <div class="scroll">
-        <MarqueeTips :content="announce[announceIndex]" :speed="10"></MarqueeTips>
+        <marquee :messages="announce"></marquee>
       </div>
     </div>
     <p class="login-info" v-if="!ws">聊天室登录中...</p>
@@ -22,12 +22,12 @@ import Vue from 'vue'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/picture-o'
 import 'vue-awesome/icons/volume-up'
-import MarqueeTips from 'vue-marquee-tips'
 import { mapState } from 'vuex'
 import { fetchChatEmoji, fetchStickers } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
+import Marquee from './Marquee'
 import WebSocketObj from '../wsObj'
 
 export default {
@@ -37,7 +37,7 @@ export default {
     TabItem,
     AlertModule,
     Icon,
-    MarqueeTips,
+    Marquee,
     ChatBody,
     ChatFooter
   },
@@ -48,7 +48,6 @@ export default {
     return {
       msgCnt: '',
       showNickNameBox: false,
-      announceIndex: 0,
       marqueeInterval: null,
       nickname: this.$store.state.user.nickname,
       showCheckUser: false,
@@ -58,15 +57,7 @@ export default {
     }
   },
   watch: {
-    '$route': 'leaveRoom',
-    'announce': function (announce) {
-      if (announce && announce.length > 0) {
-
-      }
-      this.marqueeInterval = setInterval(() => {
-        this.announceIndex = (this.announceIndex + 1) % this.announce.length
-      }, 10000)
-    }
+    '$route': 'leaveRoom'
   },
   computed: {
     ...mapState([
