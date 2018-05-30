@@ -1,7 +1,8 @@
 <template>
   <div class="chat-body" ref="view" @click="showSmile = false">
     <ul class="lay-scroll">
-      <li v-for="(item, index) in messages"
+      <li
+        v-for="(item, index) in messages"
         :key="index"
         :class="['clearfix', 'item', item.sender && user.username === item.sender.username ? 'item-right' : 'item-left', item.type < 0 ? 'sys-msg' : '']">
         <div class="lay-block clearfix" v-if="item.type >= 0">
