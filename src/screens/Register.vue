@@ -76,7 +76,7 @@
       <x-input
         :class="{'weui-cell_warn': inputErrors['phone']}"
         show-clear
-        @on-change="validate($event, 'phone')"
+        @on-blur="validate($event, 'phone')"
         ref="phone"
         :title="$t('misc.phone')"
         label-width="100"
@@ -98,7 +98,7 @@
           type="primary"
           mini
           action-type ="button"
-          :disabled="!user.phone||!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
+          :disabled="!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
           @click.native="sendSMSCode">{{countdown!=='stop'?`${countdown}s`:SMSText}}</x-button>
       </x-input>
       <x-input
@@ -444,20 +444,27 @@ export default {
         if (this.SMSLoading) {
           return
         }
-        this.SMSLoading = true
-        sendSMSCode(this.user.phone).then(res => {
-          this.SMSLoading = false
-          this.error = res.msg
-          this.setCountdown()
-          this.$nextTick(() => {
-            this.$refs.submit.$el.scrollIntoView(false)
-          })
-        }).catch(errorMsg => {
-          this.SMSLoading = false
-          this.error = msgFormatter(errorMsg)
-          this.$nextTick(() => {
-            this.$refs.submit.$el.scrollIntoView(false)
-          })
+        this.validators['phone'](this.user.phone).then(msg => {
+          this.inputErrors['phone'] = msg
+          if (!msg) {
+            this.SMSLoading = true
+            sendSMSCode(this.user.phone).then(res => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(res)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'success'
+              })
+              this.setCountdown()
+            }).catch(errorMsg => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(errorMsg)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'warn'
+              })
+            })
+          }
         })
       },
       submitForm () {
@@ -579,6 +586,10 @@ export default {
 }
 
 .sms-btn {
-  width: 100px;
+  margin: -10px -15px -10px 0px;
+  width: 110px;
+  height: 44px;
+  font-size: 14px;
+  border-radius: 0;
 }
 </style>
