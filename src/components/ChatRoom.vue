@@ -3,7 +3,7 @@
     <div class="chat-announce" v-if="ws&&announce&&announce.length>0">
       <div class="annouce-info">
         <icon class="volume-up" name="volume-up"></icon>
-        公告：
+        {{$t('home.announcement')}}：
       </div>
       <div class="scroll">
         <marquee :messages="announce"></marquee>
