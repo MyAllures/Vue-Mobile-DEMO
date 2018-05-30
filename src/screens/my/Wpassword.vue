@@ -144,19 +144,13 @@ export default {
   }
 }
 </script>
-<style lang='less'>
+<style lang="less" scoped>
 .input-errors {
   font-size: 14px;
   margin-left: 10px;
   color: #ff9800;
   li {
     list-style: circle inside;
-  }
-  li:first-child {
-    padding-top: 10px;
-  }
-  li:last-child {
-    padding-bottom: 10px;
   }
 }
 .hidden {
