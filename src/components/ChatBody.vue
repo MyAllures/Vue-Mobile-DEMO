@@ -13,7 +13,7 @@
             <div class="msg-header" >
               <h4>{{item.type === 4 ? '计划消息' : item.sender.nickname}}</h4>
               <span
-                v-if="item.type !== 4 && item.sender.level!=='member'"
+                v-if="item.type !== 4 && item.sender.level && item.sender.level!=='member'"
                 :class="['badage', getRole(item.sender.level).className]">
                 {{getRole(item.sender.level).displayName}}
               </span>
@@ -222,20 +222,10 @@ export default {
       return require('../assets/avatar.png')
     },
     openEnvelop (id) {
-      if (this.noPermission || this.busy) {
+      if (this.personal_setting.blocked || !this.user.account_type || this.busy) {
         return
       }
       if (this.envelope[id].status !== 1) {
-        if (!this.user.account_type) {
-          this.$vux.toast.show({
-            text: '游客不能抢红包',
-            type: 'warn'
-          })
-          setTimeout(() => {
-            this.$router.push('/login')
-          }, 3000)
-          return
-        }
         this.selectedEnvelope = this.envelope[id]
         this.showEnvelopeDialog = true
         if (this.envelope[id].status === 4) {

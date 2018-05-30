@@ -15,6 +15,9 @@ import {
 
 const login = function ({ commit, state }, { user }) {
   return userLogin(user).then(res => {
+    if (state.user.logined) {
+      commit('RESET_USER')
+    }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
       Vue.cookie.set('access_token', res.access_token, {
@@ -26,10 +29,12 @@ const login = function ({ commit, state }, { user }) {
       axios.defaults.withCredentials = true
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
     }
-    commit(types.SET_USER, {
-      user: {
-        logined: true
-      }
+    Vue.nextTick(() => {
+      commit(types.SET_USER, {
+        user: {
+          logined: true
+        }
+      })
     })
     return Promise.resolve(res)
   }, error => {

@@ -12,6 +12,9 @@ export default {
     state.user = {
       logined: false
     }
+    if (state.ws) {
+      state.ws.disconnect()
+    }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
   },
