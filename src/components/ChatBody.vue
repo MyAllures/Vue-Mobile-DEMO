@@ -223,7 +223,7 @@ export default {
       return require('../assets/avatar.png')
     },
     openEnvelop (id) {
-      if (this.personal_setting.blocked || !this.user.account_type || this.busy) {
+      if (this.personal_setting.blocked || !this.personal_setting.chatable || this.busy) {
         return
       }
       if (this.envelope[id].status !== 1) {
