@@ -3,7 +3,8 @@
     <div class="icon"></div>
     <div class="content">
       <div class="msg">{{item.content || '恭喜发财，大吉大利'}}</div>
-      <div class="status-text">{{currentEnvelope.status | statusFilter}}</div>
+      <div v-if="personal_setting.chatable" class="status-text">{{currentEnvelope.status | statusFilter}}</div>
+      <div v-else class="status-text">达成输入框内指示的发言条件才可以抢红包</div>
     </div>
   </div>
 </template>
@@ -38,7 +39,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'envelope', 'user'
+      'envelope', 'user', 'personal_setting'
     ]),
     currentEnvelope () {
       const envelopeId = this.item.envelope_status.id
@@ -125,7 +126,7 @@ export default {
     margin-right: 5px;
   }
   .content {
-    height: 36px;
+    min-height: 36px;
     width: calc(~'100%' - 36px);
     .msg {
       height: 18px;
@@ -137,7 +138,7 @@ export default {
       white-space : nowrap;
     }
     .status-text {
-      height: 18px;
+      min-height: 18px;
       width: 100%;
       line-height: 18px;
       font-size: 12px;
