@@ -15,6 +15,8 @@ import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
 import qs from 'qs'
+import icon from './utils/icon'
+import color from './styles'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
@@ -46,6 +48,16 @@ const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 }
+
+axios.interceptors.request.use((config) => {
+  axios.defaults.withCredentials = true
+  config.headers.common['x-sign'] = icon[color.white](icon.t, icon.sz)
+  config.headers.common['x-date'] = icon[color.red.split('5')[0]](icon.t, icon.sz)
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
