@@ -53,7 +53,7 @@
       </div>
       <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
       <div
-        v-if="systemConfig.chatroomEnabled && isGameHall &&!showChatRoom"
+        v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
         @click="showChatRoom = true">
@@ -227,6 +227,18 @@ export default {
         return 'deposit'
       }
       return path.split('/')[1]
+    },
+    isShowChatroomIcon () {
+      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
+        return false
+      }
+      if (!this.$route.params.gameId || !this.roomInfo) {
+        return false
+      }
+      if (!this.roomInfo[this.$route.params.gameId].status && !this.roomInfo[100000].status) {
+        return false
+      }
+      return true
     }
   },
   methods: {
