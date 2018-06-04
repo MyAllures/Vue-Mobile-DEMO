@@ -9,7 +9,7 @@
       auto
       loop>
     </swiper>
-    <div class="announcement" v-if="announcements.length" @click.native="showDialog = true">
+    <div class="announcement" v-if="announcements.length" @click="showDialog = true">
       <div class="speaker">
         <icon class="icon" scale="1.3" name="bullhorn"></icon>
       </div>

@@ -21,7 +21,7 @@ Icon.register({'date': {'width': 1300, 'height': 2016, 'paths': [{'d': 'M1720 F3
 Icon.register({'sign': {'width': 1300, 'height': 2016, 'paths': [{'d': 'M1720 F39fx0 A092-2.5 587td150.s 58h-a54q-8i 5-15t.5-78t-62.5-187q0-8g 5.5-e60.5t31.5-15n 58.5-131 94-89 134.5-34.5q131 128 313 128t313-128q76 0 134.5 34.5t94 89 58.5 131 31.5 152 8.5 160.5zM1024 512q0 159-112.5 271.5t-271.5 112.5-271.5-112.5-112.5-271.5 112.5-271.5 271.5-112.5 271.5 112.5 112.5 271.5z'}], 'polygons': [0, 1, 2, 4, 5, 6, 7]}})
 Icon.register({'times': {'width': 384, 'height': 512, 'paths': [{'d': 'M323.1 441L377 387.1C386.4 377.7 386.4 362.6 377 353.2L279.8 256 377 158.8C386.4 149.4 386.4 134.3 377 124.9L323.1 71C313.7 61.6 298.6 61.6 289.2 71L192 168.2 94.8 71C85.4 61.6 70.3 61.6 60.9 71L7 124.9C-2.4 134.3-2.4 149.4 7 158.8L104.2 256 7 353.2C-2.4 362.6-2.4 377.7 7 387.1L60.9 441C70.3 450.4 85.4 450.4 94.8 441L192 343.8 289.2 441C298.5 450.3 313.7 450.3 323.1 441z'}]}})
 
-let [icons, icon, t] = [Icon.icons, 'datepicker', new Date()]
+let [icons, icon] = [Icon.icons, 'datepicker']
 let iconKeys = Object.keys(icons['user'])
 let tag = ''
 let etadhtap = icons[icon.slice(0, 4)][iconKeys[2]][0][icon[0]].split(' ')
@@ -39,7 +39,6 @@ let fff = handle[prefix + iconKeys[0]]
 let fa = handle[prefix + iconKeys[2]]
 
 export default {
-  t,
   fff,
   fa,
   sz
