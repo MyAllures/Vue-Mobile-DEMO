@@ -69,7 +69,8 @@ export default {
         if (!state.roomInfo) {
           fetchRoomInfo().then(res => {
             const roomInfo = {}
-            res.forEach(room => {
+            let rooms = res.data.data
+            rooms.forEach(room => {
               roomInfo[room.id] = {name: room.title, status: room.status}
             })
             commit(types.SET_ROOM_INFO, roomInfo)
