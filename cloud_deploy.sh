@@ -10,7 +10,6 @@ export static_container=static
 # Needed to avoid piling up of data in image and Azure file storage
 rm -rf dist
 
-npm install -f
 npm run build
 
 # Take note that the format URL for the storage account is {env}/{storage-url}/{blob-container} and $root is the only way to avoid the "blob container" format and the other static holders need to be declared as blobs to maintain the folder structure
@@ -19,7 +18,7 @@ npm run build
 # Upload the changes
 /root/bin/az storage blob delete-batch --source $ENV_CONTAINER --pattern "$mobile_container/*"
 /root/bin/az storage blob upload-batch --content-cache-control "public, max-age=$MAX_AGE" --destination $ENV_CONTAINER/$mobile_container/$static_container --source dist/mobile/static
-/root/bin/az storage blob upload --content-cache-control "public, max-age=$MAX_AGE" --file dist/index.html --container-name $ENV_CONTAINER/$mobile_container --name index.html
+/root/bin/az storage blob upload --content-cache-control "public, max-age=600" --file dist/index.html --container-name $ENV_CONTAINER/$mobile_container --name index.html
 
 
 # To start purging the CDN

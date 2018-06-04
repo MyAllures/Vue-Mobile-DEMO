@@ -16,14 +16,9 @@
         </div>
       </flexbox-item>
       <flexbox-item>
-        <marquee :interval="5000">
-          <marquee-item
-            v-for="(item, index) in announcements"
-            :key="'announcement' + index"
-            class="marquee-item">
-            <span>{{ item.announcement }}</span>
-          </marquee-item>
-        </marquee>
+        <div class="content">
+          <span class="text" :style="{ position:'relative', left: `-${leftOffset}px`}" ref="announcement">{{announcements[currentAnnouncementIndex]}}</span>
+        </div>
       </flexbox-item>
     </flexbox>
     <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
@@ -111,7 +106,7 @@
         <swiper-item
           :key="'swiper-anmt' + index"
           v-for="(a, index) in announcements">
-          <p class="m-t swiper-announcement">{{a.announcement}}</p>
+          <p class="m-t swiper-announcement">{{a}}</p>
         </swiper-item>
       </swiper>
     </x-dialog>
@@ -149,7 +144,11 @@ export default {
     return {
       banners: [],
       announcements: [],
+      announcementWidth: 0,
+      leftOffset: 0,
+      currentAnnouncementIndex: 0,
       showDialog: false,
+      announcementTimer: null,
       game_count: 15,
       showpromoPopup: false,
       promotions: [],
@@ -175,11 +174,24 @@ export default {
           }
         })
       }).catch(() => {})
+    fetchAnnouncements().then(
+      result => {
+        const datas = []
+        result.forEach((item) => {
+          if (item.platform !== 0) {
+            datas.push(item)
+          }
+        })
 
-    fetchAnnouncements()
-      .then(res => {
-        this.announcements = res
-      })
+        if (datas.length > 0) {
+          datas.sort((a, b) => {
+            return a.rank - b.rank
+          })
+        }
+        this.announcements = datas.map(data => data.announcement)
+        this.setAnnouncement()
+      }
+    )
     getPromotions().then(response => {
       this.promotions = response.filter(item => item.image_mobile)
     })
@@ -195,7 +207,36 @@ export default {
     chooseGame (gameId) {
       localStorage.setItem('lastGame', gameId)
       this.$router.push(`/game/${gameId}`)
+    },
+    setAnnouncement () {
+      this.$nextTick(() => {
+        this.announcementWidth = this.$refs.announcement.offsetWidth
+        this.announcementTimer = setTimeout(() => {
+          this.scrollAnnouncement()
+        }, 1000)
+      })
+    },
+    scrollAnnouncement () {
+      this.announcementTimer = setTimeout(() => {
+        this.leftOffset += 1
+        if (this.leftOffset > this.announcementWidth) {
+          let idx = this.currentAnnouncementIndex + 1
+          if (idx >= this.announcements.length) {
+            idx = idx % this.announcements.length
+          }
+          this.announcementTimer = setTimeout(() => {
+            this.currentAnnouncementIndex = idx
+            this.leftOffset = 0
+            this.setAnnouncement()
+          }, 1000)
+        } else {
+          this.scrollAnnouncement()
+        }
+      }, 17)
     }
+  },
+  beforeDestroy () {
+    clearTimeout(this.announcementTimer)
   },
   components: {
     Swiper,
@@ -238,11 +279,13 @@ export default {
       margin: 7px 0;
     }
   }
-  /deep/ .vux-marquee-box {
-    color: #666;
-  }
-  /deep/ .vux-marquee {
+  .content {
+    overflow: hidden;
     height: 36px;
+    line-height: 36px;
+    .text {
+      white-space: nowrap;
+    }
   }
 }
 

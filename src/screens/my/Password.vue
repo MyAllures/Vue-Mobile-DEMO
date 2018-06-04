@@ -114,7 +114,7 @@ export default {
       if (!validatePassword(value)) {
         return {
           valid: false,
-          msg: '请输入8~15字元，其中至少包含一大写字母及一数字'
+          msg: '请输入6~15位数字或字母'
         }
       } else {
         return {
@@ -148,7 +148,7 @@ export default {
   }
 }
 </script>
-<style lang='less'>
+<style lang="less" scoped>
 .vux-group-tip {
   color: #ff9800;
   text-align: center;
@@ -159,12 +159,6 @@ export default {
   li {
     list-style: circle inside;
     color: #ff9800;
-  }
-  li:first-child {
-    padding-top: 10px;
-  }
-  li:last-child {
-    padding-bottom: 10px;
   }
 }
 </style>

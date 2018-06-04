@@ -48,5 +48,10 @@ export default {
   getRoomManagers: apiChat + '/v1/room/',
   chatRoomLogin: apiChat + '/chat/',
   playSetting: apiv1 + '/game/playset/',
-  setCookie: host + '/set_cookie/'
+  setCookie: host + '/set_cookie/',
+  stickers: apiChat + '/v1/stickers/',
+  envelope: apiv1 + '/red_envelope/',
+  chatinfo: apiChat + '/v1/user/',
+  roomInfo: apiChat + '/v1/member/room/',
+  smscode: apiv1 + '/sms_verification/'
 }

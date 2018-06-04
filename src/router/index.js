@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store'
 
 Vue.use(Router)
 
@@ -130,10 +131,32 @@ export default new Router({
       name: 'Deposit',
       meta: {
         title: '充值',
+        requiresAuth: true
+      },
+      beforeEnter: (to, from, next) => {
+        if (from.path !== '/my/remit') {
+          store.dispatch('removeKeepAlive', 'Deposit')
+        }
+        next()
+      },
+      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
+    },
+    {
+      path: '/my/remit',
+      name: 'Remit',
+      meta: {
+        title: '转帐',
         showBack: true,
         requiresAuth: true
       },
-      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
+      beforeEnter: (to, from, next) => {
+        if (store.state.remitPayee) {
+          next()
+        } else {
+          next('/my/deposit')
+        }
+      },
+      component: resolve => { require(['../components/Remit.vue'], resolve) }
     },
     {
       path: '/my/password',
@@ -203,54 +226,6 @@ export default new Router({
         requiresAuth: true
       },
       component: resolve => { require(['../screens/depositSuccess.vue'], resolve) }
-    },
-    {
-      path: '/results',
-      name: 'Results',
-      meta: {
-        title: '开奖结果',
-        headerHidden: true,
-        requiresAuth: true,
-        tabbarHidden: true
-      },
-      component: resolve => { require(['../screens/LotterRecord.vue'], resolve) }
-    },
-    {
-      path: '/stastics/roadbeads',
-      name: 'RoadBeads',
-      meta: {
-        title: '路珠',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
-    },
-    {
-      path: '/stastics',
-      redirect: '/stastics/leaderboards'
-    },
-    {
-      path: '/stastics/leaderboards',
-      name: 'Leaderboards',
-      meta: {
-        title: '长龙',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameStatistic.vue'], resolve) }
-    },
-    {
-      path: '/gameinfo',
-      name: 'GameInfo',
-      meta: {
-        title: '游戏介绍',
-        requiresAuth: true,
-        tabbarHidden: true,
-        showBack: true
-      },
-      component: resolve => { require(['../screens/games/GameInfo.vue'], resolve) }
     },
     {
       path: '/promotions',

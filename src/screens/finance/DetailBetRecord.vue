@@ -101,7 +101,12 @@ export default {
   methods: {
     initFetchBetHistory () {
       this.loading = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: 0, limit: this.chunkSize })
+      fetchBetHistory({
+        status: 'win,lose,tie,ongoing,cancelled,no_draw',
+        bet_date: this.date,
+        offset: '0',
+        limit: this.chunkSize
+      })
         .then(data => {
           if (data.results) {
             this.totalCount = data.count
@@ -120,7 +125,12 @@ export default {
     },
     loadMore () {
       this.loadingMore = true
-      fetchBetHistory({ status: 'win,lose,tie,ongoing,cancelled,no_draw', bet_date: this.date, offset: this.betRecords.length, limit: 10 }).then(data => {
+      fetchBetHistory({
+        status: 'win,lose,tie,ongoing,cancelled,no_draw',
+        bet_date: this.date,
+        offset: this.betRecords.length,
+        limit: 10
+      }).then(data => {
         this.currentChunk += 1
         let received = data.results || data
         this.betRecords.push(...received)

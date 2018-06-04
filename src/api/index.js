@@ -151,9 +151,8 @@ export function onlinepaySuccess (transactionId) {
   return axios.get(urls.payment + '?transaction_ids=' + transactionId)
 }
 
-export function getGameData (codeType, dataTime, limit) {
-  let url = `${urls.gamehistory}?game_code=${codeType}&limit=30&date=${dataTime}&game_code=${codeType}`
-  url = limit ? `${url}&offset=${limit}` : url
+export function getGameHistoryData (data) {
+  let url = `${urls.gamehistory}?game_code=${data.gameCode}&limit=${data.limit}&offset=${data.offset}&date=${data.time}`
   return axios.get(url)
 }
 
@@ -175,7 +174,7 @@ export function getToken (oldToken) {
 }
 
 export function sendImgToChat (data) {
-  return axios.post(`${urls.sendImgToChat}`, data)
+  return axios.post(urls.sendImgToChat, data)
 }
 
 export function fetchPlaySetting (id) {
@@ -188,4 +187,40 @@ export function setCookie (cookie) {
 
 export function getChatUser (id) {
   return axiosChat.get(`${urls.banUser}${id}/`)
+}
+
+export function fetchStickers (name) {
+  return axios.get(urls.stickers)
+}
+
+export function fetchChatEmoji () {
+  return axios.get(urls.chatEmoji)
+}
+
+export function sendEnvelope (data) {
+  return axios.post(urls.envelope, data, {
+    'Content-Type': 'application/json'
+  })
+}
+
+export function takeEnvelope (envelopId, userId) {
+  return axios.put(`${urls.envelope}${envelopId}/`, {
+    receiver_id: userId
+  }, {
+    'Content-Type': 'application/json'
+  })
+}
+
+export function fetchChatInfo (username) {
+  return axiosChat.get(`${urls.chatinfo}${username}/`)
+}
+
+export function fetchRoomInfo () {
+  return axios.get(urls.roomInfo)
+}
+
+export function sendSMSCode (phoneNumber) {
+  return axios.put(urls.smscode, {phone_number: phoneNumber}, {
+    'Content-Type': 'application/json'
+  })
 }
