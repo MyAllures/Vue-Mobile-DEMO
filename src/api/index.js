@@ -212,7 +212,7 @@ export function fetchChatInfo (username) {
 }
 
 export function fetchRoomInfo () {
-  return axios.get(urls.roomInfo)
+  return axiosChat.get(urls.roomInfo)
 }
 
 export function sendSMSCode (phoneNumber) {
