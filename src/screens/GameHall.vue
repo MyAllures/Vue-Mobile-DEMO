@@ -1,6 +1,6 @@
 <template>
   <div class="gamehall">
-    <router-view v-show="!showChatRoom" />
+    <router-view v-show="!showChatRoom"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <popup v-model="showGameInfo" height="90%" v-transfer-dom>
       <div class="game-intro">
@@ -54,7 +54,7 @@ export default {
       'allGames'
     ]),
     chatroomEnabled () {
-      return this.$store.state.systemConfig.chatroomEnabled === 'true'
+      return this.$store.state.systemConfig.chatroomEnabled
     }
   },
   watch: {

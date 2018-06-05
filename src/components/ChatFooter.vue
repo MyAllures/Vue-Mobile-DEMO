@@ -2,45 +2,59 @@
 <div class="container">
   <div :class="['footer', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
-      <div id="more-btn" class="more-btn"></div>
-      <!-- <div id="emoji-btn" class="emoji-btn btn">
-        <icon scale="1.5" name="smile-o"></icon>
-      </div> -->
-      <textarea
-        @focus="isFocus = true"
-        @blur="isFocus = false"
-        ref="realChatpannel"
-        type="textarea"
-        autocomplete="off"
-        validateevent="true"
-        :class="['el-textarea', noPermission ? 'is-disabled' : '']"
-        v-model="msgCnt"
-        :disabled="noPermission">
-      </textarea>
-      <div class="send-btn btn" @click="sendMsg" >
-        <icon scale="1" name="paper-plane"></icon>
+      <div id="more-btn" class="touch-box more-btn">
+        <div class="btn"></div>
+      </div>
+      <div id="emoji-btn" class="touch-box emoji-btn">
+        <div class="btn">
+        </div>
+      </div>
+      <label class="touch-input">
+        <textarea
+          @focus="isFocus = true"
+          @blur="isFocus = false"
+          ref="realChatpannel"
+          type="textarea"
+          autocomplete="off"
+          validateevent="true"
+          :class="['el-textarea', noPermission ? 'is-disabled' : '']"
+          v-model="msgCnt"
+          :disabled="noPermission">
+        </textarea>
+      </label>
+      <div class="touch-box send-btn" @click="sendMsg">
+        <div class="btn" >
+          <icon scale="1" name="paper-plane"></icon>
+        </div>
       </div>
     </div>
   </div>
   <div :class="['footer', 'fake', isFocus?'isFocus':'']">
     <div id="typing" class="typing" @click="handTriggerPanel">
-      <div id="more-btn" class="more-btn"></div>
-      <!-- <div id="emoji-btn" class="emoji-btn btn">
-        <icon scale="1.5" name="smile-o"></icon>
-      </div> -->
-      <textarea
-        @focus="triggerRealInput"
-        ref="chatpannel"
-        type="textarea"
-        autocomplete="off"
-        :placeholder="chatConditionMessage"
-        validateevent="true"
-        :class="['el-textarea', noPermission ? 'is-disabled' : '']"
-        v-model="msgCnt"
-        :disabled="noPermission">
-      </textarea>
-      <div class="send-btn btn" @click="sendMsg" >
-        <icon scale="1" name="paper-plane"></icon>
+      <div id="more-btn" class="touch-box more-btn">
+        <div class="btn"></div>
+      </div>
+      <div id="emoji-btn" class="touch-box emoji-btn">
+        <div class="btn">
+        </div>
+      </div>
+      <label class="touch-input">
+        <textarea
+          @focus="triggerRealInput"
+          ref="chatpannel"
+          type="textarea"
+          autocomplete="off"
+          :placeholder="chatConditionMessage"
+          validateevent="true"
+          :class="['el-textarea', noPermission ? 'is-disabled' : '']"
+          v-model="msgCnt"
+          :disabled="noPermission">
+        </textarea>
+      </label>
+      <div class="touch-box send-btn" @click="sendMsg">
+        <div class="btn" >
+          <icon scale="1" name="paper-plane"></icon>
+        </div>
       </div>
     </div>
     <div v-show="isShowEmojiPanel" class="emoji-panel">
@@ -88,15 +102,15 @@
       </div>
     </div>
     <div v-show="isShowControlPanel" class="control-panel">
-      <!-- <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
-        <div class="icon-bg">
-          <div class="envelope-icon"></div>
+      <label v-if="systemConfig.envelopeSettings.enabled === '1'" class="control-btn" @click="openEnvelopeDialog">
+        <div class="icon-bg envelope-icon">
+          <div class="icon"></div>
         </div>
         <div class="title">发红包</div>
-      </label> -->
+      </label>
       <label class="control-btn" for="capture" @click="clickSendImg">
-        <div class="icon-bg">
-          <div class="picture-icon"></div>
+        <div class="icon-bg picture-icon">
+          <div class="icon"></div>
         </div>
         <div class="title">图片</div>
         <input @change="sendMsgImg"
@@ -108,7 +122,7 @@
       </label>
     </div>
   </div>
-  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" :roomId="roomId" @hidePanel="hidePanel"/>
+  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" @hidePanel="hidePanel"/>
 </div>
 </template>
 
@@ -116,7 +130,6 @@
 import Icon from 'vue-awesome/components/Icon'
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import 'vue-awesome/icons/smile-o'
 import 'vue-awesome/icons/paper-plane'
 import { Swiper, SwiperItem } from 'vux'
 import { sendImgToChat } from '../api'
@@ -129,17 +142,6 @@ export default {
     SwiperItem,
     Icon,
     EnvelopeDialog
-  },
-  props: {
-    roomId: {
-      type: Number
-    },
-    ws: {
-      type: WebSocket
-    },
-    personalSetting: {
-      type: Object
-    }
   },
   data () {
     return {
@@ -156,10 +158,10 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'emojis'
+      'user', 'systemConfig', 'emojis', 'ws', 'personal_setting', 'roomId'
     ]),
     noPermission () {
-      return this.personalSetting.chat.status === 0
+      return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
     },
     emojiSeries () {
       if (!this.emojis) {
@@ -178,7 +180,7 @@ export default {
       return _.chunk(emojis.stickers, 8)
     },
     chatConditionMessage () {
-      if (this.personalSetting.chat.status === 0) {
+      if (!this.personal_setting.chatable) {
         return this.$store.state.systemConfig.global_preferences.chat_condition_message || ''
       } else {
         return ''
@@ -227,11 +229,11 @@ export default {
       this.isShowEmojiPanel = false
     },
     sendMsgImg (e) {
-      if (!this.personalSetting.chat) { return false }
+      if (this.noPermission) { return false }
       let fileInp = this.$refs.fileImgSend
       let file = fileInp.files[0]
 
-      if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileInp.value) || this.noPermission) {
+      if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileInp.value)) {
         this.$vux.toast.show({
           text: '文件格式不正确或您目前尚不符合发言条件',
           type: 'warn'
@@ -259,13 +261,11 @@ export default {
       })
     },
     sendMsg () {
-      if (!this.msgCnt.trim() || !this.personalSetting.chat) { return false }
-      this.ws.send(JSON.stringify({
-        'command': 'send',
-        'receivers': [this.roomId],
+      if (this.noPermission || !this.msgCnt.trim()) { return false }
+      this.ws.send({
         'type': 0,
         'content': this.msgCnt
-      }))
+      })
       this.msgCnt = ''
     },
     sendEmojiSymbol (e) {
@@ -278,13 +278,11 @@ export default {
       let target = e.target
       while (target.nodeName !== 'UL') {
         if (target.nodeName === 'LI') {
-          this.ws.send(JSON.stringify({
-            'command': 'send',
-            'receivers': [this.roomId],
+          this.ws.send({
             'type': 7,
             'content': target.dataset.content,
             'sticker': target.dataset.stickerid
-          }))
+          })
           this.hidePanel()
           break
         }
@@ -336,67 +334,82 @@ export default {
     }
   }
   .typing {
-    height: 50px;
+    height: 60px;
     display: flex;
+    align-items: center;
     box-sizing: border-box;
-    padding: 5px;
     width: 100%;
-    .more-btn {
+    .touch-box {
       flex: 0 0 auto;
-      position: relative;
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      margin-right: 5px;
-      background-color: #dfdfdf;
-      &::before,&::after {
-        position: absolute;
-        left: 19px;
-        top: 12px;
-        content: ' ';
-        height: 16px;
-        width: 2px;
-        background-color: #9b9b9b;
-      }
-      &::before {
-        transform: rotate(90deg);
+      height: 100%;
+      padding: 5px 0 5px 5px;
+      box-sizing: border-box;
+    }
+    .more-btn {
+      .btn {
+        position: relative;
+        border: solid 1px #ccc;
+        &::before,&::after {
+          position: absolute;
+          left: 23px;
+          top: 11px;
+          content: ' ';
+          height: 25px;
+          width: 2px;
+          background-color: #666666;
+        }
+        &::before {
+          transform: rotate(90deg);
+        }
       }
     }
     .btn {
-      flex: 0 0 auto;
       display: flex;
+      width: 50px;
+      height: 50px;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      box-sizing: border-box;
       border-radius: 4px;
     }
     .emoji-btn {
-      margin-right: 5px;
-      background-color: #dfdfdf;
-      color: #9b9b9b;
+      .btn {
+        border: solid 1px #ccc;
+        background: url('../assets/smile.png') no-repeat center center;
+        background-size: 60% 60%;
+      }
+      &:active {
+        .btn{
+          background-image: url('../assets/smile_pressed.png')
+        }
+      }
     }
 
     .send-btn {
-      font-size: 14px;
-      line-height: 52px;
-      background: #4a90e2;
-      color: #fff;
+      padding-right: 5px;
+      .btn {
+        font-size: 14px;
+        background-color: #0269b1;
+        color: #fff;
+      }
+    }
+    .touch-input{
+      flex: 1 1 auto;
+      height: 100%;
+      padding: 5px 0 5px 5px;
+      box-sizing: border-box;
     }
 
     .el-textarea {
-      flex: 1 1 auto;
-      margin-right: 5px;
-      resize: none;
-      outline: none;
-      display: block;
       width: 100%;
       height: 100%;
       box-sizing: border-box;
-      font-size: 14px;
-      @media screen and (max-width: 320px) {
-        font-size: 13px;
-      }
+      padding: 0 5px;
+      line-height: 25px;
+      resize: none;
+      outline: none;
+      display: block;
+      font-size: 16px;
       color: #1f2d3d;
       background-color: #fff;
       border: 1px solid #bfcbd9;
@@ -502,17 +515,31 @@ export default {
         background-color: #ffffff;
         border: solid 1px #dfdfdf;
         box-sizing: border-box;
-        .envelope-icon {
+      }
+      .envelope-icon {
+        .icon {
           background: url('../assets/envelope_btn.png') no-repeat center;
           background-size: contain;
           height: 30px;
           width: 38px;
         }
-        .picture-icon {
+        &:active {
+          .icon {
+            background-image: url('../assets/envelope_pressed.png');
+          }
+        }
+      }
+      .picture-icon {
+        .icon {
           background: url('../assets/picture.png') no-repeat center;
           background-size: contain;
           height: 30px;
           width: 38px;
+        }
+        &:active {
+          .icon {
+            background-image: url('../assets/picture_pressed.png');
+          }
         }
       }
       .title {

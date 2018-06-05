@@ -12,6 +12,9 @@ export default {
     state.user = {
       logined: false
     }
+    if (state.ws) {
+      state.ws.disconnect()
+    }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
   },
@@ -68,5 +71,45 @@ export default {
     if (index > -1) {
       state.keepAlivePage.splice(index, 1)
     }
+  },
+  [types.SET_WS]: (state, ws) => {
+    state.ws = ws
+  },
+  [types.INIT_PERSONAL_SETTING]: (state, setting) => {
+    state.personal_setting = setting
+  },
+  [types.UPDATE_PERSONAL_SETTING]: (state, type) => {
+    switch (type) {
+      case 'unblock':
+        state.personal_setting.blocked = false
+        break
+      case 'unbanned':
+        state.personal_setting.banned = false
+        break
+      case 'blocked':
+        state.personal_setting.blocked = true
+        break
+      case 'banned':
+        state.personal_setting.banned = true
+        break
+    }
+  },
+  [types.INIT_MESSAGE]: (state, messages) => {
+    state.messages = messages
+  },
+  [types.ADD_MESSAGE]: (state, message) => {
+    state.messages.push(message)
+  },
+  [types.SET_ANNOUNCE]: (state, announce) => {
+    state.announce = announce
+  },
+  [types.UPDATE_GAME_INFO]: (state, info) => {
+    state.gameInfo = {...state.gameInfo, ...info}
+  },
+  [types.SET_ROOM_INFO]: (state, info) => {
+    state.roomInfo = info
+  },
+  [types.SET_ROOM_ID]: (state, id) => {
+    state.roomId = id
   }
 }

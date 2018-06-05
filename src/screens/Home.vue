@@ -9,18 +9,14 @@
       auto
       loop>
     </swiper>
-    <flexbox class="announcement" v-if="announcements.length" @click.native="showDialog = true">
-      <flexbox-item :span="1">
-        <div class="speaker">
-          <icon class="icon" scale="1.3" name="bullhorn"></icon>
-        </div>
-      </flexbox-item>
-      <flexbox-item>
-        <div class="content">
-          <span class="text" :style="{ position:'relative', left: `-${leftOffset}px`}" ref="announcement">{{announcements[currentAnnouncementIndex]}}</span>
-        </div>
-      </flexbox-item>
-    </flexbox>
+    <div class="announcement" v-if="announcements.length" @click="showDialog = true">
+      <div class="speaker">
+        <icon class="icon" scale="1.3" name="bullhorn"></icon>
+      </div>
+      <div class="marquee">
+        <marquee :messages="announcements"></marquee>
+      </div>
+    </div>
     <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
       <cell
         is-link
@@ -121,8 +117,6 @@ import {
   Card,
   Grid,
   GridItem,
-  Marquee,
-  MarqueeItem,
   XDialog,
   Flexbox,
   FlexboxItem,
@@ -137,6 +131,7 @@ import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
+import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 export default {
   name: 'Home',
@@ -144,11 +139,7 @@ export default {
     return {
       banners: [],
       announcements: [],
-      announcementWidth: 0,
-      leftOffset: 0,
-      currentAnnouncementIndex: 0,
       showDialog: false,
-      announcementTimer: null,
       game_count: 15,
       showpromoPopup: false,
       promotions: [],
@@ -189,7 +180,6 @@ export default {
           })
         }
         this.announcements = datas.map(data => data.announcement)
-        this.setAnnouncement()
       }
     )
     getPromotions().then(response => {
@@ -207,42 +197,11 @@ export default {
     chooseGame (gameId) {
       localStorage.setItem('lastGame', gameId)
       this.$router.push(`/game/${gameId}`)
-    },
-    setAnnouncement () {
-      this.$nextTick(() => {
-        this.announcementWidth = this.$refs.announcement.offsetWidth
-        this.announcementTimer = setTimeout(() => {
-          this.scrollAnnouncement()
-        }, 1000)
-      })
-    },
-    scrollAnnouncement () {
-      this.announcementTimer = setTimeout(() => {
-        this.leftOffset += 1
-        if (this.leftOffset > this.announcementWidth) {
-          let idx = this.currentAnnouncementIndex + 1
-          if (idx >= this.announcements.length) {
-            idx = idx % this.announcements.length
-          }
-          this.announcementTimer = setTimeout(() => {
-            this.currentAnnouncementIndex = idx
-            this.leftOffset = 0
-            this.setAnnouncement()
-          }, 1000)
-        } else {
-          this.scrollAnnouncement()
-        }
-      }, 17)
     }
-  },
-  beforeDestroy () {
-    clearTimeout(this.announcementTimer)
   },
   components: {
     Swiper,
     SwiperItem,
-    Marquee,
-    MarqueeItem,
     XDialog,
     Flexbox,
     FlexboxItem,
@@ -255,7 +214,8 @@ export default {
     InlineLoading,
     TryplayPopup,
     Group,
-    Cell
+    Cell,
+    Marquee
   }
 }
 </script>
@@ -266,26 +226,26 @@ export default {
   height: 89px;
 }
 .announcement {
+  display: flex;
   height: 36px;
   background: #fff;
 }
 .announcement {
   .speaker {
+    flex: 0 0 auto;
     display: flex;
+    height: 36px;
+    width: 36px;
     justify-content: center;
-    margin-left: 10px;
+    align-items: center;
     color: #666;
     .fa-icon {
       margin: 7px 0;
     }
   }
-  .content {
-    overflow: hidden;
+  .marquee {
+    flex: 1 1 auto;
     height: 36px;
-    line-height: 36px;
-    .text {
-      white-space: nowrap;
-    }
   }
 }
 
@@ -295,13 +255,6 @@ export default {
   height: 180px;
   overflow-y: scroll;
   overflow-x: hidden;
-}
-.marquee-item {
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 36px;
 }
 .weui-grids {
   &:after{

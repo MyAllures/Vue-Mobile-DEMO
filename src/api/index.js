@@ -185,10 +185,6 @@ export function setCookie (cookie) {
   return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
 }
 
-export function getChatUser (id) {
-  return axiosChat.get(`${urls.banUser}${id}/`)
-}
-
 export function fetchStickers (name) {
   return axios.get(urls.stickers)
 }

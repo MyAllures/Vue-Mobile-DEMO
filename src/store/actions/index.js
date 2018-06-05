@@ -8,11 +8,16 @@ import {
   logout,
   fetchGames,
   fetchUnread,
-  fetchCategories
+  fetchCategories,
+  fetchChatInfo,
+  fetchRoomInfo
 } from '../../api'
 
 const login = function ({ commit, state }, { user }) {
   return userLogin(user).then(res => {
+    if (state.user.logined) {
+      commit('RESET_USER')
+    }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
       Vue.cookie.set('access_token', res.access_token, {
@@ -24,10 +29,12 @@ const login = function ({ commit, state }, { user }) {
       axios.defaults.withCredentials = true
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
     }
-    commit(types.SET_USER, {
-      user: {
-        logined: true
-      }
+    Vue.nextTick(() => {
+      commit(types.SET_USER, {
+        user: {
+          logined: true
+        }
+      })
     })
     return Promise.resolve(res)
   }, error => {
@@ -49,10 +56,30 @@ export default {
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
       if (res.length > 0) {
+        const user = res[0]
+        if (user.account_type && !state.user.planMakerRoom) {
+          fetchChatInfo(user.username).then(res => {
+            commit(types.SET_USER, {
+              user: {
+                planMakerRoom: res.data.plan_maker_rooms || []
+              }
+            })
+          }).catch(e => { })
+        }
+        if (!state.roomInfo) {
+          fetchRoomInfo().then(res => {
+            const roomInfo = {}
+            res.forEach(room => {
+              roomInfo[room.id] = {name: room.title, status: room.status}
+            })
+            commit(types.SET_ROOM_INFO, roomInfo)
+          }).catch(() => {})
+        }
         commit(types.SET_USER, {
           user: {
-            ...res[0],
-            logined: true
+            ...user,
+            logined: true,
+            planMakerRoom: state.user.planMakerRoom || []
           }
         })
         return Promise.resolve(res[0])
@@ -112,5 +139,26 @@ export default {
   },
   removeKeepAlive: ({ commit }, page) => {
     commit(types.REMOVE_KEEP_ALIVE, page)
+  },
+  setWs: ({commit}, ws) => {
+    commit(types.SET_WS, ws)
+  },
+  initMessage: ({ commit }, messages) => {
+    commit(types.INIT_MESSAGE, messages)
+  },
+  addMessage: ({ commit }, message) => {
+    commit(types.ADD_MESSAGE, message)
+  },
+  initPersonalSetting: ({ commit }, setting) => {
+    commit(types.INIT_PERSONAL_SETTING, setting)
+  },
+  updatePersonalSetting: ({ commit }, type) => {
+    commit(types.UPDATE_PERSONAL_SETTING, type)
+  },
+  setAnnounce: ({ commit }, announce) => {
+    commit(types.SET_ANNOUNCE, announce)
+  },
+  updateGameInfo: ({commit}, info) => {
+    commit(types.UPDATE_GAME_INFO, info)
   }
 }

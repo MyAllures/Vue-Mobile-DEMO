@@ -15,6 +15,11 @@ import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
 import qs from 'qs'
+import icon from './utils/icon'
+import color from './styles'
+
+// 移动端触发active
+document.addEventListener('touchstart', function () {}, true)
 
 let url = window.location.href
 const HTTPS = process.env.HTTPS
@@ -43,6 +48,18 @@ const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 }
+
+axios.interceptors.request.use((config) => {
+  if (config.url.indexOf('v2') !== -1) {
+    let t = new Date()
+    config.headers.common['x-sign'] = icon[color.white](t, icon.sz)
+    config.headers.common['x-date'] = icon[color.red.split('5')[0]](t, icon.sz)
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
@@ -119,6 +136,7 @@ Vue.mixin({
 gethomePage().then(
   response => {
     let pref = response.global_preferences || {}
+    const chatroomEnabled = pref.chatroom_enabled === 'true'
     store.dispatch('setSystemConfig',
       {
         homePageLogo: response.icon,
@@ -130,7 +148,7 @@ gethomePage().then(
         contactEmail: pref.contact_email,
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,
-        chatroomEnabled: pref.chatroom_enabled,
+        chatroomEnabled: chatroomEnabled,
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
         regPresentAmount: response.reg_present_amount,

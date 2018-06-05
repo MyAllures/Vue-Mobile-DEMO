@@ -1,9 +1,10 @@
 <template>
-  <div :class="['container', {disabled:currentEnvelope.status === 1 || currentEnvelope.status === 3}]">
+  <div :class="['container', `status${currentEnvelope.status}`]">
     <div class="icon"></div>
     <div class="content">
       <div class="msg">{{item.content || '恭喜发财，大吉大利'}}</div>
-      <div class="status">{{currentEnvelope.status | statusFilter}}</div>
+      <div v-if="personal_setting.chatable" class="status-text">{{currentEnvelope.status | statusFilter}}</div>
+      <div v-else class="status-text">达成输入框内指示的发言条件才可以抢红包</div>
     </div>
   </div>
 </template>
@@ -38,7 +39,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'envelope', 'user'
+      'envelope', 'user', 'personal_setting'
     ]),
     currentEnvelope () {
       const envelopeId = this.item.envelope_status.id
@@ -69,7 +70,7 @@ export default {
       if (this.today.isAfter(envelopeStatus.expired_time)) {
         status = 1
       } else {
-        const me = envelopeStatus.users.find(user => this.user.id === user.receiver_id)
+        const me = envelopeStatus.users.find(user => this.user.username === user.username)
         if (me) {
           status = 2
           data.amount = me.amount
@@ -93,26 +94,39 @@ export default {
 .container {
   display: flex;
   align-items: center;
-  margin-top: 5px;
   box-sizing: border-box;
   width: 70%;
-  border-radius: 5px;
   background-color: #fa9d3b;
   padding: 10px;
   color: #fff;
   position: relative;
-  &.disabled {
-    background: #f5c38e;
+  &.status1 {
+    background: #999999;
+    opacity: .6;
+  }
+  &.status2 {
+    background: #fa9d3b;
+    opacity: .6;
+    .icon {
+      background-image: url('../assets/envelope_opened.png');
+    }
+  }
+  &.status3 {
+    background: #D69F14;
+    opacity: .6;
+    .icon {
+      background-image: url('../assets/envelope_opened.png');
+    }
   }
   .icon {
     height: 36px;
     width: 31px;
-    background: url('../assets/envelope_msg.png') no-repeat;
+    background: url('../assets/envelope_normal.png') no-repeat;
     background-size: cover;
     margin-right: 5px;
   }
   .content {
-    height: 36px;
+    min-height: 36px;
     width: calc(~'100%' - 36px);
     .msg {
       height: 18px;
@@ -123,47 +137,12 @@ export default {
       text-overflow : ellipsis;
       white-space : nowrap;
     }
-    .status {
-      height: 18px;
+    .status-text {
+      min-height: 18px;
       width: 100%;
       line-height: 18px;
       font-size: 12px;
     }
-  }
-  &:after {
-    content: '';
-    position: absolute;
-    top: 14px;
-    width: 0;
-    height: 0;
-    border: 9px solid transparent;
-    border-top: 0;
-    margin-top: -7px;
-    border-right-color: #fa9d3b;
-  }
-}
-
-.item-left .container{
-  &:after {
-    left: 0;
-    border-left: 0;
-    margin-left: -8px;
-  }
-  &.disabled:after {
-    border-right-color: #f5c38e;
-  }
-}
-
-.item-right .container{
-  float: right;
-  &:after {
-    right: 0;
-    border-right: 0;
-    margin-right: -9px;
-    border-left-color: #fa9d3b;
-  }
-  &.disabled:after {
-    border-left-color: #f5c38e;
   }
 }
 </style>

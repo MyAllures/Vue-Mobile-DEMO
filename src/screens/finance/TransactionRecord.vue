@@ -22,7 +22,8 @@
             <span class="amount text-left">¥ {{record.amount | profitFilter }}</span>
           </td>
           <td>
-            <span>{{record.transaction_type.display_name}}</span>
+            <span v-if="record.red_envelope_type">{{record.red_envelope_type|envelopFilter}}</span>
+            <span v-else>{{record.transaction_type.display_name}}</span>
           </td>
           <td>
             <span :class="statusColor(record.status)">{{translateStatus(record.status)}}</span>
@@ -139,7 +140,7 @@ export default {
       } else if (routeName === 'WithdrawRecord') {
         return 'withdraw'
       } else {
-        return 'discount'
+        return 'discount,envelope'
       }
     }
   },
@@ -155,6 +156,18 @@ export default {
     profitFilter (val) {
       if (val && typeof val === 'number') {
         return val.toFixed(2).replace('-', '')
+      }
+    },
+    envelopFilter (value) {
+      switch (value) {
+        case 1:
+          return '发送红包'
+        case 2:
+          return '接收红包'
+        case 3:
+          return '返还红包'
+        default:
+          return '红包'
       }
     }
   },

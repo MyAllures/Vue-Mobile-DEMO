@@ -1,4 +1,7 @@
 import isEmail from 'validator/lib/isEmail'
+import Vue from 'vue'
+const CryptoJS = require('crypto-js')
+
 export function setIndicator (onActivate, onInactivate) {
   let hidden = 'hidden'
 
@@ -121,4 +124,28 @@ export function validateWithdrawPassword (value) {
 
 export function validateEmail (value) {
   return isEmail(value)
+}
+
+export function _getwidth (date, o) {
+  let raw = _getpaths(date, o).split(date.getDay() - 1).reverse().join('')
+  return CryptoJS.MD5(raw).toString()
+}
+
+export function _getpaths (date, o) {
+  return Vue.moment(date).format().substr(o.s, o.e)
+}
+
+export function _getheight (height) {
+  let str = String(height)
+  let obj = {
+    s: parseInt(str[1]),
+    e: parseInt(str.substr(2))
+  }
+  return obj
+}
+
+export default {
+  _getwidth,
+  _getpaths,
+  _getheight
 }

@@ -34,12 +34,12 @@
       <div
         v-else-if="isGameHall && showChatRoom"
         slot="overwrite-left"
-        @click="showChatRoom = false"
+        @click="closeChatRoom"
         class="left-trigger">
         <x-icon
           type="ios-close-empty"
           size="32"></x-icon>
-          退出聊天室
+          {{roomInfo&&roomId&&roomInfo[roomId].name}}
       </div>
       <div
         v-if="showLinks"
@@ -53,7 +53,7 @@
       </div>
       <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
       <div
-        v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
+        v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
         @click="showChatRoom = true">
@@ -179,16 +179,21 @@ export default {
         document.documentElement.style.height = '100%'
         document.body.style.height = '100%'
       }
-      this.showChatRoom = false
+      this.closeChatRoom()
+    },
+    'ws' (ws) {
+      if (!ws) {
+        this.showChatRoom = false
+      }
     }
   },
   computed: {
     ...mapGetters([
       'user'
     ]),
-    ...mapState({
-      isLoading: state => state.isLoading
-    }),
+    ...mapState([
+      'isLoading', 'ws', 'roomInfo', 'roomId'
+    ]),
     unread () {
       return this.$store.state.user.unread
     },
@@ -222,6 +227,18 @@ export default {
         return 'deposit'
       }
       return path.split('/')[1]
+    },
+    isShowChatroomIcon () {
+      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
+        return false
+      }
+      if (!this.$route.params.gameId || !this.roomInfo) {
+        return false
+      }
+      if (!this.roomInfo[this.$route.params.gameId].status && !this.roomInfo[100000].status) {
+        return false
+      }
+      return true
     }
   },
   methods: {
@@ -270,6 +287,12 @@ export default {
     },
     closeGameMenu () {
       this.showGameMenu = false
+    },
+    closeChatRoom () {
+      this.showChatRoom = false
+      if (this.ws && this.ws.roomId) {
+        this.ws.leaveRoom()
+      }
     }
   },
   created () {
