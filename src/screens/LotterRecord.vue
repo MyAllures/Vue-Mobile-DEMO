@@ -970,6 +970,7 @@ export default {
 .jsk3-dice {
   display: inline-block;
   background: url(../assets/ball_4.png) no-repeat;
+  background-size: 27px 162px;
   width: 27px;
   height: 27px;
   margin-top: 3px;
