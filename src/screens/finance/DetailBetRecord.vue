@@ -32,7 +32,7 @@
             </span>
           </td>
           <td>
-            <span v-if="record.profit===null">{{record.remarks | statusFilter}}</span>
+            <span v-if="record.profit === null">{{record.remarks | statusFilter}}</span>
             <span v-else :class="statusColor(record.profit)">
               {{record.profit | currency('￥')}}
             </span>
@@ -135,7 +135,7 @@ export default {
       })
     },
     statusColor (val) {
-      return val >= 0 ? 'red' : 'green'
+      return val >= 0 ? val === 0 ? 'blue' : 'red' : 'green'
     }
   },
   computed: {
