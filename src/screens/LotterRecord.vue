@@ -970,6 +970,7 @@ export default {
 .jsk3-dice {
   display: inline-block;
   background: url(../assets/ball_4.png) no-repeat;
+  background-size: 27px 162px;
   width: 27px;
   height: 27px;
   margin-top: 3px;
@@ -990,11 +991,12 @@ export default {
 
 .hk6ball {
   display: inline-block;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   margin-top: 4px;
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
+  background-size: 28px 1372px;
   vertical-align: middle;
   text-indent: -9999px;
 }
@@ -1003,7 +1005,7 @@ export default {
     .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
-      background-position: 0 (-27px * (@i - 1));;
+      background-position: 0 (-28px * (@i - 1));;
     }
   }
 
@@ -1013,7 +1015,7 @@ export default {
   .lottery-luckl-@{i},
   .lottery-hkl-@{i} {
     &:extend(.hk6ball);
-    background-position: 0 (-27px * (@i - 1));;
+    background-position: 0 (-28px * (@i - 1));;
   }
 }
 

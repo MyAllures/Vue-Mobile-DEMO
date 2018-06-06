@@ -122,7 +122,7 @@ export default {
       })
     },
     statusColor (val) {
-      return val > 0 ? 'red' : 'green'
+      return val >= 0 ? val === 0 ? 'blue' : 'red' : 'green'
     },
     fotmattedDate (time) {
       return dateFormat(new Date(time), 'YYYY-MM-DD')

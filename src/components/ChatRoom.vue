@@ -100,9 +100,7 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  background: url('../assets/chatbg.jpg') no-repeat right bottom;
-  background-attachment: fixed;
-  background-size: cover;
+  background-color:#f2f2f2;
   .login-info {
     color: red;
     border-top-color: rgb(204, 204, 204);
