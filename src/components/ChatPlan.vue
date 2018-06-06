@@ -4,11 +4,14 @@
       <div class="game-name">{{betInfo.display_name}}</div>
       <div class="issue-number">{{betInfo.issue_number}}</div>
       <div class="countdown">
-        <span v-if="status === 'expired'" :class="status">已开奖</span>
-        <span v-else-if="status === 'closed'">已封盘</span>
-        <span v-else>
-          <span v-if="gameInfo.countdown.days > 0">{{gameInfo.countdown.days}}天</span>
-          <span v-if="gameInfo.countdown.hours > 0">{{gameInfo.countdown.hours | complete}}:</span>{{gameInfo.countdown.minutes | complete}}:{{gameInfo.countdown.seconds | complete}}
+        <span v-if="status === 'expired'" class="expired">已开奖</span>
+        <span class="closed" v-else-if="status === 'closed'">已封盘</span>
+        <span class="open" v-else>
+          <p class="text">封盘</p>
+          <div class="clock">
+            <span v-if="gameInfo.countdown.days > 0">{{gameInfo.countdown.days}}天</span>
+            <span v-if="gameInfo.countdown.hours > 0">{{gameInfo.countdown.hours | complete}}:</span>{{gameInfo.countdown.minutes | complete}}:{{gameInfo.countdown.seconds | complete}}
+          </div>
         </span>
       </div>
     </div>
@@ -112,12 +115,30 @@ export default {
     }
     .countdown {
       width: 50%;
-      height: 39px;
-      line-height: 39px;
-      color: @red;
-      text-align: right;
-      font-size: 20px;
+
+      .open {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        .text {
+          font-size: 12px;
+          color: #999;
+        }
+        .clock {
+          height: 17px;
+          line-height: 17px;
+          font-size: 20px;
+          color: @red;
+        }
+      }
+
+      .closed {
+        font-size: 20px;
+        color: @red;
+      }
+
       .expired {
+        font-size: 20px;
         color: @green;
       }
     }
