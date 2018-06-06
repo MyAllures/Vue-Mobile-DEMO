@@ -27,7 +27,7 @@
         <tr v-for="(bet, index) in betInfo.bets" :key="index">
           <td>{{`${bet.play.playgroup} - ${bet.play.display_name}`}}</td>
           <td class="odd">{{bet.play.odds}}</td>
-          <td>{{bet.bet_amount|currency('￥')}}</td>
+          <td>{{bet.bet_amount | currency('￥')}}</td>
         </tr>
       </tbody>
     </x-table>
@@ -115,12 +115,14 @@ export default {
     }
     .countdown {
       width: 50%;
-
+      text-align: right;
       .open {
         display: flex;
         flex-direction: column;
         justify-content: center;
         .text {
+          display: inline-block;
+          padding-right: 15px;
           font-size: 12px;
           color: #999;
         }
