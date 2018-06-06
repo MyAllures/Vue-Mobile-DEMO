@@ -80,7 +80,7 @@
           <span v-else
             class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
         </div>
-        <check-icon v-if="hasPlanCheck"class="check-plan" :value.sync="hasPlan">
+        <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
           将此笔注单分享至聊天室开放跟单
         </check-icon>
         <div v-if="loading" class="loading">
