@@ -46,7 +46,7 @@
         @on-blur="validate($event, 'password')"
         ref="password"
         :placeholder="$t('validate.password_validate')"
-        autocomplete="off"
+        autocomplete="new-password"
         :title="$t('misc.password')"
         label-width="100"
         v-model="user.password">
@@ -58,7 +58,7 @@
         @on-blur="validate($event, 'confirmation_password')"
         ref="confirmation_password"
         placeholder="再次输入密码"
-        autocomplete="off"
+        autocomplete="new-password"
         :title="$t('misc.confirm_password')"
         label-width="100"
         v-model="user.confirmation_password">
@@ -115,7 +115,7 @@
         :class="{'weui-cell_warn': inputErrors['withdraw_password']}"
         show-clear
         @on-blur="validate($event, 'withdraw_password')"
-        autocomplete="off"
+        autocomplete="new-password"
         type="password"
         :title="$t('misc.withdraw_password')"
         placeholder="6位数字，用于取款"
@@ -483,6 +483,7 @@ export default {
               }
             })
             register(userInfo).then(result => {
+              window.gtag('event', '註冊', {'event_category': '會員註冊'})
               this.loading = false
               if (result.code === 9001) {
                 this.error = result.msg

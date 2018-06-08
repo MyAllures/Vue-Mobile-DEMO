@@ -76,6 +76,9 @@ export default {
     },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
+    },
+    currentGame () {
+      return this.$store.getters.gameById(this.$route.params.gameId)
     }
   },
   watch: {
@@ -94,6 +97,7 @@ export default {
       })
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
         .then(res => {
+          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
           if (res && res[0].member) {
             this.$vux.toast.show({
               text: '成功下单',

@@ -8,6 +8,7 @@
             </div>
             <x-input
             autocapitalize="off"
+            autocomplete="new-password"
             :title="$t('change_password.w_old')"
             :show-clear="true"
             required
@@ -18,6 +19,7 @@
             </x-input>
             <x-input
             autocapitalize="off"
+            autocomplete="new-password"
             :title="$t('change_password.w_new')"
             :show-clear="true"
             required
@@ -31,6 +33,7 @@
             </x-input>
             <x-input
             autocapitalize="off"
+            autocomplete="new-password"
             :title="$t('change_password.w_repeat')"
             :show-clear="true"
             type="password"
