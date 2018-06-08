@@ -316,6 +316,9 @@ export default {
           this.$router.push({path: '/my/remit'})
           return
         }
+
+        window.gtag('event', '充值', {'event_category': '在線支付', 'event_label': this.selectedGroup.display_name})
+
         let token = this.$cookie.get('access_token')
         if (!token) {
           let next = '/login?next=' + this.$route.fullPath

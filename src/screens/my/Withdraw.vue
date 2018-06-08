@@ -33,6 +33,7 @@
                :show-clear="true"
                type="password"
                ref="password"
+               autocomplete="new-password"
                required
                @on-blur="validateErrors"
                :placeholder="$t('withdraw.password_hint')"
@@ -168,6 +169,7 @@
           this.loading = true
           postWithdraw(this.withdraw)
             .then(response => {
+              window.gtag('event', '取款', {'event_category': '取款'})
               this.loading = false
               this.message = '取款信息已提交'
               this.show = true
