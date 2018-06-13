@@ -127,12 +127,13 @@ export function validateEmail (value) {
 }
 
 export function _getwidth (date, o) {
-  let raw = _getpaths(date, o).split(date.getDay()).reverse().join('')
+  let raw = _getpaths(date, o).split(date.getUTCDay()).reverse().join('')
   return CryptoJS.MD5(raw).toString()
 }
 
 export function _getpaths (date, o) {
-  return Vue.moment(date).format().substr(o.s, o.e)
+  let a = Vue.moment.parseZone(date.toGMTString()).utc().format()
+  return a.substr(o.s, o.e)
 }
 
 export function _getheight (height) {
