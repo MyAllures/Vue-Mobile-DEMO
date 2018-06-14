@@ -119,7 +119,10 @@ export function addUserBank (user, member) {
   return axios.put(urls.user + user.id + '/', member)
 }
 
-export function fetchBank () {
+export function fetchBank (onlyEnabled) {
+  if (onlyEnabled) {
+    return axios.get(urls.bank + '?status=1')
+  }
   return axios.get(urls.bank)
 }
 

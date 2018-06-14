@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
-      添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}} 
+      添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}}
       <icon type="info" @click.native="showInfo=true"></icon>
       <div>
         <alert v-model="showInfo" title="注意">
@@ -133,7 +133,7 @@ export default {
   },
   created () {
     if (!this.user.bank) {
-      this.fetchBank()
+      this.fetchBank(true)
     } else {
       this.checkBankValue()
     }
@@ -176,7 +176,7 @@ export default {
       'fetchUser'
     ]),
     fetchBank (index) {
-      fetchBank().then(response => {
+      fetchBank(true).then(response => {
         response.forEach(item => {
           this.banks.push({
             name: item.value,
