@@ -229,6 +229,22 @@
           this.errorMsg = ''
           this.loading = true
           postRemit(this.remit).then(response => {
+            let remitType = ''
+            switch (this.remitPayee.remit_type) {
+              case 1:
+                remitType = '銀行'
+                break
+              case 2:
+                remitType = '微信'
+                break
+              case 3:
+                remitType = '支付宝'
+                break
+              default:
+                remitType = ''
+            }
+            window.gtag('event', '充值', {'event_category': '線下匯款', 'event_label': remitType + '轉帳'})
+
             this.loading = false
             this.remitSuccess = true
             this.remit.remit_info.deposited_at = ''

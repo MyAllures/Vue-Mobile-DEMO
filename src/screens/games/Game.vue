@@ -330,6 +330,7 @@ export default {
       this.loading = true
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: this.playsForSubmit})
         .then(res => {
+          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
           if (res && res[0].member) {
             this.$set(this, 'playReset', !this.playReset)
             this.$vux.toast.show({

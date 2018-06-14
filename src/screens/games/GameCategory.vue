@@ -1,15 +1,16 @@
 <template>
   <div>
     <div v-if="tabKeys.length>1" class="tab-selector">
-      <tab :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
+      <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           :animate="false"
           active-color="#156fd8" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
           :key="index"
+          :style="{flex: tabKeys.length > 4?0:1}"
           :selected="key === currentTab">
-          <span :class="{'ellipsis': tabKeys.length > 5}">{{key}}</span>
+          <span :class="{'ellipsis': tabKeys.length > 4}">{{key}}</span>
         </tab-item>
       </tab>
     </div>
@@ -327,9 +328,6 @@ export default {
   }
   .vux-tab {
     overflow-x: auto;
-  }
-  .scrollable .vux-tab-item {
-    flex: 0;
   }
 }
 
