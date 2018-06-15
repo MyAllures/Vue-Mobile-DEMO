@@ -59,6 +59,7 @@
         ref="account"
         required
         @on-blur="validateErrors"
+        :is-type="bankAccountValidator"
         v-model="member.bank.account">
       </x-input>
     </group>
@@ -90,6 +91,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapActions, mapGetters } from 'vuex'
+import { validateBankAccount } from '../../utils'
 export default {
   name: 'bankinfo',
   data () {
@@ -155,7 +157,11 @@ export default {
         inputErrors.push('请輸入县市')
       }
       if (this.$refs.account.firstError) {
-        inputErrors.push('请輸入银行账号')
+        if (this.$refs.account.firstError === '必填哦') {
+          inputErrors.push('请輸入银行账号')
+        } else {
+          inputErrors.push(this.$refs.account.firstError)
+        }
       }
       this.inputErrors = inputErrors
     },
@@ -175,6 +181,18 @@ export default {
     ...mapActions([
       'fetchUser'
     ]),
+    bankAccountValidator (value) {
+      if (!validateBankAccount(value)) {
+        return {
+          valid: false,
+          msg: '该帐号格式无效'
+        }
+      } else {
+        return {
+          valid: true
+        }
+      }
+    },
     fetchBank (index) {
       fetchBank(true).then(response => {
         response.forEach(item => {
