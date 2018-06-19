@@ -101,7 +101,7 @@ export default {
   color: #fff;
   position: relative;
   &.status1 {
-    background: #999999;
+    background: #D69F14;
     opacity: .6;
   }
   &.status2 {
