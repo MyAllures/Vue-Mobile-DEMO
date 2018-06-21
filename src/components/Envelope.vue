@@ -101,7 +101,7 @@ export default {
   color: #fff;
   position: relative;
   &.status1 {
-    background: #999999;
+    background: #fa9d3b;
     opacity: .6;
   }
   &.status2 {
@@ -112,7 +112,7 @@ export default {
     }
   }
   &.status3 {
-    background: #D69F14;
+    background: #fa9d3b;
     opacity: .6;
     .icon {
       background-image: url('../assets/envelope_opened.png');
