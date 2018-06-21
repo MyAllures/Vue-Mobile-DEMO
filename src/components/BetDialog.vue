@@ -27,10 +27,10 @@
           <inline-loading></inline-loading>加载中
         </div>
         <flexbox v-else class="buttons">
-          <flexbox-item :span="1/2">
+          <flexbox-item>
             <x-button :disabled="!betInfo.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
           </flexbox-item>
-          <flexbox-item :span="1/2">
+          <flexbox-item>
             <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
           </flexbox-item>
         </flexbox>
@@ -205,14 +205,16 @@ export default {
       width: 30px;
     }
   }
-  button.weui-btn {
-    width: 80%;
-  }
   .play {
     color: #666;
   }
   .buttons {
+    box-sizing: border-box;
     height: 50px;
+    padding: 0 10px;
+    .weui-btn {
+      overflow: visible;
+    }
   }
 }
 </style>
