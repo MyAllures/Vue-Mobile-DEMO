@@ -72,7 +72,6 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
@@ -148,9 +147,9 @@ export default {
       let playGroupCode = currentPlayGroup.code
       return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupCode)
     },
-    ...mapGetters([
-      'categories'
-    ]),
+    categories () {
+      return this.$store.state.categories[this.$route.params.gameId] || []
+    },
     zodiacMap () {
       if (!this.categories || this.categories.length === 0) {
         return null
