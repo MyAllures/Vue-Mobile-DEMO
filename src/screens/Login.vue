@@ -2,6 +2,7 @@
   <form class="container" autocomplete="off">
     <group :title="$t('login.welcome')">
       <x-input
+        id="username"
         :class="{'weui-cell_warn': !validators['username']}"
         show-clear
         ref="username"
@@ -12,6 +13,7 @@
         v-model="user.username">
       </x-input>
       <x-input
+        id="password"
         :class="{'weui-cell_warn': !validators['password']}"
         show-clear
         placeholder="请输入密码"

@@ -25,7 +25,7 @@ export default new Vuex.Store({
       },
       issue_number: ''
     },
-    categories: [],
+    categories: {},
     systemConfig: {
       customerServiceUrl: '',
       agentDashboardUrl: '',

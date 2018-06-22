@@ -112,7 +112,10 @@ export default {
   },
   fetchCategories: ({ commit, state }, gameId) => {
     return fetchCategories(gameId).then(res => {
-      commit(types.SET_CATEGORIES, res)
+      commit(types.SET_CATEGORIES, {
+        gameId: gameId,
+        categories: res
+      })
       return res
     })
   },
