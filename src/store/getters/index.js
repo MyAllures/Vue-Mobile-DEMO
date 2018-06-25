@@ -9,8 +9,5 @@ export default {
   },
   gameById: (state, getters) => id => {
     return _.find(state.games, game => (game.id + '') === id)
-  },
-  categories: (state) => {
-    return state.categories
   }
 }

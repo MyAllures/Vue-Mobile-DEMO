@@ -1,6 +1,6 @@
 <template>
   <div class="gamehall">
-    <router-view v-show="!showChatRoom"/>
+    <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <popup v-model="showGameInfo" height="90%" v-transfer-dom>
       <div class="game-intro">
@@ -65,20 +65,19 @@ export default {
       this.showGameInfo = true
       this.contentType = type
     })
+    if (!this.$route.params.gameId) {
+      if (this.allGames.length > 0) {
+        this.chooseGame()
+      } else {
+        const unwatch = this.$watch('allGames', function (allGames) {
+          this.chooseGame()
+          unwatch()
+        })
+      }
+    }
   },
   beforeDestroy () {
     this.$root.bus.$off('showGameInfo')
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      if (vm.allGames.length > 0) {
-        let currentGameId = vm.$route.params.gameId
-        if (!currentGameId) {
-          currentGameId = localStorage.getItem('lastGame') || vm.allGames[0].id
-          vm.$router.replace(`/game/${currentGameId}`)
-        }
-      }
-    })
   },
   methods: {
     handleSideBarShow () {
@@ -88,9 +87,13 @@ export default {
     },
     changeRoute (to, from) {
       this.showChatRoom = false
-      if (!this.$route.params.gameId) {
-        this.$router.replace(`/game/${this.allGames[0].id}`)
+      if (to.path === '/game') {
+        this.chooseGame()
       }
+    },
+    chooseGame () {
+      const gameId = localStorage.getItem('lastGame') || this.allGames[0].id
+      this.$router.replace('/game/' + gameId)
     }
   }
 
