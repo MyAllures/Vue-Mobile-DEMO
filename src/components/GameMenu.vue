@@ -61,8 +61,13 @@ export default {
       this.$emit('closeSideBar')
     },
     switchGame (key) {
-      localStorage.setItem('lastGame', key)
-      this.$router.push({path: `/game/${key + ''}/`})
+      const gameId = key + ''
+      if (this.$route.params.gameId === gameId) {
+        this.handleClose()
+        return
+      }
+      localStorage.setItem('lastGame', gameId)
+      this.$router.push({path: `/game/${gameId}/`})
       this.handleClose()
     }
   }
