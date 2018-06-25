@@ -228,6 +228,8 @@ export default {
 .announcement {
   display: flex;
   height: 36px;
+  width: 100%;
+  overflow: hidden;
   background: #fff;
 }
 .announcement {
