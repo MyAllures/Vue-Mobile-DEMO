@@ -172,12 +172,14 @@ export default {
       }
     },
     '$route' (to, from) {
-      if (to.name === 'Home') {
-        document.documentElement.style.height = 'auto'
-        document.body.style.height = 'auto'
-      } else {
-        document.documentElement.style.height = '100%'
-        document.body.style.height = '100%'
+      if (window.self === window.top) { // 非內嵌iframe時才設成auto
+        if (to.name === 'Home') {
+          document.documentElement.style.height = 'auto'
+          document.body.style.height = 'auto'
+        } else {
+          document.documentElement.style.height = '100%'
+          document.body.style.height = '100%'
+        }
       }
       this.closeChatRoom()
     },
