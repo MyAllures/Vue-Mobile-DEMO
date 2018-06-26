@@ -21,7 +21,7 @@
       </group>
       <div class="main">
         <router-view
-        :key="$route.name + ($route.params.categoryId || '')"
+        :key="$route.params.categoryId"
         :game="currentGame"
         :gameClosed="gameClosed"
         :amount="amountForProp"
@@ -101,7 +101,7 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { fetchSchedule, placeBet } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
@@ -164,9 +164,6 @@ export default {
     activeCategory () {
       return this.$route.params.categoryId
     },
-    ...mapGetters([
-      'categories'
-    ]),
     ...mapState([
       'systemConfig', 'user'
     ]),
@@ -193,36 +190,46 @@ export default {
     },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
+    },
+    categories () {
+      if (!this.gameId) {
+        return []
+      }
+      return this.$store.state.categories[this.gameId] || []
     }
   },
   watch: {
     '$route': function (to, from) {
-      if (!this.$route.params.categoryId && to.params.gameId === from.params.gameId) {
-        this.$router.replace(`/game/${this.gameId}/${this.categories[0].id}`)
+      if (to.path === `/game/${this.gameId}`) {
+        this.chooseCategory()
       }
-    },
-    'gameId': function (gameId) {
-      this.init()
     }
   },
   created () {
-    this.init()
+    this.updateSchedule()
+    if (!this.$route.params.categoryId) {
+      if (this.categories.length > 0) {
+        this.chooseCategory()
+      } else {
+        this.$store.dispatch('fetchCategories', this.gameId)
+        const unwatch = this.$watch('categories', function (categories) {
+          this.chooseCategory()
+          unwatch()
+        })
+      }
+    } else if (this.categories.length === 0) {
+      this.$store.dispatch('fetchCategories', this.gameId)
+    }
   },
   methods: {
+    chooseCategory () {
+      const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
+      this.$router.replace(`/game/${this.gameId}/${categoryId}`)
+    },
     inputAomunt (val) {
       let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
       this.$nextTick(() => {
         this.amount = formatted
-      })
-    },
-    init () {
-      this.updateSchedule()
-      this.$store.dispatch('fetchCategories', this.gameId).then(res => {
-        if (!this.$route.params.categoryId) {
-          if (this.gameId) {
-            this.$router.replace(`/game/${this.gameId}/${res[0].id}`)
-          }
-        }
       })
     },
     updateSchedule () {
@@ -248,8 +255,10 @@ export default {
       if (!categoryId) {
         return
       }
+      const gameId = this.$route.params.gameId
+      localStorage.setItem(gameId + '-lastCategory', categoryId)
       this.$router.push({
-        path: `/game/${this.$route.params.gameId}/${categoryId}`
+        path: `/game/${gameId}/${categoryId}`
       })
     },
     startTimer () {

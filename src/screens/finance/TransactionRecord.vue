@@ -129,6 +129,8 @@ export default {
           return this.$t('misc.cancelled')
         case 5:
           return this.$t('misc.denied')
+        default:
+          return this.$t('misc.ongoing')
       }
     }
   },

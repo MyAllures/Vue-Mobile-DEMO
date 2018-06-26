@@ -24,8 +24,8 @@ export default {
   [types.SET_GAMES]: (state, { games }) => {
     state.games = games
   },
-  [types.SET_CATEGORIES]: (state, categories) => {
-    state.categories = categories
+  [types.SET_CATEGORIES]: (state, {gameId, categories}) => {
+    Vue.set(state.categories, gameId, categories)
   },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
