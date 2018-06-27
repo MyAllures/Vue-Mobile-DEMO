@@ -162,12 +162,22 @@ html, body {
     color: #666;
     font-size: 13px;
     th {
-      padding-left: 12px;
+      padding: 10px 0 10px 12px;
       text-align: left;
       font-size: 13px;
+      line-height: 20px;
     }
     th::after {
       display: none;
+    }
+  }
+  .no-data {
+    td {
+      background: #f0f0f0;
+      text-align: center;
+      &::before {
+        display: none;
+      }
     }
   }
 }
