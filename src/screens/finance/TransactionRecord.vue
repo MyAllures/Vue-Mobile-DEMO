@@ -1,8 +1,12 @@
 <template>
   <div v-if="$store.state.user.account_type">
-    <x-table :cell-bordered="false" class="transaction-table">
+    <x-table
+      v-infinite-scroll="loadMore"
+      :infinite-scroll-distance="10"
+      :cell-bordered="false"
+      class="record-table">
       <thead>
-        <tr class="transaction-thead">
+        <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
           <th>
             <span class="amount text-left">{{$t('my.balance')}}</span>
@@ -13,10 +17,9 @@
       </thead>
       <tbody>
         <tr v-if="transactionRecords.length"
-          class="text-sm"
           v-for="(record, index) in transactionRecords" :key="index">
-          <td>
-            <span>{{record.created_at | dateFilter}}</span>
+          <td :style="{'line-height':'20px'}">
+            <date-format :time="record.created_at"/>
           </td>
           <td>
             <span class="amount text-left">¥ {{record.amount | profitFilter }}</span>
@@ -34,16 +37,6 @@
         </tr>
       </tbody>
     </x-table>
-    <box gap="10px 10px">
-      <x-button v-if="totalCount > transactionRecords.length"
-                type="primary"
-                :disabled="loadingMore"
-                @click.native="loadMore(currentChunk)"
-                :show-loading="loadingMore">
-        <span>{{$t('misc.load_more')}}</span>
-      </x-button>
-      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
-    </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
@@ -55,33 +48,48 @@
 
 <script>
 import { fetchTransactionRecord } from '../../api'
-import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
+import { XTable, XButton, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
-
+import Vue from 'vue'
+import infiniteScroll from 'vue-infinite-scroll'
+const DateFormat = Vue.extend({
+  render: function (createElement) {
+    const timeFormat = this.$moment(this.time).format('YYYY-MM-DD HH:mm:ss').split(' ')
+    return createElement('div', {class: 'time'}, [createElement('div', timeFormat[0]), createElement('div', timeFormat[1])])
+  },
+  props: {
+    time: {
+      type: String,
+      required: true
+    }
+  }
+})
 export default {
   name: 'PaymentRecord',
-  data () {
-    return {
-      transactionRecords: [],
-      totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40), // clientHeight minus the height of top and bottom / height of each tr
-      currentChunk: 1,
-      loading: false,
-      error: {
-        isExist: false,
-        msg: ''
-      },
-      loadingMore: false
-    }
-  },
   components: {
     XTable,
-    dateFormat,
+    DateFormat,
     Box,
     Toast,
     Loading,
     XButton,
     Divider
+  },
+  directives: {
+    infiniteScroll
+  },
+  data () {
+    return {
+      transactionRecords: [],
+      totalCount: 0,
+      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40) + 5, // clientHeight minus the height of top and bottom / height of each tr
+      currentChunk: 1,
+      loading: false,
+      error: {
+        isExist: false,
+        msg: ''
+      }
+    }
   },
   methods: {
     initFetchTransactionRecord () {
@@ -99,13 +107,16 @@ export default {
       })
     },
     loadMore () {
-      this.loadingMore = true
+      if (this.loading || this.transactionRecords.length >= this.totalCount) {
+        return
+      }
+      this.loading = true
       fetchTransactionRecord({ transaction_type: this.transactionType, offset: this.transactionRecords.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.transactionRecords.push(...data.results)
-        this.loadingMore = false
+        this.loading = false
       }, () => {
-        this.loadingMore = false
+        this.loading = false
       })
     },
     statusColor (value) {
@@ -152,9 +163,6 @@ export default {
     }
   },
   filters: {
-    dateFilter (value) {
-      return dateFormat(new Date(value), 'YYYY-MM-DD')
-    },
     profitFilter (val) {
       if (val && typeof val === 'number') {
         return val.toFixed(2).replace('-', '')
@@ -180,14 +188,14 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '../../styles/vars.less';
-.transaction-table {
-  margin-top: 10px;
-  background-color: #fff;
+.record-table {
+  td {
+    font-size: 14px;
+  }
+  .time {
+    font-size: 13px;
+  }
 }
-.transaction-thead {
-  background-color: #fbf9fe;
-}
-
 .end {
   text-align: center;
   color: #ccc;
@@ -196,7 +204,6 @@ export default {
   display: inline-block;
   width: 100%;
 }
-
 .tip {
   height: 80vh;
   display: flex;
