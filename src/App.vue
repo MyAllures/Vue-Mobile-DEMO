@@ -18,7 +18,10 @@
       slot="header"
       :right-options="{showMore: !!user.username&&isGameHall}"
       :left-options="{showBack: $route.meta.showBack || false}">
-      <div v-if="!isGameHall&&$route.path !== '/'">
+      <div v-if="$route.name === 'DetailBetRecord'">
+        {{$route.params.date}}
+      </div>
+      <div v-else-if="!isGameHall&&$route.path !== '/'">
         {{$route.meta.title}}
       </div>
       <div
