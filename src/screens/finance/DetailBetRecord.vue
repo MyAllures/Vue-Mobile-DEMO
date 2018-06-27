@@ -1,41 +1,50 @@
 <template>
-  <div>
-    <div class="title">{{date}} 投注记录</div>
-    <x-table :cell-bordered="false" class="betrecord-table">
+  <div class="container">
+    <div class="info-panel">
+      <div class="info-panel-item">
+        <div class="title">下注总计</div>
+        <div class="amount">{{totalAmount | currency('￥')}}</div>
+      </div>
+      <div class="info-panel-item">
+        <div class="title">输赢总计</div>
+        <div class="amount">{{totalProfit | currency('￥')}}</div>
+      </div>
+    </div>
+    <x-table :cell-bordered="false" class="record-table">
       <thead>
-        <tr class="betrecord-thead">
+        <tr class="record-thead">
+          <th>{{$t('fin.time')}}</th>
           <th>{{$t('fin.issue_number')}}</th>
           <th>{{$t('fin.play')}}</th>
-          <th>{{$t('fin.amount')}}</th>
-          <th>{{$t('fin.win_lose')}}</th>
+          <th>{{$t('fin.amount')}}/{{$t('fin.win_lose')}}</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="text-sm"
+        <tr
             v-if="betRecords.length"
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
+            {{record.created_at|moment('HH:mm:ss')}}
+          </td>
+          <td>
             <span class="game">{{record.game.display_name}}</span>
             <span class="issue">{{record.issue_number}}</span>
           </td>
-          <td>
-            <p class="play">{{record.play.playgroup}} - {{record.play.display_name}}</p>
+          <td class="play">
+            <p>{{record.play.playgroup}} - {{record.play.display_name}}</p>
             <div class="odds">
               <span class="red">@ {{record.odds}}</span>
-              <span>{{record.play.return_rate && record.return_amount ? `${Math.floor(record.play.return_rate*10000)/100}%(￥${record.return_amount})`: ''}}</span>
+              <span>{{record.play.return_rate && record.return_amount ? `${Math.floor(record.play.return_rate*10000)/100}%`: ''}}</span>
             </div>
+            <div v-if="record.play.return_rate && record.return_amount">({{record.return_amount| currency('￥')}})</div>
           </td>
-          <td>
-            <span>
-              ￥{{record.bet_amount}}
-            </span>
-          </td>
-          <td>
-            <span v-if="record.profit === null">{{record.remarks | statusFilter}}</span>
-            <span v-else :class="statusColor(record.profit)">
+          <td :class="['amount', {unsettled: record.profit === null}]" :style="{'line-height':'20px'}">
+            <div>{{record.bet_amount | currency('￥')}}</div>
+            <div v-if="record.profit === null">{{record.remarks | statusFilter}}</div>
+            <div v-else :class="statusColor(record.profit)">
               {{record.profit | currency('￥')}}
-            </span>
+            </div>
           </td>
         </tr>
         <tr v-else>
@@ -59,7 +68,7 @@
 </template>
 
 <script>
-import { fetchBetHistory } from '../../api'
+import { fetchBetHistory, fetchBetTotal } from '../../api'
 import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
 
@@ -87,6 +96,8 @@ export default {
         isExist: false,
         msg: ''
       },
+      totalProfit: 0,
+      totalAmount: 0,
       loadingMore: false
     }
   },
@@ -145,37 +156,61 @@ export default {
   },
   created () {
     this.initFetchBetHistory()
+    fetchBetTotal(this.date).then(res => {
+      this.totalProfit = res.profit
+      this.totalAmount = res.amount
+    }).catch(() => {})
   }
 }
 </script>
 
 <style lang="less" scoped>
-.title {
-  font-size: 14px;
-  text-align: center;
-  margin-top: 10px;
-  color: #666;
+.container {
+  width: 100%;
 }
-.betrecord-table {
-  margin-top: 10px;
-  background-color: #fff;
+.info-panel {
+  width: 100%;
+  display: flex;
+  .info-panel-item {
+    width: 50%;
+    text-align: center;
+    background: #166fd8;
+    .title {
+      height: 30px;
+      width: 100%;
+      line-height: 30px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+    }
+    .amount {
+      height: 40px;
+      width: 100%;
+      line-height: 40px;
+      color: #fff;
+      font-size: 18px;
+    }
+  }
 }
-.betrecord-thead {
-  background-color: #fbf9fe;
+
+.record-table {
+  .issue, .odds, .amount{
+    font-size: 12px;
+  }
+  .play {
+    line-height: 20px;
+  }
+  .amount.unsettled {
+    color: #999;
+  }
 }
+
 .end {
   text-align: center;
   color: #ccc;
 }
-.game, .issue, .play, .odds {
+.game, .issue, .odds {
   display: block;
   line-height: 1.5;
-}
-.game, .play {
-  margin-top: 8px;
-}
-.issue, .odds {
-   margin-bottom: 8px;
 }
 .issue {
   color: #999;

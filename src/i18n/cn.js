@@ -61,7 +61,7 @@ export default {
     win_lose: '输赢',
     issue_number: '期号',
     play: '玩法',
-    amount: '金额'
+    amount: '注额'
   },
   my: {
     select: '请选择',
