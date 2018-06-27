@@ -109,7 +109,7 @@ export default {
     success_title: '充值结果',
     checking_result: '正在确认支付结果...',
     play_games: '去玩游戏',
-    view_history: '查看充值记录',
+    view_history: '查看充值纪录',
     check_later: '支付结果将在稍后确认',
     refresh: '刷新',
     status_fail: '订单无法处理',
