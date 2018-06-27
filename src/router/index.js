@@ -72,7 +72,7 @@ export default new Router({
           path: 'payment_record',
           name: 'PaymentRecord',
           meta: {
-            title: '充值记录',
+            title: '财务纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -81,7 +81,7 @@ export default new Router({
           path: 'withdraw_record',
           name: 'WithdrawRecord',
           meta: {
-            title: '取款记录',
+            title: '财务纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -90,7 +90,7 @@ export default new Router({
           path: 'promotion_record',
           name: 'PromotionRecord',
           meta: {
-            title: '优惠和红包',
+            title: '财务纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -99,7 +99,7 @@ export default new Router({
           path: 'bet_record/:date',
           name: 'DetailBetRecord',
           meta: {
-            title: '投注详情',
+            title: '财务纪录',
             requiresAuth: true,
             tabbarHidden: true,
             showBack: true
@@ -110,7 +110,7 @@ export default new Router({
           path: 'bet_record',
           name: 'BetRecord',
           meta: {
-            title: '投注记录',
+            title: '财务纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }

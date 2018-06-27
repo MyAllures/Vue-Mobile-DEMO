@@ -19,13 +19,13 @@
 <script>
 import { Tab, TabItem, XButton } from 'vux'
 const tabs = [{
-  label: '投注记录',
+  label: '投注纪录',
   name: 'BetRecord'
 }, {
-  label: '充值记录',
+  label: '充值纪录',
   name: 'PaymentRecord'
 }, {
-  label: '取款记录',
+  label: '取款纪录',
   name: 'WithdrawRecord'
 }, {
   label: '优惠和红包',
