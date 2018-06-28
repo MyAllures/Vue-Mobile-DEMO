@@ -10,7 +10,11 @@
         <div class="amount">{{totalProfit | currency('￥')}}</div>
       </div>
     </div>
-    <x-table :cell-bordered="false" class="record-table">
+    <x-table
+      v-infinite-scroll="loadMore"
+      :infinite-scroll-distance="10"
+      :cell-bordered="false"
+      class="record-table">
       <thead>
         <tr class="record-thead">
           <th>{{$t('fin.date')}}</th>
@@ -52,16 +56,6 @@
         </tr>
       </tbody>
     </x-table>
-    <box gap="10px 10px">
-      <x-button v-if="totalCount > betRecords.length"
-                type="primary"
-                :disabled="loadingMore"
-                @click.native="loadMore(currentChunk)"
-                :show-loading="loadingMore">
-        <span>{{$t('misc.load_more')}}</span>
-      </x-button>
-      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
-    </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
@@ -71,6 +65,7 @@
 import { fetchBetHistory, fetchBetTotal } from '../../api'
 import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
+import infiniteScroll from 'vue-infinite-scroll'
 
 export default {
   name: 'DetailBetRecord',
@@ -85,6 +80,18 @@ export default {
       }
     }
   },
+  components: {
+    XTable,
+    dateFormat,
+    Box,
+    Toast,
+    Loading,
+    XButton,
+    Divider
+  },
+  directives: {
+    infiniteScroll
+  },
   data () {
     return {
       betRecords: [],
@@ -97,18 +104,8 @@ export default {
         msg: ''
       },
       totalProfit: 0,
-      totalAmount: 0,
-      loadingMore: false
+      totalAmount: 0
     }
-  },
-  components: {
-    XTable,
-    dateFormat,
-    Box,
-    Toast,
-    Loading,
-    XButton,
-    Divider
   },
   methods: {
     initFetchBetHistory () {
@@ -131,7 +128,9 @@ export default {
         })
     },
     loadMore () {
-      this.loadingMore = true
+      if (this.loading || this.betRecords.length >= this.totalCount) {
+        return
+      }
       fetchBetHistory({
         status: 'win,lose,tie,ongoing,cancelled,no_draw',
         bet_date: this.date,
@@ -140,9 +139,9 @@ export default {
       }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
-        this.loadingMore = false
+        this.loading = false
       }, () => {
-        this.loadingMore = false
+        this.loading = false
       })
     },
     statusColor (val) {

@@ -83,8 +83,7 @@ export default {
       error: {
         isExist: false,
         msg: ''
-      },
-      loadingMore: false
+      }
     }
   },
   methods: {
