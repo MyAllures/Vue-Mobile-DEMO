@@ -7,7 +7,7 @@
     <x-header
       :class="isGameHall ? 'gamehall' : ''"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu=true"
+      @on-click-more="showRightMenu = true"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
@@ -24,14 +24,17 @@
       <div v-else-if="!isGameHall&&$route.path !== '/'">
         {{$route.meta.title}}
       </div>
+      <div v-else-if="isGameHall && !showChatRoom" @click="showGameMenu = !showGameMenu">
+        {{ this.currentGame.display_name }}
+        <i :class="['solid-triangle', showGameMenu ? 'point-top' : 'point-down' ]"></i>
+      </div>
+
       <div
         v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="showGameMenu = true"
+        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})"
         class="left-trigger">
-          <x-icon
-          type="navicon"
-          size="32"></x-icon>
+          <x-icon type="ios-arrow-back" size="24" v-if="$route.name !== 'Home'"></x-icon>
           <a class="vux-header-name">{{headerLeftTitle}}</a>
       </div>
       <div
@@ -41,7 +44,7 @@
         class="left-trigger">
         <x-icon
           type="ios-close-empty"
-          size="32"></x-icon>
+          size="24"></x-icon>
           {{roomInfo&&roomId&&roomInfo[roomId].name}}
       </div>
       <div
@@ -221,7 +224,14 @@ export default {
       return this.$store.state.systemConfig
     },
     headerLeftTitle () {
-      return this.currentGame.display_name || (this.$route.name === 'Home' ? this.systemConfig.siteName : '')
+      let name = this.$route.name
+      if (name === 'Home') {
+        return this.systemConfig.siteName
+      } else {
+        if (name === 'GameDetail' || name === 'Game') {
+          return '首页'
+        }
+      }
     },
     selectedTab () {
       const path = this.$route.path
@@ -520,9 +530,26 @@ export default {
   font-size: 16px;
   color: #fff;
   .vux-x-icon {
-    margin: -6px 0 0 -5px;
+    margin: -2px 0 0 -5px;
     float: left;
     display: inline-block;
+  }
+}
+
+.solid-triangle {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  &.point-top {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+  }
+  &.point-down {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #fff;
   }
 }
 </style>
