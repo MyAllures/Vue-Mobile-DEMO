@@ -32,11 +32,12 @@
       <div
         v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})"
+        @click="$route.name === 'Home' ? showGameMenu = false : $router.push({name: 'Home'})"
         class="left-trigger">
           <x-icon type="ios-arrow-back" size="24" v-if="$route.name !== 'Home'"></x-icon>
           <a class="vux-header-name">{{headerLeftTitle}}</a>
       </div>
+
       <div
         v-else-if="isGameHall && showChatRoom"
         slot="overwrite-left"
@@ -62,10 +63,8 @@
         v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
-        @click="showChatRoom = true">
-        <x-icon
-          type="chatbubble-working"
-          size="30"></x-icon>
+        @click="showChatRoom = true; showGameMenu = false">
+        <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
@@ -226,7 +225,7 @@ export default {
     headerLeftTitle () {
       let name = this.$route.name
       if (name === 'Home') {
-        return this.systemConfig.siteName
+        return this.showGameMenu ? '收合选单' : this.systemConfig.siteName
       } else {
         if (name === 'GameDetail' || name === 'Game') {
           return '首页'
@@ -441,6 +440,7 @@ export default {
 
 .tabbar {
   position: fixed;
+  z-index: 98;
 }
 .logo {
   position: absolute;
