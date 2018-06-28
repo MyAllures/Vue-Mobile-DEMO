@@ -1,8 +1,12 @@
 <template>
   <div>
-    <x-table :cell-bordered="false" class="betrecord-table">
+    <x-table
+      v-infinite-scroll="loadMore"
+      :infinite-scroll-distance="10"
+      :cell-bordered="false"
+      class="record-table">
       <thead>
-        <tr class="betrecord-thead">
+        <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
           <th>{{$t('fin.records_count')}}</th>
           <th>
@@ -14,10 +18,9 @@
           </th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-if="betRecords.length"
+      <tbody v-if="betRecords.length">
+        <tr
             v-for="(record, index) in betRecords" :key="index"
-            class="text-sm"
             @click="$router.push(`bet_record/${fotmattedDate(record.time)}`)">
           <td>
             <span>{{record.time | dateFilter}}</span>
@@ -37,21 +40,13 @@
             </div>
           </td>
         </tr>
-        <tr v-else>
-          <td>{{$t('misc.no_data_yet')}}</td>
+      </tbody>
+      <tbody v-else>
+        <tr class="no-data">
+          <td colspan="4">{{$t('misc.no_data_yet')}}</td>
         </tr>
       </tbody>
     </x-table>
-    <box gap="10px 10px">
-      <x-button v-if="totalCount > betRecords.length"
-                type="primary"
-                :disabled="loadingMore"
-                @click.native="loadMore(currentChunk)"
-                :show-loading="loadingMore">
-        <span>{{$t('misc.load_more')}}</span>
-      </x-button>
-      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
-    </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
@@ -61,23 +56,10 @@
 import { fetchDateBetRecords } from '../../api'
 import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider, Icon, Countup } from 'vux'
 import { msgFormatter } from '../../utils'
+import infiniteScroll from 'vue-infinite-scroll'
 
 export default {
   name: 'BetRecord',
-  data () {
-    return {
-      betRecords: [],
-      totalCount: 0,
-      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40), // clientHeight minus the height of top and bottom / height of each tr
-      currentChunk: 1,
-      loading: false,
-      error: {
-        isExist: false,
-        msg: ''
-      },
-      loadingMore: false
-    }
-  },
   components: {
     XTable,
     dateFormat,
@@ -88,6 +70,21 @@ export default {
     Divider,
     Icon,
     Countup
+  },
+  directives: {
+    infiniteScroll
+  },
+  data () {
+    return {
+      betRecords: [],
+      totalCount: 0,
+      chunkSize: ~~((document.documentElement.clientHeight - 100) / 40) + 5, // clientHeight minus the height of top and bottom / height of each tr
+      loading: false,
+      error: {
+        isExist: false,
+        msg: ''
+      }
+    }
   },
   methods: {
     initfetchDateBetRecords () {
@@ -111,14 +108,16 @@ export default {
         })
     },
     loadMore () {
-      this.loadingMore = true
+      if (this.loading || this.betRecords.length >= this.totalCount) {
+        return
+      }
+      this.loading = true
       fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: this.betRecords.length, limit: 10 }).then(data => {
-        this.currentChunk += 1
         let received = data.results || data
         this.betRecords.push(...received)
-        this.loadingMore = false
+        this.loading = false
       }, () => {
-        this.loadingMore = false
+        this.loading = false
       })
     },
     statusColor (val) {
@@ -140,15 +139,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.betrecord-table {
-  margin-top: 10px;
-  background-color: #fff;
-}
-.betrecord-thead {
-  background-color: #fbf9fe;
+.record-table {
+  td {
+    font-size: 14px;
+    line-height: 20px;
+  }
 }
 .end {
-  text-align: center;
   color: #ccc;
 }
 .profit-text {

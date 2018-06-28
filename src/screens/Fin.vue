@@ -1,15 +1,15 @@
 <template>
   <div>
-    <tab v-if="tabs.length && $route.name !== 'DetailBetRecord'">
-      <tab-item
-        :line-width="1"
+    <div class="tab" v-if="tabs.length && $route.name !== 'DetailBetRecord'">
+      <div
         v-for="(tab,index) in tabs"
         :key="index"
-        @on-item-click="switchTab(tab.name)"
-        :selected="tab.name === activeTab">
-          {{tab.label}}
-        </tab-item>
-    </tab>
+        :class="['tab-item', {selected: tab.name === activeTab}]"
+        :style="{width: Math.floor(100/tabs.length) + '%'}"
+        @click="switchTab(tab.name)">
+        <span class="tab-item-text">{{tab.label}}</span>
+      </div>
+    </div>
     <transition  name="component-fade" mode="out-in">
       <router-view></router-view>
     </transition>
@@ -19,13 +19,13 @@
 <script>
 import { Tab, TabItem, XButton } from 'vux'
 const tabs = [{
-  label: '投注记录',
+  label: '投注纪录',
   name: 'BetRecord'
 }, {
-  label: '充值记录',
+  label: '充值纪录',
   name: 'PaymentRecord'
 }, {
-  label: '取款记录',
+  label: '取款纪录',
   name: 'WithdrawRecord'
 }, {
   label: '优惠和红包',
@@ -33,14 +33,12 @@ const tabs = [{
 }]
 export default {
   name: 'Home',
-  data () {
-    return {
-      activeTab: this.$route.name
-    }
-  },
   computed: {
     tabs () {
       return this.$store.state.user.account_type === 0 ? [] : tabs
+    },
+    activeTab () {
+      return this.$route.name
     }
   },
   methods: {
@@ -59,27 +57,32 @@ export default {
 <style lang="less" scoped>
 @import '../styles/vars.less';
 
-.personal-info {
-  z-index: 0;
-  text-shadow: 0px 0px 1px #999;
-  .balance {
-    font-weight: 200;
-    span {
-      color: lighten(@green, 10%)
+.tab {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 8px 0;
+  background: #166fd8;
+  text-align: center;
+  font-size: 14px;
+  @media screen and (max-width: 320px) {
+    font-size: 12px;
+  }
+  .tab-item {
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    color: rgba(255, 255, 255, 0.8);
+    &.selected{
+      .tab-item-text {
+        display: inline-block;
+        height: 28px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 0 8px;
+        color: #166fd8;
+      }
     }
-  }
-  .center {
-    text-align: center;
-    padding-top: 20px;
-    color: #fff;
-    font-size: 18px;
-    letter-spacing: 1px;
-  }
-  .profile-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 4px solid #ddd;
   }
 }
 </style>

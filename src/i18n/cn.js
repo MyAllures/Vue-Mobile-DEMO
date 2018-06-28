@@ -38,7 +38,8 @@ export default {
     denied: '拒绝',
     next_step: '下一步',
     submit: '送出',
-    nomore_data: '~'
+    nomore_data: '~',
+    no_data_yet: '暂无纪录'
   },
   home: {
     name: '首页',
@@ -55,13 +56,14 @@ export default {
   fin: {
     name: '财务',
     time: '时间',
+    date: '日期',
     transaction_way: '交易方式',
     status: '状态',
     records_count: '笔数',
     win_lose: '输赢',
     issue_number: '期号',
     play: '玩法',
-    amount: '金额'
+    amount: '注额'
   },
   my: {
     select: '请选择',
@@ -109,7 +111,7 @@ export default {
     success_title: '充值结果',
     checking_result: '正在确认支付结果...',
     play_games: '去玩游戏',
-    view_history: '查看充值记录',
+    view_history: '查看充值纪录',
     check_later: '支付结果将在稍后确认',
     refresh: '刷新',
     status_fail: '订单无法处理',
