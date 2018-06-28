@@ -7,7 +7,7 @@
     <x-header
       :class="isGameHall ? 'gamehall' : ''"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true"
+      @on-click-more="showRightMenu = true; showGameMenu = false"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
@@ -58,7 +58,7 @@
           <div class="try">试玩</div>
         </div>
       </div>
-      <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
+      <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu = true; showGameMenu = false">{{ user.balance|currency('￥')}}</span>
       <div
         v-if="isShowChatroomIcon"
         class="chatbubble"
