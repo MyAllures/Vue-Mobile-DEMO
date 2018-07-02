@@ -48,7 +48,7 @@ export default {
     recentgame: '最近玩过'
   },
   game: {
-    betrecord: '查看注单',
+    betrecord: '投注记录',
     name: '游戏',
     deposit: '立即充值',
     nopay: '未结'
