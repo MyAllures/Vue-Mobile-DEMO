@@ -15,8 +15,8 @@
           <th>{{$t('fin.status')}}</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-if="transactionRecords.length"
+      <tbody v-if="transactionRecords.length">
+        <tr
           v-for="(record, index) in transactionRecords" :key="index">
           <td :style="{'line-height':'20px'}">
             <date-format :time="record.created_at"/>
@@ -32,8 +32,10 @@
             <span :class="statusColor(record.status)">{{translateStatus(record.status)}}</span>
           </td>
         </tr>
-        <tr v-else>
-          <td>{{$t('misc.no_data_yet')}}</td>
+      </tbody>
+      <tbody v-else>
+        <tr class="no-data">
+          <td colspan="4">{{$t('misc.no_data_yet')}}</td>
         </tr>
       </tbody>
     </x-table>
@@ -140,6 +142,8 @@ export default {
           return this.$t('misc.cancelled')
         case 5:
           return this.$t('misc.denied')
+        default:
+          return this.$t('misc.ongoing')
       }
     }
   },

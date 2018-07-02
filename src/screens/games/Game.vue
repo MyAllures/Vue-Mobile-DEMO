@@ -1,8 +1,10 @@
 <template>
   <div class="game">
     <div class="fifa-header" v-if="isFifa">
-      <img class="img" src="../../assets/2018fifa.png" alt="FIFA">
-      <p v-if="currentMatch" class="match-info">
+      <div class="image-section">
+        <img class="img" src="../../assets/2018fifa.png" alt="FIFA">
+      </div>
+      <div v-if="currentMatch" class="match-info">
         <span>
           {{`[ ${this.$moment(currentMatch.startTime).format('HH:mm')} ${currentMatch.name} ]`}}
         </span>
@@ -16,7 +18,7 @@
           </span>
           <span v-else class="label">已封盘</span>
         </span>
-      </p>
+      </div>
     </div>
     <div v-else>
       <GameResult :gameid="$route.params.gameId"/>
@@ -249,14 +251,14 @@ export default {
   },
   created () {
     this.updateSchedule()
-    let isSportsGame = !!(this.currentGame && this.currentGame.game_type)
+    let isSportsGame = !!this.currentGame.game_type
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
       } else {
         if (isSportsGame) {
           let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
-          this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId})
+          if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
         } else {
           this.$store.dispatch('fetchCategories', this.gameId)
         }
@@ -269,7 +271,7 @@ export default {
     } else if (this.categories.length === 0) {
       if (isSportsGame) {
         let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
-        this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId})
+        if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
       } else {
         this.$store.dispatch('fetchCategories', this.gameId)
       }
@@ -648,16 +650,21 @@ export default {
 
 .fifa-header {
   width: 100%;
-  padding: 10px;
-  background-color: #166fd8;
-  .img {
-    width: 80%;
-    height: auto;
+  .image-section {
+    width: 100%;
+    padding: 10px 10px 0 10px;
+    background-image: linear-gradient(to bottom, #166fd8, #1568CA);
+    .img {
+      width: 80%;
+      height: auto;
+    }
   }
   .match-info {
+    background-image: linear-gradient(to bottom, #1568CA, #1053A1);
     white-space: nowrap;
     color: #fff;
     font-size: 22px;
+    padding: 0 10px 10px 10px;
   }
   @media screen and (max-width: 375px) {
       .match-info {

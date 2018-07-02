@@ -38,7 +38,8 @@ export default {
     denied: '拒绝',
     next_step: '下一步',
     submit: '送出',
-    nomore_data: '~'
+    nomore_data: '~',
+    no_data_yet: '暂无纪录'
   },
   home: {
     name: '首页',
@@ -47,7 +48,7 @@ export default {
     recentgame: '最近玩过'
   },
   game: {
-    betrecord: '查看注单',
+    betrecord: '投注记录',
     name: '游戏',
     deposit: '立即充值',
     nopay: '未结'
@@ -55,6 +56,7 @@ export default {
   fin: {
     name: '财务',
     time: '时间',
+    date: '日期',
     transaction_way: '交易方式',
     status: '状态',
     records_count: '笔数',

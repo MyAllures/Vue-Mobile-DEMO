@@ -18,8 +18,8 @@
           </th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-if="betRecords.length"
+      <tbody v-if="betRecords.length">
+        <tr
             v-for="(record, index) in betRecords" :key="index"
             @click="$router.push(`bet_record/${fotmattedDate(record.time)}`)">
           <td>
@@ -40,8 +40,10 @@
             </div>
           </td>
         </tr>
-        <tr v-else>
-          <td>{{$t('misc.no_data_yet')}}</td>
+      </tbody>
+      <tbody v-else>
+        <tr class="no-data">
+          <td colspan="4">{{$t('misc.no_data_yet')}}</td>
         </tr>
       </tbody>
     </x-table>
@@ -81,8 +83,7 @@ export default {
       error: {
         isExist: false,
         msg: ''
-      },
-      loadingMore: false
+      }
     }
   },
   methods: {

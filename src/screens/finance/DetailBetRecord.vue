@@ -10,18 +10,21 @@
         <div class="amount">{{totalProfit | currency('￥')}}</div>
       </div>
     </div>
-    <x-table :cell-bordered="false" class="record-table">
+    <x-table
+      v-infinite-scroll="loadMore"
+      :infinite-scroll-distance="10"
+      :cell-bordered="false"
+      class="record-table">
       <thead>
         <tr class="record-thead">
-          <th>{{$t('fin.time')}}</th>
+          <th>{{$t('fin.date')}}</th>
           <th>{{$t('fin.issue_number')}}</th>
           <th>{{$t('fin.play')}}</th>
           <th>{{$t('fin.amount')}}/{{$t('fin.win_lose')}}</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="betRecords.length">
         <tr
-            v-if="betRecords.length"
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
@@ -34,12 +37,11 @@
             </span>
           </td>
           <td class="play">
-            <p>{{record.play.playgroup}} - {{record.play.display_name}}</p>
+            <p>{{record.play.playgroup}}@{{record.play.display_name}}</p>
             <div class="odds">
-              <span class="red">@ {{record.odds}}</span>
-              <span>{{record.play.return_rate && record.return_amount ? `${Math.floor(record.play.return_rate*10000)/100}%`: ''}}</span>
+              <span>{{record.odds}}</span>
+              <span>{{record.play.return_rate && record.return_amount ? ` 返${Math.floor(record.play.return_rate*10000)/100}%`: ''}}</span>
             </div>
-            <div v-if="record.play.return_rate && record.return_amount">({{record.return_amount| currency('￥')}})</div>
           </td>
           <td :class="['amount', {unsettled: record.profit === null}]" :style="{'line-height':'20px'}">
             <div>{{record.bet_amount | currency('￥')}}</div>
@@ -49,21 +51,13 @@
             </div>
           </td>
         </tr>
-        <tr v-else>
-          <td>{{$t('misc.no_data_yet')}}</td>
+      </tbody>
+      <tbody v-else>
+        <tr class="no-data">
+          <td colspan="4">{{$t('misc.no_data_yet')}}</td>
         </tr>
       </tbody>
     </x-table>
-    <box gap="10px 10px">
-      <x-button v-if="totalCount > betRecords.length"
-                type="primary"
-                :disabled="loadingMore"
-                @click.native="loadMore(currentChunk)"
-                :show-loading="loadingMore">
-        <span>{{$t('misc.load_more')}}</span>
-      </x-button>
-      <div class="end" v-else>{{$t('misc.nomore_data')}}</div>
-    </box>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
@@ -73,6 +67,7 @@
 import { fetchBetHistory, fetchBetTotal } from '../../api'
 import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
+import infiniteScroll from 'vue-infinite-scroll'
 
 export default {
   name: 'DetailBetRecord',
@@ -87,6 +82,18 @@ export default {
       }
     }
   },
+  components: {
+    XTable,
+    dateFormat,
+    Box,
+    Toast,
+    Loading,
+    XButton,
+    Divider
+  },
+  directives: {
+    infiniteScroll
+  },
   data () {
     return {
       betRecords: [],
@@ -99,18 +106,8 @@ export default {
         msg: ''
       },
       totalProfit: 0,
-      totalAmount: 0,
-      loadingMore: false
+      totalAmount: 0
     }
-  },
-  components: {
-    XTable,
-    dateFormat,
-    Box,
-    Toast,
-    Loading,
-    XButton,
-    Divider
   },
   methods: {
     initFetchBetHistory () {
@@ -133,7 +130,9 @@ export default {
         })
     },
     loadMore () {
-      this.loadingMore = true
+      if (this.loading || this.betRecords.length >= this.totalCount) {
+        return
+      }
       fetchBetHistory({
         status: 'win,lose,tie,ongoing,cancelled,no_draw',
         bet_date: this.date,
@@ -142,9 +141,9 @@ export default {
       }).then(data => {
         this.currentChunk += 1
         this.betRecords.push(...data.results)
-        this.loadingMore = false
+        this.loading = false
       }, () => {
-        this.loadingMore = false
+        this.loading = false
       })
     },
     statusColor (val) {
@@ -177,17 +176,14 @@ export default {
     width: 50%;
     text-align: center;
     background: #166fd8;
+    padding: 10px 0;
     .title {
-      height: 30px;
       width: 100%;
-      line-height: 30px;
       color: rgba(255, 255, 255, 0.6);
       font-size: 14px;
     }
     .amount {
-      height: 40px;
       width: 100%;
-      line-height: 40px;
       color: #fff;
       font-size: 18px;
     }
@@ -200,6 +196,9 @@ export default {
   }
   .play {
     line-height: 20px;
+  }
+  .odds {
+    color: #999;
   }
   .amount.unsettled {
     color: #999;
