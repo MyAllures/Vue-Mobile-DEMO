@@ -8,7 +8,8 @@
         </span>
         <span class="schedule" v-if="schedule && schedule.issue_number">
           <span class="title">封盘</span>
-          <span v-if="!gameClosed" class="label">
+          <span v-if="!closeCountDown" class="label"></span>
+          <span v-else-if="!gameClosed" class="label">
             <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天</span>
             <span v-if="closeCountDown.hours > 0">{{closeCountDown.hours | complete}}:</span>
             {{closeCountDown.minutes | complete}}:{{closeCountDown.seconds | complete}}
@@ -77,7 +78,7 @@
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
         </flexbox-item>
       </flexbox>
-      <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
+      <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">已封盘</div>
     </div>
 
     <popup v-model="dialogVisible" is-transparent>
@@ -155,18 +156,8 @@ export default {
         id: null
       },
       timer: '',
-      closeCountDown: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      },
-      resultCountDown: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      },
+      closeCountDown: null,
+      resultCountDown: null,
       currentPlays: [],
       dialogVisible: false,
       amount: localStorage.getItem('amount') || '10',
@@ -191,6 +182,9 @@ export default {
       }
     },
     gameClosed () {
+      if (!this.closeCountDown) {
+        return false
+      }
       const c = this.closeCountDown
       return c.days + c.hours + c.minutes + c.seconds === 0
     },
@@ -474,16 +468,16 @@ export default {
   flex: 1 1 auto;
   display: flex;
   /deep/ .weui-cells {
-    margin: auto; // fix the overflowing flexitem issue
+    margin: 0;
     line-height: 18px;
     width: 100%;
     background: #f9f9f9;
+    overflow-y: auto;
   }
   .aside {
     display: flex;
-    overflow-y: auto;
+    overflow-y: scroll;
     justify-content: safe center;
-    align-items: safe center;
     width: 110px;
     border-width: 0 4px 0 0;
     border-style: solid;
