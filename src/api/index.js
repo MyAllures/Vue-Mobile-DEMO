@@ -33,7 +33,7 @@ export function gethomePage () {
 }
 
 export function fetchGames () {
-  return axios.get(urls.games)
+  return axios.get(`${urls.games}?platform=1`)
 }
 
 export function fetchCategories (gameId) {
