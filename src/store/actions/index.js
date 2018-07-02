@@ -2,6 +2,8 @@ import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import router from '../../router'
 import axios from 'axios'
+import _ from 'lodash'
+
 import {
   fetchUser,
   login as userLogin,
@@ -9,6 +11,7 @@ import {
   fetchGames,
   fetchUnread,
   fetchCategories,
+  fetchMatchCategory,
   fetchChatInfo,
   fetchRoomInfo
 } from '../../api'
@@ -108,6 +111,50 @@ export default {
       commit(types.SET_UNREAD, {
         unread: res.message_count
       })
+    })
+  },
+  fetchMatchCategories: ({ commit, state }, {game, matchId}) => {
+    return fetchMatchCategory(game.id, matchId).then(res => {
+      let dateToMatchMap = {}
+      let matches = game.matches
+      let matchCategories = []
+
+      _.each(matches, (match) => {
+        let gamedate = Vue.moment(match.start_time).format('MM月DD日')
+        if (dateToMatchMap[gamedate]) {
+          dateToMatchMap[gamedate].push(match)
+        } else {
+          dateToMatchMap[gamedate] = []
+          dateToMatchMap[gamedate].push(match)
+        }
+      })
+
+      let dateKeys = Object.keys(dateToMatchMap)
+      matchCategories = _.map(dateKeys, (key, index1) => {
+        let tabs = _.map(dateToMatchMap[key], (match) => {
+          return {
+            name: `${match.home_team.display_name} vs ${match.away_team.display_name}`,
+            startTime: match.start_time,
+            groups: res[0].tabs[0].groups,
+            matchId: match.id,
+            schedule: match.schedule
+          }
+        })
+        return {
+          id: 5000 + index1,
+          name: key,
+          code: `fifa_${key}`,
+          tabs: tabs
+        }
+      })
+
+      res = matchCategories
+
+      commit(types.SET_CATEGORIES, {
+        gameId: game.id,
+        categories: res
+      })
+      return res
     })
   },
   fetchCategories: ({ commit, state }, gameId) => {
