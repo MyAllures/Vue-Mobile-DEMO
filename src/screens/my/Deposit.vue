@@ -179,7 +179,7 @@ export default {
                   break
                 case 3:
                   res.display_name = '支付宝'
-                  alipayRemit.push()
+                  alipayRemit.push(res)
                   break
                 default:
                   if (res.detail && res.detail.length > 0) {
