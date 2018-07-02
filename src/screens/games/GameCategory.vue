@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="game.game_type || tabKeys.length > 1" class="tab-selector">
+    <div v-if="(game && game.game_type) || tabKeys.length > 1" class="tab-selector">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           :animate="false"
@@ -14,7 +14,6 @@
         </tab-item>
       </tab>
     </div>
-
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -192,17 +191,16 @@ export default {
       })
     },
     'categories': function (categories) {
-      if (this.game.game_type) {
+      if (this.game && this.game.game_type) {
         this.initSportsPlayAndGroups(categories)
       } else {
         this.initPlayAndGroups(categories)
       }
     },
     'currentTab': function (currentTab) {
-      if (!this.game.game_type) {
+      if (!this.game || !this.game.game_type) {
         return
       }
-
       let currentCategory = this.categories.find(c => c.id + '' === this.activeCategory)
       let currentMatchId = currentCategory ? currentCategory.tabs.find(tab => tab.name === currentTab).matchId : this.game.matches[0].id
 
