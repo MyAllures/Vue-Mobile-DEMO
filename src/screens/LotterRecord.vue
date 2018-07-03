@@ -57,7 +57,8 @@
         </x-button>
 
         <div class="no-more" v-else>
-          <span>{{$t('misc.no_more')}}</span>
+          <span v-if="!nowGameTable.table">暂无资料</span>
+          <span v-else>{{$t('misc.no_more')}}</span>
         </div>
       </tr>
     </table>
@@ -595,6 +596,10 @@ export default {
       {
         code: 'fc3d',
         table: fc3dTable
+      },
+      {
+        code: 'fifaworldcup',
+        table: null
       }
     ]
 
@@ -714,14 +719,20 @@ export default {
         offset: this.pagination.offset,
         time: this.date
       }
+      this.nowGameTable = _.find(this.gameTable, item => {
+        return item.code === this.gameCode
+      })
+
+      if (!this.nowGameTable || !this.nowGameTable.table) {
+        this.loading = false
+        return
+      }
+
       getGameHistoryData(data).then((response) => {
         this.pagination.total = response.count
 
         this.codeKl = false
         this.records = response
-        this.nowGameTable = _.find(this.gameTable, item => {
-          return item.code === this.gameCode
-        })
 
         if (this.gameCode === 'auluck8' || this.gameCode === 'bjkl8') {
           this.codeKl = true
@@ -869,9 +880,10 @@ export default {
   position: relative;
   font-size: 14px;
 }
+
 .no-more {
   text-align: center;
-  color: #ccc;
+  color: #666;
 }
 
 .invalid {

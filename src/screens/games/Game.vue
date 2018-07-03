@@ -240,6 +240,11 @@ export default {
       if (this.currentGame.game_type && match) {
         clearInterval(this.timer)
         this.schedule = match.schedule
+        this.$store.dispatch('updateGameInfo', {
+          display_name: this.currentGame.display_name,
+          game_code: this.currentGame.code,
+          issue_number: this.schedule.issue_number
+        })
         this.startTimer()
       }
     }
@@ -252,7 +257,8 @@ export default {
         this.chooseCategory()
       } else {
         if (isSportsGame) {
-          this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId: this.currentGame.matches[0].id})
+          let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
+          if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
         } else {
           this.$store.dispatch('fetchCategories', this.gameId)
         }
@@ -264,7 +270,8 @@ export default {
       }
     } else if (this.categories.length === 0) {
       if (isSportsGame) {
-        this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId: this.currentGame.matches[0].id})
+        let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
+        if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
       } else {
         this.$store.dispatch('fetchCategories', this.gameId)
       }
@@ -285,7 +292,7 @@ export default {
       })
     },
     updateSchedule () {
-      if (!this.gameId || this.currentGame.game_type) {
+      if (!this.gameId || (this.currentGame && this.currentGame.game_type)) {
         return
       }
       clearInterval(this.timer)
@@ -298,7 +305,8 @@ export default {
           })
           this.$store.dispatch('updateGameInfo', {
             display_name: this.currentGame.display_name,
-            issue_number: this.schedule.issue_number
+            issue_number: this.schedule.issue_number,
+            game_code: this.currentGame.code
           })
           this.startTimer()
         })
