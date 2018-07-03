@@ -32,7 +32,9 @@
           </td>
           <td>
             <span class="game">{{record.game.display_name}}</span>
-            <span class="issue">{{record.issue_number}}</span>
+            <span class="issue">
+              {{record.match || record.issue_number}}
+            </span>
           </td>
           <td class="play">
             <p>{{record.play.playgroup}}@{{record.play.display_name}}</p>

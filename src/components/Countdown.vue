@@ -3,7 +3,8 @@
     <p class="issue">{{schedule.issue_number}}{{$t('common.result_period')}}</p>
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">封盘</div>
-      <span v-if="!gameClosed" class="label">
+      <span v-if="!closeCountDown" class="label"></span>
+      <span v-else-if="!gameClosed" class="label">
         <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天</span>
         <span v-if="closeCountDown.hours > 0">{{closeCountDown.hours | complete}}:</span>{{closeCountDown.minutes | complete}}:{{closeCountDown.seconds | complete}}
       </span>
@@ -11,7 +12,8 @@
     </div>
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">开奖</div>
-      <span v-if="!ended" class="label">
+      <span v-if="!resultCountDown" class="label"></span>
+      <span v-else-if="!ended" class="label">
         <span v-if="resultCountDown.days > 0">{{resultCountDown.days}}天</span>
         <span v-if="resultCountDown.hours > 0">{{resultCountDown.hours | complete}}:</span>{{resultCountDown.minutes | complete}}:{{resultCountDown.seconds | complete}}
       </span>

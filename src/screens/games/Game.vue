@@ -1,26 +1,49 @@
 <template>
   <div class="game">
-    <GameResult :gameid="$route.params.gameId"/>
-    <Countdown
+    <div class="fifa-header" v-if="isFifa">
+      <div class="image-section">
+        <img class="img" src="../../assets/2018fifa.png" alt="FIFA">
+      </div>
+      <div v-if="currentMatch" class="match-info">
+        <span>
+          {{`[ ${this.$moment(currentMatch.startTime).format('HH:mm')} ${currentMatch.name} ]`}}
+        </span>
+        <span class="schedule" v-if="schedule && schedule.issue_number">
+          <span class="title">封盘</span>
+          <span v-if="!closeCountDown" class="label"></span>
+          <span v-else-if="!gameClosed" class="label">
+            <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天</span>
+            <span v-if="closeCountDown.hours > 0">{{closeCountDown.hours | complete}}:</span>
+            {{closeCountDown.minutes | complete}}:{{closeCountDown.seconds | complete}}
+          </span>
+          <span v-else class="label">已封盘</span>
+        </span>
+      </div>
+    </div>
+    <div v-else>
+      <GameResult :gameid="$route.params.gameId"/>
+      <Countdown
         :schedule="schedule"
         v-if="schedule.id"
         :currentGame="currentGame"
         :gameClosed="gameClosed"
         :closeCountDown="closeCountDown"
         :resultCountDown="resultCountDown"/>
+    </div>
     <div class="bet-area">
       <group class="aside">
         <cell-box
           :border-intent="false"
-          :class="['category-menu-item',activeCategory===category.id+'' ? 'active' : '']"
+          :class="['category-menu-item',{'active': activeCategory === category.id + ''}]"
           v-for="(category, index) in categories"
           @click.native="switchCategory(category.id)"
-          :key="'category' + category.id">
+          :key="index">
           {{category.name}}
         </cell-box>
       </group>
       <div class="main">
         <router-view
+        :activeCategory="activeCategory"
         :key="$route.params.categoryId"
         :game="currentGame"
         :gameClosed="gameClosed"
@@ -28,9 +51,11 @@
         :playReset="playReset"
         @updatePlays="updatePlays"
         @resetPlays="playReset = !playReset"
+        @getCurrentMatch="getCurrentMatch"
         />
       </div>
     </div>
+
     <div class="bet-input">
       <flexbox :gutter="0">
         <flexbox-item>
@@ -55,8 +80,9 @@
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
         </flexbox-item>
       </flexbox>
-      <div v-if="gameClosed" class="gameclosed-mask">已封盘</div>
+      <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">已封盘</div>
     </div>
+
     <popup v-model="dialogVisible" is-transparent>
       <div class="bet-content">
         <div class="title">确认注单</div>
@@ -107,6 +133,7 @@ import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { msgFormatter } from '../../utils'
 import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
+
 export default {
   name: 'Game',
   components: {
@@ -131,18 +158,8 @@ export default {
         id: null
       },
       timer: '',
-      closeCountDown: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      },
-      resultCountDown: {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      },
+      closeCountDown: null,
+      resultCountDown: null,
       currentPlays: [],
       dialogVisible: false,
       amount: localStorage.getItem('amount') || '10',
@@ -150,11 +167,26 @@ export default {
       activePlays: [],
       playReset: false,
       loading: false,
-      hasPlan: true
+      hasPlan: true,
+      currentMatch: null
+    }
+  },
+  filters: {
+    complete (value) {
+      value = parseInt(value)
+      return value < 10 ? ('0' + value) : value
     }
   },
   computed: {
+    isFifa () {
+      if (this.currentGame) {
+        return !!this.currentGame.game_type
+      }
+    },
     gameClosed () {
+      if (!this.closeCountDown) {
+        return false
+      }
       const c = this.closeCountDown
       return c.days + c.hours + c.minutes + c.seconds === 0
     },
@@ -203,25 +235,52 @@ export default {
       if (to.path === `/game/${this.gameId}`) {
         this.chooseCategory()
       }
+    },
+    'currentMatch': function (match) {
+      if (this.currentGame.game_type && match) {
+        clearInterval(this.timer)
+        this.schedule = match.schedule
+        this.$store.dispatch('updateGameInfo', {
+          display_name: this.currentGame.display_name,
+          game_code: this.currentGame.code,
+          issue_number: this.schedule.issue_number
+        })
+        this.startTimer()
+      }
     }
   },
   created () {
     this.updateSchedule()
+    let isSportsGame = !!this.currentGame.game_type
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
       } else {
-        this.$store.dispatch('fetchCategories', this.gameId)
+        if (isSportsGame) {
+          let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
+          if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
+        } else {
+          this.$store.dispatch('fetchCategories', this.gameId)
+        }
+
         const unwatch = this.$watch('categories', function (categories) {
           this.chooseCategory()
           unwatch()
         })
       }
     } else if (this.categories.length === 0) {
-      this.$store.dispatch('fetchCategories', this.gameId)
+      if (isSportsGame) {
+        let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
+        if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
+      } else {
+        this.$store.dispatch('fetchCategories', this.gameId)
+      }
     }
   },
   methods: {
+    getCurrentMatch (match) {
+      this.currentMatch = match
+    },
     chooseCategory () {
       const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
@@ -233,7 +292,7 @@ export default {
       })
     },
     updateSchedule () {
-      if (!this.gameId) {
+      if (!this.gameId || (this.currentGame && this.currentGame.game_type)) {
         return
       }
       clearInterval(this.timer)
@@ -246,7 +305,8 @@ export default {
           })
           this.$store.dispatch('updateGameInfo', {
             display_name: this.currentGame.display_name,
-            issue_number: this.schedule.issue_number
+            issue_number: this.schedule.issue_number,
+            game_code: this.currentGame.code
           })
           this.startTimer()
         })
@@ -256,7 +316,11 @@ export default {
         return
       }
       const gameId = this.$route.params.gameId
-      localStorage.setItem(gameId + '-lastCategory', categoryId)
+
+      if (!this.currentGame.game_type) {
+        localStorage.setItem(gameId + '-lastCategory', categoryId)
+      }
+
       this.$router.push({
         path: `/game/${gameId}/${categoryId}`
       })
@@ -414,17 +478,17 @@ export default {
   flex: 1 1 auto;
   display: flex;
   /deep/ .weui-cells {
-    margin: auto; // fix the overflowing flexitem issue
+    margin: 0;
     line-height: 18px;
     width: 100%;
     background: #f9f9f9;
+    overflow-y: auto;
   }
   .aside {
     display: flex;
-    overflow-y: auto;
+    overflow-y: scroll;
     justify-content: safe center;
-    align-items: safe center;
-    width: 100px;
+    width: 110px;
     border-width: 0 4px 0 0;
     border-style: solid;
     border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
@@ -582,5 +646,30 @@ export default {
       overflow: visible;
     }
   }
+}
+
+.fifa-header {
+  width: 100%;
+  .image-section {
+    width: 100%;
+    padding: 10px 10px 0 10px;
+    background-image: linear-gradient(to bottom, #166fd8, #1568CA);
+    .img {
+      width: 80%;
+      height: auto;
+    }
+  }
+  .match-info {
+    background-image: linear-gradient(to bottom, #1568CA, #1053A1);
+    white-space: nowrap;
+    color: #fff;
+    font-size: 22px;
+    padding: 0 10px 10px 10px;
+  }
+  @media screen and (max-width: 375px) {
+      .match-info {
+        font-size: 16px;
+      }
+    }
 }
 </style>

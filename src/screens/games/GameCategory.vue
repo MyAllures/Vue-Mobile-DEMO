@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="tabKeys.length>1" class="tab-selector">
+    <div v-if="(game && game.game_type) || tabKeys.length > 1" class="tab-selector">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           :animate="false"
@@ -14,7 +14,6 @@
         </tab-item>
       </tab>
     </div>
-
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -100,6 +99,9 @@ export default {
     playReset: {
       type: Boolean,
       default: false
+    },
+    activeCategory: {
+      type: String
     }
   },
   components: {
@@ -125,7 +127,8 @@ export default {
       tabs: {},
       tabKeys: [],
       currentTab: '',
-      showCombinationDetails: false
+      showCombinationDetails: false,
+      matchChange: false // for sports match changing
     }
   },
   computed: {
@@ -188,7 +191,22 @@ export default {
       })
     },
     'categories': function (categories) {
-      this.initPlayAndGroups(categories)
+      if (this.game && this.game.game_type) {
+        this.initSportsPlayAndGroups(categories)
+      } else {
+        this.initPlayAndGroups(categories)
+      }
+    },
+    'currentTab': function (currentTab) {
+      if (!this.game || !this.game.game_type) {
+        return
+      }
+      let currentCategory = this.categories.find(c => c.id + '' === this.activeCategory)
+      let currentMatchId = currentCategory ? currentCategory.tabs.find(tab => tab.name === currentTab).matchId : this.game.matches[0].id
+
+      this.matchChange = true
+      this.$store.dispatch('fetchMatchCategories', {game: this.game, matchId: currentMatchId}).then(() => { this.matchChange = false })
+      this.$emit('getCurrentMatch', currentCategory.tabs.find(tab => tab.name === currentTab))
     }
   },
   created () {
@@ -279,8 +297,47 @@ export default {
         })
         tabs[tabName] = groups
       })
-
       this.currentTab = tabKeys[0]
+      this.tabKeys = tabKeys
+      this.tabs = tabs
+      this.groups = tabs[this.currentTab]
+      this.plays = plays
+    },
+    initSportsPlayAndGroups (categories) {
+      const categoryId = this.$route.params.categoryId
+      const currentCategory = _.find(categories, item => (item.id + '') === categoryId)
+      if (!currentCategory) {
+        return
+      }
+      const tabs = {}
+      const plays = {}
+      const tabKeys = []
+
+      let groupName = currentCategory.name
+      currentCategory.tabs.forEach(tab => {
+        const tabName = tab.name || 'no-alias'
+        tabKeys.push(tabName)
+
+        const groups = tab.groups
+        groups.forEach(group => {
+          if (!group.plays) {
+            return
+          }
+          if (group.name) {
+            groupName = group.name
+          }
+          group.plays.forEach(play => {
+            plays[play.id] = play
+            plays[play.id]['group'] = groupName
+          })
+        })
+        tabs[tabName] = groups
+      })
+
+      if (!this.matchChange) {
+        this.currentTab = tabKeys[0]
+      }
+
       this.tabKeys = tabKeys
       this.tabs = tabs
       this.groups = tabs[this.currentTab]

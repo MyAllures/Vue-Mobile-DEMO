@@ -17,6 +17,7 @@ export default new Vuex.Store({
     games: [],
     gameInfo: {
       display_name: '',
+      game_code: '',
       countdown: {
         days: 0,
         hours: 0,
