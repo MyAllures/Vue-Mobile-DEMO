@@ -169,7 +169,7 @@ export default {
       result => {
         const datas = []
         result.forEach((item) => {
-          if (item.platform !== 0) {
+          if (item.platform !== 1) {
             datas.push(item)
           }
         })
