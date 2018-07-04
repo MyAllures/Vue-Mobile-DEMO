@@ -111,5 +111,17 @@ export default {
   },
   [types.SET_ROOM_ID]: (state, id) => {
     state.roomId = id
+  },
+  [types.OPEN_BET_DIALOG]: (state, bets) => {
+    state.betDialog.bets = bets
+    state.betDialog.visible = true
+    state.betDialog.isSuccess = false
+  },
+  [types.CLOSE_BET_DIALOG]: (state, isSuccess) => {
+    state.betDialog.bets = []
+    state.betDialog.visible = false
+    if (isSuccess) {
+      state.betDialog.isSuccess = true
+    }
   }
 }

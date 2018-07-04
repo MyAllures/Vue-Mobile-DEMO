@@ -6,6 +6,10 @@ import getters from './getters'
 
 Vue.use(Vuex)
 
+const isDebugMode = process.env.NODE_ENV !== 'production'
+Vue.config.debug = isDebugMode
+Vue.config.devtools = isDebugMode
+
 export default new Vuex.Store({
   state: {
     user: {
@@ -25,6 +29,11 @@ export default new Vuex.Store({
         seconds: 0
       },
       issue_number: ''
+    },
+    betDialog: {
+      visible: false,
+      bets: [],
+      isSuccess: false
     },
     categories: {},
     systemConfig: {

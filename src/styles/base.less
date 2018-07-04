@@ -182,4 +182,29 @@ html, body {
   }
 }
 
+.bet-items {
+  height: 150px;
+  overflow-y: auto;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  padding: 10px 0;
+  .bet-item {
+    text-align: left;
+    .weui-cell {
+      padding: 5px;
+      .weui-cell__hd {
+        width: calc(~"100%" - 60px)
+      }
+      .weui-input{
+        width: 60px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding-left: 5px;
+      }
+    }
+  }
+}
+
 
