@@ -25,7 +25,7 @@ export function fetchBanner () {
 }
 
 export function fetchAnnouncements () {
-  return axios.get(urls.announcements)
+  return axios.get(`${urls.announcements}?platform=0`)
 }
 
 export function gethomePage () {
