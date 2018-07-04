@@ -13,13 +13,13 @@
     </group>
     <div class="buttons" v-if="$store.state.user.account_type !== 0">
       <x-button type="primary" @click.native="redirect('/fin/bet_record')">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="newPage(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
       <x-button type="primary" @click.native="redirect('/my/deposit')">{{$t('game.deposit')}}</x-button>
     </div>
     <div class="buttons" v-else>
       <x-button class="xbutton" type="primary" @click.native="redirect('/fin/bet_record')" link="/fin/bet_record">{{$t('game.betrecord')}}</x-button>
       <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
-      <x-button type="primary" @click.native="location = redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="newPage(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
     </div>
     <group class="links" >
       <cell-box
@@ -124,6 +124,9 @@
           this.$router.push(link)
           this.closeRightMenu()
         }
+      },
+      newPage (url) {
+        window.open(url)
       },
       closeRightMenu () {
         this.$emit('closeRightMenu')
