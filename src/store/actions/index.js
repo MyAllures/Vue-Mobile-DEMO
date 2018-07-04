@@ -210,5 +210,11 @@ export default {
   },
   updateGameInfo: ({commit}, info) => {
     commit(types.UPDATE_GAME_INFO, info)
+  },
+  openBetDialog: ({commit}, bets) => {
+    commit(types.OPEN_BET_DIALOG, bets)
+  },
+  closeBetDialog: ({commit}, isSuccess) => {
+    commit(types.CLOSE_BET_DIALOG, isSuccess)
   }
 }

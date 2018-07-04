@@ -1,24 +1,34 @@
 <template>
   <div v-transfer-dom>
-    <popup v-model="dialogVisible" is-transparent v-if="betInfo">
-      <div class="bet-content">
+    <x-dialog
+        :show.sync="dialogVisible"
+        :hide-on-blur="true"
+        :dialog-style="{
+          width: '100%',
+          'max-width': '100%'
+        }">
+        <div class="bet-content">
         <div class="title">确认注单</div>
-        <ul class="bet-items">
+        <ul class="bet-items" v-if="betAmounts">
           <li
             class="bet-item"
-            v-for="(bet, index) in betInfo.bets"
+            v-for="(bet, index) in betDialog.bets"
             :key="index">
-            <p class="bet-item-text">
-              <span class="play">{{`【${bet.play.display_name}】 @${bet.play.odds} X `}}</span>
-              <span class="amount">{{bet.bet_amount | currency('￥')}}</span>
-            </p>
+            <x-input
+              :title="`【${bet.display_name}】 @${bet.odds} X `"
+              keyboard="number"
+              @on-change="formatEachAmount($event, index)"
+              v-model="betAmounts[index]"
+              label-width="100%"
+              :show-clear="false">
+            </x-input>
             <p v-if="bet.optionDisplayNames" class="options"> {{`已选号码：${bet.optionDisplayNames}`}} </p>
           </li>
         </ul>
         <div class="total">
-          <span class="bet-num">共 <span class="red">{{betInfo.bets.length}}</span> 组</span>
+          <span class="bet-num">共 <span class="red">{{totalCount}}</span> 组</span>
           总金额：
-          <span class="amount">{{betInfo.bets.length * betInfo.bets[0].bet_amount | currency('￥')}}</span>
+          <span class="amount">{{totalAmount | currency('￥')}}</span>
         </div>
         <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
           将此笔注单分享至聊天室开放跟单
@@ -28,14 +38,14 @@
         </div>
         <flexbox v-else class="buttons">
           <flexbox-item>
-            <x-button :disabled="!betInfo.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+            <x-button :disabled="!betDialog.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
           </flexbox-item>
           <flexbox-item>
             <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
           </flexbox-item>
         </flexbox>
       </div>
-    </popup>
+      </x-dialog>
   </div>
 </template>
 
@@ -43,33 +53,26 @@
 import { placeBet } from '../api'
 import { mapState } from 'vuex'
 import { msgFormatter } from '../utils'
-import {Flexbox, FlexboxItem, Popup, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
+import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
 export default {
   name: 'BetDialog',
   components: {
-    Flexbox, FlexboxItem, Popup, CheckIcon, XButton, InlineLoading
+    Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, InlineLoading
   },
   directives: {
     TransferDom
-  },
-  props: {
-    isShowDialog: {
-      type: Boolean
-    },
-    betInfo: {
-      type: Object
-    }
   },
   data () {
     return {
       dialogVisible: false,
       loading: false,
-      hasPlan: true
+      hasPlan: true,
+      betAmounts: null
     }
   },
   computed: {
     ...mapState([
-      'systemConfig', 'user'
+      'systemConfig', 'user', 'betDialog'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -79,21 +82,70 @@ export default {
     },
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
+    },
+    totalCount () {
+      if (this.betDialog.bets.length === 0) {
+        return 0
+      }
+      let optsCombosCount = this.betDialog.bets[0].opts_combos_count
+      if (optsCombosCount && optsCombosCount > 1) {
+        return optsCombosCount
+      } else {
+        return this.betDialog.bets.length
+      }
+    },
+    totalAmount () {
+      if (this.betDialog.bets.length === 0) {
+        return 0
+      }
+      if (!this.betAmounts || this.betAmounts.length === 0) {
+        return 0
+      }
+      let optsCombosCount = this.betDialog.bets[0].opts_combos_count
+      if (optsCombosCount && optsCombosCount > 1) {
+        return this.betAmounts[0] * optsCombosCount
+      } else {
+        let total = 0
+        this.betAmounts.forEach(amount => {
+          let num = parseInt(amount)
+          if (num) {
+            total += num
+          }
+        })
+        return total
+      }
     }
   },
   watch: {
-    'isShowDialog': function (isShowDialog) {
-      this.dialogVisible = isShowDialog
+    'betDialog.visible': function (visible) {
+      this.dialogVisible = visible
+      if (visible) {
+        if (this.hasPlanCheck) {
+          this.hasPlan = false
+        }
+        const betAmounts = []
+        this.betDialog.bets.forEach(bet => {
+          betAmounts.push(bet.bet_amount + '')
+        })
+        this.betAmounts = betAmounts
+      }
     },
     'dialogVisible': function (dialogVisible) {
-      this.$emit('toggleDialog', dialogVisible)
+      if (dialogVisible === false && this.betDialog.visible !== dialogVisible) {
+        this.$store.dispatch('closeBetDialog')
+      }
     }
   },
   methods: {
     placeOrder () {
       this.loading = true
-      const formatBet = this.betInfo.bets.map(bet => {
-        return {...bet, play: bet.play.id}
+      const formatBet = this.betDialog.bets.map((bet, i) => {
+        return {
+          bet_options: bet.bet_options,
+          game_schedule: bet.game_schedule,
+          play: bet.play,
+          bet_amount: parseInt(this.betAmounts[i])
+        }
       })
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
         .then(res => {
@@ -103,6 +155,7 @@ export default {
               text: '成功下单',
               type: 'success'
             })
+            this.$store.dispatch('closeBetDialog', true)
             this.dialogVisible = false
             this.loading = false
             this.$store.dispatch('fetchUser')
@@ -131,11 +184,13 @@ export default {
           }
           this.loading = false
         })
-    }
-  },
-  created () {
-    if (this.hasPlanCheck) {
-      this.hasPlan = false
+    },
+    formatEachAmount (val, index) {
+      val = val + ''
+      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
+      this.$nextTick(() => {
+        this.$set(this.betAmounts, index, formatted)
+      })
     }
   }
 }
@@ -144,6 +199,7 @@ export default {
 @import "../styles/vars.less";
 
 .bet-content {
+  width: 100%;
   text-align: left;
   background-color: #fff;
   padding: 0 0 10px;
