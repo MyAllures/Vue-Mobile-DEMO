@@ -21,7 +21,7 @@
           </tab-item>
         </tab>
       </div>
-      <div class="data-container" @touchStart="onTouchStart">
+      <div class="data-container">
         <ul class="consolidation-grid">
           <li class="item" v-for="num in currentTableSetting" :key="num">
             <div class="number text-center">{{num | fullDigits}}</div>
@@ -157,9 +157,6 @@ export default {
     }
   },
   methods: {
-    onTouchStart (e) {
-      console.log(e)
-    },
     changeActiveName (item) {
       this.activeName = item.key
       this.createHistoryTag()

@@ -33,11 +33,15 @@ export function gethomePage () {
 }
 
 export function fetchGames () {
-  return axios.get(urls.games)
+  return axios.get(`${urls.games}?platform=1`)
 }
 
 export function fetchCategories (gameId) {
   return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
+}
+
+export function fetchMatchCategory (gameId, matchId) {
+  return axios.get(`${urls.category}?&game=${gameId}&platform=1&match=${matchId}`)
 }
 
 export function fetchPlaygroup (categoryId) {
