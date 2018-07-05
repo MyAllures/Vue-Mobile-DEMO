@@ -2,10 +2,10 @@
   <div class="gamehall">
     <router-view v-if="currentGame && currentGame.id" v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="showGameInfo" height="90%" v-transfer-dom>
+    <popup v-model="showGameInfo" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
       <div class="game-intro">
         <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
-        <x-button class="button-close" type="primary" @click.native="showGameInfo = false">返回游戏</x-button>
+        <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
   </div>
@@ -62,7 +62,7 @@ export default {
   },
   created () {
     this.$root.bus.$on('showGameInfo', (type) => {
-      this.showGameInfo = true
+      this.showGameInfo = !!type
       this.contentType = type
     })
     if (!this.$route.params.gameId) {
@@ -80,6 +80,11 @@ export default {
     this.$root.bus.$off('showGameInfo')
   },
   methods: {
+    handlePopupClose () {
+      this.showGameInfo = false
+      this.contentType = ''
+      this.$root.bus.$emit('showGameInfo', '')
+    },
     handleSideBarShow () {
       this.$store.dispatch('fetchUser').then(res => {
         this.showRightMenu = true
