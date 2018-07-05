@@ -11,7 +11,9 @@
       </div>
     </div>
     <transition  name="component-fade" mode="out-in">
-      <router-view></router-view>
+      <keep-alive :include="$store.state.keepAlivePage">
+        <router-view></router-view>
+      </keep-alive>
     </transition>
   </div>
 </template>

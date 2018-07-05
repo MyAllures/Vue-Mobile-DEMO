@@ -60,6 +60,15 @@ export default new Router({
       ]
     },
     {
+      path: '/unsettle',
+      name: 'UnsettleRecord',
+      component: resolve => { require(['../screens/finance/UnsettleRecord.vue'], resolve) },
+      meta: {
+        title: '未结明细',
+        tabbarHidden: true
+      }
+    },
+    {
       path: '/fin',
       name: 'Fin',
       meta: {
@@ -112,6 +121,12 @@ export default new Router({
           meta: {
             title: '财务纪录',
             requiresAuth: true
+          },
+          beforeEnter: (to, from, next) => {
+            if (from.name !== 'DetailBetRecord') {
+              store.dispatch('removeKeepAlive', 'BetRecord')
+            }
+            next()
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
         }

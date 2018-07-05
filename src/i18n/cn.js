@@ -61,6 +61,7 @@ export default {
     status: '状态',
     records_count: '笔数',
     win_lose: '输赢',
+    expected_win: '可赢',
     issue_number: '期号',
     play: '玩法',
     amount: '注额'

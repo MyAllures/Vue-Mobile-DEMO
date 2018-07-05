@@ -7,8 +7,12 @@
       <cell :title="$t('my.balance')" :border-intent="false">
         <div class="balance">{{user.balance | currency('￥')}}</div>
       </cell>
-      <cell :title="$t('game.nopay')" :border-intent="false">
-        <div>{{user.unsettled || 0 | currency('￥')}}</div>
+      <cell
+        :class="{'weui-cell_access': !!user.unsettled}"
+        :title="$t('game.nopay')"
+        :border-intent="false"
+        @click.native="!!user.unsettled&&$router.push({path:'/unsettle'})">
+        <div :class="{'has_unsettle': !!user.unsettled}">{{user.unsettled || 0 | currency('￥')}}</div>
       </cell>
     </group>
     <div class="buttons" v-if="$store.state.user.account_type !== 0">
@@ -163,6 +167,9 @@
 .balance {
   padding-left: 10px;
   color: @red;
+}
+.has_unsettle {
+  color: #166FD8;
 }
 .buttons {
   margin: 10px 10px 0;
