@@ -1,71 +1,69 @@
 <template>
-  <view-box
-    ref="viewBox"
+  <view-box ref="viewBox"
     body-padding-top="46px"
-    :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'"
-    >
-    <x-header
-      :class="isGameHall ? 'gamehall' : ''"
+    :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
+    <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true; showGameMenu = false"
+      @on-click-more="showRightMenu = true; closeGameMenu()"
+      :right-options="{showMore: !!user.username && isGameHall}"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
         left:'0',
         top:'0',
-        'z-index':'100'
+        'z-index': headerZindex
       }"
       slot="header"
-      :right-options="{showMore: !!user.username&&isGameHall}"
       :left-options="{showBack: $route.meta.showBack || false}">
-      <div v-if="$route.name === 'DetailBetRecord'">
-        {{$route.params.date}}
-      </div>
-      <div v-else-if="!isGameHall&&$route.path !== '/'">
-        {{$route.meta.title}}
-      </div>
-      <div v-else-if="isGameHall && !showChatRoom" @click="showGameMenu = !showGameMenu">
-        {{ this.currentGame.display_name }}
-        <i :class="['solid-triangle', showGameMenu ? 'point-top' : 'point-down' ]"></i>
+
+      <div @click="titleCondition.onClick">
+        {{titleCondition.text}}
+        <i v-if="titleCondition.showDropdown"
+          :class="['solid-triangle', showGameMenu ? 'point-top' : 'point-down' ]"></i>
       </div>
 
-      <div
-        v-if="!showChatRoom && !$route.meta.showBack"
+      <div v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="$route.name === 'Home' ? showGameMenu = false : $router.push({name: 'Home'})"
+        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})"
         class="left-trigger">
-          <x-icon type="ios-arrow-back" size="24" v-if="$route.name !== 'Home'"></x-icon>
-          <a class="vux-header-name">{{headerLeftTitle}}</a>
+        <x-icon v-if="$route.name !== 'Home'"
+          type="ios-arrow-back"
+          size="24"></x-icon>
+        <a class="vux-header-name">{{headerLeftTitle}}</a>
       </div>
 
-      <div
-        v-else-if="isGameHall && showChatRoom"
+      <div v-else-if="isGameHall && showChatRoom"
         slot="overwrite-left"
         @click="closeChatRoom"
         class="left-trigger">
         <x-icon
           type="ios-close-empty"
           size="24"></x-icon>
-          {{roomInfo&&roomId&&roomInfo[roomId].name}}
+        {{roomInfo && roomId && roomInfo[roomId].name}}
       </div>
-      <div
-        v-if="showLinks"
+
+      <div v-if="showLinks && !showGameMenu"
         class="actions"
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <div class="link" @click="tryDemo">
-          <div class="try">试玩</div>
-        </div>
+        <div class="link" @click="tryDemo"><div class="try">试玩</div></div>
       </div>
-      <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu = true; showGameMenu = false">{{ user.balance|currency('￥')}}</span>
-      <div
-        v-if="isShowChatroomIcon"
+      <span v-else-if="!isGameHall && !!user.username"
+        slot="right"
+        class="balance fr"
+        @click="showRightMenu = true; closeGameMenu()">
+        {{ user.balance|currency('￥')}}
+      </span>
+      <div v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
-        @click="showChatRoom = true; showGameMenu = false">
+        @click="showChatRoom = true; closeGameMenu()">
         <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
+
+
+
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
@@ -90,7 +88,7 @@
       @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
+    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu()" />
     <div v-transfer-dom>
       <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
@@ -180,7 +178,9 @@ export default {
       }],
       logo: '',
       userLoading: true,
-      error: ''
+      error: '',
+      showGameInfo: false,
+      headerZindex: 100
     }
   },
   mixins: [freetrial],
@@ -217,6 +217,44 @@ export default {
     ...mapState([
       'isLoading', 'ws', 'roomInfo', 'roomId'
     ]),
+    titleCondition () {
+      let route = this.$route
+      let title = {
+        text: '',
+        showDropdown: false,
+        onClick: ''
+      }
+
+      if (route.name === 'DetailBetRecord') {
+        title.text = route.params.date
+      } else if (!this.isGameHall && (route.path !== '/')) {
+        title.text = route.meta.title
+      } else if (this.isGameHall && !this.showChatRoom) {
+        title.text = this.currentGame.display_name
+        title.showDropdown = true
+        title.onClick = () => {
+          if (this.showGameMenu) {
+            this.closeGameMenu()
+          } else {
+            this.headerZindex = 503
+            this.showGameMenu = true
+          }
+        }
+      } else if ((route.name === 'Home') && this.showGameMenu) {
+        title.text = '游戏选单'
+        title.showDropdown = true
+        title.onClick = () => {
+          if (this.showGameMenu) {
+            this.closeGameMenu()
+          } else {
+            this.headerZindex = 503
+            this.showGameMenu = true
+          }
+        }
+      }
+
+      return title
+    },
     unread () {
       return this.$store.state.user.unread
     },
@@ -241,7 +279,7 @@ export default {
     headerLeftTitle () {
       let name = this.$route.name
       if (name === 'Home') {
-        return this.showGameMenu ? '收合选单' : this.systemConfig.siteName
+        return this.showGameMenu ? '' : this.systemConfig.siteName
       } else {
         if (name === 'GameDetail' || name === 'Game') {
           return '首页'
@@ -274,10 +312,16 @@ export default {
   methods: {
     closeMenus () {
       this.showRightMenu = false
-      this.showGameMenu = false
+      this.closeGameMenu()
     },
     closeRightMenu () {
       this.showRightMenu = false
+    },
+    closeGameMenu () {
+      this.showGameMenu = false
+      setTimeout(() => {
+        this.headerZindex = 100
+      }, 320)
     },
     triggerAction (key, item) {
       if (item) {
@@ -315,9 +359,6 @@ export default {
         }
       }, 11000)
     },
-    closeGameMenu () {
-      this.showGameMenu = false
-    },
     closeChatRoom () {
       this.showChatRoom = false
       if (this.ws && this.ws.roomId) {
@@ -328,11 +369,16 @@ export default {
   created () {
     this.$root.bus = new Vue()
     this.$root.bus.$on('showGameMenu', () => {
+      this.headerZindex = 503
       this.showGameMenu = true
     })
 
     this.$root.bus.$on('showFeatureGuide', () => {
       this.showFeatureGuide = true
+    })
+
+    this.$root.bus.$on('showGameInfo', (type) => {
+      this.showGameInfo = !!type
     })
 
     this.$router.afterEach((to) => {

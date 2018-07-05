@@ -1,5 +1,11 @@
 <template>
-  <popup :value="value" position="right" @on-hide="closeRightMenu" class="popup" v-transfer-dom width="180px">
+  <popup :value="value"
+    position="right"
+    @on-hide="closeRightMenu"
+    class="popup"
+    :popup-style="{zIndex: 504}"
+    v-transfer-dom
+    width="180px">
     <group class="head">
       <cell title="账号" :border-intent="false" :link="'/my'">
         <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
