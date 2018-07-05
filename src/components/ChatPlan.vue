@@ -1,8 +1,10 @@
 <template>
   <div :class="['container', status]">
     <div class="title">
-      <div class="game-name">{{betInfo.display_name}}</div>
-      <div class="issue-number">{{betInfo.issue_number}}</div>
+      <div class="title-l">
+        <div class="game-name">{{betInfo.display_name}}</div>
+        <div class="issue-number">{{betInfo.issue_number}}</div>
+      </div>
       <div class="countdown">
         <span v-if="status === 'expired'" class="expired">已开奖</span>
         <span class="closed" v-else-if="status === 'closed'">已封盘</span>
@@ -31,7 +33,7 @@
         </tr>
       </tbody>
     </x-table>
-    <x-button :disabled="status!=='ongoing'" class="bet-btn" type="primary" @click.native="$emit('showBetDialog', betInfo)">跟单</x-button>
+    <x-button :disabled="status!=='ongoing'" class="bet-btn" type="primary" @click.native="openDialog">跟单</x-button>
   </div>
 </template>
 <script>
@@ -76,6 +78,33 @@ export default {
       }
       return 'ongoing'
     }
+  },
+  methods: {
+    openDialog () {
+      this.$store.dispatch('openBetDialog', this.formatBetInfo(this.betInfo.bets))
+    },
+    formatBetInfo (betInfo) {
+      return betInfo.map(bet => {
+        let optsCombosCount = 1
+        let optionDisplayNames = []
+        let betAmount = bet.bet_amount
+        if (bet.bet_options.opts_combos_count > 1) {
+          optsCombosCount = bet.bet_options.opts_combos_count
+          optionDisplayNames = bet.bet_options.options
+          betAmount = betAmount / optsCombosCount
+        }
+        return {
+          game_schedule: bet.game_schedule,
+          display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
+          bet_amount: betAmount,
+          odds: bet.play.odds,
+          play: bet.play.id,
+          bet_options: bet.bet_options,
+          opts_combos_count: optsCombosCount,
+          optionDisplayNames: optionDisplayNames.join(',')
+        }
+      })
+    }
   }
 }
 </script>
@@ -98,14 +127,12 @@ export default {
     width: 100%;
     margin-bottom: 12px;
     .game-name {
-      width: 50%;
       height: 22px;
       line-height: 22px;
       font-size: 16px;
       text-align: left;
     }
     .issue-number {
-      width: 50%;
       height: 17px;
       line-height: 17px;
       font-size: 12px;
@@ -114,7 +141,6 @@ export default {
       text-align: left;
     }
     .countdown {
-      width: 50%;
       text-align: right;
       .open {
         display: flex;

@@ -33,7 +33,7 @@
                 @imgStart="imgLoadCount++"
                 @imgLoad="imgLoadCount--"/>
             </div>
-            <chat-plan class="component" v-else-if="item.type === 8" :betInfo="item.bet_info" @showBetDialog="showBetDialog"></chat-plan>
+            <chat-plan class="component" v-else-if="item.type === 8" :betInfo="item.bet_info"></chat-plan>
             <div v-else :class="['bubble', 'bubble' + item.type]">
               <p>
                 <span>{{item.content}}</span>
@@ -96,7 +96,6 @@
         </div>
       </x-dialog>
     </div>
-    <bet-dialog :isShowDialog="isShowBetDialog" :betInfo="betInfo" @toggleDialog="toggleBetDialog"/>
   </div>
 </template>
 
@@ -272,13 +271,6 @@ export default {
             displayName: levelname
           }
       }
-    },
-    showBetDialog (betInfo) {
-      this.isShowBetDialog = true
-      this.betInfo = betInfo
-    },
-    toggleBetDialog (status) {
-      this.isShowBetDialog = status
     }
   }
 }

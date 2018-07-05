@@ -102,6 +102,7 @@
         </div>
       </div>
     </div>
+    <bet-dialog />
   </view-box>
 </template>
 
@@ -118,9 +119,24 @@ import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
+import BetDialog from './components/BetDialog'
 
 export default {
   name: 'app',
+  components: {
+    XHeader,
+    Tabbar,
+    TabbarItem,
+    Group,
+    Cell,
+    Loading,
+    ViewBox,
+    Actionsheet,
+    RightMenu,
+    TryplayPopup,
+    GameMenu,
+    BetDialog
+  },
   directives: {
     TransferDom
   },
@@ -345,19 +361,6 @@ export default {
     }, () => {
       window.clearInterval(refreshTokenInterval)
     })
-  },
-  components: {
-    XHeader,
-    Tabbar,
-    TabbarItem,
-    Group,
-    Cell,
-    Loading,
-    ViewBox,
-    Actionsheet,
-    RightMenu,
-    TryplayPopup,
-    GameMenu
   }
 }
 </script>

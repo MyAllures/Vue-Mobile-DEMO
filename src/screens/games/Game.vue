@@ -82,57 +82,16 @@
       </flexbox>
       <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">已封盘</div>
     </div>
-
-    <popup v-model="dialogVisible" is-transparent>
-      <div class="bet-content">
-        <div class="title">确认注单</div>
-        <ul class="bet-items">
-          <li
-            class="bet-item"
-            v-for="(play, index) in currentPlays"
-            :key="index">
-            <p class="bet-item-text">
-              <span class="play">{{`【${play.display_name}】 @${play.odds} X `}}</span>
-              <span class="amount">{{amount | currency('￥')}}</span>
-            </p>
-            <p v-if="play.optionDisplayNames" class="options"> {{`已选号码：${play.optionDisplayNames}`}} </p>
-          </li>
-        </ul>
-        <div class="total">
-          <span class="bet-num">共 <span class="red">{{currentPlays.length}}</span> 组</span>
-          总金额：
-          <span v-if="amountByCombination"
-            class="amount">{{activePlays[0].combinations.length * amount | currency('￥')}}</span>
-          <span v-else
-            class="amount">{{currentPlays.length * amount | currency('￥')}}</span>
-        </div>
-        <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
-          将此笔注单分享至聊天室开放跟单
-        </check-icon>
-        <div v-if="loading" class="loading">
-          <inline-loading></inline-loading>加载中
-        </div>
-        <flexbox v-else class="buttons">
-          <flexbox-item>
-            <x-button :disabled="!currentPlays.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-          </flexbox-item>
-        </flexbox>
-      </div>
-    </popup>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import { fetchSchedule, placeBet } from '../../api'
+import { fetchSchedule } from '../../api'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
-import { msgFormatter } from '../../utils'
-import { XInput, XButton, Group, Popup, Grid, GridItem, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
+import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
 
 export default {
   name: 'Game',
@@ -142,15 +101,18 @@ export default {
     XInput,
     XButton,
     Group,
-    Popup,
     Grid,
     GridItem,
+    XDialog,
     Flexbox,
     FlexboxItem,
     Toast,
     InlineLoading,
     CellBox,
     CheckIcon
+  },
+  directives: {
+    TransferDom
   },
   data () {
     return {
@@ -164,11 +126,11 @@ export default {
       dialogVisible: false,
       amount: localStorage.getItem('amount') || '10',
       validPlays: [],
-      activePlays: [],
       playReset: false,
       loading: false,
       hasPlan: true,
-      currentMatch: null
+      currentMatch: null,
+      opts_combos_count: 1
     }
   },
   filters: {
@@ -197,23 +159,8 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user'
+      'systemConfig', 'user', 'betDialog'
     ]),
-    playsForSubmit () {
-      return _.filter(this.currentPlays, play => play.active).map(play => {
-        return {
-          game_schedule: this.schedule.id,
-          bet_amount: parseFloat(play.bet_amount),
-          play: play.id,
-          bet_options: play.bet_options
-        }
-      })
-    },
-    amountByCombination () {
-      // 自定義且有指定選項且有組合，總金額以組合數計算
-      let play = this.activePlays[0]
-      return play && play.isCustom && play.activedOptions && play.combinations
-    },
     gameId () {
       return this.$route.params.gameId
     },
@@ -246,6 +193,11 @@ export default {
           issue_number: this.schedule.issue_number
         })
         this.startTimer()
+      }
+    },
+    'betDialog.isSuccess': function (isSuccess) {
+      if (isSuccess) {
+        this.$set(this, 'playReset', !this.playReset)
       }
     }
   },
@@ -302,14 +254,14 @@ export default {
             return schedule.id !== this.schedule.id &&
               this.$moment().isBefore(schedule.schedule_result) &&
               (schedule.status === 'open' || schedule.status === 'created')
-          })
+          }) || {}
           this.$store.dispatch('updateGameInfo', {
             display_name: this.currentGame.display_name,
             issue_number: this.schedule.issue_number,
             game_code: this.currentGame.code
           })
           this.startTimer()
-        })
+        }).catch(() => {})
     },
     switchCategory (categoryId) {
       if (!categoryId) {
@@ -364,7 +316,10 @@ export default {
       }
     },
     openDialog () {
-      this.currentPlays = _.values(this.validPlays.map(play => {
+      this.$store.dispatch('openBetDialog', this.formatBetInfo(this.validPlays))
+    },
+    formatBetInfo (originPlays) {
+      return originPlays.map(play => {
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
@@ -375,72 +330,31 @@ export default {
           })
           betOptions = { options: options }
         } else if (play.combinations) {
-          betOptions = { options: play.combinations }
           optionDisplayNames = [...play.combinations]
+          betOptions = { options: play.combinations }
         } else {
           betOptions = {}
         }
-        if (optionDisplayNames.length > 0) {
-          optionDisplayNames = optionDisplayNames.join(',')
-        } else {
-          optionDisplayNames = ''
-        }
         return {
-          game_schedule: 10,
+          game_schedule: this.schedule.id,
           display_name: play.hideName ? play.group : `${play.group} - ${play.display_name}`,
-          odds: play.odds,
           bet_amount: play.amount,
-          id: play.id,
+          odds: play.odds,
+          play: play.id,
           bet_options: betOptions,
-          active: true,
-          combinations: play.combinations,
-          optionDisplayNames: optionDisplayNames
+          opts_combos_count: this.opts_combos_count,
+          optionDisplayNames: optionDisplayNames.join(',')
         }
-      }))
-      this.dialogVisible = true
-    },
-    placeOrder () {
-      this.loading = true
-      placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: this.playsForSubmit})
-        .then(res => {
-          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
-          if (res && res[0].member) {
-            this.$set(this, 'playReset', !this.playReset)
-            this.$vux.toast.show({
-              text: '成功下单',
-              type: 'success'
-            })
-            this.dialogVisible = false
-            this.loading = false
-            this.$store.dispatch('fetchUser')
-          } else {
-            this.$vux.toast.show({
-              text: msgFormatter(res.msg),
-              type: 'warn'
-            })
-            this.loading = false
-          }
-        },
-        errRes => {
-          const errStr = msgFormatter(errRes)
-          if (errStr.length > 20) {
-            this.$vux.toast.show({
-              text: msgFormatter(errRes),
-              type: 'warn',
-              time: 5000,
-              width: '12em'
-            })
-          } else {
-            this.$vux.toast.show({
-              text: msgFormatter(errRes),
-              type: 'warn'
-            })
-          }
-          this.loading = false
-        })
+      })
     },
     updatePlays (plays) {
-      this.activePlays = plays
+      let play = plays[0]
+      if (play && play.isCustom && play.activedOptions && play.combinations) {
+        this.opts_combos_count = play.combinations.length
+      } else {
+        this.opts_combos_count = 1
+      }
+
       this.validPlays = _.flatMap(
         plays,
         play => {
@@ -457,6 +371,9 @@ export default {
         }
       )
     }
+  },
+  beforeDestroy () {
+    clearInterval(this.timer)
   }
 }
 </script>
@@ -581,23 +498,6 @@ export default {
     height: 44px;
     line-height: 44px;
     text-align: center;
-  }
-  .bet-items {
-    min-height: 150px;
-    max-height: 300px;
-    overflow-y: auto;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
-    color: #333;
-    padding: 10px 0;
-    .bet-item {
-      text-align: left;
-      padding-bottom: 5px;
-      .bet-item-text {
-        height: 25px;
-        line-height: 25px;
-      }
-    }
   }
   .total {
     text-align: center;
