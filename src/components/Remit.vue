@@ -93,7 +93,6 @@
     FlexboxItem,
     Cell
   } from 'vux'
-  import moment from 'moment'
   import { postRemit } from '../api'
   import { msgFormatter } from '../utils'
   export default {
@@ -128,7 +127,7 @@
           memo: '',
           amount: ''
         },
-        endDate: moment(new Date()).format('YYYY-MM-DD'),
+        endDate: this.$moment(new Date()).format('YYYY-MM-DD'),
         limit: this.$store.state.user.level.remit_limit,
         isPayeeAvailable: true,
         errorMsg: '',

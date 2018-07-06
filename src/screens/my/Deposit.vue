@@ -214,8 +214,10 @@ export default {
           this.selectedPayee = payees[0].detail[0]
           this.payees = payees
         }
-        this.selectedGroup = payees[0]
-        this.selectedPayee = this.selectedGroup.detail[0]
+        if (payees.length > 0) {
+          this.selectedGroup = payees[0]
+          this.selectedPayee = this.selectedGroup.detail[0]
+        }
       })
   },
   methods: {
