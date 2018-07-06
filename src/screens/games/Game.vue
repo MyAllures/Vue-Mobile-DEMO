@@ -68,7 +68,7 @@
             keyboard="number"
             placeholder="金额"
             v-model="amount"
-            @on-change="inputAomunt"
+            @on-change="inputAmount"
             label-width="100px"
             :show-clear="false">
           </x-input>
@@ -237,7 +237,7 @@ export default {
       const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
     },
-    inputAomunt (val) {
+    inputAmount (val) {
       let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
       this.$nextTick(() => {
         this.amount = formatted

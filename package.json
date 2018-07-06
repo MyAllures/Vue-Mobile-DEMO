@@ -6,12 +6,13 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
+    "start": "yarn run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e",
+    "test": "yarn run unit && yarn run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "build:report": "cross-env npm_config_report=true node build/build.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -19,7 +20,7 @@
     "js-combinatorics": "^0.5.3",
     "lodash": "^4.17.4",
     "lrz": "^4.9.40",
-    "moment": "^2.20.1",
+    "vue-moment": "^2.0.2",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
     "vue": "^2.5.2",
@@ -50,7 +51,7 @@
     "chalk": "^2.0.1",
     "chromedriver": "^2.40.0",
     "copy-webpack-plugin": "^4.0.1",
-    "cross-env": "^5.0.1",
+    "cross-env": "^5.2.0",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
     "eslint": "^3.19.0",
@@ -81,7 +82,6 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "mocha": "^3.2.0",
-    "moment": "^2.17.1",
     "nightwatch": "^0.9.21",
     "node-notifier": "^5.1.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
@@ -99,7 +99,6 @@
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
     "vue-loader": "^13.3.0",
-    "vue-moment": "^2.0.2",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "vux-loader": "^1.1.28",
@@ -110,7 +109,7 @@
   },
   "engines": {
     "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
+    "yarn": ">= 1.7.0"
   },
   "browserslist": [
     "> 1%",

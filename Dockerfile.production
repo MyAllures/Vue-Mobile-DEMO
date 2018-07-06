@@ -2,7 +2,7 @@
 # Take note that the image itself is already logged-in in the cloud CLI
 FROM unnotechlottery/bison:production as bison
 
-FROM node:7.2.0
+FROM node:10.4.1
 
 WORKDIR /usr/src/app
 EXPOSE 8080
@@ -24,7 +24,7 @@ COPY --from=bison /root /root
 
 COPY --from=bison /usr/src/app/node_modules node_modules
 COPY package.json package.json
-RUN npm install
+RUN yarn install
 
 # To include everything
 COPY . .
@@ -33,4 +33,4 @@ COPY . .
 RUN chmod u+x cloud_deploy.sh
 # RUN ./cloud_deploy.sh
 
-CMD npm run dev
+CMD yarn run dev
