@@ -1,5 +1,11 @@
 <template>
-  <popup :value="value" position="right" @on-hide="closeRightMenu" class="popup" v-transfer-dom width="180px">
+  <popup :value="value"
+    position="right"
+    @on-hide="closeRightMenu"
+    class="popup"
+    :popup-style="{zIndex: 504}"
+    v-transfer-dom
+    width="180px">
     <group class="head">
       <cell title="账号" :border-intent="false" :link="'/my'">
         <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
@@ -7,19 +13,23 @@
       <cell :title="$t('my.balance')" :border-intent="false">
         <div class="balance">{{user.balance | currency('￥')}}</div>
       </cell>
-      <cell :title="$t('game.nopay')" :border-intent="false">
-        <div>{{user.unsettled || 0 | currency('￥')}}</div>
+      <cell
+        :class="{'weui-cell_access': !!user.unsettled}"
+        :title="$t('game.nopay')"
+        :border-intent="false"
+        @click.native="!!user.unsettled&&$router.push({path:'/unsettle'})">
+        <div :class="{'has_unsettle': !!user.unsettled}">{{user.unsettled || 0 | currency('￥')}}</div>
       </cell>
     </group>
     <div class="buttons" v-if="$store.state.user.account_type !== 0">
       <x-button type="primary" @click.native="redirect('/fin/bet_record')">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="newPage(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
       <x-button type="primary" @click.native="redirect('/my/deposit')">{{$t('game.deposit')}}</x-button>
     </div>
     <div class="buttons" v-else>
       <x-button class="xbutton" type="primary" @click.native="redirect('/fin/bet_record')" link="/fin/bet_record">{{$t('game.betrecord')}}</x-button>
       <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
-      <x-button type="primary" @click.native="location = redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="newPage(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
     </div>
     <group class="links" >
       <cell-box
@@ -125,6 +135,9 @@
           this.closeRightMenu()
         }
       },
+      newPage (url) {
+        window.open(url)
+      },
       closeRightMenu () {
         this.$emit('closeRightMenu')
       }
@@ -160,6 +173,9 @@
 .balance {
   padding-left: 10px;
   color: @red;
+}
+.has_unsettle {
+  color: #166FD8;
 }
 .buttons {
   margin: 10px 10px 0;

@@ -1,11 +1,12 @@
 <template>
   <div v-transfer-dom>
     <popup :value="isShow"
-      :show-mask="false"
+      :show-mask="true"
       position="top"
-      :height="'calc(100% - 45px)'"
+      :height="'calc(100% - 165px)'"
+      @on-show="lockBackScroll"
       @on-hide="handleClose"
-      :popup-style="{zIndex: 99}"
+      :popup-style="{zIndex: 502}"
       class="popup">
       <div class="popup-content">
         <grid :cols="3" :show-lr-borders="false">
@@ -26,6 +27,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TransferDom, Popup, Grid, GridItem } from 'vux'
+const body = document.getElementsByTagName('body')[0]
 
 export default {
   props: {
@@ -57,6 +59,7 @@ export default {
     },
     handleClose () {
       this.$emit('closeSideBar')
+      this.enableBackScroll()
     },
     switchGame (key) {
       const gameId = key + ''
@@ -67,6 +70,12 @@ export default {
       localStorage.setItem('lastGame', gameId)
       this.$router.push({path: `/game/${gameId}/`})
       this.handleClose()
+    },
+    lockBackScroll () {
+      body.style['overflow-y'] = 'hidden'
+    },
+    enableBackScroll () {
+      body.style['overflow-y'] = ''
     }
   }
 }

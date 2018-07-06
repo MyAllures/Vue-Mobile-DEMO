@@ -60,6 +60,7 @@ export default {
     status: 'Status',
     records_count: 'Count',
     win_lose: 'Win/Lose',
+    expected_win: 'Expected',
     issue_number: 'Issue',
     play: 'Play',
     amount: 'Amount'

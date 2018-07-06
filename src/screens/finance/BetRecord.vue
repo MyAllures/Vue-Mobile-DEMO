@@ -21,7 +21,7 @@
       <tbody v-if="betRecords.length">
         <tr
             v-for="(record, index) in betRecords" :key="index"
-            @click="$router.push(`bet_record/${fotmattedDate(record.time)}`)">
+            @click="toNext(record.time)">
           <td>
             <span>{{record.time | dateFilter}}</span>
           </td>
@@ -87,6 +87,10 @@ export default {
     }
   },
   methods: {
+    toNext (time) {
+      this.$store.dispatch('addKeepAlive', 'BetRecord')
+      this.$router.push(`bet_record/${this.fotmattedDate(time)}`)
+    },
     initfetchDateBetRecords () {
       this.loading = true
       fetchDateBetRecords({ status: 'win,lose,tie,ongoing,cancelled,no_draw', offset: 0, limit: this.chunkSize })

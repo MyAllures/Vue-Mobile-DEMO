@@ -1,6 +1,7 @@
 <template>
   <div v-transfer-dom>
     <x-dialog
+        class="bet-dialog"
         :show.sync="dialogVisible"
         :hide-on-blur="true"
         :dialog-style="{
@@ -8,43 +9,44 @@
           'max-width': '100%'
         }">
         <div class="bet-content">
-        <div class="title">确认注单</div>
-        <ul class="bet-items" v-if="betAmounts">
-          <li
-            class="bet-item"
-            v-for="(bet, index) in betDialog.bets"
-            :key="index">
-            <x-input
-              :title="`【${bet.display_name}】 @${bet.odds} X `"
-              keyboard="number"
-              @on-change="formatEachAmount($event, index)"
-              v-model="betAmounts[index]"
-              label-width="100%"
-              :show-clear="false">
-            </x-input>
-            <p v-if="bet.optionDisplayNames" class="options"> {{`已选号码：${bet.optionDisplayNames}`}} </p>
-          </li>
-        </ul>
-        <div class="total">
-          <span class="bet-num">共 <span class="red">{{totalCount}}</span> 组</span>
-          总金额：
-          <span class="amount">{{totalAmount | currency('￥')}}</span>
+          <div class="title">确认注单</div>
+          <ul class="bet-items" ref="bets">
+            <li
+              class="bet-item"
+              v-for="(bet, index) in betDialog.bets"
+              :key="index">
+              <x-input
+                :title="`【${bet.display_name}】 @${bet.odds} X `"
+                keyboard="number"
+                @on-change="formatEachAmount($event, index)"
+                v-model="betAmounts[index]"
+                label-width="100%"
+                :show-clear="false"
+                @on-focus="focusInput">
+              </x-input>
+              <p v-if="bet.optionDisplayNames" class="options"> {{`已选号码：${bet.optionDisplayNames}`}} </p>
+            </li>
+          </ul>
+          <div class="total">
+            <span class="bet-num">共 <span class="red">{{totalCount}}</span> 组</span>
+            总金额：
+            <span class="amount">{{totalAmount | currency('￥')}}</span>
+          </div>
+          <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
+            将此笔注单分享至聊天室开放跟单
+          </check-icon>
+          <div v-if="loading" class="loading">
+            <inline-loading></inline-loading>加载中
+          </div>
+          <flexbox v-else class="buttons">
+            <flexbox-item>
+              <x-button :disabled="!betDialog.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+            </flexbox-item>
+            <flexbox-item>
+              <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
+            </flexbox-item>
+          </flexbox>
         </div>
-        <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
-          将此笔注单分享至聊天室开放跟单
-        </check-icon>
-        <div v-if="loading" class="loading">
-          <inline-loading></inline-loading>加载中
-        </div>
-        <flexbox v-else class="buttons">
-          <flexbox-item>
-            <x-button :disabled="!betDialog.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
-          </flexbox-item>
-          <flexbox-item>
-            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-          </flexbox-item>
-        </flexbox>
-      </div>
       </x-dialog>
   </div>
 </template>
@@ -54,6 +56,7 @@ import { placeBet } from '../api'
 import { mapState } from 'vuex'
 import { msgFormatter } from '../utils'
 import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
+const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 export default {
   name: 'BetDialog',
   components: {
@@ -67,7 +70,8 @@ export default {
       dialogVisible: false,
       loading: false,
       hasPlan: true,
-      betAmounts: null
+      betAmounts: null,
+      currentFocusInput: null
     }
   },
   computed: {
@@ -136,7 +140,21 @@ export default {
       }
     }
   },
+  mounted () {
+    if (iOS) {
+      this.$refs.bets.addEventListener('scroll', this.scrollHandler)
+    }
+  },
   methods: {
+    focusInput (val, e) {
+      this.currentFocusInput = e.target
+    },
+    scrollHandler () {
+      if (this.currentFocusInput) {
+        this.currentFocusInput.blur()
+        this.currentFocusInput = null
+      }
+    },
     placeOrder () {
       this.loading = true
       const formatBet = this.betDialog.bets.map((bet, i) => {
@@ -192,6 +210,11 @@ export default {
         this.$set(this.betAmounts, index, formatted)
       })
     }
+  },
+  beforeDestroy () {
+    if (iOS) {
+      this.$refs.bets.removeEventListener('scroll', this.scrollHandler)
+    }
   }
 }
 </script>
@@ -203,6 +226,7 @@ export default {
   text-align: left;
   background-color: #fff;
   padding: 0 0 10px;
+  overflow: hidden;
   .title {
     height: 44px;
     line-height: 44px;
