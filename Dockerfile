@@ -24,7 +24,7 @@ COPY --from=bison /root /root
 
 COPY --from=bison /usr/src/app/node_modules node_modules
 COPY package.json package.json
-RUN npm install
+RUN yarn install
 
 # To include everything
 COPY . .
@@ -33,4 +33,4 @@ COPY . .
 #RUN chmod u+x cloud_deploy.sh
 #RUN ./cloud_deploy.sh
 
-CMD npm run dev
+CMD yarn run dev
