@@ -2,7 +2,7 @@
 # Take note that the image itself is already logged-in in the cloud CLI
 FROM unnotechlottery/bison:production as bison
 
-FROM node:7.2.0
+FROM node:10.4.1
 
 WORKDIR /usr/src/app
 EXPOSE 8080
