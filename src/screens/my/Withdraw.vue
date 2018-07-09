@@ -18,15 +18,14 @@
                name="withdraw-amount"
                :title="$t('withdraw.amount')"
                :show-clear="true"
-               type="number"
                keyboard="number"
                ref="amount"
                required
                @on-blur="validateErrors"
-               @on-cnange="validateErrors"
+               @on-change="inputAmount"
                :is-type="amountValidator"
                :placeholder="$t('withdraw.amount_hint')"
-               v-model.number="withdraw.amount">
+               v-model="withdraw.amount">
       </x-input>
       <x-input autocapitalize="off"
                :title="$t('withdraw.password')"
@@ -104,7 +103,14 @@
       this.$root.loading = false
     },
     methods: {
+      inputAmount (val) {
+        let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
+        this.$nextTick(() => {
+          this.withdraw.amount = formatted
+        })
+      },
       validateErrors () {
+        this.errorMsg = ''
         const inputErrors = []
         if (this.$refs.password.firstError) {
           inputErrors.push('请輸入密碼')
@@ -133,6 +139,7 @@
         return amount.valid && password.valid
       },
       amountValidator (value) {
+        value = parseInt(value)
         let meetLower = !this.limit.lower || value >= this.limit.lower
         let meetUpper = !this.limit.upper || value <= this.limit.upper
         if (!meetLower) {
