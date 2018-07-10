@@ -31,7 +31,6 @@
       <x-input
         autocapitalize="off"
         :title="$t('profile.bank_province')"
-        required
         type="text"
         ref="province"
         required
@@ -42,7 +41,6 @@
       <x-input
         autocapitalize="off"
         :title="$t('profile.bank_city')"
-        required
         type="text"
         ref="city"
         required
@@ -53,12 +51,11 @@
       <x-input
       autocapitalize="off"
         :title="$t('profile.bank_account')"
-        required
-        type="number"
         keyboard="number"
         ref="account"
         required
         @on-blur="validateErrors"
+        @on-change="inputAmount"
         :is-type="bankAccountValidator"
         v-model="member.bank.account">
       </x-input>
@@ -141,6 +138,12 @@ export default {
     }
   },
   methods: {
+    inputAmount (val) {
+      let formatted = !val ? '' : val.replace(/[^0-9]/g, '')
+      this.$nextTick(() => {
+        this.member.bank.account = formatted
+      })
+    },
     validate () {
       let valid = true
       for (let x in this.$refs) {
