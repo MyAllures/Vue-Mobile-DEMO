@@ -7,7 +7,6 @@ const eventWaitForRemove = []
 
 export default {
   inserted: function (el) {
-    console.log(el)
     let scrollTouchStartPosition
     el.addEventListener('touchmove', stopDefault)
 
@@ -40,7 +39,6 @@ export default {
     eventWaitForRemove.push({key: 'touchmove', func: stopDefault})
   },
   unbind: function (el) {
-    console.log('unbind')
     eventWaitForRemove.forEach(config => {
       el.removeEventListener(config.key, config.func)
     })
