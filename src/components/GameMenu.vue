@@ -1,9 +1,10 @@
 <template>
   <div v-transfer-dom>
     <popup :value="isShow"
+      v-fix-scroll
       :show-mask="true"
       position="top"
-      :height="'calc(100% - 165px)'"
+      :height="height"
       @on-show="lockBackScroll"
       @on-hide="handleClose"
       :popup-style="{zIndex: 502}"
@@ -27,6 +28,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { TransferDom, Popup, Grid, GridItem } from 'vux'
+import FixScroll from '../directive/fixscroll'
 const body = document.getElementsByTagName('body')[0]
 
 export default {
@@ -36,10 +38,16 @@ export default {
     }
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll
   },
   components: {
     Popup, Grid, GridItem
+  },
+  data () {
+    return {
+      height: '339px'
+    }
   },
   computed: {
     ...mapGetters([
@@ -50,6 +58,14 @@ export default {
     },
     isGamePage () {
       return this.$route.name === 'GameDetail'
+    }
+  },
+  mounted () {
+    const height = document.body.clientHeight
+    if (height > 650) {
+      this.height = '533px'
+    } else if (height > 550) {
+      this.height = '436px'
     }
   },
   methods: {

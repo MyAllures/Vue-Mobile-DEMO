@@ -82,7 +82,8 @@ export default new Router({
           name: 'PaymentRecord',
           meta: {
             title: '财务纪录',
-            requiresAuth: true
+            requiresAuth: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -91,7 +92,8 @@ export default new Router({
           name: 'WithdrawRecord',
           meta: {
             title: '财务纪录',
-            requiresAuth: true
+            requiresAuth: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -100,7 +102,8 @@ export default new Router({
           name: 'PromotionRecord',
           meta: {
             title: '财务纪录',
-            requiresAuth: true
+            requiresAuth: true,
+            showBack: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -120,7 +123,8 @@ export default new Router({
           name: 'BetRecord',
           meta: {
             title: '财务纪录',
-            requiresAuth: true
+            requiresAuth: true,
+            showBack: true
           },
           beforeEnter: (to, from, next) => {
             if (from.name !== 'DetailBetRecord') {
