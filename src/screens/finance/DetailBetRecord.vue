@@ -155,12 +155,17 @@ export default {
       return this.$route.params.date
     }
   },
-  created () {
-    this.initFetchBetHistory()
-    fetchBetTotal(this.date).then(res => {
-      this.totalProfit = res.profit
-      this.totalAmount = res.amount
-    }).catch(() => {})
+  watch: {
+    '$route': {
+      handler: function (route) {
+        this.initFetchBetHistory()
+        fetchBetTotal(this.date).then(res => {
+          this.totalProfit = res.profit
+          this.totalAmount = res.amount
+        }).catch(() => {})
+      },
+      immediate: true
+    }
   }
 }
 </script>
