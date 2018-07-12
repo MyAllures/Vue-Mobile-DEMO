@@ -24,12 +24,9 @@
 
       <div v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})"
-        class="left-trigger">
-        <x-icon v-if="$route.name !== 'Home'"
-          type="ios-arrow-back"
-          size="24"></x-icon>
-        <a class="vux-header-name">{{headerLeftTitle}}</a>
+        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})">
+        <a class="vux-header-back">{{headerLeftTitle}}</a>
+        <div v-if="$route.name !== 'Home'" class="left-arrow"></div>
       </div>
 
       <div v-else-if="isGameHall && showChatRoom"

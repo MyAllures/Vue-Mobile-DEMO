@@ -36,6 +36,7 @@
           </td>
           <td class="play">
             <p>{{record.play.playgroup}}@{{record.play.display_name}}</p>
+            <p class="play-options"v-if="record.bet_options.options">{{`共${record.bet_options.opts_combos_count}组 # ${record.bet_options.options.join(',')}`}}</p>
             <div class="odds">
               <span>{{record.odds}}</span>
               <span>{{record.play.return_rate && record.return_amount ? ` 返${Math.floor(record.play.return_rate*10000)/100}%`: ''}}</span>
@@ -201,7 +202,7 @@ export default {
 }
 
 .record-table {
-  .issue, .odds, .amount{
+  .issue, .odds, .amount, .play-options{
     font-size: 12px;
   }
   .play {

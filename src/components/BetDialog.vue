@@ -10,7 +10,7 @@
         }">
         <div class="bet-content">
           <div class="title">确认注单</div>
-          <ul class="bet-items" ref="bets">
+          <ul class="bet-items" ref="bets" v-fix-scroll>
             <li
               class="bet-item"
               v-for="(bet, index) in betDialog.bets"
@@ -56,13 +56,16 @@ import { placeBet } from '../api'
 import { mapState } from 'vuex'
 import { msgFormatter } from '../utils'
 import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
+import FixScroll from '../directive/fixscroll'
+const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 export default {
   name: 'BetDialog',
   components: {
     Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, InlineLoading
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll
   },
   data () {
     return {
@@ -140,7 +143,9 @@ export default {
     }
   },
   mounted () {
-    this.$refs.bets.addEventListener('scroll', this.scrollHandler)
+    if (iOS) {
+      this.$refs.bets.addEventListener('scroll', this.scrollHandler)
+    }
   },
   methods: {
     focusInput (val, e) {
@@ -209,7 +214,9 @@ export default {
     }
   },
   beforeDestroy () {
-    this.$refs.bets.removeEventListener('scroll', this.scrollHandler)
+    if (iOS) {
+      this.$refs.bets.removeEventListener('scroll', this.scrollHandler)
+    }
   }
 }
 </script>
