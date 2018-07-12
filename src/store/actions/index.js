@@ -181,9 +181,6 @@ export default {
   initEmoji: ({commit}, emoji) => {
     commit(types.INIT_EMOJI, emoji)
   },
-  setRemit: ({ commit }, remitPayee) => {
-    commit(types.SET_REMIT, remitPayee)
-  },
   addKeepAlive: ({ commit }, page) => {
     commit(types.ADD_KEEP_ALIVE, page)
   },
@@ -216,5 +213,8 @@ export default {
   },
   closeBetDialog: ({commit}, isSuccess) => {
     commit(types.CLOSE_BET_DIALOG, isSuccess)
+  },
+  setCustomTitle: ({commit}, title) => {
+    commit(types.SET_TITLE, title)
   }
 }

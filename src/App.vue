@@ -239,13 +239,18 @@ export default {
         showDropdown: false,
         onClick: ''
       }
+      const customTitle = this.$store.state.customTitle
 
       if (route.name === 'DetailBetRecord') {
         title.text = route.params.date
         title.showDropdown = true
         title.onClick = () => { this.showCalender = !this.showCalender }
       } else if (!this.isGameHall && (route.path !== '/')) {
-        title.text = route.meta.title
+        if (route.meta.title === 'custom') {
+          title.text = customTitle
+        } else {
+          title.text = route.meta.title
+        }
       } else if (this.isGameHall && !this.showChatRoom) {
         title.text = this.currentGame.display_name
         title.showDropdown = true
@@ -308,7 +313,7 @@ export default {
       if (path === '/') {
         return 'home'
       }
-      if (path === '/my/deposit') {
+      if (this.$route.matched[0].path === '/my/deposit') {
         return 'deposit'
       }
       return path.split('/')[1]

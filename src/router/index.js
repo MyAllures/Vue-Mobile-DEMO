@@ -146,36 +146,63 @@ export default new Router({
       component: resolve => { require(['../screens/My.vue'], resolve) }
     },
     {
+      path: '/my/deposit/submit_success',
+      name: 'SubmitSuccess',
+      component: resolve => { require(['../screens/my/SubmitSuccess.vue'], resolve) },
+      meta: {
+        title: 'custom',
+        showBack: true
+      }
+    },
+    {
       path: '/my/deposit',
       name: 'Deposit',
       meta: {
         title: '充值',
-        requiresAuth: true
+        requiresAuth: true,
+        showBack: true
       },
-      beforeEnter: (to, from, next) => {
-        if (from.path !== '/my/remit') {
-          store.dispatch('removeKeepAlive', 'Deposit')
+      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) },
+      children: [
+        {
+          path: 'remit',
+          component: resolve => { require(['../screens/my/remit/Remit.vue'], resolve) },
+          children: [
+            {
+              path: '',
+              name: 'Remit',
+              redirect: '/my/deposit'
+            },
+            {
+              path: 'bank',
+              name: 'Bank',
+              meta: {
+                title: '银行转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/Bank.vue'], resolve) }
+            },
+            {
+              path: 'wechat',
+              name: 'Wechat',
+              meta: {
+                title: '微信转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
+            },
+            {
+              path: 'alipay',
+              name: 'Alipay',
+              meta: {
+                title: '支付宝转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
+            }
+          ]
         }
-        next()
-      },
-      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
-    },
-    {
-      path: '/my/remit',
-      name: 'Remit',
-      meta: {
-        title: '转帐',
-        showBack: true,
-        requiresAuth: true
-      },
-      beforeEnter: (to, from, next) => {
-        if (store.state.remitPayee) {
-          next()
-        } else {
-          next('/my/deposit')
-        }
-      },
-      component: resolve => { require(['../components/Remit.vue'], resolve) }
+      ]
     },
     {
       path: '/my/password',
