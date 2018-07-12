@@ -1,5 +1,5 @@
 <template>
-  <section v-if="$route.params.date" class="calender-container" :style="{top: positionTop}">
+  <section v-if="$route.params.date" class="calender-container" :style="{top: positionTop}" v-fix-scroll>
     <div class="calender">
       <div class="calender-top">
         <li @click="preMonth(myDate, false)">
@@ -28,7 +28,7 @@
             { 'calender-today': item.isToday },
             { 'calender-chosenday': item.chosen },
             { 'calender-hasbet': item.hasBet }]">
-            {{item.id}}
+            <p class="date-number">{{item.id}}</p>
           </div>
         </div>
       </div>
@@ -40,6 +40,7 @@
 <script>
 import timeUtil from '../utils/calender.js'
 import { fetchDateBetRecords } from '../api'
+import FixScroll from '../directive/fixscroll'
 
 export default {
   data () {
@@ -56,6 +57,9 @@ export default {
       type: String,
       default: '45px'
     }
+  },
+  directives: {
+    FixScroll
   },
   methods: {
     clickDay (item, index) {
@@ -143,15 +147,23 @@ export default {
 }
 
 .calender-mask {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
-  height: 100vh;
+  max-width: 100%;
+  height: 100%;
+  z-index: 99;
 }
 
 .calender {
+  position: fixed;
   background-color: #fff;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
   padding-bottom: 10px;
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12);
@@ -240,9 +252,13 @@ export default {
     color: #fff;
   }
   .calender-hasbet {
+    flex-direction: column;
+    .date-number {
+      line-height: 25px;
+    }
     &::after {
       content: '';
-      position: absolute;
+      position: static;
       display: inline-block;
       top: 32px;
       width: 5px;
