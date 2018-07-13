@@ -4,7 +4,7 @@
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
     <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true; closeGameMenu()"
+      @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
       :right-options="{showMore: !!user.username && isGameHall}"
       :style="{
         width: '100%',
@@ -49,7 +49,7 @@
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
-        @click="showRightMenu = true; closeGameMenu()">
+        @click="showRightMenu = true; closeGameMenu(); closeCalender()">
         {{ user.balance|currency('￥')}}
       </span>
       <div v-if="isShowChatroomIcon"
@@ -196,6 +196,7 @@ export default {
       }
     },
     '$route' (to, from) {
+      let date = to.params.date
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
@@ -206,6 +207,10 @@ export default {
         }
       }
       this.closeChatRoom()
+
+      if (!date) {
+        this.showCalender = false
+      }
     },
     'ws' (ws) {
       if (!ws) {
