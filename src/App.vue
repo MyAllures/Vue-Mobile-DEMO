@@ -4,7 +4,7 @@
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
     <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true; closeGameMenu()"
+      @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
       :right-options="{showMore: !!user.username && isGameHall}"
       :style="{
         width: '100%',
@@ -49,7 +49,7 @@
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
-        @click="showRightMenu = true; closeGameMenu()">
+        @click="showRightMenu = true; closeGameMenu(); closeCalender()">
         {{ user.balance|currency('￥')}}
       </span>
       <div v-if="isShowChatroomIcon"
@@ -210,6 +210,12 @@ export default {
     'ws' (ws) {
       if (!ws) {
         this.showChatRoom = false
+      }
+    },
+    'titleCondition': function (val) { // when header changing
+      if (!val.showDropdown) { // init
+        this.showCalender = false
+        this.showGameMenu = false
       }
     }
   },
