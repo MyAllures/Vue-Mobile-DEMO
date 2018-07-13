@@ -88,7 +88,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapActions, mapGetters } from 'vuex'
-import { validateBankAccount } from '../../utils'
+import { validateBankAccount, msgFormatter } from '../../utils'
 export default {
   name: 'bankinfo',
   data () {
@@ -222,8 +222,8 @@ export default {
           setTimeout(() => {
             this.$router.push({name: 'My'})
           }, 2000)
-        }, (response) => {
-          this.errorMsg = response
+        }).catch(errRes => {
+          this.errorMsg = msgFormatter(errRes)
           this.loading = false
         })
       }
