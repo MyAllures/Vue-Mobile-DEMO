@@ -25,7 +25,6 @@
           <div :class="[
             'calender-dateitem',
             { 'calender-dayhide': item.otherMonth !== 'nowMonth' },
-            { 'calender-today': item.isToday },
             { 'calender-chosenday': item.chosen },
             { 'calender-hasbet': item.hasBet }]">
             <p class="date-number">{{item.id}}</p>
@@ -232,20 +231,7 @@ export default {
   .calender-dayhide {
     color: #dde;
   }
-  .calender-today {
-    &::after {
-      content: '今日';
-      position: absolute;
-      top: 15px;
-      font-size: 12px;
-      color: #bfbfbf;
-    }
 
-    &.calender-chosenday {
-      line-height: 35px;
-      align-items: flex-start;
-    }
-  }
   .calender-chosenday {
     background-color: #166fd8;
     border-radius: 50%;
@@ -253,9 +239,11 @@ export default {
   }
   .calender-hasbet {
     flex-direction: column;
+
     .date-number {
       line-height: 25px;
     }
+
     &::after {
       content: '';
       position: static;
@@ -266,6 +254,7 @@ export default {
       border-radius: 50%;
       background-color: #166fd8;
     }
+
     &.calender-chosenday::after {
       background-color: #fff;
     }
