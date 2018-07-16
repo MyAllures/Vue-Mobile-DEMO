@@ -123,17 +123,17 @@ export default {
       }).catch(() => {})
     }
   },
-  mounted () {
-    this.getList(this.myDate)
-    this.fetchDateBetRecord()
-  },
   watch: {
-    '$route': function (route) {
-      let date = route.params.date
-      if (date) {
-        this.myDate = new Date(date)
-        this.getList(this.myDate, timeUtil.dateFormat(this.myDate))
-      }
+    '$route': {
+      handler: function (route) {
+        let date = route.params.date
+        if (date) {
+          this.myDate = new Date(date)
+          this.getList(this.myDate, timeUtil.dateFormat(this.myDate))
+          this.fetchDateBetRecord()
+        }
+      },
+      immediate: true
     }
   }
 }
