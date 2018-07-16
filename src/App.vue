@@ -196,7 +196,6 @@ export default {
       }
     },
     '$route' (to, from) {
-      let date = to.params.date
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
@@ -207,14 +206,16 @@ export default {
         }
       }
       this.closeChatRoom()
-
-      if (!date) {
-        this.showCalender = false
-      }
     },
     'ws' (ws) {
       if (!ws) {
         this.showChatRoom = false
+      }
+    },
+    'titleCondition': function (val) { // when header changing
+      if (!val.showDropdown) { // init
+        this.showCalender = false
+        this.showGameMenu = false
       }
     }
   },
