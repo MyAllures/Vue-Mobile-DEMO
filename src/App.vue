@@ -71,11 +71,12 @@
       class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
-        :selected="selectedTab===menu.name"
+        :selected="selectedTab === menu.name"
         v-for="(menu, index) in menus"
         :link="menu.link"
         :key="'tabbar' + index">
-        <i :class="menu.icon" slot="icon"></i>
+        <img :src="menu.iconImg" slot="icon" :alt="menu.name">
+        <img :src="menu.iconImgActive" slot="icon-active" :alt="menu.name">
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
@@ -99,7 +100,9 @@
     </div>
     <bet-dialog />
     <transition name="fade">
-      <Calender ref="calendar" v-show="showCalender" @closeCalender="closeCalender"/>
+      <div v-show="showCalender">
+        <Calender ref="calendar" @closeCalender="closeCalender"/>
+      </div>
     </transition>
   </view-box>
 </template>
@@ -148,31 +151,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        icon: 'icon-home',
+        iconImg: require('./assets/footer/icon_footer_home_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_home_pressed.png'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        icon: 'icon-list',
+        iconImg: require('./assets/footer/icon_footer_game_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_game_pressed.png'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        icon: 'icon-bank',
+        iconImg: require('./assets/footer/icon_footer_top_up_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_top_up_pressed.png'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        icon: 'icon-fin',
+        iconImg: require('./assets/footer/icon_footer_finance_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_finance_pressed.png'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        icon: 'icon-my',
+        iconImg: require('./assets/footer/icon_footer_me_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_me_pressed.png'),
         link: '/my',
         route: 'My',
         name: 'my',
@@ -196,7 +204,6 @@ export default {
       }
     },
     '$route' (to, from) {
-      let date = to.params.date
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
@@ -207,14 +214,16 @@ export default {
         }
       }
       this.closeChatRoom()
-
-      if (!date) {
-        this.showCalender = false
-      }
     },
     'ws' (ws) {
       if (!ws) {
         this.showChatRoom = false
+      }
+    },
+    'titleCondition': function (val) { // when header changing
+      if (!val.showDropdown) { // init
+        this.showCalender = false
+        this.showGameMenu = false
       }
     }
   },
@@ -503,6 +512,7 @@ export default {
 .tabbar {
   position: fixed;
   z-index: 98;
+  background-color: #fff;
 }
 .logo {
   position: absolute;
