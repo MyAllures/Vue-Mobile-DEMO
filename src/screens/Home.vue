@@ -36,7 +36,13 @@
         v-for="(game, index) in allGames"
         :key="'game' + index"
         v-if="index < game_count">
-        <img slot="icon" :src="game.icon" class="game-icon">
+        <div slot="icon" class="game-icon " :style="{
+          backgroundImage: `url(${game.icon})`,
+          width: '15vw',
+          display: 'inline-block',
+          height: '15vw',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat' }"></div>
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
       <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
@@ -269,6 +275,7 @@ export default {
   /deep/ .weui-grid__icon {
     width: 60%;
     height: 60%;
+    text-align: center;
   }
 
   /deep/ .weui-grid__label {

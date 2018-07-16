@@ -4,7 +4,7 @@
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
     <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true; closeGameMenu()"
+      @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
       :right-options="{showMore: !!user.username && isGameHall}"
       :style="{
         width: '100%',
@@ -19,7 +19,7 @@
       <div @click="titleCondition.onClick">
         {{titleCondition.text}}
         <i v-if="titleCondition.showDropdown"
-          :class="['solid-triangle', showGameMenu ? 'point-top' : 'point-down' ]"></i>
+          :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
       </div>
 
       <div v-if="!showChatRoom && !$route.meta.showBack"
@@ -49,7 +49,7 @@
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
-        @click="showRightMenu = true; closeGameMenu()">
+        @click="showRightMenu = true; closeGameMenu(); closeCalender()">
         {{ user.balance|currency('￥')}}
       </span>
       <div v-if="isShowChatroomIcon"
@@ -98,6 +98,9 @@
       </div>
     </div>
     <bet-dialog />
+    <transition name="fade">
+      <Calender ref="calendar" v-show="showCalender" @closeCalender="closeCalender"/>
+    </transition>
   </view-box>
 </template>
 
@@ -115,6 +118,7 @@ import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
+import Calender from './components/Calender'
 
 export default {
   name: 'app',
@@ -130,7 +134,8 @@ export default {
     RightMenu,
     TryplayPopup,
     GameMenu,
-    BetDialog
+    BetDialog,
+    Calender
   },
   directives: {
     TransferDom
@@ -177,6 +182,7 @@ export default {
       userLoading: true,
       error: '',
       showGameInfo: false,
+      showCalender: false,
       headerZindex: 100
     }
   },
@@ -190,6 +196,7 @@ export default {
       }
     },
     '$route' (to, from) {
+      let date = to.params.date
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
@@ -200,6 +207,10 @@ export default {
         }
       }
       this.closeChatRoom()
+
+      if (!date) {
+        this.showCalender = false
+      }
     },
     'ws' (ws) {
       if (!ws) {
@@ -224,6 +235,8 @@ export default {
 
       if (route.name === 'DetailBetRecord') {
         title.text = route.params.date
+        title.showDropdown = true
+        title.onClick = () => { this.showCalender = !this.showCalender }
       } else if (!this.isGameHall && (route.path !== '/')) {
         title.text = route.meta.title
       } else if (this.isGameHall && !this.showChatRoom) {
@@ -307,6 +320,9 @@ export default {
     }
   },
   methods: {
+    closeCalender () {
+      this.showCalender = false
+    },
     closeMenus () {
       this.showRightMenu = false
       this.closeGameMenu()
@@ -598,4 +614,12 @@ export default {
     border-top: 5px solid #fff;
   }
 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 </style>
