@@ -71,11 +71,12 @@
       class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
-        :selected="selectedTab===menu.name"
+        :selected="selectedTab === menu.name"
         v-for="(menu, index) in menus"
         :link="menu.link"
         :key="'tabbar' + index">
-        <i :class="menu.icon" slot="icon"></i>
+        <img :src="menu.iconImg" slot="icon" :alt="menu.name">
+        <img :src="menu.iconImgActive" slot="icon-active" :alt="menu.name">
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
@@ -150,31 +151,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        icon: 'icon-home',
+        iconImg: require('./assets/footer/icon_footer_home_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_home_pressed.png'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        icon: 'icon-list',
+        iconImg: require('./assets/footer/icon_footer_game_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_game_pressed.png'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        icon: 'icon-bank',
+        iconImg: require('./assets/footer/icon_footer_top_up_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_top_up_pressed.png'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        icon: 'icon-fin',
+        iconImg: require('./assets/footer/icon_footer_finance_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_finance_pressed.png'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        icon: 'icon-my',
+        iconImg: require('./assets/footer/icon_footer_me_normal.png'),
+        iconImgActive: require('./assets/footer/icon_footer_me_pressed.png'),
         link: '/my',
         route: 'My',
         name: 'my',
@@ -506,6 +512,7 @@ export default {
 .tabbar {
   position: fixed;
   z-index: 98;
+  background-color: #fff;
 }
 .logo {
   position: absolute;

@@ -48,7 +48,8 @@ export default {
       myDate: new Date(),
       list: [],
       dateTop: '',
-      hasBetArr: []
+      hasBetArr: [],
+      chosenDays: []
     }
   },
   props: {
@@ -94,16 +95,19 @@ export default {
     getList (date, chooseDay, isChosedDay = true) {
       this.dateTop = `${date.getFullYear()} 年 ${date.getMonth() + 1} 月`
 
+      if (isChosedDay && chooseDay) { this.chosenDays.push(chooseDay) }
       let arr = timeUtil.getMonthList(this.myDate)
 
       for (let i = 0; i < arr.length; i++) {
         let k = arr[i]
         let flag = (k.otherMonth === 'nowMonth')
-        const nowTime = k.date
-
+        let chosenIndex = this.chosenDays.length ? this.chosenDays.length - 1 : 0
         k.chosen = false
         if (this.hasBetArr.length) { k.hasBet = (this.hasBetArr.includes(k.date)) }
-        k.chosen = (chooseDay && (chooseDay === nowTime) && flag)
+        k.chosen = (chooseDay && (chooseDay === k.date) && flag)
+        if (chosenIndex && (k.date === this.chosenDays[chosenIndex])) {
+          k.chosen = true
+        }
       }
 
       this.list = arr
