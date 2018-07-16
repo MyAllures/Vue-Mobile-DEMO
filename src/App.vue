@@ -99,7 +99,9 @@
     </div>
     <bet-dialog />
     <transition name="fade">
-      <Calender ref="calendar" v-show="showCalender" @closeCalender="closeCalender"/>
+      <div v-show="showCalender">
+        <Calender ref="calendar" @closeCalender="closeCalender"/>
+      </div>
     </transition>
   </view-box>
 </template>
