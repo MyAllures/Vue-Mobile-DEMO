@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_footer_top up_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon_footer_top-up_normal" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Page-1" transform="translate(2.000000, 6.000000)" fill="#666666">
+            <path d="M21.849905,0 L1.149995,0 C0.51540685,0 0,0.512 0,1.143 L0,6.286 L0,6.857 L0,14.857 C0,15.488 0.51540685,16 1.149995,16 L21.849905,16 C22.4844931,16 22.9999,15.488 22.9999,14.857 L22.9999,6.857 L22.9999,6.286 L22.9999,1.143 C22.9999,0.512 22.4844931,0 21.849905,0 M21.431725,1.5 L21.431725,6.286 L21.431725,6.857 L21.431725,14.5 L1.568175,14.5 L1.568175,6.857 L1.568175,6.286 L1.568175,1.5 L21.431725,1.5" id="Fill-1"></path>
+            <path d="M5,11 C4.586,11 4.25,10.552 4.25,10 C4.25,9.448 4.586,9 5,9 L10,9 C10.414,9 10.75,9.448 10.75,10 C10.75,10.552 10.414,11 10,11 L5,11 Z" id="Fill-4"></path>
+            <polygon id="Fill-6" points="1 7 22 7 22 5 1 5"></polygon>
+        </g>
+    </g>
+</svg>
