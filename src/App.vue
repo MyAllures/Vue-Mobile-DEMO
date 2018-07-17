@@ -151,36 +151,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        iconImg: require('./assets/footer/icon_footer_home_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_home_pressed.png'),
+        iconImg: require('./assets/footer/home_normal.png'),
+        iconImgActive: require('./assets/footer/home_pressed.png'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        iconImg: require('./assets/footer/icon_footer_game_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_game_pressed.png'),
+        iconImg: require('./assets/footer/game_normal.png'),
+        iconImgActive: require('./assets/footer/game_pressed.png'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        iconImg: require('./assets/footer/icon_footer_top_up_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_top_up_pressed.png'),
+        iconImg: require('./assets/footer/top_up_normal.png'),
+        iconImgActive: require('./assets/footer/top_up_pressed.png'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        iconImg: require('./assets/footer/icon_footer_finance_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_finance_pressed.png'),
+        iconImg: require('./assets/footer/finance_normal.png'),
+        iconImgActive: require('./assets/footer/finance_pressed.png'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        iconImg: require('./assets/footer/icon_footer_me_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_me_pressed.png'),
+        iconImg: require('./assets/footer/me_normal.png'),
+        iconImgActive: require('./assets/footer/me_pressed.png'),
         link: '/my',
         route: 'My',
         name: 'my',
