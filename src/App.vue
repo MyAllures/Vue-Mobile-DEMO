@@ -59,8 +59,6 @@
         <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
 
-
-
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
@@ -151,36 +149,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        iconImg: require('./assets/footer/home_normal.png'),
-        iconImgActive: require('./assets/footer/home_pressed.png'),
+        iconImg: require('./assets/footer/home.png'),
+        iconImgActive: require('./assets/footer/home_active.png'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        iconImg: require('./assets/footer/game_normal.png'),
-        iconImgActive: require('./assets/footer/game_pressed.png'),
+        iconImg: require('./assets/footer/game.png'),
+        iconImgActive: require('./assets/footer/game_active.png'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        iconImg: require('./assets/footer/top_up_normal.png'),
-        iconImgActive: require('./assets/footer/top_up_pressed.png'),
+        iconImg: require('./assets/footer/top_up.png'),
+        iconImgActive: require('./assets/footer/top_up_active.png'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        iconImg: require('./assets/footer/finance_normal.png'),
-        iconImgActive: require('./assets/footer/finance_pressed.png'),
+        iconImg: require('./assets/footer/finance.png'),
+        iconImgActive: require('./assets/footer/finance_active.png'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        iconImg: require('./assets/footer/me_normal.png'),
-        iconImgActive: require('./assets/footer/me_pressed.png'),
+        iconImg: require('./assets/footer/me.png'),
+        iconImgActive: require('./assets/footer/me_active.png'),
         link: '/my',
         route: 'My',
         name: 'my',
