@@ -59,8 +59,6 @@
         <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
 
-
-
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
