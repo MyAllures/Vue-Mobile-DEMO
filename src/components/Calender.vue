@@ -25,7 +25,6 @@
           <div :class="[
             'calender-dateitem',
             { 'calender-dayhide': item.otherMonth !== 'nowMonth' },
-            { 'calender-today': item.isToday },
             { 'calender-chosenday': item.chosen },
             { 'calender-hasbet': item.hasBet }]">
             <p class="date-number">{{item.id}}</p>
@@ -49,7 +48,8 @@ export default {
       myDate: new Date(),
       list: [],
       dateTop: '',
-      hasBetArr: []
+      hasBetArr: [],
+      chosenDays: []
     }
   },
   props: {
@@ -95,16 +95,19 @@ export default {
     getList (date, chooseDay, isChosedDay = true) {
       this.dateTop = `${date.getFullYear()} 年 ${date.getMonth() + 1} 月`
 
+      if (isChosedDay && chooseDay) { this.chosenDays.push(chooseDay) }
       let arr = timeUtil.getMonthList(this.myDate)
 
       for (let i = 0; i < arr.length; i++) {
         let k = arr[i]
         let flag = (k.otherMonth === 'nowMonth')
-        const nowTime = k.date
-
+        let chosenIndex = this.chosenDays.length ? this.chosenDays.length - 1 : 0
         k.chosen = false
         if (this.hasBetArr.length) { k.hasBet = (this.hasBetArr.includes(k.date)) }
-        k.chosen = (chooseDay && (chooseDay === nowTime) && flag)
+        k.chosen = (chooseDay && (chooseDay === k.date) && flag)
+        if (chosenIndex && (k.date === this.chosenDays[chosenIndex])) {
+          k.chosen = true
+        }
       }
 
       this.list = arr
@@ -124,17 +127,17 @@ export default {
       }).catch(() => {})
     }
   },
-  mounted () {
-    this.getList(this.myDate)
-    this.fetchDateBetRecord()
-  },
   watch: {
-    '$route': function (route) {
-      let date = route.params.date
-      if (date) {
-        this.myDate = new Date(date)
-        this.getList(this.myDate, timeUtil.dateFormat(this.myDate))
-      }
+    '$route': {
+      handler: function (route) {
+        let date = route.params.date
+        if (date) {
+          this.myDate = new Date(date)
+          this.getList(this.myDate, timeUtil.dateFormat(this.myDate))
+          this.fetchDateBetRecord()
+        }
+      },
+      immediate: true
     }
   }
 }
@@ -232,20 +235,7 @@ export default {
   .calender-dayhide {
     color: #dde;
   }
-  .calender-today {
-    &::after {
-      content: '今日';
-      position: absolute;
-      top: 15px;
-      font-size: 12px;
-      color: #bfbfbf;
-    }
 
-    &.calender-chosenday {
-      line-height: 35px;
-      align-items: flex-start;
-    }
-  }
   .calender-chosenday {
     background-color: #166fd8;
     border-radius: 50%;
@@ -253,9 +243,11 @@ export default {
   }
   .calender-hasbet {
     flex-direction: column;
+
     .date-number {
       line-height: 25px;
     }
+
     &::after {
       content: '';
       position: static;
@@ -266,6 +258,7 @@ export default {
       border-radius: 50%;
       background-color: #166fd8;
     }
+
     &.calender-chosenday::after {
       background-color: #fff;
     }
