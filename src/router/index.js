@@ -82,6 +82,7 @@ export default new Router({
           name: 'PaymentRecord',
           meta: {
             title: '财务纪录',
+            gaTitle: '充值纪录',
             requiresAuth: true,
             showBack: true
           },
@@ -92,6 +93,7 @@ export default new Router({
           name: 'WithdrawRecord',
           meta: {
             title: '财务纪录',
+            gaTitle: '取款纪录',
             requiresAuth: true,
             showBack: true
           },
@@ -102,6 +104,7 @@ export default new Router({
           name: 'PromotionRecord',
           meta: {
             title: '财务纪录',
+            gaTitle: '优惠和红包纪录',
             requiresAuth: true,
             showBack: true
           },
@@ -112,6 +115,7 @@ export default new Router({
           name: 'DetailBetRecord',
           meta: {
             title: '财务纪录',
+            gaTitle: '投注记录',
             requiresAuth: true,
             tabbarHidden: true,
             showBack: true
@@ -123,6 +127,7 @@ export default new Router({
           name: 'BetRecord',
           meta: {
             title: '财务纪录',
+            gaTitle: '投注记录',
             requiresAuth: true,
             showBack: true
           },
@@ -151,6 +156,7 @@ export default new Router({
       component: resolve => { require(['../screens/my/SubmitSuccess.vue'], resolve) },
       meta: {
         title: 'custom',
+        gaTitle: '充值申请提交',
         showBack: true
       }
     },
@@ -219,6 +225,7 @@ export default new Router({
       name: 'profile',
       meta: {
         title: '修改账户资料',
+        gaTitle: '基本资料',
         showBack: true,
         requiresAuth: true
       },
@@ -248,7 +255,7 @@ export default new Router({
       path: '/my/wpassword',
       name: 'wpassword',
       meta: {
-        title: '重置取款密码',
+        title: '修改取款密码',
         showBack: true,
         requiresAuth: true
       },

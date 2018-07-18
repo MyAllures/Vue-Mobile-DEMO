@@ -190,7 +190,7 @@ export default {
       })
     },
     updateSchedule () {
-      if (!this.gameId || this.currentGame) {
+      if (!this.gameId) {
         return
       }
       clearInterval(this.timer)
