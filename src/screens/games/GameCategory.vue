@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="(game && game.game_type) || tabKeys.length > 1" class="tab-selector">
+    <div v-if="(game && game.game_type) || (tabKeys.length >= 0&&tabKeys[0]!=='no-alias')" class="tab-selector">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           :animate="false"
