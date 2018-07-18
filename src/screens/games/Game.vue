@@ -87,6 +87,7 @@
 
 <script>
 import _ from 'lodash'
+import { setIndicator } from '../../utils'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
 import Countdown from '../../components/Countdown'
@@ -228,6 +229,12 @@ export default {
         this.$store.dispatch('fetchCategories', this.gameId)
       }
     }
+
+    setIndicator(() => {
+
+    }, () => {
+
+    })
   },
   methods: {
     getCurrentMatch (match) {

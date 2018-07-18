@@ -191,7 +191,7 @@ export default new Router({
       path: '/my/profile',
       name: 'profile',
       meta: {
-        title: '修改账户资料',
+        title: '基本資料',
         showBack: true,
         requiresAuth: true
       },

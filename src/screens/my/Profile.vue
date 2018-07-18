@@ -1,11 +1,24 @@
 <template>
   <div>
-    <group label-width="'100px'" :title="$t('profile.profile_hint')">
+    <div class="profile-section">
+      <small class="profile-hint">
+        如需修改真实姓名或手机号码请 <a class="service-url" :href="customerServiceUrl" target="_blank">联系客服</a>
+      </small>
+      <div class="profile-field">
+         <p class="title">真实姓名</p>
+         <p class="text">{{user.real_name}}</p>
+      </div>
+      <div class="profile-field">
+         <p class="title">手机号码</p>
+         <p class="text">{{user.phone}}</p>
+      </div>
+    </div>
+    <!-- <group label-width="'100px'" :title="$t('profile.profile_hint')">
       <cell :title="$t('profile.username')" :value="user.username" ></cell>
       <cell :title="$t('profile.real_name')" :value="user.real_name"></cell>
       <cell :title="$t('profile.phone')" :value="user.phone"></cell>
-    </group>
-    <group label-width="'100px'" :title="$t('profile.basic_info')">
+    </group> -->
+    <group label-width="'100px'">
       <div v-if="inputErrors.length">
         <ul class="input-errors">
           <li class="text" v-for="(error, index) in inputErrors" :key="index">
@@ -61,10 +74,8 @@
       v-model="member.qq">
       </x-input>
     </group>
-    <div></div>
-
     <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
-    <div class="m-a">
+    <div class="wrapper m-t-xlg">
       <x-button type="primary" :disabled="!hasChange" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('profile.submit')}}</span>
@@ -76,7 +87,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
 import { changeUserInformation } from '../../api'
 import { msgFormatter, validateEmail, validateQQ } from '../../utils'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 const inputs = ['email', 'qq', 'gender', 'wechat', 'birthday']
 export default {
   name: 'profile',
@@ -164,6 +175,9 @@ export default {
     ...mapGetters([
       'user'
     ]),
+    ...mapState([
+      'systemConfig'
+    ]),
     inputErrors () {
       return inputs.filter(input => {
         return this.validators[input].valid === false
@@ -175,6 +189,9 @@ export default {
       return inputs.filter(input => {
         return this.validators[input].origin !== this.member[input]
       }).length
+    },
+    customerServiceUrl () {
+      return this.systemConfig.customer_service_url
     }
   },
   watch: {
@@ -250,7 +267,7 @@ export default {
   }
 }
 </script>
-<style @lang="less">
+<style lang="less" scoped>
 .fix-arrow > .weui_cell_ft.with_arrow::after {
   content: " ";
   display: inline-block;
@@ -263,5 +280,32 @@ export default {
   position: absolute;
   top: 50%;
   right: 15px;
+}
+
+.service-url {
+  color: #166fd8;
+  text-decoration: underline;
+}
+.profile-section {
+  padding: 20px 15px;
+  .profile-hint {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  .profile-field {
+    &:nth-child(2n+1) {
+      margin-top: 15px;
+    }
+    .title {
+      color: #999;
+      font-size: 13px;
+    }
+    .text {
+      color: #333;
+      font-size: 16px;
+    }
+  }
 }
 </style>
