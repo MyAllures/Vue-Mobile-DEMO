@@ -118,7 +118,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach(function (to) {
   store.commit(types.UPDATE_LOADING, {isLoading: false})
   const gaTrackingId = store.state.systemConfig.gaTrackingId
-  if (gaTrackingId) {
+  if (gaTrackingId && to.name !== 'DetailBetRecord' && to.name !== 'GameDetail') {
     window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path, page_title: to.meta.gaTitle || to.meta.title})
   }
 })
