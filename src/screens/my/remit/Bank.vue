@@ -89,8 +89,6 @@ export default {
         font-size: 13px;
       }
       .item-content {
-        height: 22px;
-        line-height: 22px;
         font-size: 16px;
         color: #333;
       }
@@ -98,15 +96,15 @@ export default {
   }
   .stamp:after {
     position: absolute;
+    top: 0;
     right: -20px;
     content: "";
     display: block;
-    background: radial-gradient(circle, transparent 6px, #fff 7px);
+    background: radial-gradient(circle, rgba(255,255,255,0) 6px, #fff 7px);
     background-size: 50px 16px;
     background-position: 17px 2px;
     height: 100%;
     width: 40px;
-    margin-top: -12px;
     z-index: -1;
   }
 }

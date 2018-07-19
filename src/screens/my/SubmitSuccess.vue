@@ -40,13 +40,14 @@ export default {
     color: #666;
     font-size: 14px;
     text-align: center;
-    margin-bottom: 150px;
   }
-  .success-button {
-    position: absolute;
-    bottom: 100px;
-    left: 30px;
-    right: 30px;
+  @media screen and (min-width: 321px) {
+    .success-button {
+      position: absolute;
+      bottom: 100px;
+      left: 30px;
+      right: 30px;
+    }
   }
 }
 </style>
