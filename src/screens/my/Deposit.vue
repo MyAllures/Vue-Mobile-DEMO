@@ -67,7 +67,7 @@
             <label class="amount-field">
               <span class="amount-field-text">存款金额</span>
               <input class="amount-field-input" type="text" name="amount" v-model="currentPay.amount" @input="inputAmount">
-              <span class="amount-icon" v-show="currentPay.amount">¥</span>
+              <span class="amount-icon">¥</span>
             </label>
             <div class="hint">{{warnMessage||limitHint}}</div>
           </div>
@@ -451,13 +451,14 @@ export default {
     color: #666;
     font-size: 14px;
     text-align: center;
-    margin-bottom: 150px;
   }
-  .unregistered-button {
-    position: absolute;
-    bottom: 100px;
-    left: 30px;
-    right: 30px;
+  @media screen and (min-width: 321px) {
+    .unregistered-button {
+      position: absolute;
+      bottom: 100px;
+      left: 30px;
+      right: 30px;
+    }
   }
 }
 .payee-icon {
