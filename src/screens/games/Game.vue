@@ -206,22 +206,28 @@ export default {
       if (!this.gameId) {
         return
       }
-      clearInterval(this.timer)
+
       this.isBusy = true
       fetchSchedule(this.gameId)
         .then(res => {
-          this.isBusy = false
-          this.schedule = _.find(res, schedule => {
-            return schedule.id !== this.schedule.id &&
+          let result = _.find(res, schedule => {
+            return (schedule.id !== this.schedule.id) &&
               this.$moment().isBefore(schedule.schedule_result) &&
               (schedule.status === 'open' || schedule.status === 'created')
-          }) || {}
-          this.$store.dispatch('updateGameInfo', {
-            display_name: this.currentGame.display_name,
-            issue_number: this.schedule.issue_number,
-            game_code: this.currentGame.code
           })
-          this.startTimer()
+
+          if (result) {
+            clearInterval(this.timer)
+            this.schedule = result
+            this.$store.dispatch('updateGameInfo', {
+              display_name: this.currentGame.display_name,
+              issue_number: this.schedule.issue_number,
+              game_code: this.currentGame.code
+            })
+            this.startTimer()
+          }
+
+          this.isBusy = false
         }).catch(() => {
           this.isBusy = false
         })
@@ -239,12 +245,13 @@ export default {
       })
     },
     startTimer () {
-      if (!this.schedule) {
+      if (!this.schedule || !this.schedule.id) {
         return
       }
       this.timer = setInterval(() => {
         const closeTime = this.$moment(this.schedule.schedule_close)
         const resultTime = this.$moment(this.schedule.schedule_result)
+
         if (this.$moment().isAfter(resultTime)) {
           clearInterval(this.timer)
           return

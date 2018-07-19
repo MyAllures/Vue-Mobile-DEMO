@@ -110,6 +110,12 @@ export default {
       totalAmount: 0
     }
   },
+  created () {
+    const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
+    if (gaTrackingId) {
+      window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${this.$route.params.date} 投注记录`})
+    }
+  },
   methods: {
     initFetchBetHistory () {
       this.loading = true

@@ -157,7 +157,7 @@
       }
     },
     created () {
-      this.remit.remit_info.remit_payee = this.payee.remit_payee
+      this.remit.remit_info.remit_payee = this.payee.id
     },
     methods: {
       submit () {

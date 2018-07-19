@@ -257,6 +257,12 @@ export default {
       if (!currentCategory) {
         return
       }
+
+      const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
+      if (gaTrackingId) {
+        window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${this.game.display_name} - ${currentCategory.name}`})
+      }
+
       const tabs = {}
       const plays = {}
       const tabKeys = []
