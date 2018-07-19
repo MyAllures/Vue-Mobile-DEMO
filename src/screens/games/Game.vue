@@ -103,7 +103,6 @@ export default {
       closeCountDown: null,
       resultCountDown: null,
       currentPlays: [],
-      dialogVisible: false,
       amount: localStorage.getItem('amount') || '10',
       validPlays: [],
       playReset: false,
@@ -182,7 +181,12 @@ export default {
 
     setIndicator(() => {
       this.updateSchedule()
-    }, () => {})
+    }, () => {
+      if (this.betDialog.visible) {
+        this.$set(this, 'playReset', !this.playReset)
+        this.$store.dispatch('closeBetDialog')
+      }
+    })
   },
   methods: {
     chooseCategory () {
