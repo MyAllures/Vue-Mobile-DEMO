@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div>
+    <div class="data-section">
       <GameResult :gameid="$route.params.gameId"/>
       <Countdown
         :schedule="schedule"
@@ -68,6 +68,7 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
+import { setIndicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
@@ -108,7 +109,8 @@ export default {
       playReset: false,
       loading: false,
       hasPlan: true,
-      opts_combos_count: 1
+      opts_combos_count: 1,
+      isBusy: false
     }
   },
   filters: {
@@ -177,6 +179,10 @@ export default {
     } else if (this.categories.length === 0) {
       this.$store.dispatch('fetchCategories', this.gameId)
     }
+
+    setIndicator(() => {
+      this.updateSchedule()
+    }, () => {})
   },
   methods: {
     chooseCategory () {
@@ -190,12 +196,17 @@ export default {
       })
     },
     updateSchedule () {
+      if (this.isBusy) {
+        return
+      }
       if (!this.gameId) {
         return
       }
       clearInterval(this.timer)
+      this.isBusy = true
       fetchSchedule(this.gameId)
         .then(res => {
+          this.isBusy = false
           this.schedule = _.find(res, schedule => {
             return schedule.id !== this.schedule.id &&
               this.$moment().isBefore(schedule.schedule_result) &&
@@ -207,7 +218,9 @@ export default {
             game_code: this.currentGame.code
           })
           this.startTimer()
-        }).catch(() => {})
+        }).catch(() => {
+          this.isBusy = false
+        })
     },
     switchCategory (categoryId) {
       if (!categoryId) {
@@ -330,7 +343,12 @@ export default {
   overflow-x: hidden;
   flex-direction: column;
   height: 100%;
+  .data-section {
+    min-height: 60px;
+    background: #1568CA;
+  }
 }
+
 .active {
   background: @azul;
   color: #fff;
