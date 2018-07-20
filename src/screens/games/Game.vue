@@ -68,7 +68,7 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
-import { setIndicator } from '../../utils'
+import { Indicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
@@ -109,7 +109,8 @@ export default {
       loading: false,
       hasPlan: true,
       opts_combos_count: 1,
-      isBusy: false
+      isBusy: false,
+      indicator: null
     }
   },
   filters: {
@@ -179,7 +180,7 @@ export default {
       this.$store.dispatch('fetchCategories', this.gameId)
     }
 
-    setIndicator(() => {
+    this.indicator = new Indicator(() => {
       this.updateSchedule()
     }, () => {
       if (this.betDialog.visible) {
@@ -342,6 +343,11 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.timer)
+
+    if (this.indicator) {
+      this.indicator.destroy()
+      this.indicator = null
+    }
   }
 }
 </script>

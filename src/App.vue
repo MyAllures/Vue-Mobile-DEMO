@@ -113,7 +113,7 @@ import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
-import { setIndicator } from './utils'
+import { Indicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
@@ -189,7 +189,8 @@ export default {
       error: '',
       showGameInfo: false,
       showCalender: false,
-      headerZindex: 100
+      headerZindex: 100,
+      indicator: null
     }
   },
   mixins: [freetrial],
@@ -420,7 +421,8 @@ export default {
       })
     }
     let refreshTokenInterval
-    setIndicator(() => {
+
+    this.indicator = new Indicator(() => {
       refreshTokenInterval = window.setInterval(() => {
         if (this.replaceToken) {
           this.replaceToken().then(() => {
