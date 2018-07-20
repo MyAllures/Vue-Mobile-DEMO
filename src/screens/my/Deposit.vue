@@ -268,9 +268,9 @@ export default {
       let meetLower = !this.onlineLimit.lower || amount >= parseFloat(this.onlineLimit.lower)
       let meetUpper = !this.onlineLimit.upper || amount <= parseFloat(this.onlineLimit.upper)
       if (!meetLower) {
-        this.warnMessage = '必须大于最小取款金额'
+        this.warnMessage = '必须大于最小存款金额'
       } else if (!meetUpper) {
-        this.warnMessage = '必须小于最大取款金额'
+        this.warnMessage = '必须小于最大存款金额'
       } else {
         this.warnMessage = ''
       }

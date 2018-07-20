@@ -97,9 +97,9 @@
         let meetUpper = !this.limit.upper || amount <= parseInt(this.limit.upper)
 
         if (!meetLower) {
-          callback(new Error('必须大于最小取款金额'))
+          callback(new Error('必须大于最小存款金额'))
         } else if (!meetUpper) {
-          callback(new Error('必须小于最大取款金额'))
+          callback(new Error('必须小于最大存款金额'))
         } else {
           callback()
         }
