@@ -113,7 +113,6 @@ import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
-import { Indicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
@@ -190,7 +189,7 @@ export default {
       showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
-      indicator: null
+      refreshTokenInterval: null
     }
   },
   mixins: [freetrial],
@@ -358,22 +357,19 @@ export default {
       }
     },
     replaceToken () {
-      return new Promise((resolve, reject) => {
-        let refreshToken = this.$cookie.get('refresh_token')
-        if (!refreshToken) {
-          return
-        }
-        getToken(refreshToken).then(res => {
-          let expires = new Date(res.expires_in)
-          this.$cookie.set('access_token', res.access_token, {
-            expires: expires
-          })
-          this.$cookie.set('refresh_token', res.refresh_token, {
-            expires: expires
-          })
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-          resolve()
+      let refreshToken = this.$cookie.get('refresh_token')
+      if (!refreshToken || !this.$store.state.user.account_type) {
+        return
+      }
+      getToken(refreshToken).then(res => {
+        let expires = new Date(res.expires_in)
+        this.$cookie.set('access_token', res.access_token, {
+          expires: expires
         })
+        this.$cookie.set('refresh_token', res.refresh_token, {
+          expires: expires
+        })
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       })
     },
     pollUnread () {
@@ -420,20 +416,12 @@ export default {
         this.performLogin()
       })
     }
-    let refreshTokenInterval
-
-    this.indicator = new Indicator(() => {
-      refreshTokenInterval = window.setInterval(() => {
-        if (this.replaceToken) {
-          this.replaceToken().then(() => {
-          }).catch(error => {
-            Promise.resolve(error)
-          })
-        }
-      }, 300000)
-    }, () => {
-      window.clearInterval(refreshTokenInterval)
-    })
+    this.refreshTokenInterval = window.setInterval(() => {
+      this.replaceToken()
+    }, 20 * 60 * 1000)
+  },
+  beforeDestroy () {
+    window.clearInterval(this.refreshTokenInterval)
   }
 }
 </script>

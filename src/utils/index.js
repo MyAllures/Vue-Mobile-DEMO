@@ -94,17 +94,11 @@ export function msgFormatter (msgs) {
     })
     formatMsg = arr.join(', ')
   } else {
-    if (msgs.msg) {
-      formatMsg = msgs.msg
-      if (Array.isArray(formatMsg)) {
-        formatMsg = formatMsg[0]
-      }
+    if (msgs && msgs.message) {
+      formatMsg = msgs.message
       return formatMsg
-    } else if (typeof msgs === 'string') {
-      formatMsg = msgs
-    } else {
-      formatMsg = '系统发生了错误, 请联系客服'
     }
+    formatMsg = msgs
   }
   return formatMsg
 }
