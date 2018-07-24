@@ -46,6 +46,7 @@
         <router-link class="link" to="/register">注册</router-link>
         <div class="link" @click="tryDemo"><div class="try">试玩</div></div>
       </div>
+
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
@@ -106,14 +107,11 @@
 </template>
 
 <script>
-import './styles/fonts/icons.css'
-
 import Vue from 'vue'
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
-import { setIndicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
@@ -189,7 +187,8 @@ export default {
       error: '',
       showGameInfo: false,
       showCalender: false,
-      headerZindex: 100
+      headerZindex: 100,
+      refreshTokenInterval: null
     }
   },
   mixins: [freetrial],
@@ -239,13 +238,18 @@ export default {
         showDropdown: false,
         onClick: ''
       }
+      const customTitle = this.$store.state.customTitle
 
       if (route.name === 'DetailBetRecord') {
         title.text = route.params.date
         title.showDropdown = true
         title.onClick = () => { this.showCalender = !this.showCalender }
       } else if (!this.isGameHall && (route.path !== '/')) {
-        title.text = route.meta.title
+        if (route.meta.title === 'custom') {
+          title.text = customTitle
+        } else {
+          title.text = route.meta.title
+        }
       } else if (this.isGameHall && !this.showChatRoom) {
         title.text = this.currentGame.display_name
         title.showDropdown = true
@@ -308,7 +312,7 @@ export default {
       if (path === '/') {
         return 'home'
       }
-      if (path === '/my/deposit') {
+      if (this.$route.matched[0].path === '/my/deposit') {
         return 'deposit'
       }
       return path.split('/')[1]
@@ -352,22 +356,19 @@ export default {
       }
     },
     replaceToken () {
-      return new Promise((resolve, reject) => {
-        let refreshToken = this.$cookie.get('refresh_token')
-        if (!refreshToken) {
-          return
-        }
-        getToken(refreshToken).then(res => {
-          let expires = new Date(res.expires_in)
-          this.$cookie.set('access_token', res.access_token, {
-            expires: expires
-          })
-          this.$cookie.set('refresh_token', res.refresh_token, {
-            expires: expires
-          })
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-          resolve()
+      let refreshToken = this.$cookie.get('refresh_token')
+      if (!refreshToken || !this.$store.state.user.account_type) {
+        return
+      }
+      getToken(refreshToken).then(res => {
+        let expires = new Date(res.expires_in)
+        this.$cookie.set('access_token', res.access_token, {
+          expires: expires
         })
+        this.$cookie.set('refresh_token', res.refresh_token, {
+          expires: expires
+        })
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       })
     },
     pollUnread () {
@@ -375,7 +376,7 @@ export default {
         if (!this.$cookie.get('access_token')) {
           clearInterval(this.unreadInterval)
         } else if (this.user.account_type) {
-          this.$store.dispatch('fetchUnread')
+          this.$store.dispatch('fetchUnread').catch(() => {})
         }
       }, 11000)
     },
@@ -414,19 +415,12 @@ export default {
         this.performLogin()
       })
     }
-    let refreshTokenInterval
-    setIndicator(() => {
-      refreshTokenInterval = window.setInterval(() => {
-        if (this.replaceToken) {
-          this.replaceToken().then(() => {
-          }).catch(error => {
-            Promise.resolve(error)
-          })
-        }
-      }, 300000)
-    }, () => {
-      window.clearInterval(refreshTokenInterval)
-    })
+    this.refreshTokenInterval = window.setInterval(() => {
+      this.replaceToken()
+    }, 20 * 60 * 1000)
+  },
+  beforeDestroy () {
+    window.clearInterval(this.refreshTokenInterval)
   }
 }
 </script>

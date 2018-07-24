@@ -2,7 +2,7 @@
   <div>
     <div class="profile-section">
       <small class="profile-hint">
-        如需修改真实姓名或手机号码请 <a class="service-url" :href="customerServiceUrl" target="_blank">联系客服</a>
+        如需修改真实姓名或手机号码请 <a class="service-link" :href="customerServiceUrl" target="_blank">联系客服</a>
       </small>
       <div class="profile-field">
          <p class="title">真实姓名</p>
@@ -247,10 +247,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.service-url {
-  color: #166fd8;
-  text-decoration: underline;
-}
 .profile-section {
   padding: 20px 15px;
   .profile-hint {

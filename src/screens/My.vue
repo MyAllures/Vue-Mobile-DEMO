@@ -1,89 +1,81 @@
 <template>
   <div>
-    <group class="landing-info">
-      <cell class="balance-info">
-        <div slot="icon">
-          <p class="username">
-            <span v-if="user.account_type !== 0">{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
-            <span v-else>{{$t('misc.register_now')}}</span>
-          </p>
-          <p class="balance-text">余额</p>
-          <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
-        </div>
-        <div class="button" v-if="user.account_type !== 0" @click="$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
-      </cell>
-      <cell
-        v-if="user.account_type !== 0"
-        @click.native="unread ? $router.push('/my/message') : ''"
-        :title="'站内消息'"
-        :is-link="!!unread">
-        <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
-        <span :class="{'unread-alert': unread}">{{ unread }}</span>
-      </cell>
-    </group>
-    <group>
-      <cell v-if="user.account_type !== 0"
-        :title="$t('profile.basic_info')"
-        @click.native="$router.push('/my/profile')"
-        is-link>
-        <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
-      </cell>
-    </group>
-    <group>
-      <cell
-        v-if="user.account_type !== 0"
-        is-link
-        :title="$t('withdraw.apply')"
-        @click.native="$router.push('/my/withdraw')">
-        <img class="svg-icon" src="../assets/my/withdraw.svg" slot="icon" alt="withdraw">
-      </cell>
-      <cell
-        v-if="user.account_type !== 0"
-        @click.native="$router.push('/my/bankinfo')"
-        :title="$t('misc.bank')"
-        is-link>
-        <img class="svg-icon" src="../assets/my/bank_card.svg" slot="icon" alt="bank-card">
-        <span v-if="bankAccount">{{bankAccount}}</span>
-        <span class="warn-tip" v-else>未填写</span>
-      </cell>
-    </group>
+    <div class="text-center m-t-lg visitor" v-if="!user.account_type">
+      <img class="img" src="../assets/icon_balance.png" alt="$$$">
+      <p class="balance">余额</p>
+      <p class="amount">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
+    </div>
 
+    <div v-else>
+      <group class="landing-info">
+        <cell class="balance-info">
+          <div slot="icon">
+            <p class="username">
+              <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
+            </p>
+            <p class="balance-text">余额</p>
+            <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
+          </div>
+          <div class="button" @click="$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
+        </cell>
+        <cell @click.native="unread ? $router.push('/my/message') : ''"
+          :title="'站内消息'"
+          :is-link="!!unread">
+          <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
+          <span :class="{'unread-alert': unread}">{{ unread }}</span>
+        </cell>
+      </group>
+      <group>
+        <cell
+          :title="$t('profile.basic_info')"
+          @click.native="$router.push('/my/profile')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
+        </cell>
+      </group>
+      <group>
+        <cell
+          is-link
+          :title="$t('withdraw.apply')"
+          @click.native="$router.push('/my/withdraw')">
+          <img class="svg-icon" src="../assets/my/withdraw.svg" slot="icon" alt="withdraw">
+        </cell>
+        <cell
+          @click.native="$router.push('/my/bankinfo')"
+          :title="$t('misc.bank')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/bank_card.svg" slot="icon" alt="bank-card">
+          <span v-if="bankAccount">{{bankAccount}}</span>
+          <span class="warn-tip" v-else>未填写</span>
+        </cell>
+      </group>
+      <group>
+        <cell @click.native="$router.push('/my/password')"
+          :title="$t('misc.reset_password')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/reset_password.svg" slot="icon" alt="reset-pwd">
+        </cell>
+        <cell @click.native="$router.push('/my/wpassword')"
+          :title="$t('misc.reset_withdraw_password')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/reset_wpassword.svg" slot="icon" alt="reset-wpwd">
+        </cell>
+        <cell v-if="customerServiceUrl" @click.native="window.open(customerServiceUrl)" :title="'联系客服'" is-link>
+          <img class="svg-icon" src="../assets/my/customer_service.svg" slot="icon" alt="service">
+        </cell>
+      </group>
+    </div>
 
-
-
-    <group v-if="user.account_type !== 0">
-      <cell
-        @click.native="$router.push('/my/password')"
-        :title="$t('misc.reset_password')"
-        is-link>
-        <img class="svg-icon" src="../assets/my/reset_password.svg" slot="icon" alt="reset-pwd">
-      </cell>
-      <cell
-        @click.native="$router.push('/my/wpassword')"
-        :title="$t('misc.reset_withdraw_password')"
-        is-link>
-        <img class="svg-icon" src="../assets/my/reset_wpassword.svg" slot="icon" alt="reset-wpwd">
-      </cell>
-      <cell v-if="customerServiceUrl" @click.native="window.open(customerServiceUrl)" :title="'联系客服'" is-link>
-        <img class="svg-icon" src="../assets/my/customer_service.svg" slot="icon" alt="service">
-      </cell>
-    </group>
-    <group v-else>
-      <cell
-        is-link
-        link="/register">
+    <group class="set-bottom second" v-if="!user.account_type">
+      <cell @click.native="$router.push({path: '/register'})">
         <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
       </cell>
     </group>
-
-
-
     <group class="logout-cell set-bottom">
-      <cell>
-        <span class="logout" @click="logoutDialogShow = true" slot="after-title">{{$t('misc.logout')}}</span>
+      <cell @click.native="logoutDialogShow = true">
+        <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
     </group>
-
     <confirm
       v-model="logoutDialogShow"
       :confirm-text="$t('misc.logout')"
@@ -143,6 +135,22 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
+
+.visitor {
+  .img {
+    width: 60px;
+    height: 60px;
+  }
+  .balance {
+    font-size: 16px;
+    color: #666;
+  }
+  .amount {
+    font-weight: 500;
+    color: #333;
+    font-size: 24px;
+  }
+}
 .warn-tip {
   color: @red;
 }

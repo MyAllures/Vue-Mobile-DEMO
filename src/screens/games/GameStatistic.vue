@@ -10,10 +10,8 @@
     </div>
     <div class="wrapper" v-if="contentType === 'leaderboard' && gameCode">
       <leaderboards :listItems="leaderboard"
-        :gameCode="gameCode"
-        v-if="!noLeaderboardGames.includes(gameCode)">
+        :gameCode="gameCode">
       </leaderboards>
-      <p v-else class="no-data text-center">暂无排行榜</p>
     </div>
   </div>
 </template>
@@ -25,8 +23,7 @@ import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
-const noRoadBeadGames = ['fc3d', 'hkl', 'luckl', 'fifaworldcup']
-const noLeaderboardGames = ['fifaworldcup']
+const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
 
 export default {
   name: 'GameStastics',
@@ -44,8 +41,7 @@ export default {
       resultStatistic: {},
       leaderboardData: [],
       loading: false,
-      noRoadBeadGames,
-      noLeaderboardGames
+      noRoadBeadGames
     }
   },
   methods: {

@@ -596,10 +596,6 @@ export default {
       {
         code: 'fc3d',
         table: fc3dTable
-      },
-      {
-        code: 'fifaworldcup',
-        table: null
       }
     ]
 

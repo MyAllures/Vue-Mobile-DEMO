@@ -1,69 +1,53 @@
 <template>
-  <form class="container" autocomplete="off">
-    <group :title="$t('login.welcome')">
-      <x-input
-        id="username"
-        :class="{'weui-cell_warn': !validators['username']}"
-        show-clear
-        ref="username"
-        placeholder="请输入用户名"
-        @on-change="validate($event, 'username')"
-        :title="$t('misc.username')"
-        label-width="100"
-        v-model="user.username">
-      </x-input>
-      <x-input
-        id="password"
-        :class="{'weui-cell_warn': !validators['password']}"
-        show-clear
-        placeholder="请输入密码"
-        type="password"
-        ref="password"
-        autocomplete="off"
-        @on-change="validate($event, 'password')"
-        :title="$t('misc.password')"
-        label-width="100"
-        v-model="user.password">
-      </x-input>
-      <x-input v-if="illegalTriedLogin"
-        v-model="user.verification_code_1"
-        class="captcha-input"
-        title="验证码"
-        placeholder="请输入验证码"
-        label-width="100"
-        :show-clear="false"
-        :max="4">
-        <img slot="right" @click="fetchCaptcha()" :src="captcha_src" class="captcha">
-      </x-input>
-    </group>
+  <div class="login-area text-center">
+      <img class="img" src="../assets/pic_login.png" alt="Login">
+      <p class="greeting-text">欢迎登录</p>
+      <div class="form">
+        <v-form :model="user" ref="form" @click.native="errorMsg = ''">
+          <v-form-item required :label="$t('misc.username')" prop="username">
+            <v-input ref="username"
+              autocapitalize="off"
+              v-model="user.username">
+            </v-input>
+          </v-form-item>
+          <v-form-item required :label="$t('misc.password')" prop="password">
+            <v-input ref="password"
+              type="password"
+              autocapitalize="off"
+              v-model="user.password">
+            </v-input>
+          </v-form-item>
+          <v-form-item v-if="illegalTriedLogin" :label="'验证码'" prop="verification_code_1">
+            <v-input autocapitalize="off"
+              :hasCaptcha="true"
+              v-model="user.verification_code_1">
+              <img slot="captcha" class="captcha" :src="captcha_src" alt="captcha">
+            </v-input>
+          </v-form-item>
+        </v-form>
+      </div>
 
-    <div class="actions">
-      <div v-if="error" class="error">{{error}}</div>
-      <x-button type="primary"
-                action-type ="button"
-                :show-loading="loading"
-                :disabled="!valid"
-                @click.native="submit">{{$t('misc.login')}}
-      </x-button>
-      <flexbox class="m-t">
-        <flexbox-item>
-          <x-button type="default"
-                    action-type ="button"
-                    link="/register">
-                    {{$t('misc.register')}}
-          </x-button>
-        </flexbox-item>
-        <flexbox-item>
-          <x-button type="default"
-                    action-type ="button"
-                    @click.native="tryDemo">
-                    {{$t('misc.try')}}
-          </x-button>
-        </flexbox-item>
-      </flexbox>
-    </div>
+      <div class="actions">
+        <div class="error">
+          <p v-show="error" class="error">{{error}}</p>
+        </div>
+        <x-button type="primary"
+                  action-type ="button"
+                  :show-loading="loading"
+                  :disabled="!valid"
+                  @click.native="submit">{{$t('misc.login')}}
+        </x-button>
+        <flexbox class="m-t text-buttons">
+          <flexbox-item class="register text-center" @click.native="$router.push({path: '/register'})">
+            <span>{{$t('misc.register')}}</span>
+          </flexbox-item>
+          <flexbox-item class="text-center" @click.native="tryDemo">
+            <span>{{$t('misc.register')}}</span>
+          </flexbox-item>
+        </flexbox>
+      </div>
     <tryplay-popup />
-  </form>
+  </div>
 </template>
 
 <script>
@@ -72,6 +56,10 @@ import { fetchCaptcha } from '../api'
 import { msgFormatter } from '../utils'
 import TryplayPopup from '../components/TryplayPopup'
 import freetrial from '../mixins/freetrial.js'
+import VForm from '@/components/Form'
+import VFormItem from '@/components/FormItem'
+import VInput from '@/components/Input'
+
 const inputs = ['username', 'password']
 export default {
   name: 'Home',
@@ -86,7 +74,6 @@ export default {
       loading: false,
       error: '',
       illegalTriedLogin: false,
-      illegalTrial: false,
       captcha_src: '',
       validators: {
         'username': true,
@@ -153,22 +140,16 @@ export default {
       })
     }
   },
-  watch: {
-    'error': function (error) {
-      if (error) {
-        setTimeout(() => {
-          this.error = ''
-        }, 3000)
-      }
-    }
-  },
   components: {
     XInput,
     Group,
     XButton,
     Flexbox,
     FlexboxItem,
-    TryplayPopup
+    TryplayPopup,
+    VForm,
+    VFormItem,
+    VInput
   },
   beforeDestroy () {
     clearInterval(this.syncTimer)
@@ -179,28 +160,58 @@ export default {
 
 <style lang="less" scoped>
 @import '../styles/vars.less';
-
-.container {
-  margin-top: 60px;
+.login-area {
+  margin-top: 25px;
 }
+
+.img {
+  width: 140px;
+  height: 140px;
+}
+
+.greeting-text {
+  font-size: 16px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.form {
+  margin-top: 25px;
+}
+
 .error {
   color: @red;
   text-align: center;
-  margin-bottom: 0.5em;
+  height: 20px;
+  line-height: 20px;
 }
+
 .actions {
   margin-top: 1em;
   padding: 0 1em;
 }
 .login-button {
-  width: 100%;
+  width: 85%;
+  height: 40px;
 }
+
 .captcha {
   width: 100px;
-  height: 40px;
+  height: 35px;
   vertical-align: middle;
 }
-.captcha-input {
-  height: 30px;
+
+.seperate {
+  width: 2px;
+  height: 16px;
+  border: solid 1px #999;
+}
+
+.register {
+  border-right: 1px solid #999;
+}
+
+.text-buttons {
+  color: #333;
 }
 </style>
