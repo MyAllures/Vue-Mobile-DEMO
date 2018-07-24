@@ -17,6 +17,7 @@ import { ToastPlugin } from 'vux'
 import qs from 'qs'
 import icon from './utils/icon'
 import color from './styles'
+import urls from './api/urls'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
@@ -60,6 +61,7 @@ axios.interceptors.request.use((config) => {
   return Promise.reject(error)
 })
 
+const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
@@ -68,7 +70,9 @@ axios.interceptors.response.use(res => {
     return responseData
   } else {
     if (responseData.code === 9007) {
-      toLogin(router)
+      if (!pollingApi.some(url => res.config.url.indexOf(url) !== -1)) { // 忽略輪詢api
+        toLogin(router)
+      }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
       axios.defaults.withCredentials = true
       Vue.cookie.set('sessionid', res.data.sessionid)
@@ -78,7 +82,7 @@ axios.interceptors.response.use(res => {
   }
 }, (error) => {
   Vue.$vux.toast.show({
-    text: '系统发生了错误, 请联系客服',
+    text: '网路服务异常，请稍后再试',
     type: 'warn'
   })
   return Promise.reject(error)
@@ -118,8 +122,8 @@ router.beforeEach((to, from, next) => {
 router.afterEach(function (to) {
   store.commit(types.UPDATE_LOADING, {isLoading: false})
   const gaTrackingId = store.state.systemConfig.gaTrackingId
-  if (gaTrackingId) {
-    window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path})
+  if (gaTrackingId && to.name !== 'DetailBetRecord' && to.name !== 'GameDetail') {
+    window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path, page_title: to.meta.gaTitle || to.meta.title})
   }
 })
 

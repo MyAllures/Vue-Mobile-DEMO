@@ -1,6 +1,6 @@
 <template>
   <div class="gamehall">
-    <router-view v-if="currentGame && currentGame.id" v-show="!showChatRoom" :key="$route.params.gameId"/>
+    <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <popup v-model="showGameInfo" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
       <div class="game-intro">

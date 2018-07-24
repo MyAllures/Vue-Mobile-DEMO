@@ -58,9 +58,6 @@ export default {
   [types.INIT_EMOJI]: (state, emojis) => {
     state.emojis = emojis
   },
-  [types.SET_REMIT]: (state, remitPayee) => {
-    state.remitPayee = remitPayee
-  },
   [types.ADD_KEEP_ALIVE]: (state, page) => {
     if (!state.keepAlivePage.includes(page)) {
       state.keepAlivePage.push(page)
@@ -123,5 +120,8 @@ export default {
     if (isSuccess) {
       state.betDialog.isSuccess = true
     }
+  },
+  [types.SET_TITLE]: (state, title) => {
+    state.customTitle = title
   }
 }

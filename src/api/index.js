@@ -40,10 +40,6 @@ export function fetchCategories (gameId) {
   return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
 }
 
-export function fetchMatchCategory (gameId, matchId) {
-  return axios.get(`${urls.category}?&game=${gameId}&platform=1&match=${matchId}`)
-}
-
 export function fetchPlaygroup (categoryId) {
   return axios.get(`${urls.playgroup}?&category=${categoryId}`)
 }

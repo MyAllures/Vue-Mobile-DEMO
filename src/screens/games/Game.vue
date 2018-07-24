@@ -1,26 +1,6 @@
 <template>
   <div class="game">
-    <div class="fifa-header" v-if="isFifa">
-      <div class="image-section">
-        <img class="img" src="../../assets/2018fifa.png" alt="FIFA">
-      </div>
-      <div v-if="currentMatch" class="match-info">
-        <span>
-          {{`[ ${this.$moment(currentMatch.startTime).format('HH:mm')} ${currentMatch.name} ]`}}
-        </span>
-        <span class="schedule" v-if="schedule && schedule.issue_number">
-          <span class="title">封盘</span>
-          <span v-if="!closeCountDown" class="label"></span>
-          <span v-else-if="!gameClosed" class="label">
-            <span v-if="closeCountDown.days > 0">{{closeCountDown.days}}天</span>
-            <span v-if="closeCountDown.hours > 0">{{closeCountDown.hours | complete}}:</span>
-            {{closeCountDown.minutes | complete}}:{{closeCountDown.seconds | complete}}
-          </span>
-          <span v-else class="label">已封盘</span>
-        </span>
-      </div>
-    </div>
-    <div v-else>
+    <div class="data-section">
       <GameResult :gameid="$route.params.gameId"/>
       <Countdown
         :schedule="schedule"
@@ -51,7 +31,6 @@
         :playReset="playReset"
         @updatePlays="updatePlays"
         @resetPlays="playReset = !playReset"
-        @getCurrentMatch="getCurrentMatch"
         />
       </div>
     </div>
@@ -89,6 +68,7 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
+import { Indicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
@@ -123,14 +103,14 @@ export default {
       closeCountDown: null,
       resultCountDown: null,
       currentPlays: [],
-      dialogVisible: false,
       amount: localStorage.getItem('amount') || '10',
       validPlays: [],
       playReset: false,
       loading: false,
       hasPlan: true,
-      currentMatch: null,
-      opts_combos_count: 1
+      opts_combos_count: 1,
+      isBusy: false,
+      indicator: null
     }
   },
   filters: {
@@ -140,11 +120,6 @@ export default {
     }
   },
   computed: {
-    isFifa () {
-      if (this.currentGame) {
-        return !!this.currentGame.game_type
-      }
-    },
     gameClosed () {
       if (!this.closeCountDown) {
         return false
@@ -183,18 +158,6 @@ export default {
         this.chooseCategory()
       }
     },
-    'currentMatch': function (match) {
-      if (this.currentGame.game_type && match) {
-        clearInterval(this.timer)
-        this.schedule = match.schedule
-        this.$store.dispatch('updateGameInfo', {
-          display_name: this.currentGame.display_name,
-          game_code: this.currentGame.code,
-          issue_number: this.schedule.issue_number
-        })
-        this.startTimer()
-      }
-    },
     'betDialog.isSuccess': function (isSuccess) {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
@@ -203,36 +166,30 @@ export default {
   },
   created () {
     this.updateSchedule()
-    let isSportsGame = !!this.currentGame.game_type
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
       } else {
-        if (isSportsGame) {
-          let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
-          if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
-        } else {
-          this.$store.dispatch('fetchCategories', this.gameId)
-        }
-
+        this.$store.dispatch('fetchCategories', this.gameId)
         const unwatch = this.$watch('categories', function (categories) {
           this.chooseCategory()
           unwatch()
         })
       }
     } else if (this.categories.length === 0) {
-      if (isSportsGame) {
-        let matchId = this.currentGame.matches.length ? this.currentGame.matches[0].id : ''
-        if (matchId) { this.$store.dispatch('fetchMatchCategories', {game: this.currentGame, matchId}) }
-      } else {
-        this.$store.dispatch('fetchCategories', this.gameId)
-      }
+      this.$store.dispatch('fetchCategories', this.gameId)
     }
+
+    this.indicator = new Indicator(() => {
+      this.updateSchedule()
+    }, () => {
+      if (this.betDialog.visible) {
+        this.$set(this, 'playReset', !this.playReset)
+        this.$store.dispatch('closeBetDialog')
+      }
+    })
   },
   methods: {
-    getCurrentMatch (match) {
-      this.currentMatch = match
-    },
     chooseCategory () {
       const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
@@ -244,24 +201,37 @@ export default {
       })
     },
     updateSchedule () {
-      if (!this.gameId || (this.currentGame && this.currentGame.game_type)) {
+      if (this.isBusy) {
         return
       }
-      clearInterval(this.timer)
+      if (!this.gameId) {
+        return
+      }
+
+      this.isBusy = true
       fetchSchedule(this.gameId)
         .then(res => {
-          this.schedule = _.find(res, schedule => {
-            return schedule.id !== this.schedule.id &&
+          let result = _.find(res, schedule => {
+            return (schedule.id !== this.schedule.id) &&
               this.$moment().isBefore(schedule.schedule_result) &&
               (schedule.status === 'open' || schedule.status === 'created')
-          }) || {}
-          this.$store.dispatch('updateGameInfo', {
-            display_name: this.currentGame.display_name,
-            issue_number: this.schedule.issue_number,
-            game_code: this.currentGame.code
           })
-          this.startTimer()
-        }).catch(() => {})
+
+          if (result) {
+            clearInterval(this.timer)
+            this.schedule = result
+            this.$store.dispatch('updateGameInfo', {
+              display_name: this.currentGame.display_name,
+              issue_number: this.schedule.issue_number,
+              game_code: this.currentGame.code
+            })
+            this.startTimer()
+          }
+
+          this.isBusy = false
+        }).catch(() => {
+          this.isBusy = false
+        })
     },
     switchCategory (categoryId) {
       if (!categoryId) {
@@ -269,21 +239,20 @@ export default {
       }
       const gameId = this.$route.params.gameId
 
-      if (!this.currentGame.game_type) {
-        localStorage.setItem(gameId + '-lastCategory', categoryId)
-      }
+      localStorage.setItem(gameId + '-lastCategory', categoryId)
 
       this.$router.push({
         path: `/game/${gameId}/${categoryId}`
       })
     },
     startTimer () {
-      if (!this.schedule) {
+      if (!this.schedule || !this.schedule.id) {
         return
       }
       this.timer = setInterval(() => {
         const closeTime = this.$moment(this.schedule.schedule_close)
         const resultTime = this.$moment(this.schedule.schedule_result)
+
         if (this.$moment().isAfter(resultTime)) {
           clearInterval(this.timer)
           return
@@ -374,6 +343,11 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.timer)
+
+    if (this.indicator) {
+      this.indicator.destroy()
+      this.indicator = null
+    }
   }
 }
 </script>
@@ -386,7 +360,11 @@ export default {
   overflow-x: hidden;
   flex-direction: column;
   height: 100%;
+  .data-section {
+    background: #1568CA;
+  }
 }
+
 .active {
   background: @azul;
   color: #fff;
@@ -546,30 +524,5 @@ export default {
       overflow: visible;
     }
   }
-}
-
-.fifa-header {
-  width: 100%;
-  .image-section {
-    width: 100%;
-    padding: 10px 10px 0 10px;
-    background-image: linear-gradient(to bottom, #166fd8, #1568CA);
-    .img {
-      width: 80%;
-      height: auto;
-    }
-  }
-  .match-info {
-    background-image: linear-gradient(to bottom, #1568CA, #1053A1);
-    white-space: nowrap;
-    color: #fff;
-    font-size: 22px;
-    padding: 0 10px 10px 10px;
-  }
-  @media screen and (max-width: 375px) {
-      .match-info {
-        font-size: 16px;
-      }
-    }
 }
 </style>

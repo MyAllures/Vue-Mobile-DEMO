@@ -59,6 +59,7 @@ export default new Vuex.Store({
     roomInfo: null,
     messages: [],
     announce: [],
+    customTitle: '',
     personal_setting: {
       chat: {
         status: 0

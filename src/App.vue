@@ -59,8 +59,6 @@
         <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
 
-
-
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
@@ -115,7 +113,6 @@ import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
-import { setIndicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
@@ -151,36 +148,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        iconImg: require('./assets/footer/icon_footer_home_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_home_pressed.png'),
+        iconImg: require('./assets/footer/home_normal.svg'),
+        iconImgActive: require('./assets/footer/home_pressed.svg'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        iconImg: require('./assets/footer/icon_footer_game_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_game_pressed.png'),
+        iconImg: require('./assets/footer/game_normal.svg'),
+        iconImgActive: require('./assets/footer/game_pressed.svg'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        iconImg: require('./assets/footer/icon_footer_top_up_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_top_up_pressed.png'),
+        iconImg: require('./assets/footer/top_up_normal.svg'),
+        iconImgActive: require('./assets/footer/top_up_pressed.svg'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        iconImg: require('./assets/footer/icon_footer_finance_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_finance_pressed.png'),
+        iconImg: require('./assets/footer/finance_normal.svg'),
+        iconImgActive: require('./assets/footer/finance_pressed.svg'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        iconImg: require('./assets/footer/icon_footer_me_normal.png'),
-        iconImgActive: require('./assets/footer/icon_footer_me_pressed.png'),
+        iconImg: require('./assets/footer/me_normal.svg'),
+        iconImgActive: require('./assets/footer/me_pressed.svg'),
         link: '/my',
         route: 'My',
         name: 'my',
@@ -191,7 +188,8 @@ export default {
       error: '',
       showGameInfo: false,
       showCalender: false,
-      headerZindex: 100
+      headerZindex: 100,
+      refreshTokenInterval: null
     }
   },
   mixins: [freetrial],
@@ -241,13 +239,18 @@ export default {
         showDropdown: false,
         onClick: ''
       }
+      const customTitle = this.$store.state.customTitle
 
       if (route.name === 'DetailBetRecord') {
         title.text = route.params.date
         title.showDropdown = true
         title.onClick = () => { this.showCalender = !this.showCalender }
       } else if (!this.isGameHall && (route.path !== '/')) {
-        title.text = route.meta.title
+        if (route.meta.title === 'custom') {
+          title.text = customTitle
+        } else {
+          title.text = route.meta.title
+        }
       } else if (this.isGameHall && !this.showChatRoom) {
         title.text = this.currentGame.display_name
         title.showDropdown = true
@@ -310,7 +313,7 @@ export default {
       if (path === '/') {
         return 'home'
       }
-      if (path === '/my/deposit') {
+      if (this.$route.matched[0].path === '/my/deposit') {
         return 'deposit'
       }
       return path.split('/')[1]
@@ -354,22 +357,19 @@ export default {
       }
     },
     replaceToken () {
-      return new Promise((resolve, reject) => {
-        let refreshToken = this.$cookie.get('refresh_token')
-        if (!refreshToken) {
-          return
-        }
-        getToken(refreshToken).then(res => {
-          let expires = new Date(res.expires_in)
-          this.$cookie.set('access_token', res.access_token, {
-            expires: expires
-          })
-          this.$cookie.set('refresh_token', res.refresh_token, {
-            expires: expires
-          })
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-          resolve()
+      let refreshToken = this.$cookie.get('refresh_token')
+      if (!refreshToken || !this.$store.state.user.account_type) {
+        return
+      }
+      getToken(refreshToken).then(res => {
+        let expires = new Date(res.expires_in)
+        this.$cookie.set('access_token', res.access_token, {
+          expires: expires
         })
+        this.$cookie.set('refresh_token', res.refresh_token, {
+          expires: expires
+        })
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       })
     },
     pollUnread () {
@@ -377,7 +377,7 @@ export default {
         if (!this.$cookie.get('access_token')) {
           clearInterval(this.unreadInterval)
         } else if (this.user.account_type) {
-          this.$store.dispatch('fetchUnread')
+          this.$store.dispatch('fetchUnread').catch(() => {})
         }
       }, 11000)
     },
@@ -416,19 +416,12 @@ export default {
         this.performLogin()
       })
     }
-    let refreshTokenInterval
-    setIndicator(() => {
-      refreshTokenInterval = window.setInterval(() => {
-        if (this.replaceToken) {
-          this.replaceToken().then(() => {
-          }).catch(error => {
-            Promise.resolve(error)
-          })
-        }
-      }, 300000)
-    }, () => {
-      window.clearInterval(refreshTokenInterval)
-    })
+    this.refreshTokenInterval = window.setInterval(() => {
+      this.replaceToken()
+    }, 20 * 60 * 1000)
+  },
+  beforeDestroy () {
+    window.clearInterval(this.refreshTokenInterval)
   }
 }
 </script>

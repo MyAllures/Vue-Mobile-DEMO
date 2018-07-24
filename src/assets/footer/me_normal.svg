@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_footer_me_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon_footer_me_normal" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M13.65,5.8 C15.966,5.8 17.85,7.684 17.85,10 C17.85,12.316 15.966,14.2 13.65,14.2 C11.334,14.2 9.45,12.316 9.45,10 C9.45,7.684 11.334,5.8 13.65,5.8 M17.137,14.877 C18.656,13.788 19.65,12.012 19.65,10 C19.65,6.687 16.963,4 13.65,4 C10.337,4 7.65,6.687 7.65,10 C7.65,12.087 8.716,13.923 10.332,14.998 C7.227,16.133 5,19.107 5,22.6 C5,23.097 5.403,23.5 5.9,23.5 C6.397,23.5 6.8,23.097 6.8,22.6 C6.8,19.126 9.626,16.3 13.1,16.3 L14.7,16.3 C18.174,16.3 21,19.126 21,22.6 C21,23.097 21.403,23.5 21.9,23.5 C22.397,23.5 22.8,23.097 22.8,22.6 C22.8,18.983 20.416,15.913 17.137,14.877" id="Fill-1" fill="#666666"></path>
+    </g>
+</svg>
