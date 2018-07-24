@@ -61,7 +61,7 @@ axios.interceptors.request.use((config) => {
   return Promise.reject(error)
 })
 
-const pollingApi = [urls.messageCount, urls.game_result]
+const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
