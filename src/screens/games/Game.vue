@@ -361,7 +361,6 @@ export default {
   flex-direction: column;
   height: 100%;
   .data-section {
-    min-height: 60px;
     background: #1568CA;
   }
 }
