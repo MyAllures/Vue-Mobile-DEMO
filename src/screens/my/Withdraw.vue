@@ -39,7 +39,7 @@
                v-model="withdraw.withdraw_password">
       </x-input>
     </group>
-    <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
+    <div class="vux-group-tip">请核对收款人信息，如需更改收款人请联系客服</div>
     <div class="text-center text-danger m-t">{{errorMsg}}</div>
     <div class="m-a">
       <x-button type="primary" @click.native="submit">
@@ -49,10 +49,14 @@
     </div>
   </div>
 
-  <div v-else class="text-center m-t">
-    <div class="vux-group-tip text-muted">申请取款需要先建立银行资讯</div>
-    <div class="m-a">
-      <x-button type="primary" @click.native="createBank">
+  <div v-else class="text-center m-t-lg">
+    <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
+    <div class="figure-caption">
+      <p class="main">尚未建立银行资讯</p>
+      <p class="sub">申请取款须先建立银行资讯</p>
+    </div>
+    <div class="set-bottom">
+      <x-button class="createbank-btn" type="primary" @click.native="createBank">
         <span>创建银行资讯</span>
       </x-button>
     </div>
@@ -210,12 +214,22 @@
 </script>
 
 <style lang="less" scoped>
-.vux-group-tip, .vux-group-tip p {
-  color: #999;
-  font-size: 14px;
-  text-align: center;
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 5px;
+.figure {
+  width: 200px;
+  height: 200px;
+  &-caption {
+    margin-top: 15px;
+    .main {
+      font-size: 16px;
+      color: #333;
+    }
+    .sub {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+.createbank-btn {
+  width: 85%;
 }
 </style>

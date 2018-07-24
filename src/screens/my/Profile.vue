@@ -13,11 +13,6 @@
          <p class="text">{{user.phone}}</p>
       </div>
     </div>
-    <!-- <group label-width="'100px'" :title="$t('profile.profile_hint')">
-      <cell :title="$t('profile.username')" :value="user.username" ></cell>
-      <cell :title="$t('profile.real_name')" :value="user.real_name"></cell>
-      <cell :title="$t('profile.phone')" :value="user.phone"></cell>
-    </group> -->
     <group label-width="'100px'">
       <div v-if="inputErrors.length">
         <ul class="input-errors">
@@ -26,22 +21,6 @@
           </li>
         </ul>
       </div>
-      <datetime :title="$t('profile.birthday')"
-          v-model="member.birthday"
-          :confirm-text="$t('profile.ok')"
-          :cancel-text="$t('profile.cancel')"
-          :min-year="1920"
-          :max-year="2050"
-          @on-change="validate($event, 'birthday')"
-          :class="['fix-arrow', {'weui-cell_warn': !validators['gender'].valid}]"
-          placeholder="请选择">
-      </datetime>
-      <selector
-        :class="{'weui-cell_warn': !validators['gender'].valid}"
-        :title="$t('profile.gender')"
-        :options="list"
-        v-model="member.gender"
-        placeholder="请选择"></selector>
       <x-input
       :class="{'weui-cell_warn': !validators['email'].valid}"
       autocapitalize="off"
@@ -75,8 +54,8 @@
       </x-input>
     </group>
     <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
-    <div class="wrapper m-t-xlg">
-      <x-button type="primary" :disabled="!hasChange" @click.native="submit">
+    <div class="wrapper set-bottom">
+      <x-button class="submit-btn" type="primary" :disabled="!hasChange" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('profile.submit')}}</span>
       </x-button>
@@ -268,20 +247,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.fix-arrow > .weui_cell_ft.with_arrow::after {
-  content: " ";
-  display: inline-block;
-  transform: rotate(45deg) translateY(-50%);
-  height: 6px;
-  width: 6px;
-  border-width: 2px 2px 0 0;
-  border-color: #C8C8CD;
-  border-style: solid;
-  position: absolute;
-  top: 50%;
-  right: 15px;
-}
-
 .service-url {
   color: #166fd8;
   text-decoration: underline;
@@ -307,5 +272,9 @@ export default {
       font-size: 16px;
     }
   }
+}
+
+.submit-btn {
+  width: 85%;
 }
 </style>

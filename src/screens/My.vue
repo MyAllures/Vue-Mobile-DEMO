@@ -78,11 +78,12 @@
 
 
 
-    <group>
+    <group class="logout-cell set-bottom">
       <cell>
         <span class="logout" @click="logoutDialogShow = true" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
     </group>
+
     <confirm
       v-model="logoutDialogShow"
       :confirm-text="$t('misc.logout')"
@@ -90,9 +91,6 @@
       @on-confirm="logout">
       <p class="confirm-text">{{$t('misc.confirm_logout')}}</p>
     </confirm>
-
-
-
   </div>
 </template>
 
@@ -148,12 +146,7 @@ export default {
 .warn-tip {
   color: @red;
 }
-.weui-cell /deep/ .weui-cell__hd {
-  line-height: 1;
-}
-.vux-x-icon {
-  margin-right: 10px;
-}
+
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;
@@ -162,6 +155,7 @@ export default {
   color: #fff;
   font-weight: 500;
 }
+
 .icon {
   width: 24px;
   margin-right: 10px;
@@ -169,17 +163,12 @@ export default {
   display: inline-block;
   vertical-align: middle;
 }
-.logout {
-  display: block;
-  text-align: center;
-  color: @red;
-}
+
 .register {
   display: block;
   text-align: center;
   color: @azul;
 }
-
 
 .balance {
   color: #333;
@@ -224,5 +213,10 @@ export default {
   position: relative;
   top: 2px;
   right: 5px;
+}
+
+.logout-cell {
+  width: 100%;
+  color: @red;
 }
 </style>
