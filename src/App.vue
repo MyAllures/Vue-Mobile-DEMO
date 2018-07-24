@@ -377,7 +377,7 @@ export default {
         if (!this.$cookie.get('access_token')) {
           clearInterval(this.unreadInterval)
         } else if (this.user.account_type) {
-          this.$store.dispatch('fetchUnread')
+          this.$store.dispatch('fetchUnread').catch(() => {})
         }
       }, 11000)
     },
