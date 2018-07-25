@@ -18,9 +18,18 @@ import qs from 'qs'
 import icon from './utils/icon'
 import color from './styles'
 import urls from './api/urls'
+import {HTTP_ERROR, JS_ERROR, report} from './report'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
+
+Vue.config.errorHandler = (error, vm, info) => {
+  report({
+    type: JS_ERROR,
+    error,
+    memo: info
+  })
+}
 
 let url = window.location.href
 const HTTPS = process.env.HTTPS
@@ -81,6 +90,14 @@ axios.interceptors.response.use(res => {
     return Promise.reject(responseData.msg)
   }
 }, (error) => {
+  const option = {
+    type: HTTP_ERROR,
+    error
+  }
+  if (store.state.user.account_type) {
+    option.username = store.state.user.username
+  }
+  report(option)
   Vue.$vux.toast.show({
     text: '网路服务异常，请稍后再试',
     type: 'warn'

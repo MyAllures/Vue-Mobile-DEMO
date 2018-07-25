@@ -55,7 +55,6 @@ export class Indicator {
   }
 
   destroy () {
-    console.log('destroy')
     if (this.hidden in document) {
       document.removeEventListener('visibilitychange', this.onchange)
     } else if ((this.hidden === 'mozHidden')) {
