@@ -6,7 +6,7 @@
         :key="index"
         :class="['tab-item', {selected: tab.name === activeTab}]"
         :style="{width: Math.floor(100/tabs.length) + '%'}"
-        @click="switchTab(tab.name)">
+        @click="switchTab(tab)">
         <span class="tab-item-text">{{tab.label}}</span>
       </div>
     </div>
@@ -44,8 +44,14 @@ export default {
     }
   },
   methods: {
-    switchTab (name) {
-      this.$router.push({name: name})
+    switchTab ({name, label}) {
+      if (this.$route.name !== name) {
+        this.sendGaEvent({
+          category: label,
+          action: '检视'
+        })
+        this.$router.push({name: name})
+      }
     }
   },
   components: {

@@ -24,7 +24,7 @@
 
       <div v-if="!showChatRoom && !$route.meta.showBack"
         slot="overwrite-left"
-        @click="$route.name === 'Home' ? '' : $router.push({name: 'Home'})">
+        @click="toHome">
         <a class="vux-header-back">{{headerLeftTitle}}</a>
         <div v-if="$route.name !== 'Home'" class="left-arrow"></div>
       </div>
@@ -36,7 +36,7 @@
         <x-icon
           type="ios-close-empty"
           size="24"></x-icon>
-        {{roomInfo && roomId && roomInfo[roomId].name}}
+        {{roomName}}
       </div>
 
       <div v-if="showLinks && !showGameMenu"
@@ -55,7 +55,7 @@
       <div v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
-        @click="showChatRoom = true; closeGameMenu()">
+        @click="openChatRoom">
         <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
 
@@ -72,7 +72,8 @@
         :selected="selectedTab === menu.name"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :key="'tabbar' + index">
+        :key="'tabbar' + index"
+        @click.native="handleRouteChange(menu)">
         <img :src="menu.iconImg" slot="icon" :alt="menu.name">
         <img :src="menu.iconImgActive" slot="icon-active" :alt="menu.name">
         <span slot="label">{{menu.label}}</span>
@@ -193,38 +194,6 @@ export default {
     }
   },
   mixins: [freetrial],
-  watch: {
-    'user.logined' (newStatus, old) {
-      if (!newStatus) {
-        clearInterval(this.unreadInterval)
-      } else {
-        this.pollUnread()
-      }
-    },
-    '$route' (to, from) {
-      if (window.self === window.top) { // 非內嵌iframe時才設成auto
-        if (to.name === 'Home') {
-          document.documentElement.style.height = 'auto'
-          document.body.style.height = 'auto'
-        } else {
-          document.documentElement.style.height = '100%'
-          document.body.style.height = '100%'
-        }
-      }
-      this.closeChatRoom()
-    },
-    'ws' (ws) {
-      if (!ws) {
-        this.showChatRoom = false
-      }
-    },
-    'titleCondition': function (val) { // when header changing
-      if (!val.showDropdown) { // init
-        this.showCalender = false
-        this.showGameMenu = false
-      }
-    }
-  },
   computed: {
     ...mapGetters([
       'user'
@@ -329,9 +298,75 @@ export default {
         return false
       }
       return true
+    },
+    roomName () {
+      if (this.roomInfo && this.roomId) {
+        return this.roomInfo[this.roomId].name
+      }
+      return ''
+    }
+  },
+  watch: {
+    'user.logined' (newStatus, old) {
+      if (!newStatus) {
+        clearInterval(this.unreadInterval)
+      } else {
+        this.pollUnread()
+      }
+    },
+    '$route' (to, from) {
+      if (window.self === window.top) { // 非內嵌iframe時才設成auto
+        if (to.name === 'Home') {
+          document.documentElement.style.height = 'auto'
+          document.body.style.height = 'auto'
+        } else {
+          document.documentElement.style.height = '100%'
+          document.body.style.height = '100%'
+        }
+      }
+      this.closeChatRoom()
+    },
+    'ws' (ws) {
+      if (!ws) {
+        this.showChatRoom = false
+      }
+    },
+    'titleCondition': function (val) { // when header changing
+      if (!val.showDropdown) { // init
+        this.showCalender = false
+        this.showGameMenu = false
+      }
+    },
+    'roomName': function (name) {
+      if (name) {
+        this.sendGaEvent({
+          label: name,
+          category: '聊天室',
+          action: '点击'
+        })
+      }
     }
   },
   methods: {
+    toHome () {
+      if (this.$route.name !== 'Home') {
+        this.sendGaEvent({
+          label: '遊戲大廳',
+          category: '返回首頁',
+          action: '点击'
+        })
+        this.$router.push({name: 'Home'})
+      }
+    },
+    handleRouteChange ({link, label}) {
+      if (this.$route.path !== link) {
+        this.sendGaEvent({
+          label: '底部菜单',
+          category: label,
+          action: '点击'
+        })
+      }
+    },
     closeCalender () {
       this.showCalender = false
     },
@@ -386,6 +421,10 @@ export default {
       if (this.ws && this.ws.roomId) {
         this.ws.leaveRoom()
       }
+    },
+    openChatRoom () {
+      this.showChatRoom = true
+      this.closeGameMenu()
     }
   },
   created () {

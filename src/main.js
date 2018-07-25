@@ -150,6 +150,11 @@ Vue.mixin({
   methods: {
     performLogin () {
       toLogin(this.$router)
+    },
+    sendGaEvent ({label, category, action}) {
+      if (store.state.systemConfig.gaTrackingId) {
+        window.gtag('event', action, {'event_category': category, 'event_label': label})
+      }
     }
   }
 })
