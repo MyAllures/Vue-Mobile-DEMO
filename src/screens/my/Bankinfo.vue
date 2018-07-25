@@ -2,16 +2,10 @@
   <div>
     <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
       <p class="text">
-        <img src="../../assets/icon_announcement.png" class="horn-icon m-l"/>
+        <img src="../../assets/icon_announcement.png" class="horn-icon"/>
         <span>添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}}</span>
-        <span class="text-right">...</span>
+        <span @click="showInfo = true" class="more-points text-right fr">...</span>
       </p>
-
-
-
-
-
-      <!-- <icon type="info" @click.native="showInfo = true"></icon>
       <div>
         <alert v-model="showInfo" title="注意">
           <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
@@ -20,9 +14,7 @@
             <li>本平台保留对本次活动的全部解释权</li>
           </ul>
         </alert>
-      </div> -->
-
-
+      </div>
 
     </div>
 
@@ -112,9 +104,6 @@
           <span v-else>{{$t('profile.submit')}}</span>
         </x-button>
       </div>
-      <!-- <div v-else class="text-center m-a">
-        <span class="text-muted">{{$t('profile.bankinfo_update_tip')}}</span>
-      </div> -->
       <x-address style="display: none"
         title="请选择"
         v-model="selectedBank"
@@ -325,6 +314,13 @@ export default {
 }
 
 .horn-icon {
+  display: inline-block;
+  margin-left: 10px;
   vertical-align: middle;
+}
+
+.more-points {
+  display: inline-block;
+  padding-right: 10px;
 }
 </style>
