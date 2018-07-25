@@ -1,8 +1,11 @@
 <template>
   <div>
     <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
-      添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}}
-      <icon type="info" @click.native="showInfo=true"></icon>
+      <p class="text">
+        <img src="../../assets/icon_announcement.png" class="horn-icon"/>
+        <span>添加银行卡信息即可领取注册彩金 {{systemConfig.regPresentAmount | currency('￥', 0)}}</span>
+        <span @click="showInfo = true" class="more-points text-right fr">...</span>
+      </p>
       <div>
         <alert v-model="showInfo" title="注意">
           <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
@@ -12,7 +15,9 @@
           </ul>
         </alert>
       </div>
+
     </div>
+
     <group label-width="100px" :title="$t('profile.bankinfo_hint')" v-if="!user.bank">
       <div v-if="inputErrors.length">
         <ul slot="after-title" class="input-errors">
@@ -37,7 +42,6 @@
         @on-blur="validateErrors"
         v-model="member.bank.province" >
       </x-input>
-
       <x-input
         autocapitalize="off"
         :title="$t('profile.bank_city')"
@@ -60,21 +64,45 @@
         v-model="member.bank.account">
       </x-input>
     </group>
-      <group v-else label-width="'100px'">
-        <cell :title="$t('profile.bank_name')" :value="user.bank.bank"></cell>
-        <cell :title="$t('profile.bank_province')" :value="user.bank.province"></cell>
-        <cell :title="$t('profile.bank_city')" :value="user.bank.city"></cell>
-        <cell :title="$t('profile.bank_account')" :value="user.bank.account"></cell>
-      </group>
+
+    <div v-else>
+      <p class="tip">{{$t('profile.bankinfo_update_tip')}}</p>
+      <div class="stamp-wrapper">
+        <div class="stamp hasicon">
+          <div class="item">
+            <img src="../../assets/icon_bankcard.png" class="icon" alt="bank">
+            <div class="item-title">{{$t('profile.bank_name')}}</div>
+            <div class="item-content">{{user.bank.bank}}</div>
+          </div>
+          <div class="item">
+            <div class="item-title">{{$t('profile.bank_province')}}</div>
+            <div class="item-content">{{user.bank.province}}</div>
+          </div>
+          <div class="item half">
+            <div class="item-title">{{$t('profile.bank_city')}}</div>
+            <div class="item-content">{{user.bank.city}}</div>
+          </div>
+          <div class="item half">
+            <div class="item-title">{{$t('profile.bank_account')}}</div>
+            <div class="item-content">{{user.bank.account}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="set-bottom" v-if="systemConfig.customerServiceUrl">
+        <a target="_blank" :href="systemConfig.customerServiceUrl" class="service-btn">
+          <span>{{$t('misc.need_help')}}</span>
+        </a>
+      </div>
+    </div>
+
+
+
       <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
       <div class="m-a" v-if="!user.bank">
         <x-button type="primary" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('profile.submit')}}</span>
         </x-button>
-      </div>
-      <div v-else class="text-center m-a">
-        <span class="text-muted">{{$t('profile.bankinfo_update_tip')}}</span>
       </div>
       <x-address style="display: none"
         title="请选择"
@@ -257,10 +285,42 @@ export default {
   height: 100;
   text-align: center;
 }
+
 .register-money {
   width: 100%;
-  color: @red;
-  text-align: center;
-  margin-top: 15px;
+  height: 42px;
+  line-height: 42px;
+  background-color: #fce4bd;
+  font-size: 14px;
+  color: #bb7605;
+}
+
+.tip {
+  font-size: 14px;
+  color: #666;
+  margin-left: 15px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.service-btn {
+  display: inline-block;
+  width: 85%;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  background-color: #166fd8;
+  border-radius: 4px;
+}
+
+.horn-icon {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.more-points {
+  display: inline-block;
+  padding-right: 10px;
 }
 </style>

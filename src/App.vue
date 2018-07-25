@@ -46,6 +46,7 @@
         <router-link class="link" to="/register">注册</router-link>
         <div class="link" @click="tryDemo"><div class="try">试玩</div></div>
       </div>
+
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
@@ -107,8 +108,6 @@
 </template>
 
 <script>
-import './styles/fonts/icons.css'
-
 import Vue from 'vue'
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'

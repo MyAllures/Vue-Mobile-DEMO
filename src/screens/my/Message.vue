@@ -1,6 +1,6 @@
 <template>
 <div>
-  <group>
+  <group class="landing-msgs">
     <template v-for="(message, index) in messages">
       <cell :class="['cell-box', message.status ? 'read' : 'unread']"
             :title="message.title"
@@ -100,5 +100,9 @@ export default {
 }
 .view-more {
   margin: 10px;
+}
+
+.landing-msgs /deep/ .weui-cells {
+  margin-top: 0;
 }
 </style>

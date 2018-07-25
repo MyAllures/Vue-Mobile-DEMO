@@ -26,6 +26,9 @@
       <div class="weui-cell__ft">
         <icon type="clear" v-show="showClear && currentValue !== '' && !readonly && !disabled && focused" @click.native="clear"></icon>
       </div>
+      <div v-if="hasCaptcha" class="captcha">
+        <slot name="captcha"></slot>
+      </div>
     </template>
     <div v-else class="weui-cell__bd">
       <textarea
@@ -109,6 +112,10 @@ export default {
       default: 'false'
     },
     validateEvent: {
+      type: Boolean,
+      default: false
+    },
+    hasCaptcha: {
       type: Boolean,
       default: false
     },

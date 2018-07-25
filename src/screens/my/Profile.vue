@@ -1,11 +1,19 @@
 <template>
   <div>
-    <group label-width="'100px'" :title="$t('profile.profile_hint')">
-      <cell :title="$t('profile.username')" :value="user.username" ></cell>
-      <cell :title="$t('profile.real_name')" :value="user.real_name"></cell>
-      <cell :title="$t('profile.phone')" :value="user.phone"></cell>
-    </group>
-    <group label-width="'100px'" :title="$t('profile.basic_info')">
+    <div class="profile-section">
+      <small class="profile-hint">
+        如需修改真实姓名或手机号码请 <a class="service-link" :href="customerServiceUrl" target="_blank">联系客服</a>
+      </small>
+      <div class="profile-field">
+         <p class="title">真实姓名</p>
+         <p class="text">{{user.real_name}}</p>
+      </div>
+      <div class="profile-field">
+         <p class="title">手机号码</p>
+         <p class="text">{{user.phone}}</p>
+      </div>
+    </div>
+    <group label-width="'100px'">
       <div v-if="inputErrors.length">
         <ul class="input-errors">
           <li class="text" v-for="(error, index) in inputErrors" :key="index">
@@ -13,22 +21,6 @@
           </li>
         </ul>
       </div>
-      <datetime :title="$t('profile.birthday')"
-          v-model="member.birthday"
-          :confirm-text="$t('profile.ok')"
-          :cancel-text="$t('profile.cancel')"
-          :min-year="1920"
-          :max-year="2050"
-          @on-change="validate($event, 'birthday')"
-          :class="['fix-arrow', {'weui-cell_warn': !validators['gender'].valid}]"
-          placeholder="请选择">
-      </datetime>
-      <selector
-        :class="{'weui-cell_warn': !validators['gender'].valid}"
-        :title="$t('profile.gender')"
-        :options="list"
-        v-model="member.gender"
-        placeholder="请选择"></selector>
       <x-input
       :class="{'weui-cell_warn': !validators['email'].valid}"
       autocapitalize="off"
@@ -61,11 +53,9 @@
       v-model="member.qq">
       </x-input>
     </group>
-    <div></div>
-
     <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
-    <div class="m-a">
-      <x-button type="primary" :disabled="!hasChange" @click.native="submit">
+    <div class="wrapper set-bottom">
+      <x-button class="submit-btn" type="primary" :disabled="!hasChange" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('profile.submit')}}</span>
       </x-button>
@@ -76,7 +66,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
 import { changeUserInformation } from '../../api'
 import { msgFormatter, validateEmail, validateQQ } from '../../utils'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 const inputs = ['email', 'qq', 'gender', 'wechat', 'birthday']
 export default {
   name: 'profile',
@@ -164,6 +154,9 @@ export default {
     ...mapGetters([
       'user'
     ]),
+    ...mapState([
+      'systemConfig'
+    ]),
     inputErrors () {
       return inputs.filter(input => {
         return this.validators[input].valid === false
@@ -175,6 +168,9 @@ export default {
       return inputs.filter(input => {
         return this.validators[input].origin !== this.member[input]
       }).length
+    },
+    customerServiceUrl () {
+      return this.systemConfig.customer_service_url
     }
   },
   watch: {
@@ -250,18 +246,31 @@ export default {
   }
 }
 </script>
-<style @lang="less">
-.fix-arrow > .weui_cell_ft.with_arrow::after {
-  content: " ";
-  display: inline-block;
-  transform: rotate(45deg) translateY(-50%);
-  height: 6px;
-  width: 6px;
-  border-width: 2px 2px 0 0;
-  border-color: #C8C8CD;
-  border-style: solid;
-  position: absolute;
-  top: 50%;
-  right: 15px;
+<style lang="less" scoped>
+.profile-section {
+  padding: 20px 15px;
+  .profile-hint {
+    display: block;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  .profile-field {
+    &:nth-child(2n+1) {
+      margin-top: 15px;
+    }
+    .title {
+      color: #999;
+      font-size: 13px;
+    }
+    .text {
+      color: #333;
+      font-size: 16px;
+    }
+  }
+}
+
+.submit-btn {
+  width: 85%;
 }
 </style>
