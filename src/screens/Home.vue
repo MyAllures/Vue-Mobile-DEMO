@@ -32,7 +32,7 @@
     </flexbox-item>
     <grid :cols="3" v-if="allGames.length">
       <grid-item
-        @click.native="chooseGame(game.id)"
+        @click.native="chooseGame(game)"
         v-for="(game, index) in allGames"
         :key="'game' + index"
         v-if="index < game_count">
@@ -200,9 +200,14 @@ export default {
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
     },
-    chooseGame (gameId) {
-      localStorage.setItem('lastGame', gameId)
-      this.$router.push(`/game/${gameId}`)
+    chooseGame (game) {
+      this.sendGaEvent({
+        label: game.display_name,
+        category: '首页游戏选择',
+        action: '点击'
+      })
+      localStorage.setItem('lastGame', game.id)
+      this.$router.push(`/game/${game.id}`)
     }
   },
   components: {

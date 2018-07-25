@@ -15,7 +15,7 @@
             class="grid-item text-center"
             v-for="(game, index) in allGames"
             :key="index"
-            @click.native="switchGame(game.id)">
+            @click.native="switchGame(game)">
             <img class="icon" :src="game.icon" width="36" height="36"/>
             <p class="name">{{game.display_name || ''}}</p>
           </grid-item>
@@ -77,14 +77,17 @@ export default {
       this.$emit('closeSideBar')
       this.enableBackScroll()
     },
-    switchGame (key) {
-      const gameId = key + ''
-      if (this.$route.params.gameId === gameId) {
-        this.handleClose()
-        return
+    switchGame (game) {
+      const gameId = game.id + ''
+      if (this.$route.params.gameId !== gameId) {
+        this.sendGaEvent({
+          label: game.display_name,
+          category: '游戏选单',
+          action: '选单'
+        })
+        localStorage.setItem('lastGame', gameId)
+        this.$router.push({path: `/game/${gameId}/`})
       }
-      localStorage.setItem('lastGame', gameId)
-      this.$router.push({path: `/game/${gameId}/`})
       this.handleClose()
     },
     lockBackScroll () {

@@ -122,6 +122,10 @@ export default {
           this.$store.dispatch('login', {
             user: this.user
           }).then(res => {
+            this.sendGaEvent({
+              category: '会员登入',
+              action: '登入'
+            })
             this.$store.dispatch('fetchUser')
             this.illegalTriedLogin = false
             this.error = ''
