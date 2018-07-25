@@ -6,7 +6,7 @@
       <x-button type="primary" @click.native="$router.push('/my/deposit')">
         继续充值
       </x-button>
-      <x-button type="primary" plain @click.native="$router.push('/fin/payment_record')">
+      <x-button type="primary" plain @click.native="toRecord">
         查看充值纪录
       </x-button>
     </div>
@@ -18,6 +18,16 @@ export default {
   name: 'Success',
   components: {
     XButton
+  },
+  methods: {
+    toRecord () {
+      this.sendGaEvent({
+        label: '充值完成',
+        category: '查看充值纪录',
+        action: '点击'
+      })
+      this.$router.push('/fin/payment_record')
+    }
   }
 }
 </script>

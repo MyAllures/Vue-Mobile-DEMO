@@ -144,7 +144,13 @@ export default {
   },
   methods: {
     logout () {
-      this.$store.dispatch('logout')
+      this.$store.dispatch('logout').then(() => {
+        this.sendGaEvent({
+          label: '我的登出',
+          category: '登出',
+          action: '点击'
+        })
+      }).catch(() => {})
     }
   },
   components: {
