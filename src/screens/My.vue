@@ -71,7 +71,7 @@
         <span class="register" slot="after-title">{{$t('misc.register_now')}}</span>
       </cell>
     </group>
-    <group class="logout-cell set-bottom">
+    <group class="logout-cell text-center" :class="{'set-bottom': !user.account_type}">
       <cell @click.native="logoutDialogShow = true">
         <span class="logout" slot="after-title">{{$t('misc.logout')}}</span>
       </cell>
