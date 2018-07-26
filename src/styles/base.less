@@ -23,8 +23,20 @@ body .vux-header {
   display: inherit;
 }
 
+.m-a{
+  margin: 10px;
+}
+
 .m-t {
   margin-top: 10px;
+}
+
+.m-t-lg {
+  margin-top: 20px;
+}
+
+.m-t-xlg {
+  margin-top: 40px;
 }
 
 .m-b {
@@ -47,9 +59,6 @@ body .vux-header {
   font-size: 0.9em;
 }
 
-.m-a{
-  margin: 10px;
-}
 
 .clear-viewbox-default-top {
   margin-top: -45px;
@@ -224,6 +233,16 @@ body .vux-header {
   }
 }
 
+.set-bottom {
+  position: absolute;
+  width: 100%;
+  bottom: 80px;
+  text-align: center;
+  &.second {
+    bottom: 130px;
+  }
+}
+
 .dot-title {
   display: flex;
   align-items: center;
@@ -266,4 +285,77 @@ body .vux-header {
   }
 }
 
+@hasicon: false;
 
+.stamp {
+  &-wrapper {
+    box-sizing: border-box;
+    padding-right: 50px;
+    width: 100%;
+  }
+  &.hasicon {
+    padding-left: 42px;
+  }
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 12px 0 8px 32px;
+  width: 100%;
+  background: #fff;
+  filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.2));
+
+  .item {
+    .icon {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 10px;
+      top: 10px;
+    }
+
+    margin-bottom: 12px;
+    width: 100%;
+    &.half {
+      width: 50%;
+    }
+    .item-title {
+      height: 18px;
+      line-height: 18px;
+      color: #999;
+      font-size: 13px;
+    }
+    .item-content {
+      font-size: 16px;
+      color: #333;
+      &.bigger {
+        font-size: 22px;
+      }
+    }
+  }
+  &:after {
+    position: absolute;
+    top: 0;
+    right: -20px;
+    content: "";
+    display: block;
+    background: radial-gradient(circle, rgba(255,255,255,0) 6px, #fff 7px);
+    background-size: 50px 16px;
+    background-position: 17px 2px;
+    height: 100%;
+    width: 40px;
+    z-index: -1;
+  }
+}
+
+// inline service link
+.service-link {
+  color: #166fd8;
+  text-decoration: underline;
+}
+
+.stretch-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <group>
+  <group class="landing-msgs">
     <template v-for="(message, index) in messages">
       <cell :class="['cell-box', message.status ? 'read' : 'unread']"
             :title="message.title"
@@ -70,7 +70,7 @@ export default {
   }
 }
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .messages {
   background-color: #fff;
   line-height: 1.41176471;
@@ -97,8 +97,13 @@ export default {
   padding: 0 15px 10px;
   color: #999;
   font-size: 14px;
+  word-break: break-all;
 }
 .view-more {
   margin: 10px;
+}
+
+.landing-msgs /deep/ .weui-cells {
+  margin-top: 0;
 }
 </style>

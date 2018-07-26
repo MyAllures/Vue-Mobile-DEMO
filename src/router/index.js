@@ -224,7 +224,7 @@ export default new Router({
       path: '/my/profile',
       name: 'profile',
       meta: {
-        title: '修改账户资料',
+        title: '基本資料',
         gaTitle: '基本资料',
         showBack: true,
         requiresAuth: true
@@ -245,7 +245,7 @@ export default new Router({
       path: '/my/withdraw',
       name: 'withdraw',
       meta: {
-        title: '取款',
+        title: '申请取款',
         showBack: true,
         requiresAuth: true
       },

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_me_message</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#84CDFF" offset="0%"></stop>
+            <stop stop-color="#37AAF9" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icon_me_message" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g fill="url(#linearGradient-1)">
+            <path d="M19.1817,14.5337 L19.1817,9.4667 C19.1817,5.3437 15.7627,1.9997 11.5457,1.9997 C7.3277,1.9997 3.9097,5.3437 3.9097,9.4667 L3.9097,14.5337 C3.9097,16.4007 1.9997,18.2667 1.9997,18.2667 L21.0907,18.2667 C21.0907,18.2667 19.1817,16.4007 19.1817,14.5337" id="Fill-1"></path>
+            <path d="M11.5455,22 C13.6635,22 15.3805,20.881 15.3805,19.5 L7.7105,19.5 C7.7105,20.881 9.4265,22 11.5455,22" id="Fill-4" fill-opacity="0.6"></path>
+        </g>
+    </g>
+</svg>

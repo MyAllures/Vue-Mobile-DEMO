@@ -62,50 +62,5 @@ export default {
       color: #bfbfbf;
     }
   }
-  .stamp-wrapper {
-    box-sizing: border-box;
-    padding-right: 50px;
-    width: 100%;
-  }
-  .stamp {
-    position: relative;
-    box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 12px 0 8px 32px;
-    width: 100%;
-    background: #fff;
-    filter: drop-shadow(0px 0px 1px rgba(0,0,0,0.2));
-    .item {
-      margin-bottom: 12px;
-      width: 100%;
-      &.half {
-        width: 50%;
-      }
-      .item-title {
-        height: 18px;
-        line-height: 18px;
-        color: #999;
-        font-size: 13px;
-      }
-      .item-content {
-        font-size: 16px;
-        color: #333;
-      }
-    }
-  }
-  .stamp:after {
-    position: absolute;
-    top: 0;
-    right: -20px;
-    content: "";
-    display: block;
-    background: radial-gradient(circle, rgba(255,255,255,0) 6px, #fff 7px);
-    background-size: 50px 16px;
-    background-position: 17px 2px;
-    height: 100%;
-    width: 40px;
-    z-index: -1;
-  }
 }
 </style>
