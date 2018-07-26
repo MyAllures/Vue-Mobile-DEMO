@@ -1,27 +1,28 @@
 <template>
-  <div>
-    <div v-if="user && user.bank">
-      <p class="text title">收款银行资料</p>
-      <div class="stamp-wrapper">
-        <div class="stamp hasicon">
-          <div class="item">
-            <img src="../../assets/icon_bankcard.png" class="icon" alt="bank">
-            <div class="item-title">{{$t('my.bank_name')}}</div>
-            <div class="item-content">{{user.bank.bank}}</div>
-          </div>
-          <div class="item">
-            <div class="item-title">{{$t('my.bank_account')}}</div>
-            <div class="item-content">{{user.bank.account}}</div>
-          </div>
-          <div class="item">
-            <div class="item-title">{{$t('my.receiver')}}</div>
-            <div class="item-content">{{user.real_name}}</div>
+  <div class="wrapper">
+    <div class="wrapper stretch-layout" v-if="user && user.bank">
+      <div>
+        <p class="text title">收款银行资料</p>
+        <div class="stamp-wrapper">
+          <div class="stamp hasicon">
+            <div class="item">
+              <img src="../../assets/icon_bankcard.png" class="icon" alt="bank">
+              <div class="item-title">{{$t('my.bank_account')}}</div>
+              <div class="item-content bigger">{{user.bank.account}}</div>
+            </div>
+            <div class="item">
+              <div class="item-title">{{$t('my.bank_name')}}</div>
+              <div class="item-content">{{user.bank.bank}}</div>
+            </div>
+            <div class="item">
+              <div class="item-title">{{$t('my.receiver')}}</div>
+              <div class="item-content">{{user.real_name}}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <p class="hint">{{limitHint + ', 当前余额：￥' + user.balance}}</p>
-      <div class="form">
-         <v-form :model="withdraw" :rules="rules" ref="form" @click.native="errorMsg = ''">
+        <p class="hint">{{limitHint + ', 当前余额：￥' + user.balance}}</p>
+        <div class="form">
+          <v-form :model="withdraw" :rules="rules" ref="form" @click.native="errorMsg = ''">
             <v-form-item required :label="$t('withdraw.amount')" prop="amount">
               <v-input
                 autocapitalize="off"
@@ -37,9 +38,10 @@
                 :filter="/^[0]|[^0-9]/g">
               </v-input>
             </v-form-item>
-         </v-form>
+          </v-form>
+        </div>
       </div>
-      <div class="set-bottom">
+      <div class="text-center m-b">
         <div class="text-danger">{{errorMsg}}</div>
         <p class="text">请核对收款人信息，如需更改收款人请 <a class="service-link" :href="systemConfig.customerServiceUrl">联系客服</a></p>
         <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
@@ -48,7 +50,6 @@
         </x-button>
       </div>
     </div>
-
     <div v-else class="text-center m-t-lg">
       <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
       <div class="figure-caption">
@@ -193,6 +194,11 @@
 </script>
 
 <style lang="less" scoped>
+.wrapper {
+  height: 100%;
+}
+
+
 .text {
   font-size: 14px;
   color: #666;
@@ -230,6 +236,7 @@
     }
   }
 }
+
 .submit-btn {
   width: 85%;
 }

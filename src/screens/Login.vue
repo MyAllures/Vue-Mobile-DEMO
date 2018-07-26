@@ -1,7 +1,9 @@
 <template>
-  <div class="login-area text-center">
-      <img class="img" src="../assets/pic_login.png" alt="Login">
-      <p class="greeting-text">欢迎登录</p>
+  <div class="login-area">
+      <div class="text-center">
+        <img class="img" src="../assets/pic_login.png" alt="Login">
+        <p class="greeting-text">欢迎登录</p>
+      </div>
       <div class="form">
         <v-form :model="user" ref="form" @click.native="errorMsg = ''">
           <v-form-item required :label="$t('misc.username')" prop="username">

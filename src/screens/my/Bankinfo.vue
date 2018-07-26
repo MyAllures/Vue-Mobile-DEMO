@@ -71,20 +71,20 @@
         <div class="stamp hasicon">
           <div class="item">
             <img src="../../assets/icon_bankcard.png" class="icon" alt="bank">
+            <div class="item-title">{{$t('profile.bank_account')}}</div>
+            <div class="item-content bigger">{{user.bank.account}}</div>
+          </div>
+          <div class="item">
             <div class="item-title">{{$t('profile.bank_name')}}</div>
             <div class="item-content">{{user.bank.bank}}</div>
           </div>
-          <div class="item">
+          <div class="item half">
             <div class="item-title">{{$t('profile.bank_province')}}</div>
             <div class="item-content">{{user.bank.province}}</div>
           </div>
           <div class="item half">
             <div class="item-title">{{$t('profile.bank_city')}}</div>
             <div class="item-content">{{user.bank.city}}</div>
-          </div>
-          <div class="item half">
-            <div class="item-title">{{$t('profile.bank_account')}}</div>
-            <div class="item-content">{{user.bank.account}}</div>
           </div>
         </div>
       </div>
@@ -322,5 +322,9 @@ export default {
 .more-points {
   display: inline-block;
   padding-right: 10px;
+}
+
+.account-number {
+  font-size: 22px;
 }
 </style>

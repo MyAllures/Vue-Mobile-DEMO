@@ -97,6 +97,7 @@ export default {
   padding: 0 15px 10px;
   color: #999;
   font-size: 14px;
+  word-break: break-all;
 }
 .view-more {
   margin: 10px;
