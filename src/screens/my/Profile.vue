@@ -1,60 +1,61 @@
 <template>
-  <div>
-    <div class="profile-section">
-      <small class="profile-hint">
-        如需修改真实姓名或手机号码请 <a class="service-link" :href="customerServiceUrl" target="_blank">联系客服</a>
-      </small>
-      <div class="profile-field">
-         <p class="title">真实姓名</p>
-         <p class="text">{{user.real_name}}</p>
+  <div class="stretch-layout wrapper">
+    <div>
+      <div class="profile-section">
+        <small class="profile-hint">
+          如需修改真实姓名或手机号码请 <a class="service-link" :href="customerServiceUrl" target="_blank">联系客服</a>
+        </small>
+        <div class="profile-field">
+           <p class="title">真实姓名</p>
+           <p class="text">{{user.real_name}}</p>
+        </div>
+        <div class="profile-field">
+           <p class="title">手机号码</p>
+           <p class="text">{{user.phone}}</p>
+        </div>
       </div>
-      <div class="profile-field">
-         <p class="title">手机号码</p>
-         <p class="text">{{user.phone}}</p>
-      </div>
+      <group label-width="'100px'">
+        <div v-if="inputErrors.length">
+          <ul class="input-errors">
+            <li class="text" v-for="(error, index) in inputErrors" :key="index">
+              {{error}}
+            </li>
+          </ul>
+        </div>
+        <x-input
+          :class="{'weui-cell_warn': !validators['email'].valid}"
+          autocapitalize="off"
+          :title="$t('profile.email')"
+          is-type="email"
+          ref="email"
+          @on-change="validate($event, 'email')"
+          v-model="member.email">
+        </x-input>
+        <x-input
+          :class="{'weui-cell_warn': !validators['wechat'].valid}"
+          autocapitalize="off"
+          :title="$t('profile.wechat')"
+          type="text"
+          ref="wechat"
+          @on-change="validate($event, 'wechat')"
+          v-model="member.wechat">
+        </x-input>
+        <x-input
+          :class="{'weui-cell_warn': !validators['qq'].valid}"
+          :title="$t('profile.qq')"
+          show-clear
+          :max="14"
+          ref="qq"
+          @on-change="validate($event, 'qq')"
+          keyboard="number"
+          type="text"
+          v-model="member.qq">
+        </x-input>
+      </group>
     </div>
-    <group label-width="'100px'">
-      <div v-if="inputErrors.length">
-        <ul class="input-errors">
-          <li class="text" v-for="(error, index) in inputErrors" :key="index">
-            {{error}}
-          </li>
-        </ul>
-      </div>
-      <x-input
-      :class="{'weui-cell_warn': !validators['email'].valid}"
-      autocapitalize="off"
-      :title="$t('profile.email')"
-      is-type="email"
-      ref="email"
-      @on-change="validate($event, 'email')"
-      v-model="member.email">
-      </x-input>
 
-      <x-input
-      :class="{'weui-cell_warn': !validators['wechat'].valid}"
-      autocapitalize="off"
-      :title="$t('profile.wechat')"
-      type="text"
-      ref="wechat"
-      @on-change="validate($event, 'wechat')"
-      v-model="member.wechat">
-      </x-input>
-
-      <x-input
-      :class="{'weui-cell_warn': !validators['qq'].valid}"
-      :title="$t('profile.qq')"
-      show-clear
-      :max="14"
-      ref="qq"
-      @on-change="validate($event, 'qq')"
-      keyboard="number"
-      type="text"
-      v-model="member.qq">
-      </x-input>
-    </group>
-    <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
-    <div class="wrapper set-bottom">
+    <div class="m-b">
+      <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
       <x-button class="submit-btn" type="primary" :disabled="!hasChange" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
         <span v-else>{{$t('profile.submit')}}</span>
@@ -247,6 +248,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.wrapper {
+  height: 100%;
+  overflow-y: auto;
+}
+
 .profile-section {
   padding: 20px 15px;
   .profile-hint {

@@ -196,6 +196,7 @@
 <style lang="less" scoped>
 .wrapper {
   height: 100%;
+  overflow: auto;
 }
 
 
