@@ -42,7 +42,7 @@
             <span>{{$t('misc.register')}}</span>
           </flexbox-item>
           <flexbox-item class="text-center" @click.native="tryDemo">
-            <span>{{$t('misc.register')}}</span>
+            <span>{{$t('misc.try')}}</span>
           </flexbox-item>
         </flexbox>
       </div>
