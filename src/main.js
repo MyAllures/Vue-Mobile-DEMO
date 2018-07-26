@@ -22,7 +22,12 @@ import {HTTP_ERROR, JS_ERROR, report} from './report'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
-
+window.onerror = function (errorMessage, scriptURI, lineNo, columnNo, error) {
+  report({
+    type: JS_ERROR,
+    error
+  })
+}
 Vue.config.errorHandler = (error, vm, info) => {
   report({
     type: JS_ERROR,
