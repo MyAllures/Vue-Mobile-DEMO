@@ -310,7 +310,7 @@ body .vux-header {
       position: absolute;
       width: 24px;
       height: 24px;
-      left: 15px;
+      left: 10px;
       top: 10px;
     }
 
@@ -328,6 +328,9 @@ body .vux-header {
     .item-content {
       font-size: 16px;
       color: #333;
+      &.bigger {
+        font-size: 22px;
+      }
     }
   }
   &:after {
@@ -349,4 +352,10 @@ body .vux-header {
 .service-link {
   color: #166fd8;
   text-decoration: underline;
+}
+
+.stretch-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

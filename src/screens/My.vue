@@ -18,9 +18,9 @@
           </div>
           <div class="button" @click="$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
         </cell>
-        <cell @click.native="unread ? $router.push('/my/message') : ''"
+        <cell @click.native="$router.push('/my/message')"
           :title="'站内消息'"
-          :is-link="!!unread">
+          is-link>
           <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
           <span :class="{'unread-alert': unread}">{{ unread }}</span>
         </cell>
