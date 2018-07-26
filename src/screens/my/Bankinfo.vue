@@ -277,7 +277,7 @@ export default {
   }
 }
 </script>
-<style lang='less'>
+<style lang="less" scoped>
 .text-muted {
   color: #999;
   display: block;
