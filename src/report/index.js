@@ -1,3 +1,4 @@
+import store from '../store'
 function processStackMsg (stack) {
   stack = stack
       .replace(/\n/gi, '')            // 去掉换行，节省传输内容大小
@@ -37,6 +38,9 @@ export function report (config) {
         break
       default:
         return
+    }
+    if (store.state.route) {
+      reportLog += `$path=${store.state.route.path}`
     }
     if (config.memo) {
       reportLog += `&memo=${config.memo}`

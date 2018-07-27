@@ -32,8 +32,8 @@
       <div class="weui-cell__ft">
         <icon type="clear" v-show="showClear && currentValue !== '' && !readonly && !disabled && focused" @click.native="clear"></icon>
       </div>
-      <div v-if="hasCaptcha" class="captcha">
-        <slot name="captcha"></slot>
+      <div v-if="$slots.right" class="right">
+        <slot name="right"></slot>
       </div>
       <x-address style="display: none"
         title="请选择"
@@ -126,10 +126,6 @@ export default {
       default: 'false'
     },
     validateEvent: {
-      type: Boolean,
-      default: false
-    },
-    hasCaptcha: {
       type: Boolean,
       default: false
     },
@@ -273,6 +269,7 @@ export default {
   display: flex;
   flex: 1 0 auto;
   align-items: center;
+  height: 100%;
   input::-webkit-input-placeholder {
     color: #bfbfbf;
     font-size: 16px;
@@ -280,6 +277,11 @@ export default {
   textarea::-webkit-input-placeholder {
     color: #bfbfbf;
     font-size: 16px;
+  }
+  .right {
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 }
 

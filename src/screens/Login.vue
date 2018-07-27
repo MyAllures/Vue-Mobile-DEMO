@@ -21,9 +21,8 @@
           </v-form-item>
           <v-form-item v-if="illegalTriedLogin" :label="'验证码'" prop="verification_code_1">
             <v-input autocapitalize="off"
-              :hasCaptcha="true"
               v-model="user.verification_code_1">
-              <img slot="captcha" class="captcha" :src="captcha_src" alt="captcha">
+              <img slot="right" class="captcha" :src="captcha_src" @click="fetchCaptcha" alt="captcha">
             </v-input>
           </v-form-item>
         </v-form>
