@@ -47,7 +47,7 @@
         </v-form>
       </div>
       <div class="set-bottom">
-        <p class="tip"> 提交後不可自行更改，如需更改请联系客服 </p>
+        <p class="tip">提交後不可自行更改，如需更改请联系客服</p>
         <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
         <x-button type="primary" :disabled="!inputCompleted" class="submit-btn" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -57,7 +57,7 @@
     </div>
 
     <div v-else>
-      <p class="tip">{{$t('profile.bankinfo_update_tip')}}</p>
+      <p class="top-tip">{{$t('profile.bankinfo_update_tip')}}</p>
       <div class="stamp-wrapper">
         <div class="stamp hasicon">
           <div class="item">
@@ -232,6 +232,13 @@ export default {
   margin-bottom: 10px;
 }
 
+.top-tip {
+  font-size: 14px;
+  color: #666;
+  margin-left: 15px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
 .service-btn {
   display: inline-block;
   width: 85%;

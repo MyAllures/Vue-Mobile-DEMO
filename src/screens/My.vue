@@ -164,7 +164,7 @@ export default {
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;
-  padding: 4px 10px;
+  padding: 1px 7px;
   background: #d0021b;
   color: #fff;
   font-weight: 500;
