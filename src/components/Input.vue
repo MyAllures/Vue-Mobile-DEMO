@@ -3,6 +3,7 @@
     <template v-if="type!=='textarea'">
       <div class="weui-cell__bd weui-cell__primary">
         <input
+          v-if="type !== 'select'"
           :class="type==='textarea'?'weui-textarea':'weui-input'"
           :maxlength="max"
           :autocomplete="autocomplete"
@@ -22,6 +23,11 @@
           @focus="handleFocus"
           @blur="handleBlur"
           ref="input"/>
+          <div @click="optionsVisible = !optionsVisible"
+            :class="['weui-input', 'selector', {'up': optionsVisible}]"
+            v-else>
+            {{optionToDisplay}}
+          </div>
       </div>
       <div class="weui-cell__ft">
         <icon type="clear" v-show="showClear && currentValue !== '' && !readonly && !disabled && focused" @click.native="clear"></icon>
@@ -29,7 +35,14 @@
       <div v-if="hasCaptcha" class="captcha">
         <slot name="captcha"></slot>
       </div>
+      <x-address style="display: none"
+        title="请选择"
+        v-model="selectedOption"
+        :list="options"
+        :show.sync="optionsVisible">
+      </x-address>
     </template>
+
     <div v-else class="weui-cell__bd">
       <textarea
         class="weui-textarea"
@@ -56,16 +69,17 @@
         <span>{{count}}</span>/{{max}}
       </div>
     </div>
+
   </div>
 </template>
 <script>
-import {Icon} from 'vux'
+import {Icon, XAddress} from 'vux'
 import emitter from '../mixins/emitter.js'
 export default {
   name: 'VInput',
   mixins: [emitter],
   components: {
-    Icon
+    Icon, XAddress
   },
   props: {
     type: {
@@ -119,6 +133,11 @@ export default {
       type: Boolean,
       default: false
     },
+    options: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
     filter: RegExp
   },
   data () {
@@ -126,13 +145,33 @@ export default {
       currentValue: '',
       focused: false,
       isOnComposition: false,
-      valueBeforeComposition: null
+      valueBeforeComposition: null,
+      selectedOption: [],
+      optionToDisplay: '',
+      optionsVisible: false
     }
   },
   watch: {
     'value' (val, oldValue) {
       this.setCurrentValue(val)
+    },
+    'selectedOption': {
+      handler: function (option) {
+        this.$emit('selectOption', option)
+        let current = this.options.find(item => {
+          console.log(item, 'item')
+          return item.value === option[0]
+        })
+        this.optionToDisplay = current.name
+      },
+      deep: true
+    },
+    'options': function (options) {
+      if (options && options.length) {
+        this.selectedOption = [options[0]]
+      }
     }
+
   },
   computed: {
     count () {
@@ -242,6 +281,25 @@ export default {
     color: #bfbfbf;
     font-size: 16px;
   }
+}
+
+.selector:after {
+  content: " ";
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-width: 2px 2px 0 0;
+  border-color: #c8c8cd;
+  border-style: solid;
+  transform: matrix(.71,.71,-.71,.71,0,0) rotate(90deg);
+  position: absolute;
+  top: 50%;
+  margin-top: -4px;
+  right: 15px;
+}
+
+.selector.up:after{
+  transform: matrix(.71,.71,-.71,.71,0,0) rotate(-90deg);
 }
 </style>
 

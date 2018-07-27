@@ -63,9 +63,9 @@
       </div>
     </div>
 
-    <alert :hide-on-blur="true" v-model="show">
-      {{message}}
-    </alert>
+    <!-- <alert :hide-on-blur="true" v-model="show">
+      {{message}}ffffff
+    </alert> -->
   </div>
 </template>
 
@@ -107,7 +107,7 @@
         },
         errorMsg: '',
         loading: false,
-        message: '',
+        // message: '',
         show: false,
         inputErrors: [],
         rules: {
@@ -133,8 +133,7 @@
         return lowerHint + comma + upperHint
       },
       inputCompleted () {
-        return this.withdraw.amount !== '' &&
-          this.withdraw.withdraw_password !== ''
+        return this.withdraw.amount !== '' && this.withdraw.withdraw_password !== ''
       }
     },
     mounted () {
@@ -157,7 +156,7 @@
             .then(response => {
               window.gtag('event', '取款', {'event_category': '取款'})
               this.loading = false
-              this.message = '取款信息已提交'
+              // this.message = '取款信息已提交'
               this.show = true
               this.$refs.form.resetFields()
               this.$nextTick(() => {
@@ -166,6 +165,7 @@
                 this.inputErrors = []
               })
               this.errorMsg = ''
+              this.$router.push({name: 'WithdrawSuccess'})
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
