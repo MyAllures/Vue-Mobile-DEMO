@@ -189,10 +189,11 @@ export default {
   text-align: center;
   height: 20px;
   line-height: 20px;
+  margin-bottom: 10px
 }
 
 .actions {
-  margin-top: 1em;
+  margin: 10px;
   padding: 0 1em;
 }
 .login-button {

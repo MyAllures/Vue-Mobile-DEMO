@@ -41,7 +41,7 @@
           </v-form>
         </div>
       </div>
-      <div class="text-center m-b">
+      <div class="text-center m-b-lg">
         <div class="text-danger">{{errorMsg}}</div>
         <p class="text">请核对收款人信息，如需更改收款人请 <a class="service-link" :href="systemConfig.customerServiceUrl">联系客服</a></p>
         <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
@@ -53,7 +53,6 @@
     <div v-else class="text-center m-t-lg">
       <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
       <div class="figure-caption">
-        <p class="main">尚未建立银行资讯</p>
         <p class="sub">申请取款须先建立银行资讯</p>
       </div>
       <div class="set-bottom">

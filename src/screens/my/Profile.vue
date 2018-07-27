@@ -54,7 +54,7 @@
       </group>
     </div>
 
-    <div class="m-b">
+    <div class="m-b-lg">
       <div :class="['text-center', 'm-t', response.success? 'text-success':'text-danger']">{{response.msg}}</div>
       <x-button class="submit-btn" type="primary" :disabled="!hasChange" @click.native="submit">
         <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
