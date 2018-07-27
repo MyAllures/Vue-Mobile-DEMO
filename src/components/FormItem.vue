@@ -168,9 +168,14 @@ export default {
 .v-form-item {
   display: flex;
   align-items: center;
+  height: 45px;
+  &.weui-cell {
+    padding: 0 15px;
+  }
   &.is-error {
     background: rgba(208, 2, 27, 0.05);
     &::before{
+      display: block;
       color: @red;
       border-color: @red;
       left: 0;
@@ -220,6 +225,7 @@ export default {
   }
   .v-form-item__content {
     width: 0%;
+    height: 100%;
     flex: 1 0 auto;
   }
   .v-form-item__error {
