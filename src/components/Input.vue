@@ -155,8 +155,7 @@ export default {
       handler: function (option) {
         this.$emit('selectOption', option)
         let current = this.options.find(item => {
-          console.log(item, 'item')
-          return item.value === option[0]
+          return item.value === (option[0].value || option[0])
         })
         this.optionToDisplay = current.name
       },

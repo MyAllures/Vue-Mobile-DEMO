@@ -18,7 +18,7 @@
     </div>
     <div v-if="!user.bank">
       <div class="form m-t">
-        <v-form :model="member.bank" ref="form" @click.native="errorMsg = ''">
+        <v-form :model="member.bank" :rules="rules" ref="form" @click.native="errorMsg = ''">
           <v-form-item required :label="$t('profile.select_bank')" prop="bank">
             <v-input :type="'select'"
               :options="banks"
@@ -91,7 +91,7 @@
 <script>
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { validateBankAccount, msgFormatter } from '../../utils'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
@@ -99,16 +99,11 @@ import VInput from '@/components/Input'
 export default {
   name: 'bankinfo',
   data () {
-    const bankAccountValidator = (value) => {
+    const bankAccountValidator = (rule, value, callback) => {
       if (!validateBankAccount(value)) {
-        return {
-          valid: false,
-          msg: '该帐号格式无效'
-        }
+        callback(new Error('该帐号格式无效'))
       } else {
-        return {
-          valid: true
-        }
+        callback()
       }
     }
 
@@ -128,7 +123,7 @@ export default {
       inputErrors: [],
       valid: false,
       rules: {
-        'bank.bank': [{validator: bankAccountValidator}]
+        'account': [{validator: bankAccountValidator}]
       }
     }
   },
@@ -155,7 +150,7 @@ export default {
   },
   methods: {
     selectOption (option) {
-      this.member.bank.bank = option[0]
+      this.member.bank.bank = option[0].value
     },
     inputAmount (val) {
       let formatted = !val ? '' : val.replace(/[^0-9]/g, '')
@@ -163,16 +158,6 @@ export default {
         this.member.bank.account = formatted
       })
     },
-    validate () {
-      let valid = true
-      for (let x in this.$refs) {
-        valid = this.$refs[x].valid && valid
-      }
-      this.valid = valid && !!this.member.bank.bank
-    },
-    ...mapActions([
-      'fetchUser'
-    ]),
     fetchBank (index) {
       fetchBank(true).then(response => {
         response.forEach(item => {
@@ -185,21 +170,25 @@ export default {
       })
     },
     submit () {
-      if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
-        return
-      }
-      this.loading = true
-      addUserBank(this.user, this.member).then((response) => {
-        this.loading = false
-        this.fetchUser({})
-        this.$root.showToast = true
-        this.$root.toastText = this.$t('profile.bank_sucess')
-        setTimeout(() => {
-          this.$router.push({name: 'My'})
-        }, 2000)
-      }).catch(errRes => {
-        this.errorMsg = msgFormatter(errRes)
-        this.loading = false
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
+            return
+          }
+          this.loading = true
+          addUserBank(this.user, this.member).then((response) => {
+            this.loading = false
+            this.$store.dispatch('fetchUser')
+            setTimeout(() => {
+              this.$router.push({name: 'My'})
+            }, 2000)
+          }).catch(errRes => {
+            this.errorMsg = msgFormatter(errRes)
+            this.loading = false
+          })
+        } else {
+          return false
+        }
       })
     },
     checkBankValue () {
