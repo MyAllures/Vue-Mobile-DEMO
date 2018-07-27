@@ -30,7 +30,7 @@ export default {
       this.setMarquee()
     }
   },
-  created () {
+  mounted () {
     if (this.messages.length > 0) {
       this.setMarquee()
     }

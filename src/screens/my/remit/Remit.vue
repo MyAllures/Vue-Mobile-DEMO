@@ -9,7 +9,6 @@
       <v-form-item required :label="$t('my.depositor')" prop="remit_info.depositor">
         <v-input
           autocapitalize="off"
-          :title="$t('my.depositor')"
           v-model="remit.remit_info.depositor">
         </v-input>
       </v-form-item>
