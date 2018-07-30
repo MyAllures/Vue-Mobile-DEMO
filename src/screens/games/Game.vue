@@ -44,7 +44,6 @@
         <flexbox-item>
           <x-input
             class="weui-vcode"
-            keyboard="number"
             placeholder="金额"
             v-model="amount"
             @on-change="inputAmount"
@@ -68,7 +67,7 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
-import { Indicator } from '../../utils'
+import { Indicator, validateAmount } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
@@ -195,10 +194,14 @@ export default {
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
     },
     inputAmount (val) {
-      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
-      this.$nextTick(() => {
-        this.amount = formatted
-      })
+      if (!val) {
+        this.amount = '10'
+      }
+      if (val && !validateAmount(val)) {
+        this.$nextTick(() => {
+          this.amount = val.slice(0, -1)
+        })
+      }
     },
     updateSchedule () {
       if (this.isBusy) {
