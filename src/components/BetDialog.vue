@@ -112,7 +112,7 @@ export default {
       } else {
         let total = 0
         this.betAmounts.forEach(amount => {
-          let num = parseInt(amount)
+          let num = parseFloat(amount)
           if (num) {
             total += num
           }
