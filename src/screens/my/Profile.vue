@@ -67,7 +67,7 @@ import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
 import { changeUserInformation } from '../../api'
 import { msgFormatter, validateEmail, validateQQ } from '../../utils'
 import { mapActions, mapGetters, mapState } from 'vuex'
-const inputs = ['email', 'qq', 'gender', 'wechat', 'birthday']
+const inputs = ['email', 'qq', 'wechat']
 export default {
   name: 'profile',
   data () {
@@ -84,17 +84,6 @@ export default {
             } else {
               return ''
             }
-          },
-          errorMsg: ''
-        },
-        birthday: {
-          origin: '',
-          valid: true,
-          validate: (value) => {
-            if (!value) {
-              return '请选择生日'
-            }
-            return ''
           },
           errorMsg: ''
         },
@@ -121,22 +110,9 @@ export default {
             return ''
           },
           errorMsg: ''
-        },
-        gender: {
-          origin: '',
-          valid: true,
-          validate: (value) => {
-            if (!value) {
-              return '请选择性别'
-            }
-            return ''
-          },
-          errorMsg: ''
         }
       },
       member: {
-        birthday: '',
-        gender: '',
         email: '',
         wechat: '',
         qq: ''
