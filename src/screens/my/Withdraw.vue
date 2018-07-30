@@ -41,7 +41,7 @@
           </v-form>
         </div>
       </div>
-      <div class="text-center m-b">
+      <div class="text-center m-b-lg">
         <div class="text-danger">{{errorMsg}}</div>
         <p class="text">请核对收款人信息，如需更改收款人请 <a class="service-link" :href="systemConfig.customerServiceUrl">联系客服</a></p>
         <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
@@ -53,7 +53,6 @@
     <div v-else class="text-center m-t-lg">
       <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
       <div class="figure-caption">
-        <p class="main">尚未建立银行资讯</p>
         <p class="sub">申请取款须先建立银行资讯</p>
       </div>
       <div class="set-bottom">
@@ -62,10 +61,6 @@
         </x-button>
       </div>
     </div>
-
-    <alert :hide-on-blur="true" v-model="show">
-      {{message}}
-    </alert>
   </div>
 </template>
 
@@ -107,7 +102,6 @@
         },
         errorMsg: '',
         loading: false,
-        message: '',
         show: false,
         inputErrors: [],
         rules: {
@@ -133,8 +127,7 @@
         return lowerHint + comma + upperHint
       },
       inputCompleted () {
-        return this.withdraw.amount !== '' &&
-          this.withdraw.withdraw_password !== ''
+        return this.withdraw.amount !== '' && this.withdraw.withdraw_password !== ''
       }
     },
     mounted () {
@@ -157,7 +150,6 @@
             .then(response => {
               window.gtag('event', '取款', {'event_category': '取款'})
               this.loading = false
-              this.message = '取款信息已提交'
               this.show = true
               this.$refs.form.resetFields()
               this.$nextTick(() => {
@@ -166,6 +158,7 @@
                 this.inputErrors = []
               })
               this.errorMsg = ''
+              this.$router.push({name: 'WithdrawSuccess'})
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
@@ -196,6 +189,7 @@
 <style lang="less" scoped>
 .wrapper {
   height: 100%;
+  overflow: auto;
 }
 
 

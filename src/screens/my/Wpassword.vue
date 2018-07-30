@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="p-t-lg">
     <div class="form">
       <v-form :model="password" :rules="rules" ref="form" @click.native="errorMsg = ''">
          <v-form-item required :label="$t('change_password.w_old')" prop="current_password">

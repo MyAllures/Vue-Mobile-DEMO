@@ -3,11 +3,8 @@
     <div class="success-img"></div>
     <div class="success-text">提交成功，请等待交易状态更新</div>
     <div class="success-button">
-      <x-button type="primary" @click.native="$router.push('/my/deposit')">
-        继续充值
-      </x-button>
-      <x-button type="primary" plain @click.native="toRecord">
-        查看充值纪录
+      <x-button type="primary" @click.native="toRecord">
+        查看取款纪录
       </x-button>
     </div>
   </div>
@@ -16,18 +13,18 @@
 <script>
 import {XButton} from 'vux'
 export default {
-  name: 'Success',
+  name: 'withdrawSuccess',
   components: {
     XButton
   },
   methods: {
     toRecord () {
       this.sendGaEvent({
-        label: '充值完成',
-        category: '查看充值纪录',
+        label: '取款完成',
+        category: '查看取款纪录',
         action: '点击'
       })
-      this.$router.push('/fin/payment_record')
+      this.$router.push('/fin/withdraw_record')
     }
   }
 }
@@ -40,7 +37,7 @@ export default {
   .success-img {
     width: 100%;
     height: 200px;
-    background: url('../../assets/submit_success.png') no-repeat;
+    background: url('../../assets/icon_withdrawsuccess.png') no-repeat;
     background-size: contain;
     background-position: center center;
   }

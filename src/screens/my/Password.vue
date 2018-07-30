@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="p-t-lg">
     <div class="form">
       <v-form :model="password" :rules="rules" ref="form" @click.native="errorMsg = ''">
          <v-form-item required :label="$t('change_password.old')" prop="prev_password">
@@ -117,9 +117,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.container {
-  padding-top: 20px;
-}
 .submit-btn {
   width: 85%;
 }

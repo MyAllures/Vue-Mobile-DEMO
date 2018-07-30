@@ -22,7 +22,7 @@
           :title="'站内消息'"
           is-link>
           <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
-          <span :class="{'unread-alert': unread}">{{ unread }}</span>
+          <span v-if="unread" :class="{'unread-alert': unread}">{{ unread }}</span>
         </cell>
       </group>
       <group>
@@ -164,7 +164,7 @@ export default {
 .unread-alert {
   border-radius: 20px;
   font-size: 14px;
-  padding: 4px 10px;
+  padding: 1px 7px;
   background: #d0021b;
   color: #fff;
   font-weight: 500;

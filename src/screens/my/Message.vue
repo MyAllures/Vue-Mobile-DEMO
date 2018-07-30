@@ -1,24 +1,29 @@
 <template>
 <div>
-  <group class="landing-msgs">
-    <template v-for="(message, index) in messages">
-      <cell :class="['cell-box', message.status ? 'read' : 'unread']"
-            :title="message.title"
-            is-link
-            :arrow-direction="message.showContent ? 'up' : 'down'"
-            :key="'message' + index"
-            @click.native="read(message)">
-        <div slot="default">
-          <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
-        </div>
-      </cell>
-      <p class="content" v-if="message.showContent">
-        {{message.content}}
-      </p>
-    </template>
-  </group>
-  <div class="view-more" v-if='!ended'>
-    <x-button @click.native="getMessages">查看更多</x-button>
+  <div v-if="messages.length">
+    <group class="landing-msgs">
+      <template v-for="(message, index) in messages">
+        <cell :class="['cell-box', message.status ? 'read' : 'unread']"
+              :title="message.title"
+              is-link
+              :arrow-direction="message.showContent ? 'up' : 'down'"
+              :key="'message' + index"
+              @click.native="read(message)">
+          <div slot="default">
+            <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
+          </div>
+        </cell>
+        <p class="content" v-if="message.showContent">
+          {{message.content}}
+        </p>
+      </template>
+    </group>
+    <div class="view-more" v-if='!ended'>
+      <x-button @click.native="getMessages">查看更多</x-button>
+    </div>
+  </div>
+  <div class="text-center p-t-lg grey" v-else>
+    目前没有消息
   </div>
 </div>
 </template>
