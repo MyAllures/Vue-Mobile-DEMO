@@ -124,6 +124,7 @@ export default {
   },
   watch: {
     'betDialog.visible': function (visible) {
+      this.loading = false
       this.dialogVisible = visible
       if (visible) {
         if (this.hasPlanCheck) {
