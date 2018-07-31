@@ -119,7 +119,27 @@ export default {
     }
   },
   computed: {
+    notGetResult () {
+      if (!this.currentGame) {
+        return true
+      }
+      if (this.currentGame.code === 'hkl') {
+        if (this.currentGameResult && this.currentGameResult.issue_number) {
+          if (this.schedule.id) {
+            if (parseInt(this.schedule.issue_number) - 1 > parseInt(this.currentGameResult.issue_number)) {
+              return true
+            }
+          }
+        } else {
+          return true
+        }
+      }
+      return false
+    },
     gameClosed () {
+      if (this.notGetResult) {
+        return true
+      }
       if (!this.closeCountDown) {
         return false
       }
@@ -133,7 +153,7 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'betDialog'
+      'systemConfig', 'user', 'betDialog', 'currentGameResult'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -160,6 +180,11 @@ export default {
     'betDialog.isSuccess': function (isSuccess) {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
+      }
+    },
+    gameClosed: function () {
+      if (this.gameClosed) {
+        this.$store.dispatch('setCurrentGameResult', [{}])
       }
     }
   },
@@ -217,7 +242,7 @@ export default {
           let result = _.find(res, schedule => {
             return (schedule.id !== this.schedule.id) &&
               this.$moment().isBefore(schedule.schedule_result) &&
-              (schedule.status === 'open' || schedule.status === 'created')
+              (schedule.status === 'open' || schedule.status === 'created' || schedule.status === 'close')
           })
 
           if (result) {
