@@ -161,6 +161,16 @@ export default new Router({
       }
     },
     {
+      path: '/my/deposit/withdraw_success',
+      name: 'WithdrawSuccess',
+      component: resolve => { require(['../screens/my/WithdrawSuccess.vue'], resolve) },
+      meta: {
+        title: '申請取款',
+        gaTitle: '取款申请提交',
+        showBack: true
+      }
+    },
+    {
       path: '/my/deposit',
       name: 'Deposit',
       meta: {
@@ -224,7 +234,7 @@ export default new Router({
       path: '/my/profile',
       name: 'profile',
       meta: {
-        title: '修改账户资料',
+        title: '基本資料',
         gaTitle: '基本资料',
         showBack: true,
         requiresAuth: true
@@ -245,7 +255,7 @@ export default new Router({
       path: '/my/withdraw',
       name: 'withdraw',
       meta: {
-        title: '取款',
+        title: '申请取款',
         showBack: true,
         requiresAuth: true
       },

@@ -48,7 +48,10 @@ export default {
     }
   },
   created () {
-    this.fetchResult(this.gameid).then(res => { this.pollResult(this.gameid) })
+    this.fetchResult(this.gameid).then(res => {
+      this.pollResult(this.gameid)
+      this.$store.dispatch('setCurrentGameResult', res)
+    })
   },
   computed: {
     resultNums () {
@@ -79,7 +82,10 @@ export default {
       this.showSum = false
       clearInterval(this.interval)
       clearTimeout(this.timer)
-      this.fetchResult(gameid).then(res => { this.pollResult(this.gameid) })
+      this.fetchResult(gameid).then(res => {
+        this.pollResult(this.gameid)
+        this.$store.dispatch('setCurrentGameResult', res)
+      })
     },
     'gameLatestResult.game_code': function (code) {
       if (code === 'hkl' || code === 'luckl') {
@@ -139,6 +145,7 @@ export default {
                 this.loading = true
                 setTimeout(() => {
                   this.loading = false
+                  this.$store.dispatch('setCurrentGameResult', result)
                 }, 3000)
                 setTimeout(() => {
                   this.$store.dispatch('fetchUser')

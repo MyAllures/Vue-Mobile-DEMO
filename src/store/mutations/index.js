@@ -123,5 +123,9 @@ export default {
   },
   [types.SET_TITLE]: (state, title) => {
     state.customTitle = title
+  },
+  [types.SET_CURRENTGAME_RESULT]: (state, result) => {
+    let obj = result[0] || result
+    state.currentGameResult = obj
   }
 }

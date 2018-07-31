@@ -52,6 +52,7 @@ export default new Vuex.Store({
       smsValidationEnabled: false
     },
     envelope: {},
+    currentGameResult: null,
     emojis: null,
     keepAlivePage: [],
     ws: null,

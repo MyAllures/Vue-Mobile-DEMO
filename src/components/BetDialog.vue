@@ -17,7 +17,6 @@
               :key="index">
               <x-input
                 :title="`【${bet.display_name}】 @${bet.odds} X `"
-                keyboard="number"
                 @on-change="formatEachAmount($event, index)"
                 v-model="betAmounts[index]"
                 label-width="100%"
@@ -54,7 +53,7 @@
 <script>
 import { placeBet } from '../api'
 import { mapState } from 'vuex'
-import { msgFormatter } from '../utils'
+import { msgFormatter, validateAmount } from '../utils'
 import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
 import FixScroll from '../directive/fixscroll'
 const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
@@ -113,7 +112,7 @@ export default {
       } else {
         let total = 0
         this.betAmounts.forEach(amount => {
-          let num = parseInt(amount)
+          let num = parseFloat(amount)
           if (num) {
             total += num
           }
@@ -165,7 +164,7 @@ export default {
           bet_options: bet.bet_options,
           game_schedule: bet.game_schedule,
           play: bet.play,
-          bet_amount: parseInt(this.betAmounts[i])
+          bet_amount: parseFloat(this.betAmounts[i])
         }
       })
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
@@ -207,11 +206,16 @@ export default {
         })
     },
     formatEachAmount (val, index) {
+      if (!val) {
+        this.amount = '10'
+        this.$set(this.betAmounts, index, '10')
+      }
       val = val + ''
-      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
-      this.$nextTick(() => {
-        this.$set(this.betAmounts, index, formatted)
-      })
+      if (val && !validateAmount(val)) {
+        this.$nextTick(() => {
+          this.$set(this.betAmounts, index, val.slice(0, -1))
+        })
+      }
     }
   },
   beforeDestroy () {

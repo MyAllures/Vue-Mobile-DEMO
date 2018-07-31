@@ -44,7 +44,6 @@
         <flexbox-item>
           <x-input
             class="weui-vcode"
-            keyboard="number"
             placeholder="金额"
             v-model="amount"
             @on-change="inputAmount"
@@ -68,7 +67,7 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule } from '../../api'
-import { Indicator } from '../../utils'
+import { Indicator, validateAmount } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
@@ -120,7 +119,27 @@ export default {
     }
   },
   computed: {
+    notGetResult () {
+      if (!this.currentGame) {
+        return true
+      }
+      if (this.currentGame.code === 'hkl') {
+        if (this.currentGameResult && this.currentGameResult.issue_number) {
+          if (this.schedule.id) {
+            if (parseInt(this.schedule.issue_number) - 1 > parseInt(this.currentGameResult.issue_number)) {
+              return true
+            }
+          }
+        } else {
+          return true
+        }
+      }
+      return false
+    },
     gameClosed () {
+      if (this.notGetResult) {
+        return true
+      }
       if (!this.closeCountDown) {
         return false
       }
@@ -134,13 +153,13 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'betDialog'
+      'systemConfig', 'user', 'betDialog', 'currentGameResult'
     ]),
     gameId () {
       return this.$route.params.gameId
     },
     amountForProp () {
-      return parseInt(this.amount)
+      return this.amount
     },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
@@ -161,6 +180,11 @@ export default {
     'betDialog.isSuccess': function (isSuccess) {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
+      }
+    },
+    gameClosed: function () {
+      if (this.gameClosed) {
+        this.$store.dispatch('setCurrentGameResult', [{}])
       }
     }
   },
@@ -195,10 +219,14 @@ export default {
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
     },
     inputAmount (val) {
-      let formatted = !val ? '' : val.replace(/^[0]|[^0-9]/g, '')
-      this.$nextTick(() => {
-        this.amount = formatted
-      })
+      if (!val) {
+        this.amount = '10'
+      }
+      if (val && !validateAmount(val)) {
+        this.$nextTick(() => {
+          this.amount = val.slice(0, -1)
+        })
+      }
     },
     updateSchedule () {
       if (this.isBusy) {
@@ -214,7 +242,7 @@ export default {
           let result = _.find(res, schedule => {
             return (schedule.id !== this.schedule.id) &&
               this.$moment().isBefore(schedule.schedule_result) &&
-              (schedule.status === 'open' || schedule.status === 'created')
+              (schedule.status === 'open' || schedule.status === 'created' || schedule.status === 'close')
           })
 
           if (result) {

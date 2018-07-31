@@ -55,7 +55,6 @@ export class Indicator {
   }
 
   destroy () {
-    console.log('destroy')
     if (this.hidden in document) {
       document.removeEventListener('visibilitychange', this.onchange)
     } else if ((this.hidden === 'mozHidden')) {
@@ -110,7 +109,8 @@ const pattern = {
   qq: /^[0-9]{4,}$/,
   phone: /^[1][3-8]\d{9}$/,
   bankAccount: /^[0-9]{10,}$/,
-  withdrawPassword: /^[0-9]{6}$/
+  withdrawPassword: /^[0-9]{6}$/,
+  amount: /^([1-9][0-9]*([.][0-9]{0,1})?)$/
 }
 
 export function validateUserName (value) {
@@ -139,6 +139,10 @@ export function validateWithdrawPassword (value) {
 
 export function validateEmail (value) {
   return isEmail(value)
+}
+
+export function validateAmount (value) {
+  return pattern.amount.test(value)
 }
 
 export function _getwidth (date, o) {

@@ -93,7 +93,7 @@ export default {
       type: Object
     },
     amount: {
-      type: Number,
+      type: String,
       default: 1
     },
     playReset: {

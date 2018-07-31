@@ -170,5 +170,8 @@ export default {
   },
   setCustomTitle: ({commit}, title) => {
     commit(types.SET_TITLE, title)
+  },
+  setCurrentGameResult: ({ commit }, result) => {
+    commit(types.SET_CURRENTGAME_RESULT, result)
   }
 }
