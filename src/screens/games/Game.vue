@@ -139,7 +139,7 @@ export default {
       return this.$route.params.gameId
     },
     amountForProp () {
-      return parseInt(this.amount)
+      return this.amount
     },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))

@@ -112,7 +112,7 @@ export default {
       } else {
         let total = 0
         this.betAmounts.forEach(amount => {
-          let num = parseInt(amount)
+          let num = parseFloat(amount)
           if (num) {
             total += num
           }
@@ -123,6 +123,7 @@ export default {
   },
   watch: {
     'betDialog.visible': function (visible) {
+      this.loading = false
       this.dialogVisible = visible
       if (visible) {
         if (this.hasPlanCheck) {
@@ -163,7 +164,7 @@ export default {
           bet_options: bet.bet_options,
           game_schedule: bet.game_schedule,
           play: bet.play,
-          bet_amount: parseInt(this.betAmounts[i])
+          bet_amount: parseFloat(this.betAmounts[i])
         }
       })
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})

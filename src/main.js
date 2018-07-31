@@ -92,7 +92,7 @@ axios.interceptors.response.use(res => {
       Vue.cookie.set('sessionid', res.data.sessionid)
       return Promise.reject(responseData)
     }
-    return Promise.reject(responseData.msg)
+    return Promise.reject(responseData)
   }
 }, (error) => {
   const option = {

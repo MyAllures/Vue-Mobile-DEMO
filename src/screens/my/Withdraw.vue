@@ -10,11 +10,11 @@
               <div class="item-title">{{$t('my.bank_account')}}</div>
               <div class="item-content bigger">{{user.bank.account}}</div>
             </div>
-            <div class="item">
+            <div class="item half">
               <div class="item-title">{{$t('my.bank_name')}}</div>
               <div class="item-content">{{user.bank.bank}}</div>
             </div>
-            <div class="item">
+            <div class="item half">
               <div class="item-title">{{$t('my.receiver')}}</div>
               <div class="item-content">{{user.real_name}}</div>
             </div>
@@ -196,7 +196,7 @@
 .text {
   font-size: 14px;
   color: #666;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
@@ -209,7 +209,7 @@
 }
 
 .hint {
-  margin-top: 20px;
+  margin-top: 15px;
   margin-left: 15px;
   font-size: 13px;
   color: #999;
