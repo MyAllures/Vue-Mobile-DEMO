@@ -164,7 +164,7 @@ export default {
           bet_options: bet.bet_options,
           game_schedule: bet.game_schedule,
           play: bet.play,
-          bet_amount: parseInt(this.betAmounts[i])
+          bet_amount: parseFloat(this.betAmounts[i])
         }
       })
       placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
