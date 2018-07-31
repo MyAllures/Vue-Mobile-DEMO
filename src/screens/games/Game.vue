@@ -220,7 +220,7 @@ export default {
     },
     inputAmount (val) {
       if (!val) {
-        this.amount = '10'
+        this.amount = ''
       }
       if (val && !validateAmount(val)) {
         this.$nextTick(() => {
@@ -317,6 +317,9 @@ export default {
     },
     formatBetInfo (originPlays) {
       return originPlays.map(play => {
+        if (play.amount <= 0) {
+          return
+        }
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
