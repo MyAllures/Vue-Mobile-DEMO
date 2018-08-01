@@ -150,7 +150,7 @@ export default {
   },
   methods: {
     selectOption (option) {
-      this.member.bank.bank = option[0].value
+      this.member.bank.bank = option[0].value || option[0]
     },
     inputAmount (val) {
       let formatted = !val ? '' : val.replace(/[^0-9]/g, '')
