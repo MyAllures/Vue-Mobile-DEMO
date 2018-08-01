@@ -313,6 +313,9 @@ export default {
       }
     },
     openDialog () {
+      if (!this.amount) {
+        return
+      }
       this.$store.dispatch('openBetDialog', this.formatBetInfo(this.validPlays))
     },
     formatBetInfo (originPlays) {
