@@ -48,7 +48,7 @@ export function report (config) {
     if (config.username) {
       reportLog += `&username=${config.username}`
     }
-    fetch('http://log.021toilet.com/f?' + reportLog, {mode: 'no-cors', method: 'GET'})
+    fetch('https://log.021toilet.com/f?' + reportLog, {mode: 'no-cors', method: 'GET'})
   } catch (e) {
     console.log(e)
   }
