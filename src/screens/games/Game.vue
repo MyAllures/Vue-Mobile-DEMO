@@ -248,6 +248,8 @@ export default {
           if (result) {
             clearInterval(this.timer)
             this.schedule = result
+            this.schedule.schedule_result = this.$moment().add(result.result_left, 's')
+            this.schedule.schedule_close = this.$moment().add(result.close_left, 's')
             this.$store.dispatch('updateGameInfo', {
               display_name: this.currentGame.display_name,
               issue_number: this.schedule.issue_number,
@@ -278,8 +280,8 @@ export default {
         return
       }
       this.timer = setInterval(() => {
-        const closeTime = this.$moment(this.schedule.schedule_close)
-        const resultTime = this.$moment(this.schedule.schedule_result)
+        const closeTime = this.schedule.schedule_close
+        const resultTime = this.schedule.schedule_result
 
         if (this.$moment().isAfter(resultTime)) {
           clearInterval(this.timer)
