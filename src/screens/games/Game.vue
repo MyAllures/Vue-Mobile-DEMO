@@ -241,7 +241,6 @@ export default {
         .then(res => {
           let result = _.find(res, schedule => {
             return (schedule.id !== this.schedule.id) &&
-              this.$moment().isBefore(schedule.schedule_result) &&
               (schedule.status === 'open' || schedule.status === 'created' || schedule.status === 'close')
           })
 
