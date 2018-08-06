@@ -231,7 +231,9 @@ export default {
               clearInterval(this.resultInterval)
             }
             result = result[0]
-            result.zodiacs = result.zodiac.split(',')
+            if (result.zodiac) {
+              result.zodiac = result.zodiac.split(',')
+            }
             let newIssue = result.issue_number
             if (newIssue !== oldIssue) { // 表示抓到開獎結果
               if (pollingLimiter) { // 成功抓取結果後限制器可關掉
@@ -264,9 +266,10 @@ export default {
         this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
         this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
         this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
-
         const result = results[1][0]
-        result.zodiacs = result.zodiac.split(',')
+        if (result.zodiac) {
+          result.zodiac = result.zodiac.split(',')
+        }
         this.result = result
         this.pollResult()
 

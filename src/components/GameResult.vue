@@ -9,7 +9,7 @@
         :key="index"
         :class="getResultClass(num)">
         <b> {{num}} </b>
-        <p class="ball-zodiac" v-if="result.zodiacs"> {{result.zodiacs[index]}} </p>
+        <p class="ball-zodiac" v-if="result.zodiac"> {{result.zodiac[index]}} </p>
       </span>
       <div class="ball-sum" v-if="showSum">
         {{$t('common.total')}}
