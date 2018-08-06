@@ -153,7 +153,7 @@ export default new Router({
       meta: {
         title: 'custom',
         gaTitle: '充值申请提交',
-        showBack: true
+        showBack: false
       }
     },
     {
@@ -172,7 +172,7 @@ export default new Router({
       meta: {
         title: '充值',
         requiresAuth: true,
-        showBack: true
+        showBack: false
       },
       component: resolve => { require(['../screens/my/Deposit.vue'], resolve) },
       children: [
