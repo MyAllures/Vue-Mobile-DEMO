@@ -13,8 +13,7 @@
             <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
           </div>
         </cell>
-        <p class="content" v-if="message.showContent">
-          {{message.content}}
+        <p class="content" v-if="message.showContent" v-html="message.content">
         </p>
       </template>
     </group>

@@ -1,9 +1,10 @@
 <template>
   <div class="game">
     <div class="data-section">
-      <GameResult :gameid="$route.params.gameId"/>
+      <GameResult :result="result" :loading="resultLoading"/>
       <Countdown
         :schedule="schedule"
+        :realSchedule="realSchedule"
         v-if="schedule.id"
         :currentGame="currentGame"
         :gameClosed="gameClosed"
@@ -66,7 +67,7 @@
 <script>
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import { fetchSchedule } from '../../api'
+import { fetchSchedule, fetchGameResult } from '../../api'
 import { Indicator, validateAmount } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
@@ -95,10 +96,15 @@ export default {
   },
   data () {
     return {
+      realSchedule: null,
       schedule: {
         id: null
       },
-      timer: '',
+      result: null,
+      scheduleTimer: '',
+      resultTimer: null,
+      resultInterval: null,
+      resultLoading: false,
       closeCountDown: null,
       resultCountDown: null,
       currentPlays: [],
@@ -109,7 +115,8 @@ export default {
       hasPlan: true,
       opts_combos_count: 1,
       isBusy: false,
-      indicator: null
+      indicator: null,
+      diffBetweenServerAndClient: 0
     }
   },
   filters: {
@@ -119,25 +126,8 @@ export default {
     }
   },
   computed: {
-    notGetResult () {
-      if (!this.currentGame) {
-        return true
-      }
-      if (this.currentGame.code === 'hkl') {
-        if (this.currentGameResult && this.currentGameResult.issue_number) {
-          if (this.schedule.id) {
-            if (parseInt(this.schedule.issue_number) - 1 > parseInt(this.currentGameResult.issue_number)) {
-              return true
-            }
-          }
-        } else {
-          return true
-        }
-      }
-      return false
-    },
     gameClosed () {
-      if (this.notGetResult) {
+      if (this.realSchedule) {
         return true
       }
       if (!this.closeCountDown) {
@@ -153,7 +143,7 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'betDialog', 'currentGameResult'
+      'systemConfig', 'user', 'betDialog'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -181,15 +171,10 @@ export default {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
       }
-    },
-    gameClosed: function () {
-      if (this.gameClosed) {
-        this.$store.dispatch('setCurrentGameResult', [{}])
-      }
     }
   },
   created () {
-    this.updateSchedule()
+    this.fetchScheduleAndResult()
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
@@ -205,7 +190,8 @@ export default {
     }
 
     this.indicator = new Indicator(() => {
-      this.updateSchedule()
+      clearInterval(this.scheduleTimer)
+      this.startScheduleTimer()
     }, () => {
       if (this.betDialog.visible) {
         this.$set(this, 'playReset', !this.playReset)
@@ -214,6 +200,94 @@ export default {
     })
   },
   methods: {
+    pollResult () {
+      if (!this.result) {
+        return
+      }
+      let drawFromNow = this.$moment(this.result.next_draw).subtract(this.diffBetweenServerAndClient).diff(this.$moment(), 'ms')
+      let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
+
+      let oldIssue = this.result.issue_number
+      this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
+        clearInterval(this.resultInterval)
+        let pollingLimiter = null
+        /**
+         * 若以暫時期數代替真實開獎結果，可能發生該期未開，使得下期持續被關閉的情況
+         * 故以10分鐘為限，若在時限內未獲得真實開獎結果，則直接開放下期
+         */
+        if (this.realSchedule && drawFromNow < 0) {
+          const leaveTime = 10 * 60 * 1000 + drawFromNow
+          if (leaveTime < 0) { // 距離開獎時間已過十分鐘則直接開獎
+            this.realSchedule = ''
+          } else {
+            pollingLimiter = setTimeout(() => { // 剩餘時間內沒抓到開獎結果則直接開放
+              this.realSchedule = ''
+            }, leaveTime)
+          }
+        }
+        this.resultInterval = setInterval(() => {
+          fetchGameResult(this.gameId).then(result => {
+            if (!result || !result[0]) {
+              clearInterval(this.resultInterval)
+            }
+            result = result[0]
+            if (result.zodiac) {
+              result.zodiac = result.zodiac.split(',')
+            }
+            let newIssue = result.issue_number
+            if (newIssue !== oldIssue) { // 表示抓到開獎結果
+              if (pollingLimiter) { // 成功抓取結果後限制器可關掉
+                clearTimeout(pollingLimiter)
+                pollingLimiter = null
+              }
+              clearInterval(this.resultInterval)
+              clearInterval(this.resultTimer)
+              this.resultLoading = true // 開獎動畫開始
+              this.result = result
+              setTimeout(() => {
+                this.resultLoading = false
+                if (this.realSchedule) {
+                  this.realSchedule = '' // 恢復使用表定開獎時間
+                }
+              }, 3000)
+              setTimeout(() => {
+                this.$store.dispatch('fetchUser')
+              }, 2000)
+            }
+          })
+        }, 1000)
+      }, startPollingTime)
+    },
+    fetchScheduleAndResult () {
+      Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
+        const schedule = results[0][0]
+        this.schedule = schedule
+        let serverTime = this.$moment(this.schedule.schedule_result)
+        this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
+        this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
+        this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
+        const result = results[1][0]
+        if (result.zodiac) {
+          result.zodiac = result.zodiac.split(',')
+        }
+        this.result = result
+        this.pollResult()
+
+        if (this.currentGame.code === 'hkl') {
+          let realScheduleIssueNumber = parseInt(result.issue_number)
+          if (parseInt(schedule.issue_number) - 1 > realScheduleIssueNumber) { // 差超過一期，表示可能尚未抓到開獎結果
+            this.realSchedule = `${realScheduleIssueNumber + 1}`
+          }
+        }
+
+        this.$store.dispatch('updateGameInfo', {
+          display_name: this.currentGame.display_name,
+          issue_number: this.schedule.issue_number,
+          game_code: this.currentGame.code
+        })
+        this.startScheduleTimer()
+      }).catch(() => {})
+    },
     chooseCategory () {
       const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
@@ -228,40 +302,6 @@ export default {
         })
       }
     },
-    updateSchedule () {
-      if (this.isBusy) {
-        return
-      }
-      if (!this.gameId) {
-        return
-      }
-
-      this.isBusy = true
-      fetchSchedule(this.gameId)
-        .then(res => {
-          let result = _.find(res, schedule => {
-            return (schedule.id !== this.schedule.id) &&
-              (schedule.status === 'open' || schedule.status === 'created' || schedule.status === 'close')
-          })
-
-          if (result) {
-            clearInterval(this.timer)
-            this.schedule = result
-            this.schedule.schedule_result = this.$moment().add(result.result_left, 's')
-            this.schedule.schedule_close = this.$moment().add(result.close_left, 's')
-            this.$store.dispatch('updateGameInfo', {
-              display_name: this.currentGame.display_name,
-              issue_number: this.schedule.issue_number,
-              game_code: this.currentGame.code
-            })
-            this.startTimer()
-          }
-
-          this.isBusy = false
-        }).catch(() => {
-          this.isBusy = false
-        })
-    },
     switchCategory (categoryId) {
       if (!categoryId) {
         return
@@ -274,18 +314,13 @@ export default {
         path: `/game/${gameId}/${categoryId}`
       })
     },
-    startTimer () {
+    startScheduleTimer () {
       if (!this.schedule || !this.schedule.id) {
         return
       }
-      this.timer = setInterval(() => {
+      this.scheduleTimer = setInterval(() => {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
-
-        if (this.$moment().isAfter(resultTime)) {
-          clearInterval(this.timer)
-          return
-        }
         this.closeCountDown = this.diffTime(closeTime)
         this.$store.dispatch('updateGameInfo', {
           countdown: {...this.closeCountDown}
@@ -300,7 +335,7 @@ export default {
       let minutes = duration.minutes()
       let seconds = duration.seconds()
       if (flag && (days + hours + minutes + seconds === 0)) {
-        this.updateSchedule()
+        this.fetchScheduleAndResult()
       }
       days = days < 0 ? 0 : days
       hours = hours < 0 ? 0 : hours
@@ -314,6 +349,9 @@ export default {
       }
     },
     openDialog () {
+      if (!this.amount) {
+        return
+      }
       this.$store.dispatch('openBetDialog', this.formatBetInfo(this.validPlays))
     },
     formatBetInfo (originPlays) {
@@ -374,7 +412,9 @@ export default {
     }
   },
   beforeDestroy () {
-    clearInterval(this.timer)
+    clearTimeout(this.scheduleTimer)
+    clearTimeout(this.resultTimer)
+    clearInterval(this.resultInterval)
 
     if (this.indicator) {
       this.indicator.destroy()
