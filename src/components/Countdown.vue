@@ -1,6 +1,6 @@
 <template>
   <div class="countdown-panel">
-    <p class="issue">{{schedule.issue_number}}{{$t('common.result_period')}}</p>
+    <p class="issue">{{realSchedule||schedule.issue_number}}{{$t('common.result_period')}}</p>
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">封盘</div>
       <span v-if="!closeCountDown" class="label"></span>
@@ -13,7 +13,7 @@
     <div class="schedule" v-if="schedule && schedule.issue_number">
       <div class="title">开奖</div>
       <span v-if="!resultCountDown" class="label"></span>
-      <span v-else-if="!ended" class="label">
+      <span v-else-if="!realSchedule && !ended" class="label">
         <span v-if="resultCountDown.days > 0">{{resultCountDown.days}}天</span>
         <span v-if="resultCountDown.hours > 0">{{resultCountDown.hours | complete}}:</span>{{resultCountDown.minutes | complete}}:{{resultCountDown.seconds | complete}}
       </span>
@@ -25,6 +25,7 @@
 <script>
 export default {
   props: {
+    realSchedule: String,
     schedule: {
       type: Object
     },

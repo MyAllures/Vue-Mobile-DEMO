@@ -22,7 +22,7 @@
           :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
       </div>
 
-      <div v-if="!showChatRoom && !$route.meta.showBack"
+      <div v-if="!showChatRoom && !$route.meta.showBack && headerLeftTitle"
         slot="overwrite-left"
         @click="toHome">
         <a class="vux-header-back">{{headerLeftTitle}}</a>

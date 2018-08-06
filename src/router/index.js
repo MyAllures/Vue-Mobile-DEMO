@@ -83,8 +83,7 @@ export default new Router({
           meta: {
             title: '财务纪录',
             gaTitle: '充值纪录',
-            requiresAuth: true,
-            showBack: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -94,8 +93,7 @@ export default new Router({
           meta: {
             title: '财务纪录',
             gaTitle: '取款纪录',
-            requiresAuth: true,
-            showBack: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -105,8 +103,7 @@ export default new Router({
           meta: {
             title: '财务纪录',
             gaTitle: '优惠和红包纪录',
-            requiresAuth: true,
-            showBack: true
+            requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
@@ -128,8 +125,7 @@ export default new Router({
           meta: {
             title: '财务纪录',
             gaTitle: '投注记录',
-            requiresAuth: true,
-            showBack: true
+            requiresAuth: true
           },
           beforeEnter: (to, from, next) => {
             if (from.name !== 'DetailBetRecord') {
@@ -157,7 +153,7 @@ export default new Router({
       meta: {
         title: 'custom',
         gaTitle: '充值申请提交',
-        showBack: true
+        showBack: false
       }
     },
     {
@@ -176,7 +172,7 @@ export default new Router({
       meta: {
         title: '充值',
         requiresAuth: true,
-        showBack: true
+        showBack: false
       },
       component: resolve => { require(['../screens/my/Deposit.vue'], resolve) },
       children: [

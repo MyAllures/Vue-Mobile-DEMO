@@ -207,8 +207,8 @@ export default {
     },
     formatEachAmount (val, index) {
       if (!val) {
-        this.amount = '10'
-        this.$set(this.betAmounts, index, '10')
+        this.amount = ''
+        this.$set(this.betAmounts, index, '')
       }
       val = val + ''
       if (val && !validateAmount(val)) {

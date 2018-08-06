@@ -183,7 +183,7 @@
 
               this.loading = false
               this.$refs.form.resetFields()
-              this.$store.dispatch('setCustomTitle', remitType + '轉帳')
+              this.$store.dispatch('setCustomTitle', remitType + '转帐')
               this.$router.push({path: '/my/deposit/submit_success'})
             }).catch((response) => {
               this.loading = false
