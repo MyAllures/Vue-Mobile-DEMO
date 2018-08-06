@@ -230,7 +230,9 @@ export default {
             if (!result || !result[0]) {
               clearInterval(this.resultInterval)
             }
-            let newIssue = result[0].issue_number
+            result = result[0]
+            result.zodiacs = result.zodiac.split(',')
+            let newIssue = result.issue_number
             if (newIssue !== oldIssue) { // 表示抓到開獎結果
               if (pollingLimiter) { // 成功抓取結果後限制器可關掉
                 clearTimeout(pollingLimiter)
@@ -239,7 +241,7 @@ export default {
               clearInterval(this.resultInterval)
               clearInterval(this.resultTimer)
               this.resultLoading = true // 開獎動畫開始
-              this.result = result[0]
+              this.result = result
               setTimeout(() => {
                 this.resultLoading = false
                 if (this.realSchedule) {
@@ -257,13 +259,14 @@ export default {
     fetchScheduleAndResult () {
       Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
         const schedule = results[0][0]
-        const result = results[1][0]
         this.schedule = schedule
         let serverTime = this.$moment(this.schedule.schedule_result)
         this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
         this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
         this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
 
+        const result = results[1][0]
+        result.zodiacs = result.zodiac.split(',')
         this.result = result
         this.pollResult()
 
