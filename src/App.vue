@@ -5,7 +5,9 @@
     <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
       @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
-      :right-options="{showMore: !!user.username && isGameHall}"
+      :right-options="{
+        showMore: !!user.username && isGameHall,
+      }"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
@@ -14,7 +16,11 @@
         'z-index': headerZindex
       }"
       slot="header"
-      :left-options="{showBack: $route.meta.showBack || false}">
+      @on-click-back="$router.push({name: 'Home'})"
+      :left-options="{
+        showBack: $route.meta.showBack || false,
+        preventGoBack: (($route.name === 'Login') && noBackRoute)
+      }">
 
       <div @click="titleCondition.onClick">
         {{titleCondition.text}}
@@ -189,7 +195,8 @@ export default {
       showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
-      refreshTokenInterval: null
+      refreshTokenInterval: null,
+      noBackRoute: !window.history.state
     }
   },
   mixins: [freetrial],
@@ -314,6 +321,8 @@ export default {
       }
     },
     '$route' (to, from) {
+      this.noBackRoute = !window.history.state
+
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
