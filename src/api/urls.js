@@ -6,8 +6,10 @@ const prefix = host + '/member'
 const apiv2 = host + '/v2/member'
 const apiv1 = host + '/v1/member'
 const apiChat = env.chatApi.replace(/"/g, '')
+const wsEiderHost = env.eiderHost.replace(/"/g, '')
 
 export default {
+  wsEiderHost,
   domain: host,
   login: prefix + '/login/',
   register: apiv2 + '/register/',

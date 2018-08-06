@@ -12,8 +12,8 @@ export default {
     state.user = {
       logined: false
     }
-    if (state.ws) {
-      state.ws.disconnect()
+    if (state.ws.raven) {
+      state.ws.raven.disconnect()
     }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
@@ -69,8 +69,8 @@ export default {
       state.keepAlivePage.splice(index, 1)
     }
   },
-  [types.SET_WS]: (state, ws) => {
-    state.ws = ws
+  [types.SET_WS]: (state, {ws, type}) => {
+    state.ws[type] = ws
   },
   [types.INIT_PERSONAL_SETTING]: (state, setting) => {
     state.personal_setting = setting
@@ -127,5 +127,20 @@ export default {
   [types.SET_CURRENTGAME_RESULT]: (state, result) => {
     let obj = result[0] || result
     state.currentGameResult = obj
+  },
+  [types.SHOW_WINNOTIFICATION]: (state) => {
+    state.winNotificationVisible = true
+  },
+  [types.HIDE_WINNOTIFICATION]: (state) => {
+    state.winNotificationVisible = false
+  },
+  [types.ADD_WINNOTIFICATION]: (state, notification) => {
+    state.winNotification.push(notification)
+  },
+  [types.REMOVE_WINNOTIFICATION]: (state, index) => {
+    state.winNotification.shift()
+  },
+  [types.CLEAR_WINNOTIFICATION]: (state, index) => {
+    state.winNotification = []
   }
 }

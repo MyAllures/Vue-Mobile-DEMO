@@ -104,6 +104,14 @@
         <Calender ref="calendar" @closeCalender="closeCalender"/>
       </div>
     </transition>
+    <transition name="fade">
+      <div v-if="winNotificationVisible">
+        <WinNotification :gameName="winNotification[0].game_name"
+          @onClose="handleWinNotificationOnClose"
+          :type="winNotification[0].type"
+          :totalProfit="winNotification[0].total_profit"/>
+      </div>
+    </transition>
   </view-box>
 </template>
 
@@ -119,6 +127,9 @@ import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
 import Calender from './components/Calender'
+import WinNotification from './components/WinNotification'
+import GhostSocketObj from './wsObj/eider.js'
+import { setTimeout } from 'timers'
 
 export default {
   name: 'app',
@@ -135,7 +146,8 @@ export default {
     TryplayPopup,
     GameMenu,
     BetDialog,
-    Calender
+    Calender,
+    WinNotification
   },
   directives: {
     TransferDom
@@ -248,6 +260,12 @@ export default {
     unread () {
       return this.$store.state.user.unread
     },
+    winNotificationVisible () {
+      return this.$store.state.winNotificationVisible
+    },
+    winNotification () {
+      return this.$store.state.winNotification
+    },
     isGameHall () {
       return this.$route.matched[0] && this.$route.matched[0].path === '/game'
     },
@@ -306,10 +324,28 @@ export default {
     }
   },
   watch: {
+    'winNotification.length': function (val, oldVal) {
+      if (val > oldVal) {
+        if (!this.winNotificationVisible) {
+          this.$store.commit('SHOW_WINNOTIFICATION')
+        }
+      } else {
+        if (val > 0) {
+          this.$store.commit('SHOW_WINNOTIFICATION')
+        } else {
+          this.$store.commit('HIDE_WINNOTIFICATION')
+        }
+      }
+    },
     'user.logined' (newStatus, old) {
       if (!newStatus) {
         clearInterval(this.unreadInterval)
+        if (this.ws) {
+          this.ws.eider.closeConnect()
+        }
       } else {
+        let token = this.$cookie.get('access_token')
+        this.$store.dispatch('setWs', {ws: new GhostSocketObj(token), type: 'eider'})
         this.pollUnread()
       }
     },
@@ -325,7 +361,7 @@ export default {
       }
       this.closeChatRoom()
     },
-    'ws' (ws) {
+    'ws.raven' (ws) {
       if (!ws) {
         this.showChatRoom = false
       }
@@ -347,6 +383,49 @@ export default {
     }
   },
   methods: {
+    winMsg (notification) {
+      if (notification) {
+        return this.$createElement('div', { 'class': 'win-notification' },
+          [
+            this.$createElement('p', { 'class': 'title' }, '中奖明细'),
+            this.$createElement('div', { 'class': 'game' }, [
+              this.$createElement('div', [
+                this.$createElement('p', { 'class': 'name' }, `${notification.game_name}`),
+                this.$createElement('p', { 'class': 'issue' }, `${notification.issue_number}期`)
+              ]),
+              this.$createElement('p', { 'class': 'amount' }, `￥${notification.total_profit || 3456.00}`)
+            ]),
+            this.$createElement('ul', { 'class': 'result-list' }, notification.win_bets.map((bet, index) => {
+              let profit = parseFloat(bet.profit || bet.settlement_amount).toFixed(2)
+              return this.$createElement('li', { 'class': 'result' }, [
+                this.$createElement('span', `${index + 1}. ${bet.playgroup_name || bet.playgruop_name} @ ${bet.play_name}`),
+                this.$createElement('span', `￥${profit}`)
+              ])
+            }))
+          ]
+        )
+      }
+    },
+    bachWinMsg (notification) {
+      if (notification) {
+        return this.$createElement('div', { 'class': 'win-notification' },
+          [
+            this.$createElement('p', { 'class': 'title' }, '中奖明细'),
+            this.$createElement('p', { 'class': 'congratulation' }, '恭喜！您下过的游戏中奖啰～'),
+            this.$createElement('div', { 'class': 'game' }, [
+              this.$createElement('p', '中奖总额'),
+              this.$createElement('p', { 'class': 'amount' }, `￥${notification.total_profit || 3456.00}`)
+            ]),
+            this.$createElement('ul', { 'class': 'result-list' }, notification.win_notifications.map((win, index) => {
+              return this.$createElement('li', { 'class': 'result' }, [
+                this.$createElement('span', `${index + 1}. ${win.game_name}`),
+                this.$createElement('span', { 'class': 'game-profit' }, `￥${win.total_profit}`)
+              ])
+            }))
+          ]
+        )
+      }
+    },
     toHome () {
       if (this.$route.name !== 'Home') {
         this.sendGaEvent({
@@ -417,8 +496,8 @@ export default {
     },
     closeChatRoom () {
       this.showChatRoom = false
-      if (this.ws && this.ws.roomId) {
-        this.ws.leaveRoom()
+      if (this.ws.raven && this.ws.raven.roomId) {
+        this.ws.raven.leaveRoom()
       }
     },
     openChatRoom () {
@@ -662,5 +741,4 @@ export default {
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
-
 </style>

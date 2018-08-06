@@ -5,5 +5,6 @@ module.exports = {
   chatHost: '"' + process.env.chatHost + '"',
   chatApi: '"' + process.env.chatApi + '"',
   SITE_TITLE: '"' + process.env.SITE_TITLE + '"',
-  HTTPS: '"' + process.env.HTTPS + '"'
+  HTTPS: '"' + process.env.HTTPS + '"',
+  eiderHost: '"' + process.env.eiderHost + '"',
 }

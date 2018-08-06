@@ -18,6 +18,7 @@ ARG chatHost
 ARG chatApi
 ARG HTTPS
 ARG SITE_TITLE
+ARG eiderHost
 
 # using multiple copies to continously keep the environment and avoid the maximum image layer error
 COPY --from=bison /root /root
