@@ -104,14 +104,17 @@
         <Calender ref="calendar" @closeCalender="closeCalender"/>
       </div>
     </transition>
+
     <transition name="fade">
       <div v-if="winNotificationVisible">
-        <WinNotification :gameName="winNotification[0].game_name"
-          @onClose="handleWinNotificationOnClose"
-          :type="winNotification[0].type"
-          :totalProfit="winNotification[0].total_profit"/>
+        <WinNotification :notification="winNotification[0]"
+        @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
       </div>
+      <DetailWinNotification v-if="currentNotificationDetail"
+        :notification="currentNotificationDetail"
+        @closeDetailNotification="closeDetailNotification"/>
     </transition>
+
   </view-box>
 </template>
 
@@ -128,6 +131,7 @@ import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
 import Calender from './components/Calender'
 import WinNotification from './components/WinNotification'
+import DetailWinNotification from './components/DetailWinNotification'
 import GhostSocketObj from './wsObj/eider.js'
 import { setTimeout } from 'timers'
 
@@ -147,7 +151,8 @@ export default {
     GameMenu,
     BetDialog,
     Calender,
-    WinNotification
+    WinNotification,
+    DetailWinNotification
   },
   directives: {
     TransferDom
@@ -201,7 +206,8 @@ export default {
       showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
-      refreshTokenInterval: null
+      refreshTokenInterval: null,
+      currentNotificationDetail: null
     }
   },
   mixins: [freetrial],
@@ -210,7 +216,7 @@ export default {
       'user'
     ]),
     ...mapState([
-      'isLoading', 'ws', 'roomInfo', 'roomId'
+      'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'winNotificationVisible', 'winNotification'
     ]),
     titleCondition () {
       let route = this.$route
@@ -258,13 +264,7 @@ export default {
       return title
     },
     unread () {
-      return this.$store.state.user.unread
-    },
-    winNotificationVisible () {
-      return this.$store.state.winNotificationVisible
-    },
-    winNotification () {
-      return this.$store.state.winNotification
+      return this.user.unread
     },
     isGameHall () {
       return this.$route.matched[0] && this.$route.matched[0].path === '/game'
@@ -277,12 +277,6 @@ export default {
     },
     showLinks () {
       return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
-    },
-    pageName: function () {
-      return this.$route.name
-    },
-    systemConfig () {
-      return this.$store.state.systemConfig
     },
     headerLeftTitle () {
       let name = this.$route.name
@@ -338,14 +332,14 @@ export default {
       }
     },
     'user.logined' (newStatus, old) {
+      let token = this.$cookie.get('access_token')
       if (!newStatus) {
         clearInterval(this.unreadInterval)
-        if (this.ws) {
+        if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
       } else {
-        let token = this.$cookie.get('access_token')
-        this.$store.dispatch('setWs', {ws: new GhostSocketObj(token), type: 'eider'})
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
         this.pollUnread()
       }
     },
@@ -383,48 +377,11 @@ export default {
     }
   },
   methods: {
-    winMsg (notification) {
-      if (notification) {
-        return this.$createElement('div', { 'class': 'win-notification' },
-          [
-            this.$createElement('p', { 'class': 'title' }, '中奖明细'),
-            this.$createElement('div', { 'class': 'game' }, [
-              this.$createElement('div', [
-                this.$createElement('p', { 'class': 'name' }, `${notification.game_name}`),
-                this.$createElement('p', { 'class': 'issue' }, `${notification.issue_number}期`)
-              ]),
-              this.$createElement('p', { 'class': 'amount' }, `￥${notification.total_profit || 3456.00}`)
-            ]),
-            this.$createElement('ul', { 'class': 'result-list' }, notification.win_bets.map((bet, index) => {
-              let profit = parseFloat(bet.profit || bet.settlement_amount).toFixed(2)
-              return this.$createElement('li', { 'class': 'result' }, [
-                this.$createElement('span', `${index + 1}. ${bet.playgroup_name || bet.playgruop_name} @ ${bet.play_name}`),
-                this.$createElement('span', `￥${profit}`)
-              ])
-            }))
-          ]
-        )
-      }
+    closeDetailNotification () {
+      this.currentNotificationDetail = null
     },
-    bachWinMsg (notification) {
-      if (notification) {
-        return this.$createElement('div', { 'class': 'win-notification' },
-          [
-            this.$createElement('p', { 'class': 'title' }, '中奖明细'),
-            this.$createElement('p', { 'class': 'congratulation' }, '恭喜！您下过的游戏中奖啰～'),
-            this.$createElement('div', { 'class': 'game' }, [
-              this.$createElement('p', '中奖总额'),
-              this.$createElement('p', { 'class': 'amount' }, `￥${notification.total_profit || 3456.00}`)
-            ]),
-            this.$createElement('ul', { 'class': 'result-list' }, notification.win_notifications.map((win, index) => {
-              return this.$createElement('li', { 'class': 'result' }, [
-                this.$createElement('span', `${index + 1}. ${win.game_name}`),
-                this.$createElement('span', { 'class': 'game-profit' }, `￥${win.total_profit}`)
-              ])
-            }))
-          ]
-        )
-      }
+    getCurrentNotificationDetail (current) {
+      this.currentNotificationDetail = current
     },
     toHome () {
       if (this.$route.name !== 'Home') {
@@ -471,7 +428,7 @@ export default {
     },
     replaceToken () {
       let refreshToken = this.$cookie.get('refresh_token')
-      if (!refreshToken || !this.$store.state.user.account_type) {
+      if (!refreshToken || !this.user.account_type) {
         return
       }
       getToken(refreshToken).then(res => {

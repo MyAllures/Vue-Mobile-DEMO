@@ -19,22 +19,10 @@
 <script>
 export default {
   props: {
-    gameName: {
-      type: String
-    },
-    type: {
-      type: String
-    },
-    totalProfit: {
-      type: Number
-    },
-    visible: {
-      type: Boolean
-    }
+    notification: Object
   },
   data () {
     return {
-      timeout: null
     }
   },
   methods: {
@@ -44,6 +32,8 @@ export default {
       this.timeout = null
     },
     handleTextClick () {
+      let currentNotification = Object.assign({}, this.notification)
+      this.$emit('getCurrentNotificationDetail', currentNotification)
       this.$router.push({name: 'BetRecord'})
       this.close()
     },
@@ -51,14 +41,19 @@ export default {
       this.$emit('onClose')
     }
   },
-  beforeDestroy () {
-    this.close()
+  computed: {
+    gameName () {
+      return this.notification.game_name
+    },
+    type () {
+      return this.notification.type
+    },
+    totalProfit () {
+      return this.notification.total_profit
+    }
   },
-  created () {
-    this.timeout = setTimeout(() => {
-      this.close()
-    }, 5000)
-  }
+  beforeDestroy () { this.close() },
+  created () {}
 }
 </script>
 
