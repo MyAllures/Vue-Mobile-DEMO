@@ -103,6 +103,8 @@ export default {
     const bankAccountValidator = (rule, value, callback) => {
       if (!validateBankAccount(value)) {
         callback(new Error('该帐号格式无效'))
+      } else if (value.length > 20) {
+        callback(new Error('银行帐号需为20位以内的数字'))
       } else {
         callback()
       }
