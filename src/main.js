@@ -19,7 +19,7 @@ import qs from 'qs'
 import icon from './utils/icon'
 import color from './styles'
 import urls from './api/urls'
-import {HTTP_ERROR, JS_ERROR, report} from './report'
+import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
@@ -91,6 +91,11 @@ axios.interceptors.response.use(res => {
   } else {
     if (responseData.code === 9007) {
       if (!pollingApi.some(url => res.config.url.indexOf(url) !== -1)) { // 忽略輪詢api
+        report({
+          type: AUTH_ERROR,
+          url: res.config.url,
+          msg: '9007身份认证信息未提供'
+        })
         toLogin(router)
       }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
@@ -101,14 +106,10 @@ axios.interceptors.response.use(res => {
     return Promise.reject(responseData)
   }
 }, (error) => {
-  const option = {
+  report({
     type: HTTP_ERROR,
     error
-  }
-  if (store.state.user.account_type) {
-    option.username = store.state.user.username
-  }
-  report(option)
+  })
   Vue.$vux.toast.show({
     text: '网路服务异常，请稍后再试',
     type: 'warn'
