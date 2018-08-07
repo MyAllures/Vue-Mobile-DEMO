@@ -101,7 +101,7 @@ export default {
         id: null
       },
       result: null,
-      scheduleTimer: '',
+      scheduleInterval: '',
       resultTimer: null,
       resultInterval: null,
       resultLoading: false,
@@ -190,7 +190,7 @@ export default {
     }
 
     this.indicator = new Indicator(() => {
-      clearInterval(this.scheduleTimer)
+      clearInterval(this.scheduleInterval)
       this.startScheduleTimer()
     }, () => {
       if (this.betDialog.visible) {
@@ -318,7 +318,7 @@ export default {
       if (!this.schedule || !this.schedule.id) {
         return
       }
-      this.scheduleTimer = setInterval(() => {
+      this.scheduleInterval = setInterval(() => {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
         this.closeCountDown = this.diffTime(closeTime)
@@ -412,7 +412,7 @@ export default {
     }
   },
   beforeDestroy () {
-    clearTimeout(this.scheduleTimer)
+    clearInterval(this.scheduleInterval)
     clearTimeout(this.resultTimer)
     clearInterval(this.resultInterval)
 
