@@ -64,14 +64,6 @@
             <span>免费试玩</span>
           </div>
         </div>
-        <div v-else>
-        <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/error.png" alt="desktop" class="icon-placeholder" >
-        </div>
-        <div class="weui-grid__label">
-          <span>&nbsp;</span>
-        </div>
-        </div>
       </a>
     </grid>
     <div v-if="promotions.length > 0" class="activity">
