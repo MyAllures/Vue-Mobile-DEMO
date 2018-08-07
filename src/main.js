@@ -55,8 +55,8 @@ Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 Vue.use(VueLazyload, {
-  error: 'static/images/error.png',
-  loading: 'static/images/loading.gif',
+  error: 'mobile/static/images/error.png',
+  loading: 'mobile/static/images/loading.gif',
   attempt: 1
 })
 
