@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
       <p class="text">
         <img src="../../assets/icon_announcement.png" class="horn-icon"/>
@@ -16,7 +16,7 @@
         </alert>
       </div>
     </div>
-    <div v-if="!user.bank">
+    <div v-if="!user.bank" class="stretch-layout wrapper">
       <div class="form m-t">
         <v-form :model="member.bank" :rules="rules" ref="form" @click.native="errorMsg = ''">
           <v-form-item required :label="$t('profile.select_bank')" prop="bank">
@@ -46,7 +46,8 @@
           </v-form-item>
         </v-form>
       </div>
-      <div class="set-bottom">
+
+      <div class="text-center m-b-lg">
         <p class="tip">提交後不可自行更改，如需更改请联系客服</p>
         <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
         <x-button type="primary" :disabled="!inputCompleted" class="submit-btn" @click.native="submit">
@@ -266,5 +267,13 @@ export default {
 
 .submit-btn {
   width: 85%;
+}
+
+.wrapper {
+  height: 100%;
+}
+
+.container {
+  height: calc(~"100%" - 45px);
 }
 </style>

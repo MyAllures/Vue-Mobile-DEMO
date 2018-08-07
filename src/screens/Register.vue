@@ -10,7 +10,7 @@
         <div v-transfer-dom>
           <alert v-model="showInfo" title="注意">
             <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
-              <li>登录后请到「我的」> 「取款账号」填写</li>
+              <li>登录后请到「我的」> 「取款银行卡」填写</li>
               <li>同一银行卡信息最多仅可领取一次</li>
               <li>同一 IP 最多仅可领取一次，请勿重复注册</li>
               <li>本平台保留对本次活动的全部解释权</li>
