@@ -21,6 +21,7 @@ const login = function ({ commit, state }, { user }) {
     }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
+      localStorage.setItem('token_expire', res.expires_in)
       Vue.cookie.set('access_token', res.access_token, {
         expires: expires
       })

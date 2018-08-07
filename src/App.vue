@@ -125,6 +125,7 @@ import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
 import Calender from './components/Calender'
+import { Indicator } from './utils'
 
 export default {
   name: 'app',
@@ -195,8 +196,9 @@ export default {
       showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
-      refreshTokenInterval: null,
-      noBackRoute: !window.history.state
+      refreshTokenTimer: null,
+      noBackRoute: !window.history.state,
+      indicator: null
     }
   },
   mixins: [freetrial],
@@ -406,6 +408,7 @@ export default {
       }
       getToken(refreshToken).then(res => {
         let expires = new Date(res.expires_in)
+        localStorage.setItem('token_expire', res.expires_in)
         this.$cookie.set('access_token', res.access_token, {
           expires: expires
         })
@@ -413,7 +416,10 @@ export default {
           expires: expires
         })
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-      })
+      }).catch(() => {})
+      this.refreshTokenTimer = setTimeout(() => {
+        this.replaceToken()
+      }, 20 * 60 * 1000)
     },
     pollUnread () {
       this.unreadInterval = setInterval(() => {
@@ -463,12 +469,26 @@ export default {
         this.performLogin()
       })
     }
-    this.refreshTokenInterval = window.setInterval(() => {
-      this.replaceToken()
-    }, 20 * 60 * 1000)
+    this.indicator = new Indicator(() => {
+      const expireTime = localStorage.getItem('token_expire')
+      if (!expireTime) {
+        return
+      }
+      const expireFromNow = this.$moment(expireTime).diff(this.$moment(), 'ms')
+      clearTimeout(this.refreshTokenTimer)
+      if (expireFromNow < 300000) { // 五分鐘內過期則直接刷新
+        this.replaceToken()
+      } else {
+        this.refreshTokenTimer = setTimeout(() => {
+          this.replaceToken()
+        }, expireFromNow - 300000)
+      }
+    }, () => {
+
+    })
   },
   beforeDestroy () {
-    window.clearInterval(this.refreshTokenInterval)
+    window.clearTimeout(this.refreshTokenTimer)
   }
 }
 </script>
