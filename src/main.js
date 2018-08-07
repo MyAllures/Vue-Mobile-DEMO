@@ -8,6 +8,7 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
+import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie } from './api'
@@ -53,6 +54,11 @@ Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
+Vue.use(VueLazyload, {
+  error: 'static/images/error.png',
+  loading: 'static/images/loading.gif',
+  attempt: 1
+})
 
 const i18n = new VueI18n({
   locale: 'cn',
