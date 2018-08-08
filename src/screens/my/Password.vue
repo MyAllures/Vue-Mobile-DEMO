@@ -1,35 +1,37 @@
 <template>
-  <div class="p-t-lg">
-    <div class="form">
-      <v-form :model="password" :rules="rules" ref="form" @click.native="errorMsg = ''">
-         <v-form-item required :label="$t('change_password.old')" prop="prev_password">
-           <v-input type="password"
-             autocapitalize="off"
-             v-model="password.prev_password">
-           </v-input>
-         </v-form-item>
-         <v-form-item required :label="$t('change_password.new')" prop="new_password">
-           <v-input type="password"
-             autocapitalize="off"
-             v-model="password.new_password">
-           </v-input>
-         </v-form-item>
-         <v-form-item required :label="$t('change_password.repeat')" prop="repeat_password">
-           <v-input type="password"
-             autocapitalize="off"
-             v-model="password.repeat_password">
-           </v-input>
-         </v-form-item>
-      </v-form>
-    </div>
+  <div class="container">
+    <div class="stretch-layout wrapper">
+      <div class="form p-t-lg ">
+        <v-form :model="password" :rules="rules" ref="form" @click.native="errorMsg = ''">
+           <v-form-item required :label="$t('change_password.old')" prop="prev_password">
+             <v-input type="password"
+               autocapitalize="off"
+               v-model="password.prev_password">
+             </v-input>
+           </v-form-item>
+           <v-form-item required :label="$t('change_password.new')" prop="new_password">
+             <v-input type="password"
+               autocapitalize="off"
+               v-model="password.new_password">
+             </v-input>
+           </v-form-item>
+           <v-form-item required :label="$t('change_password.repeat')" prop="repeat_password">
+             <v-input type="password"
+               autocapitalize="off"
+               v-model="password.repeat_password">
+             </v-input>
+           </v-form-item>
+        </v-form>
+      </div>
 
-    <div class="text-center text-success m-t" v-if="changed">{{$t('change_password.success')}}</div>
-    <div class="set-bottom">
-      <div class="text-center text-danger m-t">{{errorMsg}}</div>
-      <x-button type="primary" :disabled="!inputCompleted" class="submit-btn" @click.native="submit">
-        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>{{$t('action.submit')}}</span>
-      </x-button>
+      <div class="m-b-lg">
+        <div class="text-center text-success m-t" v-if="changed">{{$t('change_password.success')}}</div>
+        <div class="text-center text-danger m-t">{{errorMsg}}</div>
+        <x-button type="primary" :disabled="!inputCompleted" class="submit-btn" @click.native="submit">
+          <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+          <span v-else>{{$t('action.submit')}}</span>
+        </x-button>
+      </div>
     </div>
   </div>
 </template>
@@ -117,6 +119,14 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.container {
+  height: 100%;
+}
+
+.wrapper {
+  height: 100%;
+}
+
 .submit-btn {
   width: 85%;
 }

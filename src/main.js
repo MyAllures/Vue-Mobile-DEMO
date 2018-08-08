@@ -8,6 +8,7 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
+import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie } from './api'
@@ -18,7 +19,7 @@ import qs from 'qs'
 import icon from './utils/icon'
 import color from './styles'
 import urls from './api/urls'
-import {HTTP_ERROR, JS_ERROR, report} from './report'
+import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
@@ -53,6 +54,11 @@ Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
+Vue.use(VueLazyload, {
+  error: 'mobile/static/images/error.png',
+  loading: 'mobile/static/images/loading.gif',
+  attempt: 1
+})
 
 const i18n = new VueI18n({
   locale: 'cn',
@@ -85,6 +91,11 @@ axios.interceptors.response.use(res => {
   } else {
     if (responseData.code === 9007) {
       if (!pollingApi.some(url => res.config.url.indexOf(url) !== -1)) { // 忽略輪詢api
+        report({
+          type: AUTH_ERROR,
+          url: res.config.url,
+          msg: '9007身份认证信息未提供'
+        })
         toLogin(router)
       }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
@@ -95,14 +106,10 @@ axios.interceptors.response.use(res => {
     return Promise.reject(responseData)
   }
 }, (error) => {
-  const option = {
+  report({
     type: HTTP_ERROR,
     error
-  }
-  if (store.state.user.account_type) {
-    option.username = store.state.user.username
-  }
-  report(option)
+  })
   Vue.$vux.toast.show({
     text: '网路服务异常，请稍后再试',
     type: 'warn'

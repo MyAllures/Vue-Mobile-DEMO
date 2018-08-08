@@ -34,8 +34,7 @@
               <v-input
                 type="password"
                 autocapitalize="off"
-                v-model="withdraw.withdraw_password"
-                :filter="/[^0-9]/g">
+                v-model="withdraw.withdraw_password">
               </v-input>
             </v-form-item>
           </v-form>
