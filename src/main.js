@@ -28,6 +28,7 @@ window.onerror = function (errorMessage, scriptURI, lineNo, columnNo, error) {
     type: JS_ERROR,
     error
   })
+  throw error
 }
 Vue.config.errorHandler = (error, vm, info) => {
   report({
@@ -35,6 +36,7 @@ Vue.config.errorHandler = (error, vm, info) => {
     error,
     memo: info
   })
+  throw error
 }
 
 let url = window.location.href
