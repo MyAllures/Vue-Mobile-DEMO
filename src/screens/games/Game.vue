@@ -53,7 +53,7 @@
           </x-input>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+          <x-button type="primary" :disabled="!amount" @click.native="openDialog">{{$t('action.submit')}}</x-button>
         </flexbox-item>
         <flexbox-item>
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
@@ -208,6 +208,7 @@ export default {
       let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
 
       let oldIssue = this.result.issue_number
+      clearTimeout(this.resultTimer)
       this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
         clearInterval(this.resultInterval)
         let pollingLimiter = null
@@ -360,6 +361,7 @@ export default {
         if (play.amount <= 0) {
           return
         }
+
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
