@@ -13,6 +13,7 @@ function processStackMsg (stack) {
 
 export const HTTP_ERROR = 1
 export const JS_ERROR = 2
+export const AUTH_ERROR = 3
 
 export function report (config) {
   try {
@@ -21,6 +22,7 @@ export function report (config) {
     }
     let reportLog = ''
     const error = config.error
+    const accountType = store.state.user.account_type
     switch (config.type) {
       case HTTP_ERROR:
         reportLog =
@@ -36,17 +38,27 @@ export function report (config) {
         `stack=${processStackMsg(error.stack)}
         &msg=${error.message}`
         break
+      case AUTH_ERROR:
+        if (!accountType) { // 只記錄登入狀態
+          return
+        }
+        reportLog =
+        `url=${config.url}
+        &msg=${config.msg}`
+        break
       default:
         return
     }
     if (store.state.route) {
-      reportLog += `$path=${store.state.route.path}`
+      reportLog += `&path=${store.state.route.path}`
     }
     if (config.memo) {
       reportLog += `&memo=${config.memo}`
     }
-    if (config.username) {
+    if (accountType === 1) {
       reportLog += `&username=${config.username}`
+    } else if (accountType === 0) {
+      reportLog += '&username=tryplay'
     }
     fetch('https://log.021toilet.com/f?' + reportLog, {mode: 'no-cors', method: 'GET'})
   } catch (e) {

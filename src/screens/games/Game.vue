@@ -101,7 +101,7 @@ export default {
         id: null
       },
       result: null,
-      scheduleTimer: '',
+      scheduleInterval: '',
       resultTimer: null,
       resultInterval: null,
       resultLoading: false,
@@ -190,7 +190,7 @@ export default {
     }
 
     this.indicator = new Indicator(() => {
-      clearInterval(this.scheduleTimer)
+      clearInterval(this.scheduleInterval)
       this.startScheduleTimer()
     }, () => {
       if (this.betDialog.visible) {
@@ -208,6 +208,7 @@ export default {
       let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
 
       let oldIssue = this.result.issue_number
+      clearTimeout(this.resultTimer)
       this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
         clearInterval(this.resultInterval)
         let pollingLimiter = null
@@ -241,7 +242,7 @@ export default {
                 pollingLimiter = null
               }
               clearInterval(this.resultInterval)
-              clearInterval(this.resultTimer)
+              clearTimeout(this.resultTimer)
               this.resultLoading = true // 開獎動畫開始
               this.result = result
               setTimeout(() => {
@@ -318,7 +319,8 @@ export default {
       if (!this.schedule || !this.schedule.id) {
         return
       }
-      this.scheduleTimer = setInterval(() => {
+      clearInterval(this.scheduleInterval)
+      this.scheduleInterval = setInterval(() => {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
         this.closeCountDown = this.diffTime(closeTime)
@@ -412,7 +414,7 @@ export default {
     }
   },
   beforeDestroy () {
-    clearTimeout(this.scheduleTimer)
+    clearInterval(this.scheduleInterval)
     clearTimeout(this.resultTimer)
     clearInterval(this.resultInterval)
 
