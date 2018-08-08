@@ -241,7 +241,7 @@ export default {
                 pollingLimiter = null
               }
               clearInterval(this.resultInterval)
-              clearInterval(this.resultTimer)
+              clearTimeout(this.resultTimer)
               this.resultLoading = true // 開獎動畫開始
               this.result = result
               setTimeout(() => {
@@ -318,6 +318,7 @@ export default {
       if (!this.schedule || !this.schedule.id) {
         return
       }
+      clearInterval(this.scheduleInterval)
       this.scheduleInterval = setInterval(() => {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
