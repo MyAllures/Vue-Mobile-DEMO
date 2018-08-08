@@ -38,7 +38,7 @@ export default {
         this.fields.push(field)
       }
     })
-      /* istanbul ignore next */
+    /* istanbul ignore next */
     this.$on('form.removeField', (field) => {
       if (field.prop) {
         this.fields.splice(this.fields.indexOf(field), 1)
@@ -56,8 +56,8 @@ export default {
     },
     clearValidate (props = []) {
       const fields = props.length
-          ? this.fields.filter(field => props.indexOf(field.prop) > -1)
-          : this.fields
+        ? this.fields.filter(field => props.indexOf(field.prop) > -1)
+        : this.fields
       fields.forEach(field => {
         field.clearValidate()
       })
@@ -65,7 +65,7 @@ export default {
     validate (callback) {
       let valid = true
       let count = 0
-        // 如果需要验证的fields为空，调用验证时立刻返回callback
+      // 如果需要验证的fields为空，调用验证时立刻返回callback
       if (this.fields.length === 0 && callback) {
         callback(valid)
       }

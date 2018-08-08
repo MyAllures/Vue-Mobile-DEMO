@@ -48,7 +48,7 @@ export class Indicator {
     } else { // All others:
       window.onpageshow = window.onpagehide = window.onfocus = window.onblur = this.onchange
     }
-     // set the initial state (but only if browser supports the Page Visibility API)
+    // set the initial state (but only if browser supports the Page Visibility API)
     if (document[this.hidden] !== undefined) {
       this.onchange({ type: document[this.hidden] ? 'blur' : 'focus' })
     }

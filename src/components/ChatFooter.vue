@@ -127,7 +127,6 @@
 </template>
 
 <script>
-import Icon from 'vue-awesome/components/Icon'
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import 'vue-awesome/icons/paper-plane'
@@ -140,7 +139,6 @@ export default {
   components: {
     Swiper,
     SwiperItem,
-    Icon,
     EnvelopeDialog
   },
   data () {

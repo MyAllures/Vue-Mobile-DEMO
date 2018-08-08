@@ -19,8 +19,6 @@
 
 <script>
 import Vue from 'vue'
-import Icon from 'vue-awesome/components/Icon'
-import 'vue-awesome/icons/picture-o'
 import 'vue-awesome/icons/volume-up'
 import { mapState } from 'vuex'
 import { fetchChatEmoji, fetchStickers } from '../api'
@@ -36,7 +34,6 @@ export default {
     Tab,
     TabItem,
     AlertModule,
-    Icon,
     Marquee,
     ChatBody,
     ChatFooter
