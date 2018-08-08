@@ -53,7 +53,7 @@
           </x-input>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="primary" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+          <x-button type="primary" :disabled="!amount" @click.native="openDialog">{{$t('action.submit')}}</x-button>
         </flexbox-item>
         <flexbox-item>
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
@@ -361,6 +361,7 @@ export default {
         if (play.amount <= 0) {
           return
         }
+
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
