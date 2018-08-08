@@ -208,6 +208,7 @@ export default {
       let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
 
       let oldIssue = this.result.issue_number
+      clearTimeout(this.resultTimer)
       this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
         clearInterval(this.resultInterval)
         let pollingLimiter = null
