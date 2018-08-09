@@ -11,17 +11,24 @@ module.exports = {
   mode: 'production',
   entry: {
     base: [
-      'vue/dist/vue.esm.js',
-      'qs',
-      'lodash',
+      'async-validator',
       'axios',
-      'vuex',
+      'babel-polyfill',
+      'crypto-js',
+      'js-combinatorics',
+      'lodash',
+      'lrz',
+      'vue',
+      'vue-awesome',
       'vue-cookie',
+      'vue-i18n',
+      'vue-infinite-scroll',
+      'vue-lazyload',
+      'vue-moment',
       'vue-router',
-      'vue-i18n'
-    ],
-    ui: [
-      'element-ui/lib/index.js'
+      'vue2-filters',
+      'vuex',
+      'vuex-router-sync',
     ]
   },
   output: {

@@ -83,10 +83,6 @@ const originalConfig = {
       context: __dirname,
       manifest: require('../lib/base-manifest.json')
     }),
-    new webpack.DllReferencePlugin({
-      context: __dirname,
-      manifest: require('../lib/ui-manifest.json')
-    }),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|cn/),
   ],
   node: {
