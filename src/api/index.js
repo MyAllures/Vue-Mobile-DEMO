@@ -180,6 +180,10 @@ export function getToken (oldToken) {
     })
 }
 
+export function fetchChatToken () {
+  return axios.post(urls.chat_token)
+}
+
 export function sendImgToChat (data) {
   return axios.post(urls.sendImgToChat, data)
 }

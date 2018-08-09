@@ -5,7 +5,7 @@ import Vue from 'vue'
 
 const DEFAULT_ROOM_ID = 100000
 function WebSocketObj (token, roomId) {
-  this.ws = new WebSocket(`${config.chatHost}/chat/stream?username=${store.state.user.username}&token=${token}`)
+  this.ws = new WebSocket(`${config.chatHost}/chat/stream?token=${token}`)
   this.ws.onopen = () => {
     this.joinRoom(roomId)
   }
