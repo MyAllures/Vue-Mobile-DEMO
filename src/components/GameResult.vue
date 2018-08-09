@@ -1,6 +1,6 @@
 <template>
   <div class="result-balls">
-    <div class="balls-text">{{result.issue_number}}{{$t('common.result_period')}}</div>
+    <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
     <div :class="['balls-number', 'wrapper-' + result.game_code]" v-if="result && !loading">
       <div v-if="result.status!=='valid'">官方开奖无效</div>
       <span
