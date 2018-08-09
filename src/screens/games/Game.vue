@@ -230,32 +230,33 @@ export default {
           fetchGameResult(this.gameId).then(result => {
             if (!result || !result[0]) {
               clearInterval(this.resultInterval)
-            }
-            result = result[0]
-            if (result.zodiac) {
-              result.zodiac = result.zodiac.split(',')
-            }
-            let newIssue = result.issue_number
-            if (newIssue !== oldIssue) { // 表示抓到開獎結果
-              if (pollingLimiter) { // 成功抓取結果後限制器可關掉
-                clearTimeout(pollingLimiter)
-                pollingLimiter = null
+            } else {
+              result = result[0]
+              if (result.zodiac) {
+                result.zodiac = result.zodiac.split(',')
               }
-              clearInterval(this.resultInterval)
-              clearTimeout(this.resultTimer)
-              this.resultLoading = true // 開獎動畫開始
-              this.result = result
-              setTimeout(() => {
-                this.resultLoading = false
-                if (this.realSchedule) {
-                  this.realSchedule = '' // 恢復使用表定開獎時間
+              let newIssue = result.issue_number
+              if (newIssue !== oldIssue) { // 表示抓到開獎結果
+                if (pollingLimiter) { // 成功抓取結果後限制器可關掉
+                  clearTimeout(pollingLimiter)
+                  pollingLimiter = null
                 }
-              }, 3000)
-              setTimeout(() => {
-                this.$store.dispatch('fetchUser')
-              }, 2000)
+                clearInterval(this.resultInterval)
+                clearTimeout(this.resultTimer)
+                this.resultLoading = true // 開獎動畫開始
+                this.result = result
+                setTimeout(() => {
+                  this.resultLoading = false
+                  if (this.realSchedule) {
+                    this.realSchedule = '' // 恢復使用表定開獎時間
+                  }
+                }, 3000)
+                setTimeout(() => {
+                  this.$store.dispatch('fetchUser')
+                }, 2000)
+              }
             }
-          })
+          }).catch(() => {})
         }, 1000)
       }, startPollingTime)
     },
@@ -336,7 +337,7 @@ export default {
       let hours = duration.hours()
       let minutes = duration.minutes()
       let seconds = duration.seconds()
-      if (flag && (days + hours + minutes + seconds === 0)) {
+      if (flag && (days + hours + minutes + seconds <= 0)) {
         this.fetchScheduleAndResult()
       }
       days = days < 0 ? 0 : days
