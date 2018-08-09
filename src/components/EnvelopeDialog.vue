@@ -205,8 +205,8 @@ export default {
     },
     validateAll () {
       return validateItems
-      .map(item => this.validators[item].validate(this.envelope[item]))
-      .filter(msg => msg)
+        .map(item => this.validators[item].validate(this.envelope[item]))
+        .filter(msg => msg)
     }
   }
 }

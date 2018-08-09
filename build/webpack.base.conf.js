@@ -13,7 +13,7 @@ const createLintingRule = () => ({
   test: /\.(js|vue)$/,
   loader: 'eslint-loader',
   enforce: 'pre',
-  include: [resolve('src'), resolve('test')],
+  include: [resolve('src'), resolve('test'), resolve('node_modules/vue-awesome')],
   options: {
     formatter: require('eslint-friendly-formatter'),
     emitWarning: !config.dev.showEslintErrorsInOverlay
@@ -79,6 +79,10 @@ const originalConfig = {
     ]
   },
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('../lib/base-manifest.json')
+    }),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|cn/),
   ],
   node: {

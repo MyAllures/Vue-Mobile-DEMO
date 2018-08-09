@@ -124,7 +124,6 @@ import {
 } from 'vux'
 import { mapGetters, mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
-import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
@@ -206,7 +205,6 @@ export default {
     XDialog,
     Flexbox,
     FlexboxItem,
-    Icon,
     Masker,
     Alert,
     Card,

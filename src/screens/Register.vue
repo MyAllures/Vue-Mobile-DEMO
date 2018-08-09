@@ -137,7 +137,6 @@
   import VFormItem from '@/components/FormItem'
   import VInput from '@/components/Input'
   import { mapState } from 'vuex'
-  import Icon from 'vue-awesome/components/Icon'
   import 'vue-awesome/icons/volume-up'
 export default {
     name: 'Register',
@@ -145,7 +144,6 @@ export default {
       XButton,
       Popup,
       CheckIcon,
-      Icon,
       Alert,
       VForm,
       VFormItem,

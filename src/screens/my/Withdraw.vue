@@ -146,25 +146,25 @@
           if (valid) {
             this.loading = true
             postWithdraw(this.withdraw)
-            .then(response => {
-              window.gtag('event', '取款', {'event_category': '取款'})
-              this.loading = false
-              this.show = true
-              this.$refs.form.resetFields()
-              this.$nextTick(() => {
-                this.$refs.amount.firstError = ''
-                this.$refs.password.firstError = ''
-                this.inputErrors = []
+              .then(response => {
+                window.gtag('event', '取款', {'event_category': '取款'})
+                this.loading = false
+                this.show = true
+                this.$refs.form.resetFields()
+                this.$nextTick(() => {
+                  this.$refs.amount.firstError = ''
+                  this.$refs.password.firstError = ''
+                  this.inputErrors = []
+                })
+                this.errorMsg = ''
+                this.$router.push({name: 'WithdrawSuccess'})
+                setTimeout(() => {
+                  this.$store.dispatch('fetchUser')
+                }, 2000)
+              }, (error) => {
+                this.loading = false
+                this.errorMsg = msgFormatter(error)
               })
-              this.errorMsg = ''
-              this.$router.push({name: 'WithdrawSuccess'})
-              setTimeout(() => {
-                this.$store.dispatch('fetchUser')
-              }, 2000)
-            }, (error) => {
-              this.loading = false
-              this.errorMsg = msgFormatter(error)
-            })
           } else {
             return false
           }
