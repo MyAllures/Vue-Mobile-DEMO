@@ -15,6 +15,7 @@ export default {
   password: prefix + '/password/',
   withdraw_password: prefix + '/withdraw_password/',
   refresh_token: prefix + '/login/refresh/',
+  chat_token: host + '/get_chat_token/',
   verification: apiv2 + '/verification_code/',
   logout: host + '/logout/',
   games: apiv2 + '/game/',

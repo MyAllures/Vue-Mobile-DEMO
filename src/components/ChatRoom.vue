@@ -23,7 +23,7 @@ import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/picture-o'
 import 'vue-awesome/icons/volume-up'
 import { mapState } from 'vuex'
-import { fetchChatEmoji, fetchStickers } from '../api'
+import { fetchChatEmoji, fetchStickers, fetchChatToken } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
@@ -72,7 +72,9 @@ export default {
       if (!token) {
         return this.$router.push('/login?next=' + this.$route.path)
       }
-      this.$store.dispatch('setWs', new WebSocketObj(token, this.RECEIVER))
+      fetchChatToken().then(({chat_token}) => {
+        this.$store.dispatch('setWs', new WebSocketObj(chat_token, this.RECEIVER))
+      }).catch(() => {})
     }
     if (!this.$store.state.emojis) {
       Promise.all([fetchChatEmoji(), fetchStickers()]).then(resArr => {
