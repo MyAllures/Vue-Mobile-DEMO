@@ -50,7 +50,6 @@ export default {
     return logout().then(
       res => {
         commit(types.RESET_USER)
-        router.push('/')
       },
       errRes => Promise.reject(errRes)
     )
