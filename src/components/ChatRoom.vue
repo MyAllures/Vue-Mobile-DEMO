@@ -69,8 +69,8 @@ export default {
       if (!token) {
         return this.$router.push('/login?next=' + this.$route.path)
       }
-      fetchChatToken().then(({chat_token}) => {
-        this.$store.dispatch('setWs', new WebSocketObj(chat_token, this.RECEIVER))
+      fetchChatToken().then((res) => {
+        this.$store.dispatch('setWs', new WebSocketObj(res.chat_token, this.RECEIVER))
       }).catch(() => {})
     }
     if (!this.$store.state.emojis) {

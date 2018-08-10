@@ -11,6 +11,7 @@ module.exports = {
   mode: 'production',
   entry: {
     base: [
+      'vue/dist/vue.esm.js',
       'async-validator',
       'axios',
       'babel-polyfill',
@@ -18,7 +19,6 @@ module.exports = {
       'js-combinatorics',
       'lodash',
       'lrz',
-      'vue',
       'vue-awesome',
       'vue-cookie',
       'vue-i18n',
