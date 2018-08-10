@@ -25,7 +25,7 @@ export function fetchBanner () {
 }
 
 export function fetchAnnouncements () {
-  return axios.get(urls.announcements)
+  return axios.get(`${urls.announcements}?platform=0`)
 }
 
 export function gethomePage () {
@@ -33,7 +33,7 @@ export function gethomePage () {
 }
 
 export function fetchGames () {
-  return axios.get(urls.games)
+  return axios.get(`${urls.games}?platform=1`)
 }
 
 export function fetchCategories (gameId) {
@@ -107,6 +107,10 @@ export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
 }
 
+export function fetchBetTotal (date) {
+  return axios.get(`${urls.betrecord_byday}?bet_date=${date}&status=win,lose,tie,ongoing`).then(res => res.results[0])
+}
+
 export function fetchGameResult (gameId) {
   return axios.get(`${urls.game_result}?game=${gameId}&opt_expand=next`)
 }
@@ -119,7 +123,10 @@ export function addUserBank (user, member) {
   return axios.put(urls.user + user.id + '/', member)
 }
 
-export function fetchBank () {
+export function fetchBank (onlyEnabled) {
+  if (onlyEnabled) {
+    return axios.get(urls.bank + '?status=1')
+  }
   return axios.get(urls.bank)
 }
 
@@ -183,10 +190,6 @@ export function fetchPlaySetting (id) {
 
 export function setCookie (cookie) {
   return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
-}
-
-export function getChatUser (id) {
-  return axiosChat.get(`${urls.banUser}${id}/`)
 }
 
 export function fetchStickers (name) {

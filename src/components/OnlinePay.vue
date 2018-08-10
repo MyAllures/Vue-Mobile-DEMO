@@ -200,12 +200,12 @@ export default {
       if (!meetLower) {
         return {
           valid: false,
-          msg: '必须大于最小取款金额'
+          msg: '必须大于最小存款金额'
         }
       } else if (!meetUpper) {
         return {
           valid: false,
-          msg: '必须小于最大取款金额'
+          msg: '必须小于最大存款金额'
         }
       } else {
         return {

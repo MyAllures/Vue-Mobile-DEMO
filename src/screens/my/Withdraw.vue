@@ -1,75 +1,99 @@
 <template>
-  <div>
-  <div v-if="user && user.bank">
-    <group label-width="'80px'" title="收款银行资料">
-      <cell :title="$t('my.bank_name')" :value="user.bank.bank"></cell>
-      <cell :title="$t('my.bank_account')" :value="user.bank.account"></cell>
-      <cell :title="$t('my.receiver')" :value="user.real_name"></cell>
-    </group>
-    <group label-width="'80px'" :title="limitHint + ', 当前余额：￥' + user.balance">
-      <div v-if="inputErrors.length">
-        <ul slot="after-title" class="input-errors">
-          <li class="text" v-for="(error, index) in inputErrors" :key="index">
-            {{error}}
-          </li>
-        </ul>
+  <div class="wrapper">
+    <div class="wrapper stretch-layout" v-if="user && user.bank">
+      <div>
+        <p class="text title">收款银行资料</p>
+        <div class="stamp-wrapper">
+          <div class="stamp hasicon">
+            <div class="item">
+              <img src="../../assets/icon_bankcard.png" class="icon" alt="bank">
+              <div class="item-title">{{$t('my.bank_account')}}</div>
+              <div class="item-content bigger">{{user.bank.account}}</div>
+            </div>
+            <div class="item half">
+              <div class="item-title">{{$t('my.bank_name')}}</div>
+              <div class="item-content">{{user.bank.bank}}</div>
+            </div>
+            <div class="item half">
+              <div class="item-title">{{$t('my.receiver')}}</div>
+              <div class="item-content">{{user.real_name}}</div>
+            </div>
+          </div>
+        </div>
+        <p class="hint">{{limitHint + ', 当前余额：￥' + user.balance}}</p>
+        <div class="form">
+          <v-form :model="withdraw" :rules="rules" ref="form" @click.native="errorMsg = ''">
+            <v-form-item required :label="$t('withdraw.amount')" prop="amount">
+              <v-input
+                autocapitalize="off"
+                v-model="withdraw.amount"
+                :filter="/^[0]|[^0-9]/g">
+              </v-input>
+            </v-form-item>
+            <v-form-item required :label="$t('withdraw.password')" prop="withdraw_password">
+              <v-input
+                type="password"
+                autocapitalize="off"
+                v-model="withdraw.withdraw_password">
+              </v-input>
+            </v-form-item>
+          </v-form>
+        </div>
       </div>
-      <x-input autocapitalize="off"
-               name="withdraw-amount"
-               :title="$t('withdraw.amount')"
-               :show-clear="true"
-               type="number"
-               keyboard="number"
-               ref="amount"
-               required
-               @on-blur="validateErrors"
-               @on-cnange="validateErrors"
-               :is-type="amountValidator"
-               :placeholder="$t('withdraw.amount_hint')"
-               v-model.number="withdraw.amount">
-      </x-input>
-      <x-input autocapitalize="off"
-               :title="$t('withdraw.password')"
-               :show-clear="true"
-               type="password"
-               ref="password"
-               required
-               @on-blur="validateErrors"
-               :placeholder="$t('withdraw.password_hint')"
-               v-model="withdraw.withdraw_password">
-      </x-input>
-    </group>
-    <div class="vux-group-tip text-muted">请核对收款人信息，如需更改收款人请联系客服</div>
-    <div class="text-center text-danger m-t">{{errorMsg}}</div>
-    <div class="m-a">
-      <x-button type="primary" @click.native="submit">
-        <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
-        <span v-else>{{$t('withdraw.submit')}}</span>
-      </x-button>
+      <div class="text-center m-b-lg">
+        <div class="text-danger">{{errorMsg}}</div>
+        <p class="text">请核对收款人信息，如需更改收款人请 <a class="service-link" :href="systemConfig.customerServiceUrl">联系客服</a></p>
+        <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
+          <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
+          <span v-else>{{$t('withdraw.submit')}}</span>
+        </x-button>
+      </div>
     </div>
-  </div>
-
-  <div v-else class="text-center m-t">
-    <div class="vux-group-tip text-muted">申请取款需要先建立银行资讯</div>
-    <div class="m-a">
-      <x-button type="primary" @click.native="createBank">
-        <span>创建银行资讯</span>
-      </x-button>
+    <div v-else class="text-center m-t-lg">
+      <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
+      <div class="figure-caption">
+        <p class="sub">申请取款须先建立银行资讯</p>
+      </div>
+      <div class="set-bottom">
+        <x-button class="submit-btn" type="primary" @click.native="createBank">
+          <span>创建银行资讯</span>
+        </x-button>
+      </div>
     </div>
-  </div>
-    <alert :hide-on-blur="true" v-model="show">
-      {{message}}
-    </alert>
   </div>
 </template>
 
 <script>
+  import VForm from '@/components/Form'
+  import VFormItem from '@/components/FormItem'
+  import VInput from '@/components/Input'
   import {Group, Cell, XButton, XInput, Spinner, Alert} from 'vux'
   import { postWithdraw } from '../../api'
   import { msgFormatter } from '../../utils'
-
+  import { mapState } from 'vuex'
   export default {
     data () {
+      const amountValidator = (rule, value, callback) => {
+        let amount = parseInt(value)
+        let meetLower = !this.limit.lower || amount >= parseInt(this.limit.lower)
+        let meetUpper = !this.limit.upper || amount <= parseInt(this.limit.upper)
+
+        if (!meetLower) {
+          callback(new Error('必须大于最小存款金额'))
+        } else if (!meetUpper) {
+          callback(new Error('必须小于最大存款金额'))
+        } else {
+          callback()
+        }
+      }
+      const wpasswordValidator = (rule, value, callback) => {
+        if (value.length !== 6) {
+          callback(new Error('取款密码必须是六位数字'))
+        } else {
+          callback()
+        }
+      }
+
       return {
         withdraw: {
           amount: undefined,
@@ -77,18 +101,21 @@
         },
         errorMsg: '',
         loading: false,
-        message: '',
         show: false,
-        inputErrors: []
+        inputErrors: [],
+        rules: {
+          amount: [{validator: amountValidator}],
+          withdraw_password: [{validator: wpasswordValidator}]
+        }
       }
     },
     computed: {
-      user () {
-        return this.$store.state.user
-      },
+      ...mapState([
+        'user',
+        'systemConfig'
+      ]),
       limit () {
-        let user = this.$store.state.user
-        return user.level.withdraw_limit
+        return this.user.level.withdraw_limit
       },
       limitHint () {
         let lower = this.limit.lower
@@ -97,64 +124,15 @@
         let comma = (lower && upper ? ', ' : '')
         let upperHint = upper ? (this.$t('message.max') + ' ' + upper) : ''
         return lowerHint + comma + upperHint
+      },
+      inputCompleted () {
+        return this.withdraw.amount !== '' && this.withdraw.withdraw_password !== ''
       }
     },
     mounted () {
       this.$root.loading = false
     },
     methods: {
-      validateErrors () {
-        const inputErrors = []
-        if (this.$refs.password.firstError) {
-          inputErrors.push('请輸入密碼')
-        }
-        if (this.$refs.amount.firstError) {
-          if (this.$refs.amount.firstError === '必填哦') {
-            inputErrors.push('请输入金额')
-          } else {
-            inputErrors.push(this.$refs.amount.firstError)
-          }
-        }
-        this.inputErrors = inputErrors
-      },
-      validateAll () {
-        let amount = this.$refs.amount
-        let password = this.$refs.password
-        amount.validate()
-        password.validate()
-        if (amount.firstError) {
-          amount.forceShowError = true
-        }
-        if (password.firstError) {
-          password.forceShowError = true
-        }
-        this.validateErrors()
-        return amount.valid && password.valid
-      },
-      amountValidator (value) {
-        let meetLower = !this.limit.lower || value >= this.limit.lower
-        let meetUpper = !this.limit.upper || value <= this.limit.upper
-        if (!meetLower) {
-          return {
-            valid: false,
-            msg: '必须大于最小取款金额'
-          }
-        } else if (!meetUpper) {
-          return {
-            valid: false,
-            msg: '必须小于最大取款金额'
-          }
-        } else if (value > this.user.balance) {
-          return {
-            valid: false,
-            msg: '余额不足'
-          }
-        } else {
-          return {
-            valid: true
-          }
-        }
-      },
       createBank () {
         this.$router.push({
           name: 'bankinfo',
@@ -164,21 +142,22 @@
         })
       },
       submit () {
-        if (this.validateAll()) {
-          this.loading = true
-          postWithdraw(this.withdraw)
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.loading = true
+            postWithdraw(this.withdraw)
             .then(response => {
+              window.gtag('event', '取款', {'event_category': '取款'})
               this.loading = false
-              this.message = '取款信息已提交'
               this.show = true
-              this.$refs.amount.reset()
-              this.$refs.password.reset()
+              this.$refs.form.resetFields()
               this.$nextTick(() => {
                 this.$refs.amount.firstError = ''
                 this.$refs.password.firstError = ''
                 this.inputErrors = []
               })
               this.errorMsg = ''
+              this.$router.push({name: 'WithdrawSuccess'})
               setTimeout(() => {
                 this.$store.dispatch('fetchUser')
               }, 2000)
@@ -186,7 +165,10 @@
               this.loading = false
               this.errorMsg = msgFormatter(error)
             })
-        }
+          } else {
+            return false
+          }
+        })
       }
     },
     components: {
@@ -195,18 +177,60 @@
       XButton,
       XInput,
       Spinner,
-      Alert
+      Alert,
+      VForm,
+      VFormItem,
+      VInput
     }
   }
 </script>
 
 <style lang="less" scoped>
-.vux-group-tip, .vux-group-tip p {
-  color: #999;
+.wrapper {
+  height: 100%;
+  overflow: auto;
+}
+
+
+.text {
   font-size: 14px;
-  text-align: center;
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 5px;
+  color: #666;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.title {
+  margin-left: 15px;
+}
+
+.form {
+  margin-top: 10px;
+}
+
+.hint {
+  margin-top: 15px;
+  margin-left: 15px;
+  font-size: 13px;
+  color: #999;
+}
+
+.figure {
+  width: 200px;
+  height: 200px;
+  &-caption {
+    margin-top: 15px;
+    .main {
+      font-size: 16px;
+      color: #333;
+    }
+    .sub {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+
+.submit-btn {
+  width: 85%;
 }
 </style>

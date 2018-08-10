@@ -8,6 +8,7 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 import VueCookie from 'vue-cookie'
 import locales from './i18n/locales'
+import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie } from './api'
@@ -15,6 +16,26 @@ import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
 import qs from 'qs'
+import icon from './utils/icon'
+import color from './styles'
+import urls from './api/urls'
+import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
+
+// 移动端触发active
+document.addEventListener('touchstart', function () {}, true)
+window.onerror = function (errorMessage, scriptURI, lineNo, columnNo, error) {
+  report({
+    type: JS_ERROR,
+    error
+  })
+}
+Vue.config.errorHandler = (error, vm, info) => {
+  report({
+    type: JS_ERROR,
+    error,
+    memo: info
+  })
+}
 
 let url = window.location.href
 const HTTPS = process.env.HTTPS
@@ -33,6 +54,11 @@ Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
+Vue.use(VueLazyload, {
+  error: 'mobile/static/images/error.png',
+  loading: 'mobile/static/images/loading.gif',
+  attempt: 1
+})
 
 const i18n = new VueI18n({
   locale: 'cn',
@@ -43,6 +69,19 @@ const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
 }
+
+axios.interceptors.request.use((config) => {
+  if (config.url.indexOf('v2') !== -1) {
+    let t = new Date()
+    config.headers.common['x-sign'] = icon[color.white](t, icon.sz)
+    config.headers.common['x-date'] = icon[color.red.split('5')[0]](t, icon.sz)
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
+const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
@@ -51,17 +90,28 @@ axios.interceptors.response.use(res => {
     return responseData
   } else {
     if (responseData.code === 9007) {
-      toLogin(router)
+      if (!pollingApi.some(url => res.config.url.indexOf(url) !== -1)) { // 忽略輪詢api
+        report({
+          type: AUTH_ERROR,
+          url: res.config.url,
+          msg: '9007身份认证信息未提供'
+        })
+        toLogin(router)
+      }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
       axios.defaults.withCredentials = true
       Vue.cookie.set('sessionid', res.data.sessionid)
       return Promise.reject(responseData)
     }
-    return Promise.reject(responseData.msg)
+    return Promise.reject(responseData)
   }
 }, (error) => {
+  report({
+    type: HTTP_ERROR,
+    error
+  })
   Vue.$vux.toast.show({
-    text: '系统发生了错误, 请联系客服',
+    text: '网路服务异常，请稍后再试',
     type: 'warn'
   })
   return Promise.reject(error)
@@ -101,8 +151,8 @@ router.beforeEach((to, from, next) => {
 router.afterEach(function (to) {
   store.commit(types.UPDATE_LOADING, {isLoading: false})
   const gaTrackingId = store.state.systemConfig.gaTrackingId
-  if (gaTrackingId) {
-    window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path})
+  if (gaTrackingId && to.name !== 'DetailBetRecord' && to.name !== 'GameDetail') {
+    window.gtag('config', store.state.systemConfig.gaTrackingId, {page_path: to.path, page_title: to.meta.gaTitle || to.meta.title})
   }
 })
 
@@ -112,6 +162,11 @@ Vue.mixin({
   methods: {
     performLogin () {
       toLogin(this.$router)
+    },
+    sendGaEvent ({label, category, action}) {
+      if (store.state.systemConfig.gaTrackingId) {
+        window.gtag('event', action, {'event_category': category, 'event_label': label})
+      }
     }
   }
 })
@@ -119,6 +174,7 @@ Vue.mixin({
 gethomePage().then(
   response => {
     let pref = response.global_preferences || {}
+    const chatroomEnabled = pref.chatroom_enabled === 'true'
     store.dispatch('setSystemConfig',
       {
         homePageLogo: response.icon,
@@ -130,7 +186,7 @@ gethomePage().then(
         contactEmail: pref.contact_email,
         contactPhoneNumber: pref.contact_phone_number,
         openAccountConsultingQQ: pref.open_account_consulting_qq,
-        chatroomEnabled: pref.chatroom_enabled,
+        chatroomEnabled: chatroomEnabled,
         siteName: response.name,
         gaTrackingId: pref.ga_tracking_id,
         regPresentAmount: response.reg_present_amount,

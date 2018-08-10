@@ -6,6 +6,10 @@ import getters from './getters'
 
 Vue.use(Vuex)
 
+const isDebugMode = process.env.NODE_ENV !== 'production'
+Vue.config.debug = isDebugMode
+Vue.config.devtools = isDebugMode
+
 export default new Vuex.Store({
   state: {
     user: {
@@ -15,7 +19,23 @@ export default new Vuex.Store({
     isLoading: false,
     showVerifyPopup: false,
     games: [],
-    categories: [],
+    gameInfo: {
+      display_name: '',
+      game_code: '',
+      countdown: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+      },
+      issue_number: ''
+    },
+    betDialog: {
+      visible: false,
+      bets: [],
+      isSuccess: false
+    },
+    categories: {},
     systemConfig: {
       customerServiceUrl: '',
       agentDashboardUrl: '',
@@ -24,7 +44,7 @@ export default new Vuex.Store({
       global_preferences: {
         send_chat_conditions: '{}'
       },
-      chatroomEnabled: 'false',
+      chatroomEnabled: false,
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
       envelopeSettings: {},
@@ -32,8 +52,20 @@ export default new Vuex.Store({
       smsValidationEnabled: false
     },
     envelope: {},
+    currentGameResult: null,
     emojis: null,
     keepAlivePage: [],
+    ws: null,
+    roomId: undefined,
+    roomInfo: null,
+    messages: [],
+    announce: [],
+    customTitle: '',
+    personal_setting: {
+      chat: {
+        status: 0
+      }
+    },
     customPlayGroups: [
       {
         // 广东11选5 连码

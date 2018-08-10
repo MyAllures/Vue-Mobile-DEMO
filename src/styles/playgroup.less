@@ -38,7 +38,7 @@
 }
 .play-nums {
   .play-num {
-    color: #000;
+    color: #333;
     margin-right: 5px;
   }
 }
@@ -88,10 +88,11 @@
 // hkl
 .hk6ball {
   display: inline-block;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
+  background-size: 28px 1372px;
   vertical-align: middle;
   text-indent: -9999px;
 }
@@ -100,7 +101,7 @@
     .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
-      background-position: 0 (-27px * (@i - 1));;
+      background-position: 0 (-28px * (@i - 1));;
     }
   }
 
@@ -110,7 +111,7 @@
   .luckl-@{i},
   .hkl-@{i} {
     &:extend(.hk6ball);
-    background-position: 0 (-27px * (@i - 1));;
+    background-position: 0 (-28px * (@i - 1));;
   }
 }
 
@@ -121,7 +122,7 @@
 
 .jsk3-dice {
   display: inline-block;
-  background: url(../assets/dice.png) no-repeat;
+  background: url(../assets/ball_4.png) no-repeat;
   background-size: (42px * 0.8) (252px * 0.8);
   width: (42px * 0.8);
   height: (42px * 0.8);

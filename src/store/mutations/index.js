@@ -12,6 +12,9 @@ export default {
     state.user = {
       logined: false
     }
+    if (state.ws) {
+      state.ws.disconnect()
+    }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
   },
@@ -21,8 +24,8 @@ export default {
   [types.SET_GAMES]: (state, { games }) => {
     state.games = games
   },
-  [types.SET_CATEGORIES]: (state, categories) => {
-    state.categories = categories
+  [types.SET_CATEGORIES]: (state, {gameId, categories}) => {
+    Vue.set(state.categories, gameId, categories)
   },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
@@ -55,9 +58,6 @@ export default {
   [types.INIT_EMOJI]: (state, emojis) => {
     state.emojis = emojis
   },
-  [types.SET_REMIT]: (state, remitPayee) => {
-    state.remitPayee = remitPayee
-  },
   [types.ADD_KEEP_ALIVE]: (state, page) => {
     if (!state.keepAlivePage.includes(page)) {
       state.keepAlivePage.push(page)
@@ -68,5 +68,64 @@ export default {
     if (index > -1) {
       state.keepAlivePage.splice(index, 1)
     }
+  },
+  [types.SET_WS]: (state, ws) => {
+    state.ws = ws
+  },
+  [types.INIT_PERSONAL_SETTING]: (state, setting) => {
+    state.personal_setting = setting
+  },
+  [types.UPDATE_PERSONAL_SETTING]: (state, type) => {
+    switch (type) {
+      case 'unblock':
+        state.personal_setting.blocked = false
+        break
+      case 'unbanned':
+        state.personal_setting.banned = false
+        break
+      case 'blocked':
+        state.personal_setting.blocked = true
+        break
+      case 'banned':
+        state.personal_setting.banned = true
+        break
+    }
+  },
+  [types.INIT_MESSAGE]: (state, messages) => {
+    state.messages = messages
+  },
+  [types.ADD_MESSAGE]: (state, message) => {
+    state.messages.push(message)
+  },
+  [types.SET_ANNOUNCE]: (state, announce) => {
+    state.announce = announce
+  },
+  [types.UPDATE_GAME_INFO]: (state, info) => {
+    state.gameInfo = {...state.gameInfo, ...info}
+  },
+  [types.SET_ROOM_INFO]: (state, info) => {
+    state.roomInfo = info
+  },
+  [types.SET_ROOM_ID]: (state, id) => {
+    state.roomId = id
+  },
+  [types.OPEN_BET_DIALOG]: (state, bets) => {
+    state.betDialog.bets = bets
+    state.betDialog.visible = true
+    state.betDialog.isSuccess = false
+  },
+  [types.CLOSE_BET_DIALOG]: (state, isSuccess) => {
+    state.betDialog.bets = []
+    state.betDialog.visible = false
+    if (isSuccess) {
+      state.betDialog.isSuccess = true
+    }
+  },
+  [types.SET_TITLE]: (state, title) => {
+    state.customTitle = title
+  },
+  [types.SET_CURRENTGAME_RESULT]: (state, result) => {
+    let obj = result[0] || result
+    state.currentGameResult = obj
   }
 }

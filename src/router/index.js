@@ -60,6 +60,16 @@ export default new Router({
       ]
     },
     {
+      path: '/unsettle',
+      name: 'UnsettleRecord',
+      component: resolve => { require(['../screens/finance/UnsettleRecord.vue'], resolve) },
+      meta: {
+        title: '未结明细',
+        tabbarHidden: true,
+        showBack: true
+      }
+    },
+    {
       path: '/fin',
       name: 'Fin',
       meta: {
@@ -72,7 +82,8 @@ export default new Router({
           path: 'payment_record',
           name: 'PaymentRecord',
           meta: {
-            title: '充值记录',
+            title: '财务纪录',
+            gaTitle: '充值纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -81,7 +92,8 @@ export default new Router({
           path: 'withdraw_record',
           name: 'WithdrawRecord',
           meta: {
-            title: '取款记录',
+            title: '财务纪录',
+            gaTitle: '取款纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -90,7 +102,8 @@ export default new Router({
           path: 'promotion_record',
           name: 'PromotionRecord',
           meta: {
-            title: '优惠和红包',
+            title: '财务纪录',
+            gaTitle: '优惠和红包纪录',
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
@@ -99,7 +112,8 @@ export default new Router({
           path: 'bet_record/:date',
           name: 'DetailBetRecord',
           meta: {
-            title: '投注详情',
+            title: '财务纪录',
+            gaTitle: '投注记录',
             requiresAuth: true,
             tabbarHidden: true,
             showBack: true
@@ -110,8 +124,15 @@ export default new Router({
           path: 'bet_record',
           name: 'BetRecord',
           meta: {
-            title: '投注记录',
+            title: '财务纪录',
+            gaTitle: '投注记录',
             requiresAuth: true
+          },
+          beforeEnter: (to, from, next) => {
+            if (from.name !== 'DetailBetRecord') {
+              store.dispatch('removeKeepAlive', 'BetRecord')
+            }
+            next()
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
         }
@@ -127,36 +148,74 @@ export default new Router({
       component: resolve => { require(['../screens/My.vue'], resolve) }
     },
     {
+      path: '/my/deposit/submit_success',
+      name: 'SubmitSuccess',
+      component: resolve => { require(['../screens/my/SubmitSuccess.vue'], resolve) },
+      meta: {
+        title: 'custom',
+        gaTitle: '充值申请提交',
+        showBack: false
+      }
+    },
+    {
+      path: '/my/deposit/withdraw_success',
+      name: 'WithdrawSuccess',
+      component: resolve => { require(['../screens/my/WithdrawSuccess.vue'], resolve) },
+      meta: {
+        title: '申請取款',
+        gaTitle: '取款申请提交',
+        showBack: true
+      }
+    },
+    {
       path: '/my/deposit',
       name: 'Deposit',
       meta: {
         title: '充值',
-        requiresAuth: true
+        requiresAuth: true,
+        showBack: false
       },
-      beforeEnter: (to, from, next) => {
-        if (from.path !== '/my/remit') {
-          store.dispatch('removeKeepAlive', 'Deposit')
+      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) },
+      children: [
+        {
+          path: 'remit',
+          component: resolve => { require(['../screens/my/remit/Remit.vue'], resolve) },
+          children: [
+            {
+              path: '',
+              name: 'Remit',
+              redirect: '/my/deposit'
+            },
+            {
+              path: 'bank',
+              name: 'Bank',
+              meta: {
+                title: '银行转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/Bank.vue'], resolve) }
+            },
+            {
+              path: 'wechat',
+              name: 'Wechat',
+              meta: {
+                title: '微信转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
+            },
+            {
+              path: 'alipay',
+              name: 'Alipay',
+              meta: {
+                title: '支付宝转帐',
+                showBack: true
+              },
+              component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
+            }
+          ]
         }
-        next()
-      },
-      component: resolve => { require(['../screens/my/Deposit.vue'], resolve) }
-    },
-    {
-      path: '/my/remit',
-      name: 'Remit',
-      meta: {
-        title: '转帐',
-        showBack: true,
-        requiresAuth: true
-      },
-      beforeEnter: (to, from, next) => {
-        if (store.state.remitPayee) {
-          next()
-        } else {
-          next('/my/deposit')
-        }
-      },
-      component: resolve => { require(['../components/Remit.vue'], resolve) }
+      ]
     },
     {
       path: '/my/password',
@@ -164,7 +223,8 @@ export default new Router({
       meta: {
         title: '修改密码',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Password.vue'], resolve) }
     },
@@ -172,9 +232,11 @@ export default new Router({
       path: '/my/profile',
       name: 'profile',
       meta: {
-        title: '修改账户资料',
+        title: '基本資料',
+        gaTitle: '基本资料',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Profile.vue'], resolve) }
     },
@@ -184,7 +246,8 @@ export default new Router({
       meta: {
         title: '银行资讯',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Bankinfo.vue'], resolve) }
     },
@@ -192,9 +255,10 @@ export default new Router({
       path: '/my/withdraw',
       name: 'withdraw',
       meta: {
-        title: '取款',
+        title: '申请取款',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Withdraw.vue'], resolve) }
     },
@@ -202,9 +266,10 @@ export default new Router({
       path: '/my/wpassword',
       name: 'wpassword',
       meta: {
-        title: '重置取款密码',
+        title: '修改取款密码',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Wpassword.vue'], resolve) }
     },
@@ -214,7 +279,8 @@ export default new Router({
       meta: {
         title: '会员消息',
         showBack: true,
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Message.vue'], resolve) }
     },

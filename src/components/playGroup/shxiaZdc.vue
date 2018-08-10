@@ -23,7 +23,6 @@
         </div>
       </grid-item>
     </grid>
-    <toast v-model="illegal" type="text" width="10em">不允许超过{{maxOpts}}个选项</toast>
   </div>
 </template>
 
@@ -64,12 +63,16 @@ export default {
         active: false
       })
     })
+    const playMap = {}
+    this.plays.forEach(play => {
+      playMap[play.rules.max_opts] = play
+    })
 
     return {
       rawOptions,
       valid: false,
-      illegal: false,
-      zodiacs: this.plays[0].rules.choices ? this.plays[0].rules.choices : ''
+      zodiacs: this.plays[0].rules.choices ? this.plays[0].rules.choices : '',
+      playMap
     }
   },
   computed: {
@@ -87,17 +90,10 @@ export default {
       })
     },
     activePlay () {
-      if (this.activedOptions.length > (this.minOpts - 1)) {
-        return this.plays[this.activedOptions.length - this.minOpts]
+      const activePlay = this.playMap[this.activedOptions.length]
+      if (activePlay) {
+        return activePlay
       }
-    },
-    maxOpts () {
-      const maxOptionsPlay = this.plays[this.plays.length - 1].display_name
-      return maxOptionsPlay.slice(0, 2)
-    },
-    minOpts () {
-      const minOptionsPlay = this.plays[0].display_name
-      return minOptionsPlay.slice(0, 1)
     }
   },
   watch: {
@@ -128,15 +124,7 @@ export default {
       if (this.gameClosed) {
         return false
       }
-      if (!option.active) {
-        if (this.activedOptions.length < this.maxOpts) {
-          option.active = true
-        } else {
-          this.illegal = true
-        }
-      } else {
-        option.active = false
-      }
+      option.active = !option.active
     }
   },
   components: {

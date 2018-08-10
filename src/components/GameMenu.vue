@@ -1,30 +1,35 @@
 <template>
   <div v-transfer-dom>
-    <popup :value="isShow" position="left" @on-hide="handleClose" class="popup">
-      <div :class="['popup-content', isGamePage ? 'shorter' : '']">
-        <ul class="popup-menu">
-          <li
-            :class="['arrow-right',
-            {'active': $route.path.split('/')[2] === game.id + ''}]"
+    <popup :value="isShow"
+      v-fix-scroll
+      :show-mask="true"
+      position="top"
+      :height="height"
+      @on-show="lockBackScroll"
+      @on-hide="handleClose"
+      :popup-style="{zIndex: 502}"
+      class="popup">
+      <div class="popup-content">
+        <grid :cols="3" :show-lr-borders="false">
+          <grid-item
+            class="grid-item text-center"
             v-for="(game, index) in allGames"
             :key="index"
-            @click="switchGame(game.id)">
-              <img class="icon" :src="game.icon" width="36" height="36"/>
-              {{game.display_name || ''}}
-            </li>
-        </ul>
+            @click.native="switchGame(game)">
+            <img class="icon" :src="game.icon" width="36" height="36"/>
+            <p class="name">{{game.display_name || ''}}</p>
+          </grid-item>
+        </grid>
       </div>
-      <router-link class="home-link" to="/" v-if="isGamePage">
-        <x-icon type="ios-arrow-left"></x-icon>
-        <span>返回首页</span>
-      </router-link >
     </popup>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { TransferDom, Popup, Group, CellBox, Cell } from 'vux'
+import { TransferDom, Popup, Grid, GridItem } from 'vux'
+import FixScroll from '../directive/fixscroll'
+const body = document.getElementsByTagName('body')[0]
 
 export default {
   props: {
@@ -33,13 +38,16 @@ export default {
     }
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll
   },
   components: {
-    Popup,
-    Group,
-    CellBox,
-    Cell
+    Popup, Grid, GridItem
+  },
+  data () {
+    return {
+      height: '339px'
+    }
   },
   computed: {
     ...mapGetters([
@@ -52,6 +60,14 @@ export default {
       return this.$route.name === 'GameDetail'
     }
   },
+  mounted () {
+    const height = document.body.clientHeight
+    if (height > 650) {
+      this.height = '533px'
+    } else if (height > 550) {
+      this.height = '436px'
+    }
+  },
   methods: {
     back () {
       this.$router.go(-1)
@@ -59,11 +75,26 @@ export default {
     },
     handleClose () {
       this.$emit('closeSideBar')
+      this.enableBackScroll()
     },
-    switchGame (key) {
-      localStorage.setItem('lastGame', key)
-      this.$router.push({path: `/game/${key + ''}/`})
+    switchGame (game) {
+      const gameId = game.id + ''
+      if (this.$route.params.gameId !== gameId) {
+        this.sendGaEvent({
+          label: game.display_name,
+          category: '游戏选单',
+          action: '选单'
+        })
+        localStorage.setItem('lastGame', gameId)
+        this.$router.push({path: `/game/${gameId}/`})
+      }
       this.handleClose()
+    },
+    lockBackScroll () {
+      body.style['overflow-y'] = 'hidden'
+    },
+    enableBackScroll () {
+      body.style['overflow-y'] = ''
     }
   }
 }
@@ -73,52 +104,26 @@ export default {
 @import '../styles/vars.less';
 .popup {
   background-color: #fff;
+  top: 45px;
 }
-.home-link {
-  display: block;
-  background: @azul;
-  border-bottom: 1px solid #f1f1f1;
-  height: 44px;
-  line-height: 44px;
-  width: 100%;
-  color: #fff;
-  .vux-x-icon {
-    float: left;
-    fill: #fff;
-    margin: 10px 0 0 10px;
-  }
-}
-.shorter {
-  height: calc(~"100%" - 44px);
-}
-.icon {
-  border-radius: 4px;
-  margin-right: 10px;
-  vertical-align: middle;
-  display: inline-block;
-  margin-top: -3px;
-}
+
 .popup-content {
-  width: 60vw;
-  overflow-y: scroll;
-  font-size: 18px;
-  color: #4a4a4a;
-  li {
-    position: relative;
-    box-sizing: border-box;
-    height: 50px;
-    line-height: 50px;
-    padding-left: 10px;
-    text-align: left;
-    width: 100%;
-    border-bottom: 1px solid #f1f1f1;
-    &.active {
-      color: #fff;
-      background-image: linear-gradient(to bottom, #006bb3, #00397c);
+  width: 100%;
+
+  .grid-item.weui-grid {
+    padding: 10px;
+    overflow: hidden;
+    color: #333;
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
     }
-  }
-  .arrow-right:after {
-    right: 10px;
+    .name {
+      font-size: 14px;
+      line-height: 20px;
+      white-space: pre;
+    }
   }
 }
 </style>

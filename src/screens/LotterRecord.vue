@@ -57,7 +57,8 @@
         </x-button>
 
         <div class="no-more" v-else>
-          <span>{{$t('misc.no_more')}}</span>
+          <span v-if="!nowGameTable.table">暂无资料</span>
+          <span v-else>{{$t('misc.no_more')}}</span>
         </div>
       </tr>
     </table>
@@ -714,14 +715,20 @@ export default {
         offset: this.pagination.offset,
         time: this.date
       }
+      this.nowGameTable = _.find(this.gameTable, item => {
+        return item.code === this.gameCode
+      })
+
+      if (!this.nowGameTable || !this.nowGameTable.table) {
+        this.loading = false
+        return
+      }
+
       getGameHistoryData(data).then((response) => {
         this.pagination.total = response.count
 
         this.codeKl = false
         this.records = response
-        this.nowGameTable = _.find(this.gameTable, item => {
-          return item.code === this.gameCode
-        })
 
         if (this.gameCode === 'auluck8' || this.gameCode === 'bjkl8') {
           this.codeKl = true
@@ -869,9 +876,10 @@ export default {
   position: relative;
   font-size: 14px;
 }
+
 .no-more {
   text-align: center;
-  color: #ccc;
+  color: #666;
 }
 
 .invalid {
@@ -970,6 +978,7 @@ export default {
 .jsk3-dice {
   display: inline-block;
   background: url(../assets/ball_4.png) no-repeat;
+  background-size: 27px 162px;
   width: 27px;
   height: 27px;
   margin-top: 3px;
@@ -990,11 +999,12 @@ export default {
 
 .hk6ball {
   display: inline-block;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   margin-top: 4px;
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
+  background-size: 28px 1372px;
   vertical-align: middle;
   text-indent: -9999px;
 }
@@ -1003,7 +1013,7 @@ export default {
     .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
-      background-position: 0 (-27px * (@i - 1));;
+      background-position: 0 (-28px * (@i - 1));;
     }
   }
 
@@ -1013,7 +1023,7 @@ export default {
   .lottery-luckl-@{i},
   .lottery-hkl-@{i} {
     &:extend(.hk6ball);
-    background-position: 0 (-27px * (@i - 1));;
+    background-position: 0 (-28px * (@i - 1));;
   }
 }
 

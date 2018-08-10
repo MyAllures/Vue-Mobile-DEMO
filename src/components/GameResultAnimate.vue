@@ -27,6 +27,9 @@
         </ul>
       </div>
     </template>
+    <div v-else-if="gameCode === 'jsk3'">
+      <img class="jsk3-loading" :src="require('../assets/loading_dice.gif')" alt="dice">
+    </div>
     <div
       v-else
       :class="`result-${gameCode} view`"
@@ -175,5 +178,9 @@ export default {
   margin-bottom: 10px;
   height: 26px;
   margin-left: -8px;
+}
+
+.jsk3-loading {
+  height: 35px;
 }
 </style>

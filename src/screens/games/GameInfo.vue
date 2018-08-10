@@ -18,32 +18,33 @@
 </template>
 
 <script>
-import cqlf from './rules/cqlf'
-import gd11x5 from './rules/gd11x5'
-import jsk3 from './rules/jsk3'
-import mlaft from './rules/mlaft'
-import gdklsf from './rules/gdklsf'
-import bcr from './rules/bcr'
-import jsssc from './rules/jsssc'
-import jspk10 from './rules/jspk10'
-import cqssc from './rules/cqssc'
-import pcdd from './rules/pcdd'
-import luckdd from './rules/luckdd'
-import hkl from './rules/hkl'
-import luckl from './rules/luckl'
-import xjssc from './rules/xjssc'
-import tjssc from './rules/tjssc'
-import csffc from './rules/csffc'
-import bjkl8 from './rules/bjkl8'
-import er75ft from './rules/er75ft'
-import auluck8 from './rules/auluck8'
-import jnd28 from './rules/jnd28'
-import fc3d from './rules/fc3d'
-import GameStatistic from './GameStatistic'
-import LotterRecord from '../LotterRecord'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/caret-down'
 import { Datetime, dateFormat } from 'vux'
+
+const cqlf = (resolve) => require(['@/screens/games/rules/cqlf'], resolve)
+const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
+const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
+const mlaft = (resolve) => require(['@/screens/games/rules/mlaft'], resolve)
+const gdklsf = (resolve) => require(['@/screens/games/rules/gdklsf'], resolve)
+const bcr = (resolve) => require(['@/screens/games/rules/bcr'], resolve)
+const jsssc = (resolve) => require(['@/screens/games/rules/jsssc'], resolve)
+const jspk10 = (resolve) => require(['@/screens/games/rules/jspk10'], resolve)
+const cqssc = (resolve) => require(['@/screens/games/rules/cqssc'], resolve)
+const pcdd = (resolve) => require(['@/screens/games/rules/pcdd'], resolve)
+const luckdd = (resolve) => require(['@/screens/games/rules/luckdd'], resolve)
+const hkl = (resolve) => require(['@/screens/games/rules/hkl'], resolve)
+const luckl = (resolve) => require(['@/screens/games/rules/luckl'], resolve)
+const xjssc = (resolve) => require(['@/screens/games/rules/xjssc'], resolve)
+const tjssc = (resolve) => require(['@/screens/games/rules/tjssc'], resolve)
+const csffc = (resolve) => require(['@/screens/games/rules/csffc'], resolve)
+const bjkl8 = (resolve) => require(['@/screens/games/rules/bjkl8'], resolve)
+const er75ft = (resolve) => require(['@/screens/games/rules/er75ft'], resolve)
+const auluck8 = (resolve) => require(['@/screens/games/rules/auluck8'], resolve)
+const jnd28 = (resolve) => require(['@/screens/games/rules/jnd28'], resolve)
+const fc3d = (resolve) => require(['@/screens/games/rules/fc3d'], resolve)
+const GameStatistic = (resolve) => require(['@/screens/games/GameStatistic'], resolve)
+const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 
 export default {
   name: 'GameIntro',

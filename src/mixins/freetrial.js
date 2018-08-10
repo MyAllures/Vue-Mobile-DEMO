@@ -15,6 +15,7 @@ export default {
         }
         return this.$store.dispatch('login', { user })
           .then(() => {
+            window.gtag('event', '試玩', {'event_category': '遊客'})
             this.$vux.toast.show({
               text: '试玩已开启',
               type: 'success'

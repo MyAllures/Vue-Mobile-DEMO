@@ -1,17 +1,16 @@
 <template>
   <div>
-    <form class="container" autocomplete="off">
-    <div v-if="parseInt(systemConfig.regPresentAmount)">
+    <div v-if="parseInt(systemConfig.regPresentAmount)" class="register-money-area">
+      <icon class="volume-up" name="volume-up"></icon>
       <div class="register-money" v-if="!systemConfig.needBankinfo">
         现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
       </div>
       <div v-else class="register-money">
         注册账号并填写银行信息即可领取 {{systemConfig.regPresentAmount | currency('￥', 0)}} 红包
-        <icon type="info" @click.native="showInfo=true"></icon>
         <div v-transfer-dom>
           <alert v-model="showInfo" title="注意">
             <ul style="list-style: square inside; color: #999; text-align: left; line-height: 1.6;">
-              <li>登录后请到「我的」> 「取款账号」填写</li>
+              <li>登录后请到「我的」> 「取款银行卡」填写</li>
               <li>同一银行卡信息最多仅可领取一次</li>
               <li>同一 IP 最多仅可领取一次，请勿重复注册</li>
               <li>本平台保留对本次活动的全部解释权</li>
@@ -19,122 +18,78 @@
           </alert>
         </div>
       </div>
+      <div v-if="systemConfig.needBankinfo" class="register-money-info" @click="showInfo = true">&#8230;</div>
     </div>
-    <group>
-      <div v-if="showInputErrors.length">
-        <ul slot="after-title" class="input-errors">
-          <li class="text" v-for="(error, index) in showInputErrors" :key="index">
-            {{error}}
-          </li>
-        </ul>
-      </div>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['username']}"
-        show-clear
-        @on-blur="validate($event, 'username')"
-        ref="username"
-        :placeholder="$t('validate.username_validate')"
-        :title="$t('misc.username')"
-        label-width="100"
-        :debounce="1000"
-        v-model="user.username">
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['password']}"
-        show-clear
-        type="password"
-        @on-blur="validate($event, 'password')"
-        ref="password"
-        :placeholder="$t('validate.password_validate')"
-        autocomplete="off"
-        :title="$t('misc.password')"
-        label-width="100"
-        v-model="user.password">
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['confirmation_password']}"
-        show-clear
-        type="password"
-        @on-blur="validate($event, 'confirmation_password')"
-        ref="confirmation_password"
-        placeholder="再次输入密码"
-        autocomplete="off"
-        :title="$t('misc.confirm_password')"
-        label-width="100"
-        v-model="user.confirmation_password">
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['real_name']}"
-        show-clear
-        placeholder="用于取款"
-        @on-blur="validate($event, 'real_name')"
-        ref="real_name"
-        :title="$t('misc.real_name')"
-        label-width="100"
-        v-model="user.real_name">
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['phone']}"
-        show-clear
-        @on-blur="validate($event, 'phone')"
-        ref="phone"
-        :title="$t('misc.phone')"
-        label-width="100"
-        v-model="user.phone">
-      </x-input>
-       <x-input
-        v-if="smsValidationEnabled"
-        :class="{'weui-cell_warn': inputErrors['sms_code']}"
-        @on-blur="validate($event, 'sms_code')"
-        ref="sms_code"
-        show-clear
-        autocomplete="off"
-        :title="$t('misc.captcha')"
-        label-width="100"
-        v-model="user.sms_code">
-        <x-button
+    <v-form :model="user" :rules="rules" ref="form" @click.native="error = ''">
+      <v-form-item required :label="$t('misc.username')" prop="username">
+        <v-input
+          :placeholder="$t('validate.username_validate')"
+          v-model="user.username">
+        </v-input>
+      </v-form-item>
+      <v-form-item required :label="$t('misc.password')" prop="password">
+        <v-input
+          type="password"
+          :placeholder="$t('validate.password_validate')"
+          autocomplete="new-password"
+          v-model="user.password">
+        </v-input>
+      </v-form-item>
+      <v-form-item required :label="$t('misc.confirm_password')" prop="confirmation_password">
+        <v-input
+          type="password"
+          placeholder="再次输入密码"
+          autocomplete="new-password"
+          v-model="user.confirmation_password">
+        </v-input>
+      </v-form-item>
+      <v-form-item required :label="$t('misc.real_name')" prop="real_name">
+        <v-input
+          placeholder="用于取款"
+          v-model="user.real_name">
+        </v-input>
+      </v-form-item>
+      <v-form-item required :label="$t('misc.phone')" prop="phone">
+        <v-input
+          v-model="user.phone">
+        </v-input>
+      </v-form-item>
+      <v-form-item v-if="smsValidationEnabled" required :label="$t('misc.captcha')" prop="phone">
+        <v-input
+          autocomplete="off"
+          v-model="user.sms_code">
+          <x-button
           class="sms-btn"
           slot="right"
           type="primary"
           mini
           action-type ="button"
-          :disabled="!!inputErrors['phone']||SMSLoading||countdown!=='stop'"
+          :disabled="!user.phone||SMSLoading||countdown!=='stop'"
           @click.native="sendSMSCode">{{countdown!=='stop'?`${countdown}s`:SMSText}}</x-button>
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['qq']}"
-        show-clear
-        @on-blur="validate($event, 'qq')"
-        ref="qq"
-        autocomplete="off"
-        :title="'QQ'"
-        label-width="100"
-        v-model="user.qq">
-      </x-input>
-      <x-input
-        :class="{'weui-cell_warn': inputErrors['withdraw_password']}"
-        show-clear
-        @on-blur="validate($event, 'withdraw_password')"
-        autocomplete="off"
-        type="password"
-        :title="$t('misc.withdraw_password')"
-        placeholder="6位数字，用于取款"
-        label-width="100"
-        v-model="user.withdraw_password">
-      </x-input>
-      <x-input
-        v-if="!smsValidationEnabled"
-        :class="{'weui-cell_warn': inputErrors['verification_code_1']}"
-        show-clear
-        @on-blur="validate($event, 'verification_code_1')"
-        ref="verification_code_1"
-        autocomplete="off"
-        :title="$t('misc.captcha')"
-        label-width="100"
-        v-model="user.verification_code_1">
-        <img class="captcha" slot="right" :src="captcha_src" @click="fetchCaptcha"/>
-      </x-input>
-    </group>
+        </v-input>
+      </v-form-item>
+      <v-form-item required label="QQ" prop="qq">
+        <v-input
+          autocomplete="off"
+          v-model="user.qq">
+        </v-input>
+      </v-form-item>
+      <v-form-item required :label="$t('misc.withdraw_password')" prop="withdraw_password">
+        <v-input
+          type="password"
+          autocomplete="new-password"
+          placeholder="6位数字，用于取款"
+          v-model="user.withdraw_password">
+        </v-input>
+      </v-form-item>
+      <v-form-item v-if="!smsValidationEnabled" required :label="$t('misc.captcha')" prop="verification_code_1">
+        <v-input
+          autocomplete="off"
+          v-model="user.verification_code_1">
+          <img class="captcha" slot="right" :src="captcha_src" @click="fetchCaptcha" alt="captcha"/>
+        </v-input>
+      </v-form-item>
+    </v-form>
     <div class="read-agreement m-t">
       <check-icon :value.sync="user.hasAgree">
         我已阅读并完全同意
@@ -142,35 +97,34 @@
       <span class="link" @click="agreement.showAgreement= true">用户协议</span>
     </div>
     <div class="actions">
-      <div v-if="error" class="error">{{error}}</div>
+      <div v-if="error" class="error text-center text-danger">{{error}}</div>
       <x-button type="primary"
                 ref="submit"
                 action-type ="button"
                 :show-loading="loading"
-                :disabled="false"
+                :disabled="!inputCompleted"
                 @click.native="submitForm">
                 注册
       </x-button>
     </div>
-  </form>
-  <div v-transfer-dom>
-    <popup v-model="agreement.showAgreement" height="50%">
-      <div class="agreement">
-        <h3>用户协议</h3>
-        </br>
-        <p>01. 使用本公司网站的客户，请留意阁下所在的国家或居住地的相关法律规定，如有疑问应就相关问题，寻求当地法律意见。</p></br>
-        <p>02. 若发生遭黑客入侵破坏行为或不可抗拒之灾害导致网站故障或资料损坏、资料丢失等情况，我们将以本公司之后备资料为最后处理依据；为确保各方利益，请各会员投注后打印资料。本公司不会接受没有打印资料的投诉。</p></br>
-        <p>03. 为避免纠纷，各会员在投注之后，务必进入下注明细检查及打印资料。若发现任何异常，请立即与代理商联系查证，一切投注将以本公司资料库的资料为准，不得异议。如出现特殊网络情况或线路不稳定导致不能下注或下注失败。本公司概不负责。</p></br>
-        <p>04. 开奖结果以官方公布的结果为准。</p></br>
-        <p>05. 如遇到官方停止销售或者开奖结果不确定的情况，本公司将对相关注单进行无效处理，并且返还下注本金。</p></br>
-        <p>06. 我们将竭力提供准确而可靠的开奖统计等资料，但并不保证资料绝对无误，统计资料只供参考，并非是对客户行为的指引，本公司也不接受关于统计数据产生错误而引起的相关投诉。</p></br>
-        <p>07. 本公司拥有一切判决及注消任何涉嫌以非正常方式下注之权利，在进行更深入调查期间将停止发放与其有关之任何彩金。客户有责任确保自己的帐户及密码保密，如果客户怀疑自己的资料被盗用，应立即通知本公司，并须更改其个人详细资料。所有被盗用帐号之损失将由客户自行负责。</p></br>
-        <p>管理层 敬啟</p>
-        <hr>
-        </br>
-        <p>注册本站会员并使用本站任何服务即表示您完全同意此协议</p>
-      </div>
-    </popup>
+    <div v-transfer-dom>
+      <popup v-model="agreement.showAgreement" height="50%">
+        <div class="agreement">
+          <h3>用户协议</h3>
+          </br>
+          <p>01. 使用本公司网站的客户，请留意阁下所在的国家或居住地的相关法律规定，如有疑问应就相关问题，寻求当地法律意见。</p></br>
+          <p>02. 若发生遭黑客入侵破坏行为或不可抗拒之灾害导致网站故障或资料损坏、资料丢失等情况，我们将以本公司之后备资料为最后处理依据；为确保各方利益，请各会员投注后打印资料。本公司不会接受没有打印资料的投诉。</p></br>
+          <p>03. 为避免纠纷，各会员在投注之后，务必进入下注明细检查及打印资料。若发现任何异常，请立即与代理商联系查证，一切投注将以本公司资料库的资料为准，不得异议。如出现特殊网络情况或线路不稳定导致不能下注或下注失败。本公司概不负责。</p></br>
+          <p>04. 开奖结果以官方公布的结果为准。</p></br>
+          <p>05. 如遇到官方停止销售或者开奖结果不确定的情况，本公司将对相关注单进行无效处理，并且返还下注本金。</p></br>
+          <p>06. 我们将竭力提供准确而可靠的开奖统计等资料，但并不保证资料绝对无误，统计资料只供参考，并非是对客户行为的指引，本公司也不接受关于统计数据产生错误而引起的相关投诉。</p></br>
+          <p>07. 本公司拥有一切判决及注消任何涉嫌以非正常方式下注之权利，在进行更深入调查期间将停止发放与其有关之任何彩金。客户有责任确保自己的帐户及密码保密，如果客户怀疑自己的资料被盗用，应立即通知本公司，并须更改其个人详细资料。所有被盗用帐号之损失将由客户自行负责。</p></br>
+          <p>管理层 敬啟</p>
+          <hr>
+          </br>
+          <p>注册本站会员并使用本站任何服务即表示您完全同意此协议</p>
+        </div>
+      </popup>
     </div>
   </div>
 </template>
@@ -178,127 +132,76 @@
 <script>
   import { fetchCaptcha, checkUserName, register, sendSMSCode } from '../api'
   import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
-  import { XInput, Group, XButton, Flexbox,
-    FlexboxItem, Selector, CellBox, Cell,
-    Popup, CheckIcon, TransferDom,
-    Icon, Alert } from 'vux'
+  import { XButton, Popup, CheckIcon, TransferDom, Alert } from 'vux'
+  import VForm from '@/components/Form'
+  import VFormItem from '@/components/FormItem'
+  import VInput from '@/components/Input'
   import { mapState } from 'vuex'
+  import Icon from 'vue-awesome/components/Icon'
+  import 'vue-awesome/icons/volume-up'
 export default {
     name: 'Register',
     components: {
-      XInput,
-      Group,
       XButton,
-      Flexbox,
-      FlexboxItem,
-      Selector,
-      Cell,
-      CellBox,
       Popup,
       CheckIcon,
       Icon,
-      Alert
+      Alert,
+      VForm,
+      VFormItem,
+      VInput
     },
     directives: {
       TransferDom
     },
     data () {
-      const usernameValidator = (value, type) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入用户名称')
-          } else if (!validateUserName(value)) {
-            resolve('请输入6~15位数字或字母')
-          } else {
-            checkUserName(value).then(response => {
-              if (response.length > 0) {
-                resolve('')
-              } else {
-                resolve('用户名已经存在')
-              }
-            })
-          }
-        })
+      const usernameValidator = (rule, value, callback) => {
+        if (!validateUserName(value)) {
+          callback(new Error('请输入6~15位数字或字母'))
+        } else {
+          checkUserName(value).then(response => {
+            if (response.length > 0) {
+              callback()
+            } else {
+              callback(new Error('用户名已经存在'))
+            }
+          })
+        }
       }
-      const passwordValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入密码')
-          } else if (!validatePassword(value)) {
-            resolve('请输入6~15位数字或字母')
-          } else {
-            resolve('')
-          }
-        })
+      const passwordValidator = (rule, value, callback) => {
+        if (!validatePassword(value)) {
+          callback(new Error('请输入6~15位数字或字母'))
+        } else {
+          callback()
+        }
       }
-      const repeatPasswordValidator = (repeatValue, value) => {
-        return new Promise((resolve, reject) => {
-          if (value !== repeatValue) {
-            resolve('两次输入密码不一致')
-          } else {
-            resolve('')
-          }
-        })
+      const repeatPasswordValidator = (rule, value, callback) => {
+        if (value !== this.user.password) {
+          callback(new Error('两次输入密码不一致'))
+        } else {
+          callback()
+        }
       }
-      const withdrawPasswordValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入取款密码')
-          } else if (!validateWithdrawPassword(value)) {
-            resolve('请输入6位纯数字')
-          } else {
-            resolve('')
-          }
-        })
+      const withdrawPasswordValidator = (rule, value, callback) => {
+        if (!validateWithdrawPassword(value)) {
+          callback(new Error('请输入6位纯数字'))
+        } else {
+          callback()
+        }
       }
-      const qqValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入QQ')
-          } else if (!validateQQ(value)) {
-            resolve('QQ号码格式无效')
-          } else {
-            resolve('')
-          }
-        })
+      const qqValidator = (rule, value, callback) => {
+        if (!validateQQ(value)) {
+          callback(new Error('QQ号码格式无效'))
+        } else {
+          callback()
+        }
       }
-      const phoneValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入手机号码')
-          } else if (!validatePhone(value)) {
-            resolve('手机号码格式无效')
-          } else {
-            resolve('')
-          }
-        })
-      }
-      const realnameValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入真实姓名')
-          } else {
-            resolve('')
-          }
-        })
-      }
-      const captchaValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请输入验证码')
-          } else {
-            resolve('')
-          }
-        })
-      }
-      const agreementValidator = (value) => {
-        return new Promise((resolve, reject) => {
-          if (!value) {
-            resolve('请阅读并同意用户协议')
-          } else {
-            resolve('')
-          }
-        })
+      const phoneValidator = (rule, value, callback) => {
+        if (!validatePhone(value)) {
+          callback(new Error('手机号码格式无效'))
+        } else {
+          callback()
+        }
       }
       return {
         showInfo: false,
@@ -318,29 +221,13 @@ export default {
           verification_code_1: '',
           sms_code: ''
         },
-        inputErrors: {
-          username: '',
-          password: '',
-          confirmation_password: '',
-          real_name: '',
-          phone: '',
-          qq: '',
-          withdraw_password: '',
-          hasAgree: '',
-          verification_code_1: '',
-          sms_code: ''
-        },
-        validators: {
-          username: usernameValidator,
-          password: passwordValidator,
-          confirmation_password: repeatPasswordValidator,
-          qq: qqValidator,
-          withdraw_password: withdrawPasswordValidator,
-          real_name: realnameValidator,
-          phone: phoneValidator,
-          hasAgree: agreementValidator,
-          verification_code_1: captchaValidator,
-          sms_code: captchaValidator
+        rules: {
+          username: [{validator: usernameValidator}],
+          password: [{validator: passwordValidator}],
+          confirmation_password: [{validator: repeatPasswordValidator}],
+          withdraw_password: [{validator: withdrawPasswordValidator}],
+          qq: [{validator: qqValidator}],
+          phone: [{validator: phoneValidator}]
         },
         captcha_src: '',
         error: '',
@@ -355,29 +242,21 @@ export default {
       ...mapState([
         'systemConfig'
       ]),
-      nextStepDisabled () {
-        if (this.user.username && this.user.password && this.user.confirmation_password) {
-          let usernameValid = this.$refs.username.valid
-          let passwordValid = this.$refs.password.valid && this.$refs.confirmation_password.valid
-
-          return !(usernameValid && passwordValid)
-        } else {
-          return true
-        }
-      },
-      showInputErrors () {
-        const keys = Object.keys(this.inputErrors)
-        const errors = []
-        keys.forEach(key => {
-          const msg = this.inputErrors[key]
-          if (msg) {
-            errors.push(msg)
-          }
-        })
-        return errors
-      },
       smsValidationEnabled () {
         return this.systemConfig.smsValidationEnabled
+      },
+      requiredField () {
+        const fields = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree']
+        if (this.smsValidationEnabled) {
+          fields.push('sms_code')
+        } else {
+          fields.push('verification_code_1')
+        }
+        return fields
+      },
+      inputCompleted () {
+        const user = this.user
+        return this.requiredField.every((feild) => user[feild])
       }
     },
     watch: {
@@ -389,39 +268,6 @@ export default {
       this.fetchCaptcha()
     },
     methods: {
-      validate (value, input) {
-        let currentValue = value || this.user[input]
-        if (input === 'confirmation_password') {
-          this.validators['confirmation_password'](currentValue, this.user.password).then(msg => {
-            this.inputErrors[input] = msg
-          })
-        } else {
-          this.validators[input](currentValue).then(msg => {
-            this.inputErrors[input] = msg
-            if (input === 'password' && this.user.confirmation_password && this.user.password) {
-              this.validate(this.user.confirmation_password, 'confirmation_password')
-            }
-          })
-        }
-      },
-      validateAll () {
-        const inputs = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree', this.smsValidationEnabled ? 'sms_code' : 'verification_code_1']
-        const validatePromises = inputs.map(input => {
-          const currentValue = this.user[input]
-          if (input === 'confirmation_password') {
-            return this.validators['confirmation_password'](currentValue, this.user.password).then(msg => {
-              this.inputErrors['confirmation_password'] = msg
-              return msg
-            })
-          } else {
-            return this.validators[input](currentValue).then(msg => {
-              this.inputErrors[input] = msg
-              return msg
-            })
-          }
-        })
-        return Promise.all(validatePromises)
-      },
       fetchCaptcha () {
         if (this.smsValidationEnabled) { return }
         fetchCaptcha().then(res => {
@@ -444,8 +290,7 @@ export default {
         if (this.SMSLoading) {
           return
         }
-        this.validators['phone'](this.user.phone).then(msg => {
-          this.inputErrors['phone'] = msg
+        this.$refs.form.validateField('phone', (msg) => {
           if (!msg) {
             this.SMSLoading = true
             sendSMSCode(this.user.phone).then(res => {
@@ -471,9 +316,8 @@ export default {
         if (this.loading) {
           return
         }
-        this.validateAll().then(msgs => {
-          const isValid = msgs.filter(msg => { return msg }).length === 0
-          if (isValid) {
+        this.$refs.form.validate((valid) => {
+          if (valid) {
             this.loading = true
             const userInfo = {}
             Object.keys(this.user).forEach(key => {
@@ -483,6 +327,7 @@ export default {
               }
             })
             register(userInfo).then(result => {
+              window.gtag('event', '註冊', {'event_category': '會員註冊'})
               this.loading = false
               if (result.code === 9001) {
                 this.error = result.msg
@@ -511,6 +356,8 @@ export default {
                 }, 200)
               }
             }).catch(() => {})
+          } else {
+            return false
           }
         })
       }
@@ -523,14 +370,9 @@ export default {
 
 <style lang="less" scoped>
 @import '../styles/vars.less';
-.error {
-  color: #ff9800;
-  text-align: center;
-  margin-bottom: 0.5em;
-}
 .actions {
   margin-top: 1em;
-  padding: 0 1em;
+  padding: 0 30px;
 }
 .captcha {
   vertical-align: middle;
@@ -566,10 +408,10 @@ export default {
 }
 
 .read-agreement {
+  color: #333;
   padding-left: 1em;
   .link {
-    color: @azul;
-    text-decoration: underline;
+    color: #4a90e2;
     vertical-align: middle;
   }
 }
@@ -578,18 +420,38 @@ export default {
   padding: 1em;
 }
 
-.register-money {
+.register-money-area {
+  display: flex;
+  box-sizing: border-box;
   width: 100%;
-  color: @red;
-  text-align: center;
-  margin-top: 15px;
+  padding: 10px 0 10px 12px;
+  margin-bottom: 12px;
+  background: #fce4bd;
+  color: #bb7605;
+  .volume-up {
+    flex: 0 0 auto;
+    margin-right: 4px;
+    margin-top: 2px;
+  }
+  .register-money {
+    flex: 1 1 auto;
+    display: flex;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+  }
+  .register-money-info {
+    flex: 0 0 auto;
+    width: 53px;
+    text-align:center;
+  }
 }
 
+
+
 .sms-btn {
-  margin: -10px -15px -10px 0px;
-  width: 110px;
-  height: 44px;
+  height: 32px;
+  border-radius: 4px;
   font-size: 14px;
-  border-radius: 0;
 }
 </style>

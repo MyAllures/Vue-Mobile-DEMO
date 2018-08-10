@@ -36,10 +36,10 @@ export default {
     ongoing: 'Ongoing',
     cancelled: 'Canceled',
     denied: 'Denied',
-    no_data_yet: 'No information yet',
     next_step: 'Next Step',
     submit: 'Submit',
-    nomore_data: "There's no data currently"
+    nomore_data: "There's no data currently",
+    no_data_yet: 'No information yet'
   },
   home: {
     name: 'Home',
@@ -55,10 +55,12 @@ export default {
   fin: {
     name: 'Finance',
     time: 'Time',
+    date: 'Date',
     transaction_way: 'Transaction Way',
     status: 'Status',
     records_count: 'Count',
     win_lose: 'Win/Lose',
+    expected_win: 'Expected',
     issue_number: 'Issue',
     play: 'Play',
     amount: 'Amount'

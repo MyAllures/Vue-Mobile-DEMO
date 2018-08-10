@@ -1,11 +1,11 @@
 <template>
   <div class="gamehall">
-    <router-view v-show="!showChatRoom" />
+    <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="showGameInfo" height="90%" v-transfer-dom>
+    <popup v-model="showGameInfo" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
       <div class="game-intro">
         <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
-        <x-button class="button-close" type="primary" @click.native="showGameInfo = false">返回游戏</x-button>
+        <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
   </div>
@@ -54,7 +54,7 @@ export default {
       'allGames'
     ]),
     chatroomEnabled () {
-      return this.$store.state.systemConfig.chatroomEnabled === 'true'
+      return this.$store.state.systemConfig.chatroomEnabled
     }
   },
   watch: {
@@ -62,25 +62,29 @@ export default {
   },
   created () {
     this.$root.bus.$on('showGameInfo', (type) => {
-      this.showGameInfo = true
+      this.showGameInfo = !!type
       this.contentType = type
     })
+    if (!this.$route.params.gameId) {
+      if (this.allGames.length > 0) {
+        this.chooseGame()
+      } else {
+        const unwatch = this.$watch('allGames', function (allGames) {
+          this.chooseGame()
+          unwatch()
+        })
+      }
+    }
   },
   beforeDestroy () {
     this.$root.bus.$off('showGameInfo')
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      if (vm.allGames.length > 0) {
-        let currentGameId = vm.$route.params.gameId
-        if (!currentGameId) {
-          currentGameId = localStorage.getItem('lastGame') || vm.allGames[0].id
-          vm.$router.replace(`/game/${currentGameId}`)
-        }
-      }
-    })
-  },
   methods: {
+    handlePopupClose () {
+      this.showGameInfo = false
+      this.contentType = ''
+      this.$root.bus.$emit('showGameInfo', '')
+    },
     handleSideBarShow () {
       this.$store.dispatch('fetchUser').then(res => {
         this.showRightMenu = true
@@ -88,9 +92,13 @@ export default {
     },
     changeRoute (to, from) {
       this.showChatRoom = false
-      if (!this.$route.params.gameId) {
-        this.$router.replace(`/game/${this.allGames[0].id}`)
+      if (to.path === '/game') {
+        this.chooseGame()
       }
+    },
+    chooseGame () {
+      const gameId = localStorage.getItem('lastGame') || this.allGames[0].id
+      this.$router.replace('/game/' + gameId)
     }
   }
 

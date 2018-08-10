@@ -5,7 +5,7 @@ module.exports = {
   chatHost: config.chatHost.replace(/"/g, ''),
   dev: {
     env: require('./dev.env'),
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: 'mobile/static',
     assetsPublicPath: '/',
     proxyTable: {},
     host: '0.0.0.0',

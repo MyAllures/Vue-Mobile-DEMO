@@ -1,66 +1,71 @@
 <template>
-  <view-box
-    ref="viewBox"
+  <view-box ref="viewBox"
     body-padding-top="46px"
-    :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'"
-    >
-    <x-header
-      :class="isGameHall ? 'gamehall' : ''"
+    :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
+    <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu=true"
+      @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
+      :right-options="{
+        showMore: !!user.username && isGameHall,
+      }"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
         left:'0',
         top:'0',
-        'z-index':'100'
+        'z-index': headerZindex
       }"
       slot="header"
-      :right-options="{showMore: !!user.username&&isGameHall}"
-      :left-options="{showBack: $route.meta.showBack || false}">
-      <div v-if="!isGameHall&&$route.path !== '/'">
-        {{$route.meta.title}}
+      @on-click-back="$router.push({name: 'Home'})"
+      :left-options="{
+        showBack: $route.meta.showBack || false,
+        preventGoBack: (($route.name === 'Login') && noBackRoute)
+      }">
+
+      <div @click="titleCondition.onClick">
+        {{titleCondition.text}}
+        <i v-if="titleCondition.showDropdown"
+          :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
       </div>
-      <div
-        v-if="!showChatRoom && !$route.meta.showBack"
+
+      <div v-if="!showChatRoom && !$route.meta.showBack && headerLeftTitle"
         slot="overwrite-left"
-        @click="showGameMenu = true"
-        class="left-trigger">
-          <x-icon
-          type="navicon"
-          size="32"></x-icon>
-          <a class="vux-header-name">{{headerLeftTitle}}</a>
+        @click="toHome">
+        <a class="vux-header-back">{{headerLeftTitle}}</a>
+        <div v-if="$route.name !== 'Home'" class="left-arrow"></div>
       </div>
-      <div
-        v-else-if="isGameHall && showChatRoom"
+
+      <div v-else-if="isGameHall && showChatRoom"
         slot="overwrite-left"
-        @click="showChatRoom = false"
+        @click="closeChatRoom"
         class="left-trigger">
         <x-icon
           type="ios-close-empty"
-          size="32"></x-icon>
-          退出聊天室
+          size="24"></x-icon>
+        {{roomName}}
       </div>
-      <div
-        v-if="showLinks"
+
+      <div v-if="showLinks && !showGameMenu"
         class="actions"
         slot="right">
         <router-link class="link" to="/login">登录</router-link>
         <router-link class="link" to="/register">注册</router-link>
-        <div class="link" @click="tryDemo">
-          <div class="try">试玩</div>
-        </div>
+        <div class="link" @click="tryDemo"><div class="try">试玩</div></div>
       </div>
-      <span v-else-if="!isGameHall&&!!user.username" slot="right" class="balance fr" @click="showRightMenu=true">{{ user.balance|currency('￥')}}</span>
-      <div
-        v-if="systemConfig.chatroomEnabled === 'true' && isGameHall &&!showChatRoom"
+
+      <span v-else-if="!isGameHall && !!user.username"
+        slot="right"
+        class="balance fr"
+        @click="showRightMenu = true; closeGameMenu(); closeCalender()">
+        {{ user.balance|currency('￥')}}
+      </span>
+      <div v-if="isShowChatroomIcon"
         class="chatbubble"
         slot="right"
-        @click="showChatRoom = true">
-        <x-icon
-          type="chatbubble-working"
-          size="30"></x-icon>
+        @click="openChatRoom">
+        <x-icon type="chatbubble-working" size="30"></x-icon>
       </div>
+
     </x-header>
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
@@ -71,11 +76,13 @@
       class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
-        :selected="selectedTab===menu.name"
+        :selected="selectedTab === menu.name"
         v-for="(menu, index) in menus"
         :link="menu.link"
-        :key="'tabbar' + index">
-        <i :class="menu.icon" slot="icon"></i>
+        :key="'tabbar' + index"
+        @click.native="handleRouteChange(menu)">
+        <img :src="menu.iconImg" slot="icon" :alt="menu.name">
+        <img :src="menu.iconImgActive" slot="icon-active" :alt="menu.name">
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
@@ -85,7 +92,7 @@
       @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu" />
+    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu()" />
     <div v-transfer-dom>
       <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
@@ -97,25 +104,46 @@
         </div>
       </div>
     </div>
+    <bet-dialog />
+    <transition name="fade">
+      <div v-show="showCalender">
+        <Calender ref="calendar" @closeCalender="closeCalender"/>
+      </div>
+    </transition>
   </view-box>
 </template>
 
 <script>
-import './styles/fonts/icons.css'
-
 import Vue from 'vue'
 import { XHeader, Tabbar, TabbarItem, Group, Cell, Loading, ViewBox, Actionsheet, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
-import { setIndicator } from './utils'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
+import BetDialog from './components/BetDialog'
+import Calender from './components/Calender'
+import { Indicator } from './utils'
 
 export default {
   name: 'app',
+  components: {
+    XHeader,
+    Tabbar,
+    TabbarItem,
+    Group,
+    Cell,
+    Loading,
+    ViewBox,
+    Actionsheet,
+    RightMenu,
+    TryplayPopup,
+    GameMenu,
+    BetDialog,
+    Calender
+  },
   directives: {
     TransferDom
   },
@@ -127,31 +155,36 @@ export default {
       showFeatureGuide: false,
       menus: [{
         label: this.$t('home.name'),
-        icon: 'icon-home',
+        iconImg: require('./assets/footer/home_normal.svg'),
+        iconImgActive: require('./assets/footer/home_pressed.svg'),
         link: '/',
         route: 'Home',
         name: 'home'
       }, {
         label: this.$t('game.name'),
-        icon: 'icon-list',
+        iconImg: require('./assets/footer/game_normal.svg'),
+        iconImgActive: require('./assets/footer/game_pressed.svg'),
         link: '/game',
         route: 'Game',
         name: 'game'
       }, {
         label: this.$t('deposit.process'),
-        icon: 'icon-bank',
+        iconImg: require('./assets/footer/top_up_normal.svg'),
+        iconImgActive: require('./assets/footer/top_up_pressed.svg'),
         link: '/my/deposit',
         route: 'Deposit',
         name: 'deposit'
       }, {
         label: this.$t('fin.name'),
-        icon: 'icon-fin',
+        iconImg: require('./assets/footer/finance_normal.svg'),
+        iconImgActive: require('./assets/footer/finance_pressed.svg'),
         link: '/fin/bet_record',
         route: 'Fin',
         name: 'fin'
       }, {
         label: this.$t('my.name'),
-        icon: 'icon-my',
+        iconImg: require('./assets/footer/me_normal.svg'),
+        iconImgActive: require('./assets/footer/me_pressed.svg'),
         link: '/my',
         route: 'My',
         name: 'my',
@@ -159,36 +192,68 @@ export default {
       }],
       logo: '',
       userLoading: true,
-      error: ''
+      error: '',
+      showGameInfo: false,
+      showCalender: false,
+      headerZindex: 100,
+      refreshTokenTimer: null,
+      noBackRoute: !window.history.state,
+      indicator: null
     }
   },
   mixins: [freetrial],
-  watch: {
-    'user.logined' (newStatus, old) {
-      if (!newStatus) {
-        clearInterval(this.unreadInterval)
-      } else {
-        this.pollUnread()
-      }
-    },
-    '$route' (to, from) {
-      if (to.name === 'Home') {
-        document.documentElement.style.height = 'auto'
-        document.body.style.height = 'auto'
-      } else {
-        document.documentElement.style.height = '100%'
-        document.body.style.height = '100%'
-      }
-      this.showChatRoom = false
-    }
-  },
   computed: {
     ...mapGetters([
       'user'
     ]),
-    ...mapState({
-      isLoading: state => state.isLoading
-    }),
+    ...mapState([
+      'isLoading', 'ws', 'roomInfo', 'roomId'
+    ]),
+    titleCondition () {
+      let route = this.$route
+      let title = {
+        text: '',
+        showDropdown: false,
+        onClick: ''
+      }
+      const customTitle = this.$store.state.customTitle
+
+      if (route.name === 'DetailBetRecord') {
+        title.text = route.params.date
+        title.showDropdown = true
+        title.onClick = () => { this.showCalender = !this.showCalender }
+      } else if (!this.isGameHall && (route.path !== '/')) {
+        if (route.meta.title === 'custom') {
+          title.text = customTitle
+        } else {
+          title.text = route.meta.title
+        }
+      } else if (this.isGameHall && !this.showChatRoom) {
+        title.text = this.currentGame.display_name
+        title.showDropdown = true
+        title.onClick = () => {
+          if (this.showGameMenu) {
+            this.closeGameMenu()
+          } else {
+            this.headerZindex = 503
+            this.showGameMenu = true
+          }
+        }
+      } else if ((route.name === 'Home') && this.showGameMenu) {
+        title.text = '游戏选单'
+        title.showDropdown = true
+        title.onClick = () => {
+          if (this.showGameMenu) {
+            this.closeGameMenu()
+          } else {
+            this.headerZindex = 503
+            this.showGameMenu = true
+          }
+        }
+      }
+
+      return title
+    },
     unread () {
       return this.$store.state.user.unread
     },
@@ -211,26 +276,122 @@ export default {
       return this.$store.state.systemConfig
     },
     headerLeftTitle () {
-      return this.currentGame.display_name || (this.$route.name === 'Home' ? this.systemConfig.siteName : '')
+      let name = this.$route.name
+      if (name === 'Home') {
+        return this.showGameMenu ? '' : this.systemConfig.siteName
+      } else {
+        if (name === 'GameDetail' || name === 'Game') {
+          return '首页'
+        }
+      }
     },
     selectedTab () {
       const path = this.$route.path
       if (path === '/') {
         return 'home'
       }
-      if (path === '/my/deposit') {
+      if (this.$route.matched[0].path === '/my/deposit') {
         return 'deposit'
       }
       return path.split('/')[1]
+    },
+    isShowChatroomIcon () {
+      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
+        return false
+      }
+      if (!this.$route.params.gameId || !this.roomInfo) {
+        return false
+      }
+      if (!this.roomInfo[this.$route.params.gameId].status && !this.roomInfo[100000].status) {
+        return false
+      }
+      return true
+    },
+    roomName () {
+      if (this.roomInfo && this.roomId) {
+        return this.roomInfo[this.roomId].name
+      }
+      return ''
+    }
+  },
+  watch: {
+    'user.logined' (newStatus, old) {
+      if (!newStatus) {
+        clearInterval(this.unreadInterval)
+      } else {
+        this.pollUnread()
+      }
+    },
+    '$route' (to, from) {
+      this.noBackRoute = !window.history.state
+
+      if (window.self === window.top) { // 非內嵌iframe時才設成auto
+        if (to.name === 'Home') {
+          document.documentElement.style.height = 'auto'
+          document.body.style.height = 'auto'
+        } else {
+          document.documentElement.style.height = '100%'
+          document.body.style.height = '100%'
+        }
+      }
+      this.closeChatRoom()
+    },
+    'ws' (ws) {
+      if (!ws) {
+        this.showChatRoom = false
+      }
+    },
+    'titleCondition': function (val) { // when header changing
+      if (!val.showDropdown) { // init
+        this.showCalender = false
+        this.showGameMenu = false
+      }
+    },
+    'roomName': function (name) {
+      if (name) {
+        this.sendGaEvent({
+          label: name,
+          category: '聊天室',
+          action: '点击'
+        })
+      }
     }
   },
   methods: {
+    toHome () {
+      if (this.$route.name !== 'Home') {
+        this.sendGaEvent({
+          label: '遊戲大廳',
+          category: '返回首頁',
+          action: '点击'
+        })
+        this.$router.push({name: 'Home'})
+      }
+    },
+    handleRouteChange ({link, label}) {
+      if (this.$route.path !== link) {
+        this.sendGaEvent({
+          label: '底部菜单',
+          category: label,
+          action: '点击'
+        })
+      }
+    },
+    closeCalender () {
+      this.showCalender = false
+    },
     closeMenus () {
       this.showRightMenu = false
-      this.showGameMenu = false
+      this.closeGameMenu()
     },
     closeRightMenu () {
       this.showRightMenu = false
+    },
+    closeGameMenu () {
+      this.showGameMenu = false
+      setTimeout(() => {
+        this.headerZindex = 100
+      }, 320)
     },
     triggerAction (key, item) {
       if (item) {
@@ -241,45 +402,58 @@ export default {
       }
     },
     replaceToken () {
-      return new Promise((resolve, reject) => {
-        let refreshToken = this.$cookie.get('refresh_token')
-        if (!refreshToken) {
-          return
-        }
-        getToken(refreshToken).then(res => {
-          let expires = new Date(res.expires_in)
-          this.$cookie.set('access_token', res.access_token, {
-            expires: expires
-          })
-          this.$cookie.set('refresh_token', res.refresh_token, {
-            expires: expires
-          })
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-          resolve()
+      let refreshToken = this.$cookie.get('refresh_token')
+      if (!refreshToken || !this.$store.state.user.account_type) {
+        return
+      }
+      getToken(refreshToken).then(res => {
+        let expires = new Date(res.expires_in)
+        localStorage.setItem('token_expire', res.expires_in)
+        this.$cookie.set('access_token', res.access_token, {
+          expires: expires
         })
-      })
+        this.$cookie.set('refresh_token', res.refresh_token, {
+          expires: expires
+        })
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      }).catch(() => {})
+      this.refreshTokenTimer = setTimeout(() => {
+        this.replaceToken()
+      }, 20 * 60 * 1000)
     },
     pollUnread () {
       this.unreadInterval = setInterval(() => {
         if (!this.$cookie.get('access_token')) {
           clearInterval(this.unreadInterval)
         } else if (this.user.account_type) {
-          this.$store.dispatch('fetchUnread')
+          this.$store.dispatch('fetchUnread').catch(() => {})
         }
       }, 11000)
     },
-    closeGameMenu () {
-      this.showGameMenu = false
+    closeChatRoom () {
+      this.showChatRoom = false
+      if (this.ws && this.ws.roomId) {
+        this.ws.leaveRoom()
+      }
+    },
+    openChatRoom () {
+      this.showChatRoom = true
+      this.closeGameMenu()
     }
   },
   created () {
     this.$root.bus = new Vue()
     this.$root.bus.$on('showGameMenu', () => {
+      this.headerZindex = 503
       this.showGameMenu = true
     })
 
     this.$root.bus.$on('showFeatureGuide', () => {
       this.showFeatureGuide = true
+    })
+
+    this.$root.bus.$on('showGameInfo', (type) => {
+      this.showGameInfo = !!type
     })
 
     this.$router.afterEach((to) => {
@@ -295,32 +469,26 @@ export default {
         this.performLogin()
       })
     }
-    let refreshTokenInterval
-    setIndicator(() => {
-      refreshTokenInterval = window.setInterval(() => {
-        if (this.replaceToken) {
-          this.replaceToken().then(() => {
-          }).catch(error => {
-            Promise.resolve(error)
-          })
-        }
-      }, 300000)
+    this.indicator = new Indicator(() => {
+      const expireTime = localStorage.getItem('token_expire')
+      if (!expireTime) {
+        return
+      }
+      const expireFromNow = this.$moment(expireTime).diff(this.$moment(), 'ms')
+      clearTimeout(this.refreshTokenTimer)
+      if (expireFromNow < 300000) { // 五分鐘內過期則直接刷新
+        this.replaceToken()
+      } else {
+        this.refreshTokenTimer = setTimeout(() => {
+          this.replaceToken()
+        }, expireFromNow - 300000)
+      }
     }, () => {
-      window.clearInterval(refreshTokenInterval)
+
     })
   },
-  components: {
-    XHeader,
-    Tabbar,
-    TabbarItem,
-    Group,
-    Cell,
-    Loading,
-    ViewBox,
-    Actionsheet,
-    RightMenu,
-    TryplayPopup,
-    GameMenu
+  beforeDestroy () {
+    window.clearTimeout(this.refreshTokenTimer)
   }
 }
 </script>
@@ -403,6 +571,8 @@ export default {
 
 .tabbar {
   position: fixed;
+  z-index: 98;
+  background-color: #fff;
 }
 .logo {
   position: absolute;
@@ -492,9 +662,34 @@ export default {
   font-size: 16px;
   color: #fff;
   .vux-x-icon {
-    margin: -6px 0 0 -5px;
+    margin: -2px 0 0 -5px;
     float: left;
     display: inline-block;
   }
 }
+
+.solid-triangle {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  &.point-top {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+  }
+  &.point-down {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #fff;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 </style>

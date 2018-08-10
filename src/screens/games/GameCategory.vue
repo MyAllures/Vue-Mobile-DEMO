@@ -1,19 +1,19 @@
 <template>
   <div>
-    <div v-if="tabKeys.length>1" class="tab-selector">
-      <tab :style="{width: tabKeys.length > 5 ? `${tabKeys.length * 75}px` : ''}"
+    <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector">
+      <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="#156fd8"
           :animate="false"
           active-color="#156fd8" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
           :key="index"
+          :style="{flex: tabKeys.length > 4?0:1}"
           :selected="key === currentTab">
-          <span :class="{'ellipsis': tabKeys.length > 5}">{{key}}</span>
+          <span :class="{'ellipsis': tabKeys.length > 4}">{{key}}</span>
         </tab-item>
       </tab>
     </div>
-
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -71,7 +71,6 @@
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
@@ -94,12 +93,15 @@ export default {
       type: Object
     },
     amount: {
-      type: Number,
+      type: String,
       default: 1
     },
     playReset: {
       type: Boolean,
       default: false
+    },
+    activeCategory: {
+      type: String
     }
   },
   components: {
@@ -147,9 +149,9 @@ export default {
       let playGroupCode = currentPlayGroup.code
       return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupCode)
     },
-    ...mapGetters([
-      'categories'
-    ]),
+    categories () {
+      return this.$store.state.categories[this.$route.params.gameId] || []
+    },
     zodiacMap () {
       if (!this.categories || this.categories.length === 0) {
         return null
@@ -255,6 +257,12 @@ export default {
       if (!currentCategory) {
         return
       }
+
+      const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
+      if (gaTrackingId) {
+        window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${this.game.display_name} - ${currentCategory.name}`})
+      }
+
       const tabs = {}
       const plays = {}
       const tabKeys = []
@@ -279,7 +287,6 @@ export default {
         })
         tabs[tabName] = groups
       })
-
       this.currentTab = tabKeys[0]
       this.tabKeys = tabKeys
       this.tabs = tabs
@@ -327,9 +334,6 @@ export default {
   }
   .vux-tab {
     overflow-x: auto;
-  }
-  .scrollable .vux-tab-item {
-    flex: 0;
   }
 }
 

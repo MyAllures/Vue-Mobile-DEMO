@@ -86,9 +86,6 @@ export default {
   props: {
     isShowEnvelopeDialog: {
       type: Boolean
-    },
-    roomId: {
-      type: Number
     }
   },
   data () {
@@ -151,7 +148,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig'
+      'user', 'systemConfig', 'roomId'
     ])
   },
   watch: {
@@ -240,13 +237,15 @@ export default {
   }
   .text-field {
     width: 100%;
-    margin-top: 10px;
+    height: 30px;
+    line-height: 30px;
     font-size: 14px;
     color: #ffffff;
   }
   .balance-field {
     width: 100%;
-    margin-top: 10px;
+    height: 30px;
+    line-height: 30px;
     font-size: 12px;
     color: #ffffff;
     .balance {
@@ -255,20 +254,22 @@ export default {
   }
   .input-validate{
     text-align: left;
-    height: 40px;
-    line-height: 40px;
+    height: 30px;
+    line-height: 30px;
     background: #de5547;
     color: rgba(255, 255, 255, .8);
     font-size: 12px;
   }
 
-  & /deep/ .weui-cells.vux-no-group-title::after {
-    border: none;
+  & /deep/ .weui-cells.vux-no-group-title {
+    margin-top: 0;
+    &::after {
+      border: none;
+    }
   }
 
   .footer {
     width: 235px;
-    height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;

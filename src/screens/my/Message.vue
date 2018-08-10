@@ -1,24 +1,28 @@
 <template>
 <div>
-  <group>
-    <template v-for="(message, index) in messages">
-      <cell :class="['cell-box', message.status ? 'read' : 'unread']"
-            :title="message.title"
-            is-link
-            :arrow-direction="message.showContent ? 'up' : 'down'"
-            :key="'message' + index"
-            @click.native="read(message)">
-        <div slot="default">
-          <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
-        </div>
-      </cell>
-      <p class="content" v-if="message.showContent">
-        {{message.content}}
-      </p>
-    </template>
-  </group>
-  <div class="view-more" v-if='!ended'>
-    <x-button @click.native="getMessages">查看更多</x-button>
+  <div v-if="messages.length">
+    <group class="landing-msgs">
+      <template v-for="(message, index) in messages">
+        <cell :class="['cell-box', message.status ? 'read' : 'unread']"
+              :title="message.title"
+              is-link
+              :arrow-direction="message.showContent ? 'up' : 'down'"
+              :key="'message' + index"
+              @click.native="read(message)">
+          <div slot="default">
+            <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
+          </div>
+        </cell>
+        <p class="content" v-if="message.showContent" v-html="message.content">
+        </p>
+      </template>
+    </group>
+    <div class="view-more" v-if='!ended'>
+      <x-button @click.native="getMessages">查看更多</x-button>
+    </div>
+  </div>
+  <div class="text-center p-t-lg grey" v-else>
+    目前没有消息
   </div>
 </div>
 </template>
@@ -70,7 +74,7 @@ export default {
   }
 }
 </script>
-<style lang='less' scoped>
+<style lang="less" scoped>
 .messages {
   background-color: #fff;
   line-height: 1.41176471;
@@ -97,8 +101,13 @@ export default {
   padding: 0 15px 10px;
   color: #999;
   font-size: 14px;
+  word-break: break-all;
 }
 .view-more {
   margin: 10px;
+}
+
+.landing-msgs /deep/ .weui-cells {
+  margin-top: 0;
 }
 </style>

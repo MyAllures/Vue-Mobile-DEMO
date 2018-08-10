@@ -2,19 +2,26 @@ import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import router from '../../router'
 import axios from 'axios'
+
 import {
   fetchUser,
   login as userLogin,
   logout,
   fetchGames,
   fetchUnread,
-  fetchCategories
+  fetchCategories,
+  fetchChatInfo,
+  fetchRoomInfo
 } from '../../api'
 
 const login = function ({ commit, state }, { user }) {
   return userLogin(user).then(res => {
+    if (state.user.logined) {
+      commit('RESET_USER')
+    }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
+      localStorage.setItem('token_expire', res.expires_in)
       Vue.cookie.set('access_token', res.access_token, {
         expires: expires
       })
@@ -24,10 +31,12 @@ const login = function ({ commit, state }, { user }) {
       axios.defaults.withCredentials = true
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
     }
-    commit(types.SET_USER, {
-      user: {
-        logined: true
-      }
+    Vue.nextTick(() => {
+      commit(types.SET_USER, {
+        user: {
+          logined: true
+        }
+      })
     })
     return Promise.resolve(res)
   }, error => {
@@ -49,10 +58,30 @@ export default {
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
       if (res.length > 0) {
+        const user = res[0]
+        if (user.account_type && !state.user.planMakerRoom) {
+          fetchChatInfo(user.username).then(res => {
+            commit(types.SET_USER, {
+              user: {
+                planMakerRoom: res.data.plan_maker_rooms || []
+              }
+            })
+          }).catch(e => { })
+        }
+        if (!state.roomInfo) {
+          fetchRoomInfo().then(res => {
+            const roomInfo = {}
+            res.forEach(room => {
+              roomInfo[room.id] = {name: room.title, status: room.status}
+            })
+            commit(types.SET_ROOM_INFO, roomInfo)
+          }).catch(() => {})
+        }
         commit(types.SET_USER, {
           user: {
-            ...res[0],
-            logined: true
+            ...user,
+            logined: true,
+            planMakerRoom: state.user.planMakerRoom || []
           }
         })
         return Promise.resolve(res[0])
@@ -85,7 +114,10 @@ export default {
   },
   fetchCategories: ({ commit, state }, gameId) => {
     return fetchCategories(gameId).then(res => {
-      commit(types.SET_CATEGORIES, res)
+      commit(types.SET_CATEGORIES, {
+        gameId: gameId,
+        categories: res
+      })
       return res
     })
   },
@@ -104,13 +136,43 @@ export default {
   initEmoji: ({commit}, emoji) => {
     commit(types.INIT_EMOJI, emoji)
   },
-  setRemit: ({ commit }, remitPayee) => {
-    commit(types.SET_REMIT, remitPayee)
-  },
   addKeepAlive: ({ commit }, page) => {
     commit(types.ADD_KEEP_ALIVE, page)
   },
   removeKeepAlive: ({ commit }, page) => {
     commit(types.REMOVE_KEEP_ALIVE, page)
+  },
+  setWs: ({commit}, ws) => {
+    commit(types.SET_WS, ws)
+  },
+  initMessage: ({ commit }, messages) => {
+    commit(types.INIT_MESSAGE, messages)
+  },
+  addMessage: ({ commit }, message) => {
+    commit(types.ADD_MESSAGE, message)
+  },
+  initPersonalSetting: ({ commit }, setting) => {
+    commit(types.INIT_PERSONAL_SETTING, setting)
+  },
+  updatePersonalSetting: ({ commit }, type) => {
+    commit(types.UPDATE_PERSONAL_SETTING, type)
+  },
+  setAnnounce: ({ commit }, announce) => {
+    commit(types.SET_ANNOUNCE, announce)
+  },
+  updateGameInfo: ({commit}, info) => {
+    commit(types.UPDATE_GAME_INFO, info)
+  },
+  openBetDialog: ({commit}, bets) => {
+    commit(types.OPEN_BET_DIALOG, bets)
+  },
+  closeBetDialog: ({commit}, isSuccess) => {
+    commit(types.CLOSE_BET_DIALOG, isSuccess)
+  },
+  setCustomTitle: ({commit}, title) => {
+    commit(types.SET_TITLE, title)
+  },
+  setCurrentGameResult: ({ commit }, result) => {
+    commit(types.SET_CURRENTGAME_RESULT, result)
   }
 }

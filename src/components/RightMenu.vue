@@ -1,25 +1,35 @@
 <template>
-  <popup :value="value" position="right" @on-hide="closeRightMenu" class="popup" v-transfer-dom width="180px">
+  <popup :value="value"
+    position="right"
+    @on-hide="closeRightMenu"
+    class="popup"
+    :popup-style="{zIndex: 504}"
+    v-transfer-dom
+    width="180px">
     <group class="head">
-      <cell title="账号" :border-intent="false" :link="'/my'">
+      <cell title="账号" :border-intent="false" :link="'/my'" @click.native="toMy">
         <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
       </cell>
       <cell :title="$t('my.balance')" :border-intent="false">
         <div class="balance">{{user.balance | currency('￥')}}</div>
       </cell>
-      <cell :title="$t('game.nopay')" :border-intent="false">
-        <div>{{user.unsettled || 0 | currency('￥')}}</div>
+      <cell
+        :class="{'weui-cell_access': !!user.unsettled}"
+        :title="$t('game.nopay')"
+        :border-intent="false"
+        @click.native="toUnsettle">
+        <div :class="{'has_unsettle': !!user.unsettled}">{{user.unsettled || 0 | currency('￥')}}</div>
       </cell>
     </group>
-    <div class="buttons" v-if="$store.state.user.account_type !== 0">
-      <x-button type="primary" @click.native="redirect('/fin/bet_record')">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
-      <x-button type="primary" @click.native="redirect('/my/deposit')">{{$t('game.deposit')}}</x-button>
+    <div class="buttons" v-if="$store.state.user.account_type">
+      <x-button type="primary" @click.native="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</x-button>
+      <x-button type="primary" @click.native="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</x-button>
     </div>
     <div class="buttons" v-else>
-      <x-button class="xbutton" type="primary" @click.native="redirect('/fin/bet_record')" link="/fin/bet_record">{{$t('game.betrecord')}}</x-button>
-      <x-button class="xbutton" type="primary" @click.native="redirect('/register')" link="/register">{{$t('misc.register_now')}}</x-button>
-      <x-button type="primary" @click.native="location = redirect(systemConfig.customerServiceUrl)">{{$t('misc.need_help')}}</x-button>
+      <x-button type="primary" @click.native="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</x-button>
+      <x-button type="primary" @click.native="handleRouteChange('/register', $t('misc.register_now'))">{{$t('misc.register_now')}}</x-button>
+      <x-button type="primary" @click.native="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</x-button>
     </div>
     <group class="links" >
       <cell-box
@@ -109,21 +119,61 @@
       }
     },
     methods: {
-      logout () {
-        this.closeRightMenu()
-        this.$store.dispatch('logout')
+      toMy () {
+        if (this.$route.path !== '/my') {
+          this.sendGaEvent({
+            label: '右側菜單',
+            category: '我的',
+            action: '点击'
+          })
+        }
       },
-      showGameInfo (link) {
-        this.closeRightMenu()
-        this.$root.bus.$emit('showGameInfo', link.type)
+      toUnsettle () {
+        if (!!this.user.unsettled && this.$route.path !== '/unsettle') {
+          this.sendGaEvent({
+            label: '右側菜單',
+            category: '未结明细',
+            action: '点击'
+          })
+          this.$router.push({path: '/unsettle'})
+        }
       },
-      redirect (link) {
+      handleRouteChange (link, name) {
         if (link[0] !== '/') {
-          window.location = link
-        } else {
+          this.sendGaEvent({
+            label: '右側菜單',
+            category: name,
+            action: '点击'
+          })
+          window.open(link)
+        } else if (this.$route.path !== link) {
+          this.sendGaEvent({
+            label: '右側菜單',
+            category: name,
+            action: '点击'
+          })
           this.$router.push(link)
           this.closeRightMenu()
         }
+      },
+      logout () {
+        this.closeRightMenu()
+        this.$store.dispatch('logout').then(() => {
+          this.sendGaEvent({
+            label: '右側菜單',
+            category: '登出',
+            action: '点击'
+          })
+        }).catch(() => {})
+      },
+      showGameInfo (link) {
+        this.sendGaEvent({
+          label: '右側菜單',
+          category: link.display_name,
+          action: '点击'
+        })
+        this.closeRightMenu()
+        this.$root.bus.$emit('showGameInfo', link.type)
       },
       closeRightMenu () {
         this.$emit('closeRightMenu')
@@ -160,6 +210,9 @@
 .balance {
   padding-left: 10px;
   color: @red;
+}
+.has_unsettle {
+  color: #166FD8;
 }
 .buttons {
   margin: 10px 10px 0;

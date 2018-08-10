@@ -1,25 +1,29 @@
 <template>
-  <div class="wrapper">
-    <road-beads
-      v-if="gameCode && contentType === 'roadbeads'"
-      :gameCode="gameCode"
-      :resultStatistic="resultStatistic">
-    </road-beads>
-    <leaderboards :listItems="leaderboard"
-      :gameCode="gameCode"
-      v-if="gameCode && contentType === 'leaderboard'">
-    </leaderboards>
+  <div class="container">
+    <div class="wrapper" v-if="contentType === 'roadbeads' && gameCode">
+      <road-beads
+        v-if="!noRoadBeadGames.includes(gameCode)"
+        :gameCode="gameCode"
+        :resultStatistic="resultStatistic">
+      </road-beads>
+      <p v-else class="no-data text-center">暂无路珠统计</p>
+    </div>
+    <div class="wrapper" v-if="contentType === 'leaderboard' && gameCode">
+      <leaderboards :listItems="leaderboard"
+        :gameCode="gameCode">
+      </leaderboards>
+    </div>
   </div>
 </template>
 
 <script>
-import { XAddress, InlineLoading } from 'vux'
 import { mapGetters } from 'vuex'
 import RoadBeads from './RoadBeads'
 import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
+const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
 
 export default {
   name: 'GameStastics',
@@ -33,11 +37,11 @@ export default {
   },
   data () {
     return {
-      currentGameId: [],
       games: [],
       resultStatistic: {},
       leaderboardData: [],
-      loading: false
+      loading: false,
+      noRoadBeadGames
     }
   },
   methods: {
@@ -99,6 +103,16 @@ export default {
       this.interval = setInterval(() => {
         this.fetchLeaderboard()
       }, 10000)
+    },
+    initFetch () {
+      clearInterval(this.interval)
+      if (this.contentType === 'leaderboard') {
+        this.fetchLeaderboard()
+        this.pollLeaderboard()
+      } else {
+        this.fetchStatistic()
+        this.pollStatistic()
+      }
     }
   },
   computed: {
@@ -113,79 +127,40 @@ export default {
   },
   watch: {
     'gameCode': function (to) {
-      clearInterval(this.interval)
-      if (this.contentType === 'leaderboard') {
-        this.fetchLeaderboard()
-        this.pollLeaderboard()
-      } else {
-        this.fetchStatistic()
-        this.pollStatistic()
-      }
+      this.initFetch()
     },
-    'allGames': function (allGames) {
-      this.games = []
-      const played = localStorage.getItem('lastGame')
-      const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
-      const current = _.find(allGames, game => (game.id + '') === played + '')
-      let formattedAllGames = _.clone(allGames)
-
-      if (this.contentType === 'roadbeads') {
-        if (played) {
-          this.currentGameId = noRoadBeadGames.includes(current.code) ? [allGames[0].id + ''] : [played]
-        } else {
-          this.currentGameId = [allGames[0].id + '']
-        }
-
-        formattedAllGames = _.reject(formattedAllGames, (o) => { return _.includes(noRoadBeadGames, o.code) })
-      }
-
-      if (this.contentType === 'leaderboard') {
-        this.currentGameId = played ? [played] : [allGames[0].id + '']
-      }
-      _.each(formattedAllGames, (game) => {
-        this.games.push(
-          {
-            name: game.display_name,
-            value: game.id + ''
-          }
-        )
-      })
-    },
-    'contentType': function (type) {
-      clearInterval(this.interval)
-      if (type === 'leaderboard') {
-        this.fetchLeaderboard()
-        this.pollLeaderboard()
-      } else {
-        this.fetchStatistic()
-        this.pollStatistic()
-      }
+    'contentType': {
+      handler: function (type) {
+        this.initFetch()
+      },
+      immediate: true
     }
   },
   created () {
-    this.$store.dispatch('fetchGames')
-    clearInterval(this.interval)
-    if (this.contentType === 'leaderboard') {
-      this.fetchLeaderboard()
-      this.pollLeaderboard()
-    } else {
-      this.fetchStatistic()
-      this.pollStatistic()
-    }
   },
   beforeDestroy () {
     clearInterval(this.interval)
   },
   components: {
-    XAddress, RoadBeads, Leaderboards, InlineLoading
+    RoadBeads, Leaderboards
   }
 }
 </script>
 
 <style lang="less" scoped>
 @import '../../styles/vars.less';
+
+.container {
+  height: 100%;
+}
+
 .wrapper {
   height: calc(~"100% - "40px);
 }
 
+.no-data {
+  color: #666;
+  font-size: 20px;
+  padding-top: 40px;
+}
 </style>

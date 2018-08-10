@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <swiper
       v-if="banners.length"
       :list="banners"
@@ -9,18 +9,14 @@
       auto
       loop>
     </swiper>
-    <flexbox class="announcement" v-if="announcements.length" @click.native="showDialog = true">
-      <flexbox-item :span="1">
-        <div class="speaker">
-          <icon class="icon" scale="1.3" name="bullhorn"></icon>
-        </div>
-      </flexbox-item>
-      <flexbox-item>
-        <div class="content">
-          <span class="text" :style="{ position:'relative', left: `-${leftOffset}px`}" ref="announcement">{{announcements[currentAnnouncementIndex]}}</span>
-        </div>
-      </flexbox-item>
-    </flexbox>
+    <div class="announcement" v-if="announcements.length" @click="showDialog = true">
+      <div class="speaker">
+        <icon class="icon" scale="1.3" name="bullhorn"></icon>
+      </div>
+      <div class="marquee">
+        <marquee :messages="announcements"></marquee>
+      </div>
+    </div>
     <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
       <cell
         is-link
@@ -34,13 +30,13 @@
         更多游戏<i class="arrow-right"></i>
       </span>
     </flexbox-item>
-    <grid :cols="3" v-if="allGames.length">
+    <grid :cols="3">
       <grid-item
-        @click.native="chooseGame(game.id)"
+        @click.native="chooseGame(game)"
         v-for="(game, index) in allGames"
         :key="'game' + index"
         v-if="index < game_count">
-        <img slot="icon" :src="game.icon" class="game-icon">
+        <img slot="icon" class="game-icon" v-lazy="game.icon" />
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
       <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
@@ -68,12 +64,8 @@
             <span>免费试玩</span>
           </div>
         </div>
-        <div class="grid-placeholder" v-else></div>
       </a>
     </grid>
-    <div class="game-loading" v-else>
-      <InlineLoading  />
-    </div>
     <div v-if="promotions.length > 0" class="activity">
       <flexbox>
         <flexbox-item>
@@ -92,7 +84,7 @@
         v-if="promotions && index < 5"
         @click.native="handleClick(promotion)">
         <div slot="content" class>
-          <img :src="promotion.image_mobile" alt="promotion.name">
+          <img v-lazy="promotion.image_mobile" alt="promotion.name">
         </div>
       </card>
     </div>
@@ -121,8 +113,6 @@ import {
   Card,
   Grid,
   GridItem,
-  Marquee,
-  MarqueeItem,
   XDialog,
   Flexbox,
   FlexboxItem,
@@ -137,6 +127,7 @@ import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
 import Icon from 'vue-awesome/components/Icon'
 import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
+import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 export default {
   name: 'Home',
@@ -144,11 +135,7 @@ export default {
     return {
       banners: [],
       announcements: [],
-      announcementWidth: 0,
-      leftOffset: 0,
-      currentAnnouncementIndex: 0,
       showDialog: false,
-      announcementTimer: null,
       game_count: 15,
       showpromoPopup: false,
       promotions: [],
@@ -178,7 +165,7 @@ export default {
       result => {
         const datas = []
         result.forEach((item) => {
-          if (item.platform !== 0) {
+          if (item.platform !== 1) {
             datas.push(item)
           }
         })
@@ -189,7 +176,6 @@ export default {
           })
         }
         this.announcements = datas.map(data => data.announcement)
-        this.setAnnouncement()
       }
     )
     getPromotions().then(response => {
@@ -204,45 +190,19 @@ export default {
     handleClick (promotion) {
       this.$router.push(`/promotions/${promotion.id}`)
     },
-    chooseGame (gameId) {
-      localStorage.setItem('lastGame', gameId)
-      this.$router.push(`/game/${gameId}`)
-    },
-    setAnnouncement () {
-      this.$nextTick(() => {
-        this.announcementWidth = this.$refs.announcement.offsetWidth
-        this.announcementTimer = setTimeout(() => {
-          this.scrollAnnouncement()
-        }, 1000)
+    chooseGame (game) {
+      this.sendGaEvent({
+        label: game.display_name,
+        category: '首页游戏选择',
+        action: '点击'
       })
-    },
-    scrollAnnouncement () {
-      this.announcementTimer = setTimeout(() => {
-        this.leftOffset += 1
-        if (this.leftOffset > this.announcementWidth) {
-          let idx = this.currentAnnouncementIndex + 1
-          if (idx >= this.announcements.length) {
-            idx = idx % this.announcements.length
-          }
-          this.announcementTimer = setTimeout(() => {
-            this.currentAnnouncementIndex = idx
-            this.leftOffset = 0
-            this.setAnnouncement()
-          }, 1000)
-        } else {
-          this.scrollAnnouncement()
-        }
-      }, 17)
+      localStorage.setItem('lastGame', game.id)
+      this.$router.push(`/game/${game.id}`)
     }
-  },
-  beforeDestroy () {
-    clearTimeout(this.announcementTimer)
   },
   components: {
     Swiper,
     SwiperItem,
-    Marquee,
-    MarqueeItem,
     XDialog,
     Flexbox,
     FlexboxItem,
@@ -255,37 +215,43 @@ export default {
     InlineLoading,
     TryplayPopup,
     Group,
-    Cell
+    Cell,
+    Marquee
   }
 }
 </script>
 
 <style scoped lang="less">
 @import '../styles/vars.less';
-.grid-placeholder {
-  height: 89px;
+.icon-placeholder {
+  opacity: 0;
+}
+.container /deep/ .vux-swiper {
+  min-height: 45w;
 }
 .announcement {
+  display: flex;
   height: 36px;
+  width: 100%;
+  overflow: hidden;
   background: #fff;
 }
 .announcement {
   .speaker {
+    flex: 0 0 auto;
     display: flex;
+    height: 36px;
+    width: 36px;
     justify-content: center;
-    margin-left: 10px;
+    align-items: center;
     color: #666;
     .fa-icon {
       margin: 7px 0;
     }
   }
-  .content {
-    overflow: hidden;
+  .marquee {
+    flex: 1 1 auto;
     height: 36px;
-    line-height: 36px;
-    .text {
-      white-space: nowrap;
-    }
   }
 }
 
@@ -296,13 +262,6 @@ export default {
   overflow-y: scroll;
   overflow-x: hidden;
 }
-.marquee-item {
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 36px;
-}
 .weui-grids {
   &:after{
     border: none;
@@ -311,16 +270,19 @@ export default {
   .weui-grid {
     padding: 10px;
   }
+  /deep/ .weui-grid {
+    height: 28vw;
+  }
   /deep/ .weui-grid__icon {
     width: 60%;
-    height: 60%;
+    height: auto;
+    text-align: center;
   }
 
   /deep/ .weui-grid__label {
     color: #666;
     line-height: 1;
-    margin-top: 10px;
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 .register-money {
@@ -387,6 +349,8 @@ export default {
   padding: 100px 0;
 }
 .game-icon {
+  display: block;
   border-radius: 10px;
+  min-height: 15vw;
 }
 </style>

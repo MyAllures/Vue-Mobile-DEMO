@@ -1,6 +1,6 @@
 <template>
   <div class="gameplays">
-    <div class="playgroup-title" v-if="!activePlay.odds">{{groupName}}</div>
+    <div class="playgroup-title" v-if="!activePlay">{{groupName}}</div>
     <div class="playgroup-odds" v-else>赔率：<span class="red">{{activePlay.odds}}</span></div>
     <grid :cols="2">
       <grid-item
@@ -52,15 +52,14 @@ export default {
         active: false
       })
     })
+    const playMap = {}
+    this.plays.forEach(play => {
+      playMap[play.rules.max_opts] = play
+    })
     return {
       customOptions,
-      combinations: [],
       valid: false,
-      activePlay: {
-        id: '',
-        display_name: '',
-        odds: ''
-      }
+      playMap
     }
   },
   computed: {
@@ -69,42 +68,30 @@ export default {
         return option.active
       })
     },
-    maxOptionCount () {
-      return (this.plays.length - 1) * 2
+    activePlay () {
+      const activePlay = this.playMap[this.activedOptions.length]
+      if (activePlay) {
+        return activePlay
+      }
     }
   },
   watch: {
     'activedOptions': function () {
-      if (this.activedOptions.length < this.maxOptionCount / 2) {
-        this.updateForSubmit()
-        this.activePlay.odds = ''
-        this.activePlay.id = ''
-        this.activePlay.display_name = ''
-        return
-      }
-
-      this.activedOptions.sort((a, b) => { return a.num - b.num })
-      _.forEach(this.plays, (play) => {
-        if (play.display_name.slice(-1) === '' + (this.activedOptions.length)) {
-          this.activePlay.odds = play.odds
-          this.activePlay.id = play.id
-          this.activePlay.display_name = play.display_name
-          this.updateForSubmit()
-        }
-      })
+      this.updateForSubmit()
     },
     'playReset': function () {
       this.customOptions.forEach(option => {
         option.active = false
       })
-      this.combinations.length = 0
     }
   },
   methods: {
     updateForSubmit () {
-      this.valid = this.activedOptions.length >= this.maxOptionCount / 2
+      let numbers = this.activedOptions.map(option => option.num)
+      let rules = this.activePlay ? this.activePlay.rules : ''
+      this.valid = rules && numbers.length >= rules.min_opts
       this.$emit('updateCustomPlays', {
-        activePlayId: this.activePlay.id,
+        activePlayId: this.activePlay ? this.activePlay.id : '',
         activedOptions: this.activedOptions.map(option => {
           return {
             num: option.num
@@ -118,13 +105,7 @@ export default {
       if (this.gameClosed) {
         return false
       }
-      if (!option.active) {
-        if (this.activedOptions.length < this.maxOptionCount) {
-          option.active = true
-        }
-      } else {
-        option.active = false
-      }
+      option.active = !option.active
     }
   }
 }
