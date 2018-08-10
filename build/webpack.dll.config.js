@@ -1,7 +1,6 @@
 // library.webpack.config.js
 const path = require('path')
 const webpack = require('webpack')
-const utils = require('./utils')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 function resolve (dir) {
   return path.join(__dirname, '..', dir)

@@ -8,7 +8,6 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
@@ -97,6 +96,13 @@ const webpackConfig = merge(baseWebpackConfig, {
       publicPath: '/static/js',
       outputPath: 'static/js',
       includeSourcemap: false
+    },
+    { filepath: require.resolve('../lib/ui.dll.js'),
+     hash: true,
+     files: ['index.html'],
+     publicPath: '/static/js',
+     outputPath: 'static/js',
+     includeSourcemap: false
     }]),
     new FaviconsWebpackPlugin({
       logo: './src/assets/favicon.png',
