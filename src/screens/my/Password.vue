@@ -88,7 +88,6 @@ export default {
             this.changed = true
             this.$refs.form.resetFields()
             setTimeout(() => {
-              this.$store.dispatch('logout')
               this.$router.push({name: 'Login'})
               this.loading = false
             }, 2000)
