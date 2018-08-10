@@ -10,7 +10,7 @@ module.exports = {
   mode: 'production',
   entry: {
     base: [
-      // 'vue/dist/vue.esm.js',
+      'vue/dist/vue.esm.js',
       'async-validator',
       'axios',
       'babel-polyfill',
