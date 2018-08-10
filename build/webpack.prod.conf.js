@@ -89,14 +89,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       }
     ]),
-    // new AddAssetHtmlPlugin([{
-    //   filepath: require.resolve('../lib/base.dll.js'),
-    //   hash: true,
-    //   files: ['index.html'],
-    //   publicPath: '/static/js',
-    //   outputPath: 'static/js',
-    //   includeSourcemap: false
-    // }]),
+    new AddAssetHtmlPlugin([{
+      filepath: require.resolve('../lib/base.dll.js'),
+      hash: true,
+      files: ['index.html'],
+      publicPath: '/static/js',
+      outputPath: 'static/js',
+      includeSourcemap: false
+    }]),
     new FaviconsWebpackPlugin({
       logo: './src/assets/favicon.png',
       prefix: 'static/icons-[hash]/',
