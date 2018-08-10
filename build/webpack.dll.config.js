@@ -9,7 +9,7 @@ function resolve (dir) {
 module.exports = {
   mode: 'production',
   entry: {
-    base1: [
+    base: [
       'vue/dist/vue.esm.js',
       'async-validator',
       'axios',
