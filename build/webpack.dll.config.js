@@ -12,23 +12,13 @@ module.exports = {
   entry: {
     base: [
       'vue/dist/vue.esm.js',
-      'async-validator',
-      'axios',
-      'babel-polyfill',
-      'crypto-js',
-      'js-combinatorics',
+      'qs',
       'lodash',
-      'lrz',
-      'vue-awesome',
-      'vue-cookie',
-      'vue-i18n',
-      'vue-infinite-scroll',
-      'vue-lazyload',
-      'vue-moment',
-      'vue-router',
-      'vue2-filters',
+      'axios',
       'vuex',
-      'vuex-router-sync',
+      'vue-cookie',
+      'vue-router',
+      'vue-i18n'
     ]
   },
   output: {
