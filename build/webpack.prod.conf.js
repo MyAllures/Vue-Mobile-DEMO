@@ -40,9 +40,9 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
-    new webpack.DefinePlugin({
-      'process.env': env
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env': env
+    // }),
     // extract css into its own file
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
@@ -89,14 +89,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       }
     ]),
-    new AddAssetHtmlPlugin([{
-      filepath: require.resolve('../lib/base.dll.js'),
-      hash: true,
-      files: ['index.html'],
-      publicPath: '/static/js',
-      outputPath: 'static/js',
-      includeSourcemap: false
-    }]),
+    // new AddAssetHtmlPlugin([{
+    //   filepath: require.resolve('../lib/base.dll.js'),
+    //   hash: true,
+    //   files: ['index.html'],
+    //   publicPath: '/static/js',
+    //   outputPath: 'static/js',
+    //   includeSourcemap: false
+    // }]),
     new FaviconsWebpackPlugin({
       logo: './src/assets/favicon.png',
       prefix: 'static/icons-[hash]/',
