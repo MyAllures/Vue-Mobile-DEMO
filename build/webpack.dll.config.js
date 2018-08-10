@@ -2,8 +2,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-
-function resolve(dir) {
+function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -11,7 +10,7 @@ module.exports = {
   mode: 'production',
   entry: {
     base: [
-      'vue',
+      // 'vue/dist/vue.esm.js',
       'async-validator',
       'axios',
       'babel-polyfill',
