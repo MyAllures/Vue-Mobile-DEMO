@@ -10,23 +10,7 @@ module.exports = {
   mode: 'production',
   entry: {
     base: [
-      'async-validator',
-      'axios',
-      'babel-polyfill',
-      'crypto-js',
-      'js-combinatorics',
-      'lodash',
-      'lrz',
-      'vue-awesome',
-      'vue-cookie',
-      'vue-i18n',
-      'vue-infinite-scroll',
-      'vue-lazyload',
-      'vue-moment',
-      'vue-router',
-      'vue2-filters',
-      'vuex',
-      'vuex-router-sync'
+      'axios'
     ]
   },
   output: {
