@@ -39,6 +39,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
+    new webpack.LoaderOptionsPlugin({ options: {} }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
@@ -92,18 +93,18 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]),
     new AddAssetHtmlPlugin([{
       filepath: require.resolve('../lib/base.dll.js'),
-      hash: true,
-      files: ['index.html'],
-      publicPath: '/mobile/static/js',
-      outputPath: 'mobile/static/js',
+      // hash: true,
+      // files: ['index.html'],
+      // publicPath: '/mobile/static/js',
+      // outputPath: 'mobile/static/js',
       includeSourcemap: false
     },
     {
       filepath: require.resolve('../lib/tools.dll.js'),
-      hash: true,
-      files: ['index.html'],
-      publicPath: '/mobile/static/js',
-      outputPath: 'mobile/static/js',
+      // hash: true,
+      // files: ['index.html'],
+      // publicPath: '/mobile/static/js',
+      // outputPath: 'mobile/static/js',
       includeSourcemap: false
     }]),
     new FaviconsWebpackPlugin({
