@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
-import router from '../../router'
 import axios from 'axios'
 
 import {
@@ -50,7 +49,6 @@ export default {
     return logout().then(
       res => {
         commit(types.RESET_USER)
-        router.push('/')
       },
       errRes => Promise.reject(errRes)
     )
