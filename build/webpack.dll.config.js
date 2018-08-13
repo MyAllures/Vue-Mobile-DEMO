@@ -28,7 +28,7 @@ module.exports = {
       'vue-moment',
       'vue-infinite-scroll',
       'vue2-filters',
-      'async-validator',
+      'async-validator'
     ]
   },
   output: {
