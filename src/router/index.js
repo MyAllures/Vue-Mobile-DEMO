@@ -65,8 +65,7 @@ export default new Router({
       component: resolve => { require(['../screens/finance/UnsettleRecord.vue'], resolve) },
       meta: {
         title: '未结明细',
-        tabbarHidden: true,
-        showBack: true
+        tabbarHidden: true
       }
     },
     {

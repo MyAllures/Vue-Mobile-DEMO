@@ -11,7 +11,7 @@
     </swiper>
     <div class="announcement" v-if="announcements.length" @click="showDialog = true">
       <div class="speaker">
-        <img src="../assets/icon_bullhorn.svg" alt="bullhorn">
+        <icon class="icon" scale="1.3" name="bullhorn"></icon>
       </div>
       <div class="marquee">
         <marquee :messages="announcements"></marquee>
@@ -124,6 +124,7 @@ import {
 } from 'vux'
 import { mapGetters, mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
+import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
