@@ -2,7 +2,7 @@
   <div class="chat-box" id="chatBox">
     <div class="chat-announce" v-if="ws&&announce&&announce.length>0">
       <div class="annouce-info">
-        <img src="../assets/icon_volume-up.svg" alt="volume-up" class="volume-up">
+        <icon class="volume-up" name="volume-up"></icon>
         {{$t('home.announcement')}}：
       </div>
       <div class="scroll">
@@ -19,6 +19,7 @@
 
 <script>
 import Vue from 'vue'
+import 'vue-awesome/icons/volume-up'
 import { mapState } from 'vuex'
 import { fetchChatEmoji, fetchStickers, fetchChatToken } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'

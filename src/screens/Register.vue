@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="parseInt(systemConfig.regPresentAmount)" class="register-money-area">
-      <img src="../assets/icon_volume-up.svg" alt="volume-up" class="volume-up">
+      <icon class="volume-up" name="volume-up"></icon>
       <div class="register-money" v-if="!systemConfig.needBankinfo">
         现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包
       </div>
@@ -130,239 +130,240 @@
 </template>
 
 <script>
-import { fetchCaptcha, checkUserName, register, sendSMSCode } from '../api'
-import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
-import { XButton, Popup, CheckIcon, TransferDom, Alert } from 'vux'
-import VForm from '@/components/Form'
-import VFormItem from '@/components/FormItem'
-import VInput from '@/components/Input'
-import { mapState } from 'vuex'
+  import { fetchCaptcha, checkUserName, register, sendSMSCode } from '../api'
+  import { validateUserName, validatePassword, validateWithdrawPassword, msgFormatter, validateQQ, validatePhone } from '../utils'
+  import { XButton, Popup, CheckIcon, TransferDom, Alert } from 'vux'
+  import VForm from '@/components/Form'
+  import VFormItem from '@/components/FormItem'
+  import VInput from '@/components/Input'
+  import { mapState } from 'vuex'
+  import 'vue-awesome/icons/volume-up'
 export default {
-  name: 'Register',
-  components: {
-    XButton,
-    Popup,
-    CheckIcon,
-    Alert,
-    VForm,
-    VFormItem,
-    VInput
-  },
-  directives: {
-    TransferDom
-  },
-  data () {
-    const usernameValidator = (rule, value, callback) => {
-      if (!validateUserName(value)) {
-        callback(new Error('请输入6~15位数字或字母'))
-      } else {
-        checkUserName(value).then(response => {
-          if (response.length > 0) {
-            callback()
+    name: 'Register',
+    components: {
+      XButton,
+      Popup,
+      CheckIcon,
+      Alert,
+      VForm,
+      VFormItem,
+      VInput
+    },
+    directives: {
+      TransferDom
+    },
+    data () {
+      const usernameValidator = (rule, value, callback) => {
+        if (!validateUserName(value)) {
+          callback(new Error('请输入6~15位数字或字母'))
+        } else {
+          checkUserName(value).then(response => {
+            if (response.length > 0) {
+              callback()
+            } else {
+              callback(new Error('用户名已经存在'))
+            }
+          })
+        }
+      }
+      const passwordValidator = (rule, value, callback) => {
+        if (!validatePassword(value)) {
+          callback(new Error('请输入6~15位数字或字母'))
+        } else {
+          callback()
+        }
+      }
+      const repeatPasswordValidator = (rule, value, callback) => {
+        if (value !== this.user.password) {
+          callback(new Error('两次输入密码不一致'))
+        } else {
+          callback()
+        }
+      }
+      const withdrawPasswordValidator = (rule, value, callback) => {
+        if (!validateWithdrawPassword(value)) {
+          callback(new Error('请输入6位纯数字'))
+        } else {
+          callback()
+        }
+      }
+      const qqValidator = (rule, value, callback) => {
+        if (!validateQQ(value)) {
+          callback(new Error('QQ号码格式无效'))
+        } else {
+          callback()
+        }
+      }
+      const phoneValidator = (rule, value, callback) => {
+        if (!validatePhone(value)) {
+          callback(new Error('手机号码格式无效'))
+        } else {
+          callback()
+        }
+      }
+      return {
+        showInfo: false,
+        agreement: {
+          showAgreement: false
+        },
+        user: {
+          username: '',
+          password: '',
+          confirmation_password: '',
+          real_name: '',
+          phone: '',
+          qq: '',
+          withdraw_password: '',
+          hasAgree: true,
+          verification_code_0: '',
+          verification_code_1: '',
+          sms_code: ''
+        },
+        rules: {
+          username: [{validator: usernameValidator}],
+          password: [{validator: passwordValidator}],
+          confirmation_password: [{validator: repeatPasswordValidator}],
+          withdraw_password: [{validator: withdrawPasswordValidator}],
+          qq: [{validator: qqValidator}],
+          phone: [{validator: phoneValidator}]
+        },
+        captcha_src: '',
+        error: '',
+        loading: false,
+        SMSLoading: false,
+        SMSText: '获取验证码',
+        countdown: 'stop',
+        countdownInterval: null
+      }
+    },
+    computed: {
+      ...mapState([
+        'systemConfig'
+      ]),
+      smsValidationEnabled () {
+        return this.systemConfig.smsValidationEnabled
+      },
+      requiredField () {
+        const fields = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree']
+        if (this.smsValidationEnabled) {
+          fields.push('sms_code')
+        } else {
+          fields.push('verification_code_1')
+        }
+        return fields
+      },
+      inputCompleted () {
+        const user = this.user
+        return this.requiredField.every((feild) => user[feild])
+      }
+    },
+    watch: {
+      'user.hasAgree': function (hasAgree) {
+        this.validate(hasAgree, 'hasAgree')
+      }
+    },
+    created () {
+      this.fetchCaptcha()
+    },
+    methods: {
+      fetchCaptcha () {
+        if (this.smsValidationEnabled) { return }
+        fetchCaptcha().then(res => {
+          this.captcha_src = res.captcha_src
+          this.user.verification_code_0 = res.captcha_val
+        })
+      },
+      setCountdown () {
+        this.countdown = 60
+        this.countdownInterval = setInterval(() => {
+          this.countdown--
+          if (this.countdown <= 0) {
+            clearInterval(this.countdownInterval)
+            this.countdown = 'stop'
+            this.SMSText = '重新获取'
+          }
+        }, 1000)
+      },
+      sendSMSCode () {
+        if (this.SMSLoading) {
+          return
+        }
+        this.$refs.form.validateField('phone', (msg) => {
+          if (!msg) {
+            this.SMSLoading = true
+            sendSMSCode(this.user.phone).then(res => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(res)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'success'
+              })
+              this.setCountdown()
+            }).catch(errorMsg => {
+              this.SMSLoading = false
+              let resMsg = msgFormatter(errorMsg)
+              this.$vux.toast.show({
+                text: resMsg,
+                type: 'warn'
+              })
+            })
+          }
+        })
+      },
+      submitForm () {
+        if (this.loading) {
+          return
+        }
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.loading = true
+            const userInfo = {}
+            Object.keys(this.user).forEach(key => {
+              let value = this.user[key]
+              if (value !== undefined && value !== '') {
+                userInfo[key] = value
+              }
+            })
+            register(userInfo).then(result => {
+              window.gtag('event', '註冊', {'event_category': '會員註冊'})
+              this.loading = false
+              if (result.code === 9001) {
+                this.error = result.msg
+                this.$nextTick(() => {
+                  this.$refs.submit.$el.scrollIntoView(false)
+                })
+              }
+
+              return this.$store.dispatch('login', {
+                user: {
+                  username: this.user.username,
+                  password: this.user.password
+                }
+              })
+            }).catch(errorMsg => {
+              this.loading = false
+              this.fetchCaptcha()
+              this.error = msgFormatter(errorMsg)
+              throw new Error(this.error)
+            }).then(result => {
+              this.$router.push({ name: 'Home' })
+              this.$store.dispatch('fetchUser')
+              if (this.systemConfig.regPresentAmount && this.systemConfig.needBankinfo) {
+                setTimeout(() => {
+                  this.$root.bus.$emit('showFeatureGuide')
+                }, 200)
+              }
+            }).catch(() => {})
           } else {
-            callback(new Error('用户名已经存在'))
+            return false
           }
         })
       }
-    }
-    const passwordValidator = (rule, value, callback) => {
-      if (!validatePassword(value)) {
-        callback(new Error('请输入6~15位数字或字母'))
-      } else {
-        callback()
-      }
-    }
-    const repeatPasswordValidator = (rule, value, callback) => {
-      if (value !== this.user.password) {
-        callback(new Error('两次输入密码不一致'))
-      } else {
-        callback()
-      }
-    }
-    const withdrawPasswordValidator = (rule, value, callback) => {
-      if (!validateWithdrawPassword(value)) {
-        callback(new Error('请输入6位纯数字'))
-      } else {
-        callback()
-      }
-    }
-    const qqValidator = (rule, value, callback) => {
-      if (!validateQQ(value)) {
-        callback(new Error('QQ号码格式无效'))
-      } else {
-        callback()
-      }
-    }
-    const phoneValidator = (rule, value, callback) => {
-      if (!validatePhone(value)) {
-        callback(new Error('手机号码格式无效'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      showInfo: false,
-      agreement: {
-        showAgreement: false
-      },
-      user: {
-        username: '',
-        password: '',
-        confirmation_password: '',
-        real_name: '',
-        phone: '',
-        qq: '',
-        withdraw_password: '',
-        hasAgree: true,
-        verification_code_0: '',
-        verification_code_1: '',
-        sms_code: ''
-      },
-      rules: {
-        username: [{validator: usernameValidator}],
-        password: [{validator: passwordValidator}],
-        confirmation_password: [{validator: repeatPasswordValidator}],
-        withdraw_password: [{validator: withdrawPasswordValidator}],
-        qq: [{validator: qqValidator}],
-        phone: [{validator: phoneValidator}]
-      },
-      captcha_src: '',
-      error: '',
-      loading: false,
-      SMSLoading: false,
-      SMSText: '获取验证码',
-      countdown: 'stop',
-      countdownInterval: null
-    }
-  },
-  computed: {
-    ...mapState([
-      'systemConfig'
-    ]),
-    smsValidationEnabled () {
-      return this.systemConfig.smsValidationEnabled
     },
-    requiredField () {
-      const fields = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree']
-      if (this.smsValidationEnabled) {
-        fields.push('sms_code')
-      } else {
-        fields.push('verification_code_1')
-      }
-      return fields
-    },
-    inputCompleted () {
-      const user = this.user
-      return this.requiredField.every((feild) => user[feild])
+    beforeDestroy () {
+      clearInterval(this.countdownInterval)
     }
-  },
-  watch: {
-    'user.hasAgree': function (hasAgree) {
-      this.validate(hasAgree, 'hasAgree')
-    }
-  },
-  created () {
-    this.fetchCaptcha()
-  },
-  methods: {
-    fetchCaptcha () {
-      if (this.smsValidationEnabled) { return }
-      fetchCaptcha().then(res => {
-        this.captcha_src = res.captcha_src
-        this.user.verification_code_0 = res.captcha_val
-      })
-    },
-    setCountdown () {
-      this.countdown = 60
-      this.countdownInterval = setInterval(() => {
-        this.countdown--
-        if (this.countdown <= 0) {
-          clearInterval(this.countdownInterval)
-          this.countdown = 'stop'
-          this.SMSText = '重新获取'
-        }
-      }, 1000)
-    },
-    sendSMSCode () {
-      if (this.SMSLoading) {
-        return
-      }
-      this.$refs.form.validateField('phone', (msg) => {
-        if (!msg) {
-          this.SMSLoading = true
-          sendSMSCode(this.user.phone).then(res => {
-            this.SMSLoading = false
-            let resMsg = msgFormatter(res)
-            this.$vux.toast.show({
-              text: resMsg,
-              type: 'success'
-            })
-            this.setCountdown()
-          }).catch(errorMsg => {
-            this.SMSLoading = false
-            let resMsg = msgFormatter(errorMsg)
-            this.$vux.toast.show({
-              text: resMsg,
-              type: 'warn'
-            })
-          })
-        }
-      })
-    },
-    submitForm () {
-      if (this.loading) {
-        return
-      }
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          const userInfo = {}
-          Object.keys(this.user).forEach(key => {
-            let value = this.user[key]
-            if (value !== undefined && value !== '') {
-              userInfo[key] = value
-            }
-          })
-          register(userInfo).then(result => {
-            window.gtag('event', '註冊', {'event_category': '會員註冊'})
-            this.loading = false
-            if (result.code === 9001) {
-              this.error = result.msg
-              this.$nextTick(() => {
-                this.$refs.submit.$el.scrollIntoView(false)
-              })
-            }
-
-            return this.$store.dispatch('login', {
-              user: {
-                username: this.user.username,
-                password: this.user.password
-              }
-            })
-          }).catch(errorMsg => {
-            this.loading = false
-            this.fetchCaptcha()
-            this.error = msgFormatter(errorMsg)
-            throw new Error(this.error)
-          }).then(result => {
-            this.$router.push({ name: 'Home' })
-            this.$store.dispatch('fetchUser')
-            if (this.systemConfig.regPresentAmount && this.systemConfig.needBankinfo) {
-              setTimeout(() => {
-                this.$root.bus.$emit('showFeatureGuide')
-              }, 200)
-            }
-          }).catch(() => {})
-        } else {
-          return false
-        }
-      })
-    }
-  },
-  beforeDestroy () {
-    clearInterval(this.countdownInterval)
   }
-}
 </script>
 
 <style lang="less" scoped>
@@ -428,7 +429,7 @@ export default {
   .volume-up {
     flex: 0 0 auto;
     margin-right: 4px;
-    margin-top: -2px;
+    margin-top: 2px;
   }
   .register-money {
     flex: 1 1 auto;

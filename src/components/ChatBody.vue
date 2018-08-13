@@ -7,7 +7,8 @@
         :class="['clearfix', 'item', item.sender && user.username === item.sender.username ? 'item-right' : 'item-left', item.type < 0 ? 'sys-msg' : '']">
         <div class="lay-block clearfix" v-if="item.type >= 0">
           <div class="avatar">
-            <img :src="getAvatarSrc(item.sender)">
+            <icon name="cog" class="font-cog" v-if="item.type == 4" scale="3"></icon>
+            <img :src="getAvatarSrc(item.sender)" v-else>
           </div>
           <div class="lay-content">
             <div class="msg-header" >
@@ -381,7 +382,9 @@ export default {
     width: 42px;
     height: 42px;
     float: left;
-
+    .font-cog {
+      color: #7285d6;
+    }
     img {
       display: block;
       width: 100%;

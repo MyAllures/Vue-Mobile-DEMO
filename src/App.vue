@@ -668,6 +668,23 @@ export default {
   }
 }
 
+.solid-triangle {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  &.point-top {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+  }
+  &.point-down {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #fff;
+  }
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }

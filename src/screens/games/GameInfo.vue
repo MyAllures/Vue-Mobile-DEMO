@@ -4,7 +4,7 @@
       <span>{{currentGame.display_name}}</span>
       <span v-if="contentType === 'history'" class="date-picker">
         <datetime class="date-picker-input" v-model="date" @on-change="change"></datetime>
-        <i class="solid-triangle point-down"></i>
+        <icon class="caret-down arrow" name="caret-down"></icon>
       </span>
     </div>
     <component :is="showing"
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import Icon from 'vue-awesome/components/Icon'
+import 'vue-awesome/icons/caret-down'
 import { Datetime, dateFormat } from 'vux'
 
 const cqlf = (resolve) => require(['@/screens/games/rules/cqlf'], resolve)
@@ -109,6 +111,7 @@ export default {
     fc3d,
     GameStatistic,
     LotterRecord,
+    Icon,
     Datetime,
     dateFormat
   }
@@ -170,11 +173,12 @@ export default {
   &-input {
     padding: 0 5px 0 0;
   }
-  .solid-triangle {
+  .arrow {
     position: absolute;
-    border-top: 5px solid #999;
-    top: 18px;
-    right: 5px;
+    width: 20px;
+    right: 0;
+    top: 12px;
+    color: #aaa;
   }
 }
 
