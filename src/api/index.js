@@ -36,6 +36,10 @@ export function fetchGames () {
   return axios.get(`${urls.games}?platform=1`)
 }
 
+export function fetchGamesDetail () {
+  return axios.get(`${urls.games}?platform=1&extras=categories`)
+}
+
 export function fetchCategories (gameId) {
   return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
 }
