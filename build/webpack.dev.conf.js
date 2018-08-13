@@ -55,6 +55,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
+      host: process.env.HOST || '',
       inject: true
     }),
     new AddAssetHtmlPlugin([{
