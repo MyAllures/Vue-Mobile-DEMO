@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <% if (htmlWebpackPlugin.options.host) { %>
+      <link rel="preconnect" href="<%=htmlWebpackPlugin.options.host%>">
+    <% } %>
     <title><%= htmlWebpackPlugin.options.title%></title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script>
