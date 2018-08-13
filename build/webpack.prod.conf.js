@@ -97,6 +97,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       publicPath: '/mobile/static/js',
       outputPath: 'mobile/static/js',
       includeSourcemap: false
+    },
+    {
+      filepath: require.resolve('../lib/tools.dll.js'),
+      hash: true,
+      files: ['index.html'],
+      publicPath: '/mobile/static/js',
+      outputPath: 'mobile/static/js',
+      includeSourcemap: false
     }]),
     new FaviconsWebpackPlugin({
       logo: './src/assets/favicon.png',
