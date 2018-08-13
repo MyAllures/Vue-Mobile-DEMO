@@ -126,13 +126,8 @@ export default {
         limit: this.chunkSize
       })
         .then(data => {
-          if (data.results) {
-            this.totalCount = data.count
-            this.betRecords = data.results
-          } else {
-            this.totalCount = data.length
-            this.betRecords = data
-          }
+          this.totalCount = data.count
+          this.betRecords = data.results
           this.currentPage = 1
           this.loading = false
         }, errorMsg => {
