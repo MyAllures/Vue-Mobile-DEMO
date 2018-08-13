@@ -11,7 +11,7 @@ module.exports = {
   entry: {
     base: [
       'vue/dist/vue.esm.js',
-      'axios',
+      // 'axios',
       'babel-polyfill',
       'vue-cookie',
       'vue-i18n',
