@@ -7,6 +7,7 @@ import {
   login as userLogin,
   logout,
   fetchGames,
+  fetchGamesDetail,
   fetchUnread,
   fetchCategories,
   fetchChatInfo,
@@ -99,6 +100,14 @@ export default {
     return fetchGames().then(res => {
       commit(types.SET_GAMES, {
         games: res
+      })
+      fetchGamesDetail().then(gamesDetial => {
+        gamesDetial.forEach(({id, categories}) => {
+          commit(types.SET_CATEGORIES, {
+            gameId: id,
+            categories: categories
+          })
+        })
       })
       return Promise.resolve(res)
     })
