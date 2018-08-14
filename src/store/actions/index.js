@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
-import router from '../../router'
 import axios from 'axios'
 
 import {
@@ -8,6 +7,7 @@ import {
   login as userLogin,
   logout,
   fetchGames,
+  fetchGamesDetail,
   fetchUnread,
   fetchCategories,
   fetchChatInfo,
@@ -50,7 +50,6 @@ export default {
     return logout().then(
       res => {
         commit(types.RESET_USER)
-        router.push('/')
       },
       errRes => Promise.reject(errRes)
     )
@@ -101,6 +100,14 @@ export default {
     return fetchGames().then(res => {
       commit(types.SET_GAMES, {
         games: res
+      })
+      fetchGamesDetail().then(gamesDetial => {
+        gamesDetial.forEach(({id, categories}) => {
+          commit(types.SET_CATEGORIES, {
+            gameId: id,
+            categories: categories
+          })
+        })
       })
       return Promise.resolve(res)
     })

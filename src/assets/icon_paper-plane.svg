@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_paper-plane</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon_paper-plane" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(0.000000, -3.000000)" fill="#FFFFFF" id="Fill-1">
+            <path d="M19.7662256,10.1918581 L3.88489935,3.90076544 C3.30016187,3.69237973 2.68578332,4.12621722 2.68578332,4.74688327 L3.52741008,9.9780831 C3.56064401,10.1828759 3.72950829,10.338267 3.93609756,10.3544349 L12.8832098,11.0415688 L3.93609756,11.7278045 C3.72950829,11.7439723 3.56064401,11.8993634 3.52741008,12.1041562 L2.68578332,17.3353561 C2.68578332,17.9569203 3.30016187,18.3898596 3.88489935,18.1823721 L19.7662256,11.8903812 C20.5656363,11.6065455 20.5656363,10.4756938 19.7662256,10.1918581" transform="translate(11.525783, 11.041407) rotate(-30.000000) translate(-11.525783, -11.041407) "></path>
+        </g>
+    </g>
+</svg>

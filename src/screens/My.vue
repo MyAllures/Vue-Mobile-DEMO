@@ -128,6 +128,7 @@ export default {
           category: '登出',
           action: '点击'
         })
+        this.$router.push('/')
       }).catch(() => {})
     }
   },
