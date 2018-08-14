@@ -74,7 +74,7 @@ function WebSocketObj (token, roomId) {
           switch (data.error_type) {
             case 4:
               AlertModule.show({
-                content: '您已被聊天室管理员禁言，在' + Vue.moment(data.msg).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
+                content: '您已被聊天室管理员禁言，在' + Vue.moment(data.banned_time).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
               })
               store.dispatch('updatePersonalSetting', 'banned')
               break
