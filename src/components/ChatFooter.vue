@@ -434,6 +434,7 @@ export default {
         list-style: none;
         box-sizing: border-box;
         padding: 10px 10px 20px 10px;
+        -webkit-tap-highlight-color: transparent;
         .sticker-item {
           display: flex;
           align-items: center;
