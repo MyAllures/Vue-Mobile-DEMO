@@ -91,7 +91,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       }
     ]),
     new AddAssetHtmlPlugin([{
-      filepath: require.resolve('../lib/base.dll.js'),
+      filepath: require.resolve('../lib/base1.dll.js'),
       hash: true,
       files: ['index.html'],
       publicPath: '/mobile/static/js',
