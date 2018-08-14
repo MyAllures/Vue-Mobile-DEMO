@@ -59,7 +59,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       inject: true
     }),
     new AddAssetHtmlPlugin([{
-      filepath: require.resolve('../lib/base.dll.js'),
+      filepath: require.resolve('../lib/base1.dll.js'),
       includeSourcemap: false
     },
     {
