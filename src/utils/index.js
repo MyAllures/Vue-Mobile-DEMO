@@ -111,7 +111,8 @@ const pattern = {
   bankAccount: /^[0-9]{10,}$/,
   withdrawPassword: /^[0-9]{6}$/,
   amount: /^([0-9][0-9]*([.][0-9]{0,1})?)$/,
-  province: /[\u4E00-\u9FA5]/
+  province: /[\u4E00-\u9FA5]/,
+  depositAmount: /^([0-9][0-9]*([.][0-9]{0,2})?)$/
 }
 
 export function validateUserName (value) {
@@ -144,6 +145,9 @@ export function validateWithdrawPassword (value) {
 
 export function validateEmail (value) {
   return isEmail(value)
+}
+export function validateDepositAmount (value) {
+  return pattern.depositAmount.test(value)
 }
 
 export function validateAmount (value) {
