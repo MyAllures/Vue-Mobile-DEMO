@@ -93,7 +93,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapGetters } from 'vuex'
-import { validateBankAccount, msgFormatter } from '../../utils'
+import { validateBankAccount, validateProvince, msgFormatter } from '../../utils'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
@@ -105,6 +105,13 @@ export default {
         callback(new Error('该帐号格式无效'))
       } else if (value.length > 20) {
         callback(new Error('银行帐号需为20位以内的数字'))
+      } else {
+        callback()
+      }
+    }
+    const provinceValidator = (rule, value, callback) => {
+      if (!validateProvince(value)) {
+        callback(new Error('请输入中文字符'))
       } else {
         callback()
       }
@@ -126,7 +133,9 @@ export default {
       inputErrors: [],
       valid: false,
       rules: {
-        'account': [{validator: bankAccountValidator}]
+        'account': [{validator: bankAccountValidator}],
+        'province': [{validator: provinceValidator}],
+        'city': [{validator: provinceValidator}]
       }
     }
   },
