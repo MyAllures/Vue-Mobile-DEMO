@@ -66,7 +66,7 @@
           <div :class="['amount-box', {warn: warnMessage}]">
             <label class="amount-field">
               <span class="amount-field-text">存款金额</span>
-              <input class="amount-field-input" type="text" name="amount" v-model="currentPay.amount" @input="inputAmount">
+              <input class="amount-field-input" type="text" name="amount" v-model="currentPay.amount" @input="inputAmount(currentPay.amount)">
               <span class="amount-icon">¥</span>
             </label>
             <div class="hint">{{warnMessage||limitHint}}</div>
@@ -84,6 +84,7 @@
 <script>
 import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle, TransferDom, XDialog } from 'vux'
 import { getOnlinepayees, getRemitPayees } from '../../api'
+import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
 import urls from '../../api/urls'
 export default {
@@ -251,13 +252,16 @@ export default {
       })
       return arr
     },
-    inputAmount (evt) {
-      let value = evt.target.value
-      let formatted = !value ? '' : value.replace(/^[0]|[^0-9]/g, '')
-      this.$nextTick(() => {
-        this.currentPay.amount = formatted
-        this.validateAmount(formatted)
-      })
+    inputAmount (val) {
+      if (!val) {
+        this.currentPay.amount = ''
+      }
+      if (val && !validateDepositAmount(val)) {
+        this.$nextTick(() => {
+          this.currentPay.amount = val.slice(0, -1)
+          this.validateAmount(this.currentPay.amount)
+        })
+      }
     },
     validateAmount (value) {
       if (value === '') {
