@@ -191,7 +191,8 @@ export default new Router({
               name: 'Bank',
               meta: {
                 title: '银行转帐',
-                showBack: true
+                showBack: true,
+                tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/Bank.vue'], resolve) }
             },
@@ -200,7 +201,8 @@ export default new Router({
               name: 'Wechat',
               meta: {
                 title: '微信转帐',
-                showBack: true
+                showBack: true,
+                tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
             },
@@ -209,7 +211,8 @@ export default new Router({
               name: 'Alipay',
               meta: {
                 title: '支付宝转帐',
-                showBack: true
+                showBack: true,
+                tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
             }
