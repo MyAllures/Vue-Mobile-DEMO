@@ -10,11 +10,14 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
+
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
 const devWebpackConfig = merge(baseWebpackConfig, {
+  mode: 'development',
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
   },
@@ -41,6 +44,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
+    new webpack.LoaderOptionsPlugin({ options: {} }),
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),
@@ -51,8 +55,17 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
+      host: process.env.HOST || '',
       inject: true
     }),
+    new AddAssetHtmlPlugin([{
+      filepath: require.resolve('../lib/base1.dll.js'),
+      includeSourcemap: false
+    },
+    {
+      filepath: require.resolve('../lib/tools.dll.js'),
+      includeSourcemap: false
+    }]),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),

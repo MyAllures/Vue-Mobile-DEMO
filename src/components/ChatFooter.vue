@@ -24,7 +24,7 @@
       </label>
       <div class="touch-box send-btn" @click="sendMsg">
         <div class="btn" >
-          <icon scale="1" name="paper-plane"></icon>
+          <img src="../assets/icon_paper-plane.svg" alt="paper-plane" class="paper-plane">
         </div>
       </div>
     </div>
@@ -53,7 +53,7 @@
       </label>
       <div class="touch-box send-btn" @click="sendMsg">
         <div class="btn" >
-          <icon scale="1" name="paper-plane"></icon>
+          <img src="../assets/icon_paper-plane.svg" alt="paper-plane" class="paper-plane">
         </div>
       </div>
     </div>
@@ -127,10 +127,8 @@
 </template>
 
 <script>
-import Icon from 'vue-awesome/components/Icon'
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import 'vue-awesome/icons/paper-plane'
 import { Swiper, SwiperItem } from 'vux'
 import { sendImgToChat } from '../api'
 import lrz from 'lrz'
@@ -140,7 +138,6 @@ export default {
   components: {
     Swiper,
     SwiperItem,
-    Icon,
     EnvelopeDialog
   },
   data () {

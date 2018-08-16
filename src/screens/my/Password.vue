@@ -88,8 +88,14 @@ export default {
             this.changed = true
             this.$refs.form.resetFields()
             setTimeout(() => {
-              this.$router.push({name: 'Login'})
-              this.loading = false
+              this.$store.dispatch('logout').then(() => {
+                this.$router.push({name: 'Login'})
+                this.loading = false
+              }).catch(() => {
+                this.$store.commit('RESET_USER')
+                this.$router.push({name: 'Login'})
+                this.loading = false
+              })
             }, 2000)
           }, (response) => {
             this.loading = false
