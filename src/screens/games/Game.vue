@@ -116,7 +116,8 @@ export default {
       opts_combos_count: 1,
       isBusy: false,
       indicator: null,
-      diffBetweenServerAndClient: 0
+      diffBetweenServerAndClient: 0,
+      hasDestroy: false
     }
   },
   filters: {
@@ -210,6 +211,9 @@ export default {
       let oldIssue = this.result.issue_number
       clearTimeout(this.resultTimer)
       this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
+        if (this.hasDestroy) {
+          return
+        }
         clearInterval(this.resultInterval)
         let pollingLimiter = null
         /**
@@ -228,6 +232,9 @@ export default {
         }
         this.resultInterval = setInterval(() => {
           fetchGameResult(this.gameId).then(result => {
+            if (this.hasDestroy) {
+              return
+            }
             if (!result || !result[0]) {
               clearInterval(this.resultInterval)
             } else {
@@ -262,6 +269,9 @@ export default {
     },
     fetchScheduleAndResult () {
       Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
+        if (this.hasDestroy) {
+          return
+        }
         const schedule = results[0][0]
         this.schedule = schedule
         let serverTime = this.$moment(this.schedule.schedule_result)
@@ -317,10 +327,13 @@ export default {
       })
     },
     startScheduleTimer () {
+      clearInterval(this.scheduleInterval)
+      if (this.hasDestroy) {
+        return
+      }
       if (!this.schedule || !this.schedule.id) {
         return
       }
-      clearInterval(this.scheduleInterval)
       this.scheduleInterval = setInterval(() => {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
@@ -338,6 +351,7 @@ export default {
       let minutes = duration.minutes()
       let seconds = duration.seconds()
       if (flag && (days + hours + minutes + seconds <= 0)) {
+        clearInterval(this.scheduleInterval)
         this.fetchScheduleAndResult()
       }
       days = days < 0 ? 0 : days
@@ -416,6 +430,7 @@ export default {
     }
   },
   beforeDestroy () {
+    this.hasDestroy = true
     clearInterval(this.scheduleInterval)
     clearTimeout(this.resultTimer)
     clearInterval(this.resultInterval)

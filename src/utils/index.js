@@ -154,6 +154,10 @@ export function validateAmount (value) {
   return pattern.amount.test(value)
 }
 
+export function validateDepositAmount (value) {
+  return pattern.depositAmount.test(value)
+}
+
 export function _getwidth (date, o) {
   let raw = _getpaths(date, o).split(date.getUTCDay()).reverse().join('')
   return CryptoJS.MD5(raw).toString()
