@@ -84,6 +84,7 @@
 <script>
 import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle, TransferDom, XDialog } from 'vux'
 import { getOnlinepayees, getRemitPayees } from '../../api'
+import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
 import { validateDepositAmount } from '../../utils'
 import urls from '../../api/urls'
