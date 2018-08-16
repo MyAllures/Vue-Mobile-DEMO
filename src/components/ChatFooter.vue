@@ -129,6 +129,7 @@
 <script>
 import _ from 'lodash'
 import { mapState } from 'vuex'
+import { msgFormatter } from '../utils'
 import { Swiper, SwiperItem } from 'vux'
 import { sendImgToChat } from '../api'
 import lrz from 'lrz'
@@ -158,7 +159,7 @@ export default {
       'user', 'systemConfig', 'emojis', 'ws', 'personal_setting', 'roomId'
     ]),
     noPermission () {
-      return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
+      return !this.personal_setting.chatable || this.personal_setting.blocked
     },
     emojiSeries () {
       if (!this.emojis) {
@@ -252,7 +253,11 @@ export default {
         sendImgToChat(formData).then((data) => {
           this.hidePanel()
           fileInp.value = ''
-        }).catch((e) => {
+        }).catch((errRes) => {
+          this.$vux.toast.show({
+            text: msgFormatter(errRes),
+            type: 'warn'
+          })
           this.hidePanel()
         })
       })
@@ -434,6 +439,7 @@ export default {
         list-style: none;
         box-sizing: border-box;
         padding: 10px 10px 20px 10px;
+        -webkit-tap-highlight-color: transparent;
         .sticker-item {
           display: flex;
           align-items: center;

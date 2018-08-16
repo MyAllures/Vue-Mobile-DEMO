@@ -153,9 +153,6 @@ export default {
     ...mapState([
       'user', 'envelope', 'ws', 'personal_setting', 'messages'
     ]),
-    noPermission () {
-      return !this.personal_setting.chatable || this.personal_setting.banned || this.personal_setting.blocked
-    },
     statistic () {
       if (this.selectedEnvelope.users) {
         const gottenNum = this.selectedEnvelope.users.length
