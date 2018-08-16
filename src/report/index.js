@@ -56,7 +56,7 @@ export function report (config) {
       reportLog += `&memo=${config.memo}`
     }
     if (accountType === 1) {
-      reportLog += `&username=${config.username}`
+      reportLog += `&username=${store.state.user.username}`
     } else if (accountType === 0) {
       reportLog += '&username=tryplay'
     }
