@@ -102,7 +102,6 @@
         errorMsg: '',
         loading: false,
         show: false,
-        inputErrors: [],
         rules: {
           amount: [{validator: amountValidator}],
           withdraw_password: [{validator: wpasswordValidator}]
@@ -151,11 +150,6 @@
                 this.loading = false
                 this.show = true
                 this.$refs.form.resetFields()
-                this.$nextTick(() => {
-                  this.$refs.amount.firstError = ''
-                  this.$refs.password.firstError = ''
-                  this.inputErrors = []
-                })
                 this.errorMsg = ''
                 this.$router.push({name: 'WithdrawSuccess'})
                 setTimeout(() => {
