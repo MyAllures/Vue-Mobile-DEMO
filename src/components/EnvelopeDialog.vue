@@ -197,7 +197,11 @@ export default {
       }
     },
     reset () {
-      this.envelope = {}
+      this.envelope = {
+        pack_amount: '',
+        pack_nums: '',
+        content: ''
+      }
       this.error = ''
     },
     validate (value, input) {
