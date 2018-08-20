@@ -5,7 +5,7 @@ import Vue from 'vue'
 
 const DEFAULT_ROOM_ID = 100000
 function WebSocketObj (token, roomId) {
-  this.ws = new WebSocket(`${config.chatHost}/chat/stream?username=${store.state.user.username}&token=${token}`)
+  this.ws = new WebSocket(`${config.chatHost}/chat/stream?token=${token}`)
   this.ws.onopen = () => {
     this.joinRoom(roomId)
   }
@@ -80,7 +80,7 @@ function WebSocketObj (token, roomId) {
           switch (data.error_type) {
             case 4:
               AlertModule.show({
-                content: '您已被聊天室管理员禁言，在' + Vue.moment(data.msg).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
+                content: '您已被聊天室管理员禁言，在' + Vue.moment(data.banned_time).format('YYYY-MM-DD HH:mm:ss') + '后才可以发言。'
               })
               store.dispatch('updatePersonalSetting', 'banned')
               break

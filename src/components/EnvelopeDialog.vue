@@ -197,7 +197,11 @@ export default {
       }
     },
     reset () {
-      this.envelope = {}
+      this.envelope = {
+        pack_amount: '',
+        pack_nums: '',
+        content: ''
+      }
       this.error = ''
     },
     validate (value, input) {
@@ -205,8 +209,8 @@ export default {
     },
     validateAll () {
       return validateItems
-      .map(item => this.validators[item].validate(this.envelope[item]))
-      .filter(msg => msg)
+        .map(item => this.validators[item].validate(this.envelope[item]))
+        .filter(msg => msg)
     }
   }
 }
@@ -276,6 +280,7 @@ export default {
     box-sizing: border-box;
     background: transparent;
     margin: 0 auto;
+    padding-top: 5px;
     & /deep/ .weui-btn.weui-btn_primary {
       color: #4a4a4a;
       background: #f5b723;
@@ -286,8 +291,8 @@ export default {
     }
     .error {
       width: 100%;
-      height: 30px;
-      line-height: 30px;
+      word-wrap: break-word;
+      margin-bottom: 5px;
       color: #fff;
       text-align: center;
     }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="!user.bank && systemConfig.regPresentAmount && systemConfig.needBankinfo" class="register-money">
       <p class="text">
         <img src="../../assets/icon_announcement.png" class="horn-icon"/>
@@ -16,7 +16,7 @@
         </alert>
       </div>
     </div>
-    <div v-if="!user.bank">
+    <div v-if="!user.bank" class="stretch-layout wrapper">
       <div class="form m-t">
         <v-form :model="member.bank" :rules="rules" ref="form" @click.native="errorMsg = ''">
           <v-form-item required :label="$t('profile.select_bank')" prop="bank">
@@ -46,7 +46,8 @@
           </v-form-item>
         </v-form>
       </div>
-      <div class="set-bottom">
+
+      <div class="text-center m-b-lg">
         <p class="tip">提交後不可自行更改，如需更改请联系客服</p>
         <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
         <x-button type="primary" :disabled="!inputCompleted" class="submit-btn" @click.native="submit">
@@ -92,7 +93,7 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapGetters } from 'vuex'
-import { validateBankAccount, msgFormatter } from '../../utils'
+import { validateBankAccount, validateProvince, msgFormatter } from '../../utils'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
@@ -102,6 +103,15 @@ export default {
     const bankAccountValidator = (rule, value, callback) => {
       if (!validateBankAccount(value)) {
         callback(new Error('该帐号格式无效'))
+      } else if (value.length > 20) {
+        callback(new Error('银行帐号需为20位以内的数字'))
+      } else {
+        callback()
+      }
+    }
+    const provinceValidator = (rule, value, callback) => {
+      if (!validateProvince(value)) {
+        callback(new Error('请输入中文字符'))
       } else {
         callback()
       }
@@ -123,7 +133,9 @@ export default {
       inputErrors: [],
       valid: false,
       rules: {
-        'account': [{validator: bankAccountValidator}]
+        'account': [{validator: bankAccountValidator}],
+        'province': [{validator: provinceValidator}],
+        'city': [{validator: provinceValidator}]
       }
     }
   },
@@ -266,5 +278,13 @@ export default {
 
 .submit-btn {
   width: 85%;
+}
+
+.wrapper {
+  height: 100%;
+}
+
+.container {
+  height: calc(~"100%" - 45px);
 }
 </style>

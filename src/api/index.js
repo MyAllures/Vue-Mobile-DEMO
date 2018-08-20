@@ -36,6 +36,10 @@ export function fetchGames () {
   return axios.get(`${urls.games}?platform=1`)
 }
 
+export function fetchGamesDetail () {
+  return axios.get(`${urls.games}?platform=1&extras=categories`)
+}
+
 export function fetchCategories (gameId) {
   return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
 }
@@ -178,6 +182,10 @@ export function getToken (oldToken) {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       return res
     })
+}
+
+export function fetchChatToken () {
+  return axios.post(urls.chat_token)
 }
 
 export function sendImgToChat (data) {

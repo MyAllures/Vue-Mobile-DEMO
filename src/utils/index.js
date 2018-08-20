@@ -48,7 +48,7 @@ export class Indicator {
     } else { // All others:
       window.onpageshow = window.onpagehide = window.onfocus = window.onblur = this.onchange
     }
-     // set the initial state (but only if browser supports the Page Visibility API)
+    // set the initial state (but only if browser supports the Page Visibility API)
     if (document[this.hidden] !== undefined) {
       this.onchange({ type: document[this.hidden] ? 'blur' : 'focus' })
     }
@@ -110,11 +110,17 @@ const pattern = {
   phone: /^[1][3-8]\d{9}$/,
   bankAccount: /^[0-9]{10,}$/,
   withdrawPassword: /^[0-9]{6}$/,
-  amount: /^([0-9][0-9]*([.][0-9]{0,1})?)$/
+  amount: /^([0-9][0-9]*([.][0-9]{0,1})?)$/,
+  province: /^[\u4E00-\u9FA5]{0,}$/,
+  depositAmount: /^([0-9][0-9]*([.][0-9]{0,2})?)$/
 }
 
 export function validateUserName (value) {
   return pattern.username.test(value)
+}
+
+export function validateProvince (value) {
+  return pattern.province.test(value)
 }
 
 export function validatePassword (value) {
@@ -139,6 +145,9 @@ export function validateWithdrawPassword (value) {
 
 export function validateEmail (value) {
   return isEmail(value)
+}
+export function validateDepositAmount (value) {
+  return pattern.depositAmount.test(value)
 }
 
 export function validateAmount (value) {

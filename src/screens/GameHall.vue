@@ -14,8 +14,6 @@
 import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
 import { mapGetters } from 'vuex'
 import GameInfo from './games/GameInfo'
-import 'vue-awesome/icons/navicon'
-import Icon from 'vue-awesome/components/Icon'
 import ChatRoom from '../components/ChatRoom'
 
 export default {
@@ -26,7 +24,6 @@ export default {
     }
   },
   components: {
-    Icon,
     Popup,
     XHeader,
     Tab,

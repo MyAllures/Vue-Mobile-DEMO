@@ -2,7 +2,7 @@
   <div class="chat-box" id="chatBox">
     <div class="chat-announce" v-if="ws.raven&&announce&&announce.length>0">
       <div class="annouce-info">
-        <icon class="volume-up" name="volume-up"></icon>
+        <img src="../assets/icon_volume-up.svg" alt="volume-up" class="volume-up">
         {{$t('home.announcement')}}：
       </div>
       <div class="scroll">
@@ -19,11 +19,8 @@
 
 <script>
 import Vue from 'vue'
-import Icon from 'vue-awesome/components/Icon'
-import 'vue-awesome/icons/picture-o'
-import 'vue-awesome/icons/volume-up'
 import { mapState } from 'vuex'
-import { fetchChatEmoji, fetchStickers } from '../api'
+import { fetchChatEmoji, fetchStickers, fetchChatToken } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
@@ -36,7 +33,6 @@ export default {
     Tab,
     TabItem,
     AlertModule,
-    Icon,
     Marquee,
     ChatBody,
     ChatFooter
@@ -72,10 +68,13 @@ export default {
       if (!token) {
         return this.$router.push('/login?next=' + this.$route.path)
       }
-      this.$store.dispatch('setWs', {
-        ws: new WebSocketObj(token, this.RECEIVER),
-        type: 'raven'
-      })
+
+      fetchChatToken().then((res) => {
+        this.$store.dispatch('setWs', {
+          ws: new WebSocketObj(token, this.RECEIVER),
+          type: 'raven'
+        })
+      }).catch(() => {})
     }
     if (!this.$store.state.emojis) {
       Promise.all([fetchChatEmoji(), fetchStickers()]).then(resArr => {

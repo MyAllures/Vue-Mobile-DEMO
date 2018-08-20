@@ -34,8 +34,7 @@
               <v-input
                 type="password"
                 autocapitalize="off"
-                v-model="withdraw.withdraw_password"
-                :filter="/[^0-9]/g">
+                v-model="withdraw.withdraw_password">
               </v-input>
             </v-form-item>
           </v-form>
@@ -103,7 +102,6 @@
         errorMsg: '',
         loading: false,
         show: false,
-        inputErrors: [],
         rules: {
           amount: [{validator: amountValidator}],
           withdraw_password: [{validator: wpasswordValidator}]
@@ -147,25 +145,20 @@
           if (valid) {
             this.loading = true
             postWithdraw(this.withdraw)
-            .then(response => {
-              window.gtag('event', '取款', {'event_category': '取款'})
-              this.loading = false
-              this.show = true
-              this.$refs.form.resetFields()
-              this.$nextTick(() => {
-                this.$refs.amount.firstError = ''
-                this.$refs.password.firstError = ''
-                this.inputErrors = []
+              .then(response => {
+                window.gtag('event', '取款', {'event_category': '取款'})
+                this.loading = false
+                this.show = true
+                this.$refs.form.resetFields()
+                this.errorMsg = ''
+                this.$router.push({name: 'WithdrawSuccess'})
+                setTimeout(() => {
+                  this.$store.dispatch('fetchUser')
+                }, 2000)
+              }, (error) => {
+                this.loading = false
+                this.errorMsg = msgFormatter(error)
               })
-              this.errorMsg = ''
-              this.$router.push({name: 'WithdrawSuccess'})
-              setTimeout(() => {
-                this.$store.dispatch('fetchUser')
-              }, 2000)
-            }, (error) => {
-              this.loading = false
-              this.errorMsg = msgFormatter(error)
-            })
           } else {
             return false
           }

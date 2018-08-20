@@ -5,7 +5,9 @@
     <x-header :class="{'gamehall': isGameHall}"
       v-show="!$route.meta.headerHidden"
       @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
-      :right-options="{showMore: !!user.username && isGameHall}"
+      :right-options="{
+        showMore: !!user.username && isGameHall,
+      }"
       :style="{
         width: '100%',
         position: 'fixed', // lay over the default
@@ -14,7 +16,11 @@
         'z-index': headerZindex
       }"
       slot="header"
-      :left-options="{showBack: $route.meta.showBack || false}">
+      @on-click-back="$router.push({name: 'Home'})"
+      :left-options="{
+        showBack: $route.meta.showBack || false,
+        preventGoBack: (($route.name === 'Login') && noBackRoute)
+      }">
 
       <div @click="titleCondition.onClick">
         {{titleCondition.text}}
@@ -22,7 +28,7 @@
           :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
       </div>
 
-      <div v-if="!showChatRoom && !$route.meta.showBack"
+      <div v-if="!showChatRoom && !$route.meta.showBack && headerLeftTitle"
         slot="overwrite-left"
         @click="toHome">
         <a class="vux-header-back">{{headerLeftTitle}}</a>
@@ -134,6 +140,7 @@ import WinNotification from './components/WinNotification'
 import DetailWinNotification from './components/DetailWinNotification'
 import GhostSocketObj from './wsObj/eider.js'
 import { setTimeout } from 'timers'
+import { Indicator } from './utils'
 
 export default {
   name: 'app',
@@ -207,7 +214,10 @@ export default {
       showCalender: false,
       headerZindex: 100,
       refreshTokenInterval: null,
-      currentNotificationDetail: null
+      currentNotificationDetail: null,
+      refreshTokenTimer: null,
+      noBackRoute: !window.history.state,
+      indicator: null
     }
   },
   mixins: [freetrial],
@@ -344,6 +354,8 @@ export default {
       }
     },
     '$route' (to, from) {
+      this.noBackRoute = !window.history.state
+
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
         if (to.name === 'Home') {
           document.documentElement.style.height = 'auto'
@@ -433,6 +445,7 @@ export default {
       }
       getToken(refreshToken).then(res => {
         let expires = new Date(res.expires_in)
+        localStorage.setItem('token_expire', res.expires_in)
         this.$cookie.set('access_token', res.access_token, {
           expires: expires
         })
@@ -440,7 +453,10 @@ export default {
           expires: expires
         })
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-      })
+      }).catch(() => {})
+      this.refreshTokenTimer = setTimeout(() => {
+        this.replaceToken()
+      }, 20 * 60 * 1000)
     },
     pollUnread () {
       this.unreadInterval = setInterval(() => {
@@ -490,12 +506,26 @@ export default {
         this.performLogin()
       })
     }
-    this.refreshTokenInterval = window.setInterval(() => {
-      this.replaceToken()
-    }, 20 * 60 * 1000)
+    this.indicator = new Indicator(() => {
+      const expireTime = localStorage.getItem('token_expire')
+      if (!expireTime) {
+        return
+      }
+      const expireFromNow = this.$moment(expireTime).diff(this.$moment(), 'ms')
+      clearTimeout(this.refreshTokenTimer)
+      if (expireFromNow < 300000) { // 五分鐘內過期則直接刷新
+        this.replaceToken()
+      } else {
+        this.refreshTokenTimer = setTimeout(() => {
+          this.replaceToken()
+        }, expireFromNow - 300000)
+      }
+    }, () => {
+
+    })
   },
   beforeDestroy () {
-    window.clearInterval(this.refreshTokenInterval)
+    window.clearTimeout(this.refreshTokenTimer)
   }
 }
 </script>
@@ -672,23 +702,6 @@ export default {
     margin: -2px 0 0 -5px;
     float: left;
     display: inline-block;
-  }
-}
-
-.solid-triangle {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  vertical-align: middle;
-  &.point-top {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid #fff;
-  }
-  &.point-down {
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #fff;
   }
 }
 

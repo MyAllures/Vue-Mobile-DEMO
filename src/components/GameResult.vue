@@ -1,15 +1,15 @@
 <template>
   <div class="result-balls">
-    <div class="balls-text">{{gameLatestResult.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameLatestResult.game_code]" v-if="gameLatestResult && !loading">
-      <div v-if="invalid">官方开奖无效</div>
+    <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
+    <div :class="['balls-number', 'wrapper-' + result.game_code]" v-if="result && !loading">
+      <div v-if="result.status!=='valid'">官方开奖无效</div>
       <span
         v-else
         v-for="(num, index) in resultNums"
-        :key="gameLatestResult.issue_number + index"
+        :key="index"
         :class="getResultClass(num)">
         <b> {{num}} </b>
-        <p class="ball-zodiac" v-if="showZodiac"> {{zodiacs[index]}} </p>
+        <p class="ball-zodiac" v-if="result.zodiac"> {{result.zodiac[index]}} </p>
       </span>
       <div class="ball-sum" v-if="showSum">
         {{$t('common.total')}}
@@ -18,46 +18,27 @@
         </span>
       </div>
     </div>
-    <game-result-animate v-else-if="gameLatestResult" :gameCode="gameLatestResult.game_code" :resultNums="resultNums" />
+    <game-result-animate v-else-if="result" :gameCode="result.game_code" :resultNums="resultNums" />
   </div>
 </template>
 
 <script>
-import {fetchGameResult} from '../api'
 import GameResultAnimate from './GameResultAnimate'
 import _ from 'lodash'
 
 export default {
   props: {
-    gameid: {
-      type: String
-    }
+    result: Object,
+    loading: Boolean
   },
   components: {
     GameResultAnimate
   },
-  data () {
-    return {
-      gameLatestResult: '',
-      drawTimeGap: '',
-      zodiacs: '',
-      showZodiac: false,
-      showSum: false,
-      invalid: false,
-      loading: false
-    }
-  },
-  created () {
-    this.fetchResult(this.gameid).then(res => {
-      this.pollResult(this.gameid)
-      this.$store.dispatch('setCurrentGameResult', res)
-    })
-  },
   computed: {
     resultNums () {
-      let rawNums = this.gameLatestResult.result_str.split(',')
+      let rawNums = this.result.result_str.split(',')
       let formattedNums = []
-      if (this.gameLatestResult.game_code === 'bjkl8') {
+      if (this.result.game_code === 'bjkl8') {
         rawNums.pop()
       }
       rawNums.forEach((rawBall) => {
@@ -67,101 +48,27 @@ export default {
         }
         formattedNums.push(rawBall)
       })
-      if (!this.gameLatestResult.result_str) {
+      if (!this.result.result_str) {
         return this.$t('navMenu.no_result')
       }
       return formattedNums
     },
     resultsSum () {
       return _.reduce(this.resultNums, (sum, nums) => { return sum + Number(nums) }, 0)
-    }
-  },
-  watch: {
-    'gameid': function (gameid) {
-      this.showZodiac = false
-      this.showSum = false
-      clearInterval(this.interval)
-      clearTimeout(this.timer)
-      this.fetchResult(gameid).then(res => {
-        this.pollResult(this.gameid)
-        this.$store.dispatch('setCurrentGameResult', res)
-      })
     },
-    'gameLatestResult.game_code': function (code) {
-      if (code === 'hkl' || code === 'luckl') {
-        this.showZodiac = true
+    showSum () {
+      if (!this.result) {
+        return false
       }
-      if (code === 'pcdd' || code === 'jnd28' || code === 'luckdd') {
-        this.showSum = true
-      }
-    },
-    'gameLatestResult.status': function (val) {
-      if (val) {
-        this.invalid = (val !== 'valid')
-      }
+      return this.result.game_code === 'pcdd' || this.result.game_code === 'jnd28' || this.result.game_code === 'luckdd'
     }
   },
   methods: {
     getResultClass (resultNum) {
-      let gameClass = `result-${this.gameLatestResult.game_code}`
+      let gameClass = `result-${this.result.game_code}`
       let resultClass = `resultnum-${resultNum}`
       return [gameClass, resultClass]
-    },
-    fetchResult (gameId) {
-      return fetchGameResult(gameId).then(
-      result => {
-        if (!result || !result[0]) {
-          return
-        }
-        this.gameLatestResult = result[0]
-        this.zodiacs = result[0].zodiac.split(',')
-        return result
-      }
-    )
-    },
-    pollResult (gameid) {
-      if (!this.gameLatestResult) {
-        return
-      }
-
-      let drawFromNow = this.$moment(this.gameLatestResult.next_draw).diff(this.$moment(), 'ms')
-      let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
-
-      let oldIssue = this.gameLatestResult.issue_number
-      this.timer = setTimeout(() => {
-        clearInterval(this.interval)
-        let isGetResult = false
-        this.interval = setInterval(() => {
-          this.fetchResult(gameid).then(result => {
-            if (!result || !result[0]) {
-              clearInterval(this.interval)
-            }
-            let newIssue = result[0].issue_number
-            if (newIssue !== oldIssue) {
-              if (!isGetResult) {
-                isGetResult = true
-                clearInterval(this.interval)
-                clearInterval(this.timer)
-                this.loading = true
-                setTimeout(() => {
-                  this.loading = false
-                  this.$store.dispatch('setCurrentGameResult', result)
-                }, 3000)
-                setTimeout(() => {
-                  this.$store.dispatch('fetchUser')
-                }, 2000)
-                this.pollResult(gameid)
-              }
-            }
-          })
-        }, 1000)
-        this.pollResult(gameid)
-      }, startPollingTime)
     }
-  },
-  beforeDestroy () {
-    clearTimeout(this.timer)
-    clearInterval(this.interval)
   }
 }
 </script>

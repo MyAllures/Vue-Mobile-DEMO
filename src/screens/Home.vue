@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <swiper
       v-if="banners.length"
       :list="banners"
@@ -11,7 +11,7 @@
     </swiper>
     <div class="announcement" v-if="announcements.length" @click="showDialog = true">
       <div class="speaker">
-        <icon class="icon" scale="1.3" name="bullhorn"></icon>
+        <img src="../assets/icon_bullhorn.svg" alt="bullhorn">
       </div>
       <div class="marquee">
         <marquee :messages="announcements"></marquee>
@@ -30,19 +30,13 @@
         更多游戏<i class="arrow-right"></i>
       </span>
     </flexbox-item>
-    <grid :cols="3" v-if="allGames.length">
+    <grid :cols="3">
       <grid-item
         @click.native="chooseGame(game)"
         v-for="(game, index) in allGames"
         :key="'game' + index"
         v-if="index < game_count">
-        <div slot="icon" class="game-icon " :style="{
-          backgroundImage: `url(${game.icon})`,
-          width: '15vw',
-          display: 'inline-block',
-          height: '15vw',
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat' }"></div>
+        <img slot="icon" class="game-icon" v-lazy="game.icon" />
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
       <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
@@ -70,12 +64,8 @@
             <span>免费试玩</span>
           </div>
         </div>
-        <div class="grid-placeholder" v-else></div>
       </a>
     </grid>
-    <div class="game-loading" v-else>
-      <InlineLoading  />
-    </div>
     <div v-if="promotions.length > 0" class="activity">
       <flexbox>
         <flexbox-item>
@@ -94,7 +84,7 @@
         v-if="promotions && index < 5"
         @click.native="handleClick(promotion)">
         <div slot="content" class>
-          <img :src="promotion.image_mobile" alt="promotion.name">
+          <img v-lazy="promotion.image_mobile" alt="promotion.name">
         </div>
       </card>
     </div>
@@ -134,8 +124,6 @@ import {
 } from 'vux'
 import { mapGetters, mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
-import Icon from 'vue-awesome/components/Icon'
-import 'vue-awesome/icons/bullhorn'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
@@ -216,7 +204,6 @@ export default {
     XDialog,
     Flexbox,
     FlexboxItem,
-    Icon,
     Masker,
     Alert,
     Card,
@@ -233,8 +220,11 @@ export default {
 
 <style scoped lang="less">
 @import '../styles/vars.less';
-.grid-placeholder {
-  height: 89px;
+.icon-placeholder {
+  opacity: 0;
+}
+.container /deep/ .vux-swiper {
+  min-height: 45w;
 }
 .announcement {
   display: flex;
@@ -277,17 +267,19 @@ export default {
   .weui-grid {
     padding: 10px;
   }
+  /deep/ .weui-grid {
+    height: 28vw;
+  }
   /deep/ .weui-grid__icon {
     width: 60%;
-    height: 60%;
+    height: auto;
     text-align: center;
   }
 
   /deep/ .weui-grid__label {
     color: #666;
     line-height: 1;
-    margin-top: 10px;
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 .register-money {
@@ -354,6 +346,8 @@ export default {
   padding: 100px 0;
 }
 .game-icon {
+  display: block;
   border-radius: 10px;
+  min-height: 15vw;
 }
 </style>

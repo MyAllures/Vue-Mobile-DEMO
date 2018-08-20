@@ -23,7 +23,7 @@
         <v-input
           autocapitalize="off"
           v-model="remit.amount"
-          :filter="/^[0]|[^0-9]/g">
+          @input="inputAmount">
         </v-input>
       </v-form-item>
       <v-form-item :label="$t('my.memo')" prop="memo">
@@ -61,7 +61,7 @@
     FlexboxItem
   } from 'vux'
   import { postRemit } from '@/api'
-  import { msgFormatter } from '@/utils'
+  import { msgFormatter, validateDepositAmount } from '@/utils'
   import VForm from '@/components/Form'
   import VFormItem from '@/components/FormItem'
   import VInput from '@/components/Input'
@@ -159,6 +159,16 @@
       this.remit.remit_info.remit_payee = this.payee.id
     },
     methods: {
+      inputAmount (val) {
+        if (!val) {
+          this.remit.amount = ''
+        }
+        if (val && !validateDepositAmount(val)) {
+          this.$nextTick(() => {
+            this.remit.amount = val.slice(0, -1)
+          })
+        }
+      },
       submit () {
         this.$refs.form.validate((valid) => {
           if (valid) {
@@ -183,7 +193,7 @@
 
               this.loading = false
               this.$refs.form.resetFields()
-              this.$store.dispatch('setCustomTitle', remitType + '轉帳')
+              this.$store.dispatch('setCustomTitle', remitType + '转帐')
               this.$router.push({path: '/my/deposit/submit_success'})
             }).catch((response) => {
               this.loading = false
