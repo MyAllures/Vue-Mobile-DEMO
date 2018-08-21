@@ -10,11 +10,17 @@ function WebSocketObj (token, roomId) {
     this.joinRoom(roomId)
   }
   this.ws.onclose = (e) => {
-    store.dispatch('setWs', null)
+    store.dispatch('setWs', {
+      ws: null,
+      type: 'raven'
+    })
   }
 
   this.ws.onerror = (e) => {
-    store.dispatch('setWs', null)
+    store.dispatch('setWs', {
+      ws: null,
+      type: 'raven'
+    })
   }
   this.ws.onmessage = (resData) => {
     let data

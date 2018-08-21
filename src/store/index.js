@@ -30,6 +30,8 @@ export default new Vuex.Store({
       },
       issue_number: ''
     },
+    winNotification: [],
+    winNotificationVisible: false,
     betDialog: {
       visible: false,
       bets: [],
@@ -55,7 +57,11 @@ export default new Vuex.Store({
     currentGameResult: null,
     emojis: null,
     keepAlivePage: [],
-    ws: null,
+    // ws: null,
+    ws: {
+      raven: null,
+      eider: null
+    },
     roomId: undefined,
     roomInfo: null,
     messages: [],

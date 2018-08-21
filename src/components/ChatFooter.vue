@@ -264,7 +264,7 @@ export default {
     },
     sendMsg () {
       if (this.noPermission || !this.msgCnt.trim()) { return false }
-      this.ws.send({
+      this.ws.raven.send({
         'type': 0,
         'content': this.msgCnt
       })
@@ -280,7 +280,7 @@ export default {
       let target = e.target
       while (target.nodeName !== 'UL') {
         if (target.nodeName === 'LI') {
-          this.ws.send({
+          this.ws.raven.send({
             'type': 7,
             'content': target.dataset.content,
             'sticker': target.dataset.stickerid

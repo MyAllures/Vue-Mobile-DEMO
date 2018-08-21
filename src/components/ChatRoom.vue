@@ -1,6 +1,6 @@
 <template>
   <div class="chat-box" id="chatBox">
-    <div class="chat-announce" v-if="ws&&announce&&announce.length>0">
+    <div class="chat-announce" v-if="ws.raven&&announce&&announce.length>0">
       <div class="annouce-info">
         <img src="../assets/icon_volume-up.svg" alt="volume-up" class="volume-up">
         {{$t('home.announcement')}}：
@@ -9,7 +9,7 @@
         <marquee :messages="announce"></marquee>
       </div>
     </div>
-    <p class="login-info" v-if="!ws">聊天室登录中...</p>
+    <p class="login-info" v-if="!ws.raven">聊天室登录中...</p>
     <div class="chat-container" v-else>
       <chat-body @click.native="hidePanel"/>
       <chat-footer ref="chatFooter"/>
@@ -61,15 +61,19 @@ export default {
     ])
   },
   created () {
-    if (this.ws) {
-      this.ws.joinRoom(this.RECEIVER)
+    if (this.ws.raven) {
+      this.ws.raven.joinRoom(this.RECEIVER)
     } else {
       let token = Vue.cookie.get('access_token')
       if (!token) {
         return this.$router.push('/login?next=' + this.$route.path)
       }
+
       fetchChatToken().then((res) => {
-        this.$store.dispatch('setWs', new WebSocketObj(res.chat_token, this.RECEIVER))
+        this.$store.dispatch('setWs', {
+          ws: new WebSocketObj(token, this.RECEIVER),
+          type: 'raven'
+        })
       }).catch(() => {})
     }
     if (!this.$store.state.emojis) {
