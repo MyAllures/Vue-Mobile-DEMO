@@ -16,7 +16,7 @@
         <div class="body">
           <div class="total-sum" v-if="formatted.total_profit">
             <span>中奖总额</span>
-            <span class="amount">￥{{formatted.total_profit}}</span>
+            <span class="amount">{{formatted.total_profit | currency('￥')}}</span>
           </div>
           <div class="game" v-for="(game, i) in formatted.win_notifications" :key="i">
             <div class="info">
@@ -24,18 +24,18 @@
                 <p class="name">{{game.game_name}}</p>
                 <p class="issue">{{game.issue_number}}期</p>
               </div>
-              <p class="amount">￥{{game.total_profit}}</p>
+              <p class="amount">{{game.total_profit | currency('￥')}}</p>
             </div>
             <ul class="result-list">
               <li class="result" v-for="(bet, index) in game.win_bets" :key="index">
                 <span>{{`${index + 1}. ${bet.playgroup_name} @ ${bet.play_name}`}}</span>
-                <span>{{`￥${parseFloat(bet.profit).toFixed(2)}`}}</span>
+                <span>{{bet.profit| currency('￥')}}</span>
               </li>
             </ul>
           </div>
         </div>
         <div class="footer">
-          <x-button @click.native="$router.push({name: 'BetRecord'})" type="primary">查看投注纪录</x-button>
+          <x-button @click.native="handleFooterClick()" type="primary">查看投注纪录</x-button>
         </div>
       </div>
     </x-dialog>
@@ -64,6 +64,10 @@ export default {
     handleClose () {
       this.$emit('closeDetailNotification')
       this.dialogVisible = false
+    },
+    handleFooterClick () {
+      this.handleClose()
+      this.$router.push({name: 'BetRecord'})
     }
   },
   computed: {
@@ -117,6 +121,11 @@ export default {
     border-bottom: 2px solid #eee;
     text-align: center;
     .font-style(18px, #333, 500, inherit);
+  }
+
+  .body {
+    max-height: 380px;
+    overflow-y: auto;
   }
 
   .footer {

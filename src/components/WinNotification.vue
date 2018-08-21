@@ -1,19 +1,21 @@
 <template>
-  <div class="wrapper">
-    <x-icon type="ios-close" @click.native="close" class="dark-fill" size="24"></x-icon>
-    <div @click="handleTextClick" class="text-area">
-      <span>
-        <span class="game-name" v-if="type === 'win-notification'">
-          {{gameName}}中奖
+  <transition name="fade">
+    <div class="wrapper" v-if="notification">
+      <x-icon type="ios-close" @click.native="close" class="dark-fill" size="24"></x-icon>
+      <div @click="handleTextClick" class="text-area">
+        <span>
+          <span class="game-name" v-if="type === 'win-notification'">
+            {{gameName}}中奖
+          </span>
+          <span class="congratulation" v-else>
+            恭喜中奖了！
+          </span>
         </span>
-        <span class="congratulation" v-else>
-          恭喜中奖了！
-        </span>
-      </span>
-      <span class="amount">总额: {{totalProfit | currency('￥')}}</span>
-      <span class="detail-link">明细</span>
+        <span class="amount">总额: {{totalProfit | currency('￥')}}</span>
+        <span class="detail-link">明细</span>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -23,22 +25,31 @@ export default {
   },
   data () {
     return {
+      timer: null
     }
   },
   methods: {
     close () {
       this.$store.commit('HIDE_WINNOTIFICATION')
       this.$store.dispatch('removeWinNotification')
-      this.timeout = null
+      clearTimeout(this.timer)
+      this.timer = null
+      if (this.$store.state.winNotification.length > 0) {
+        setTimeout(() => {
+          this.$store.commit('SHOW_WINNOTIFICATION')
+          this.startTimer()
+        }, 1000)
+      }
     },
     handleTextClick () {
       let currentNotification = Object.assign({}, this.notification)
       this.$emit('getCurrentNotificationDetail', currentNotification)
-      this.$router.push({name: 'BetRecord'})
       this.close()
     },
-    onClose () {
-      this.$emit('onClose')
+    startTimer () {
+      this.timer = setTimeout(() => {
+        this.close()
+      }, 5000)
     }
   },
   computed: {
@@ -52,8 +63,15 @@ export default {
       return this.notification.total_profit
     }
   },
-  beforeDestroy () { this.close() },
-  created () {}
+  watch: {
+    'notification': function (notification) {
+      if (notification) {
+        this.$store.commit('SHOW_WINNOTIFICATION')
+        this.startTimer()
+      }
+    }
+  },
+  beforeDestroy () { this.close() }
 }
 </script>
 
@@ -62,6 +80,7 @@ export default {
 .dark-fill {
   fill: rgba(0, 0, 0, .4);
 }
+
 .wrapper {
   position: fixed;
   display: inline-flex;

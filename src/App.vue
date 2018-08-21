@@ -111,16 +111,16 @@
       </div>
     </transition>
 
-    <transition name="fade">
-      <div v-if="winNotificationVisible">
-        <WinNotification :notification="winNotification[0]"
-        @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
+    <div v-if="isInfirstLevelPage">
+      <div v-show="winNotificationVisible">
+        <WinNotification :notification="winNotification[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
       </div>
-      <DetailWinNotification v-if="currentNotificationDetail"
-        :notification="currentNotificationDetail"
-        @closeDetailNotification="closeDetailNotification"/>
-    </transition>
-
+      <transition name="fade">
+        <div v-if="currentNotificationDetail">
+          <DetailWinNotification :notification="currentNotificationDetail" @closeDetailNotification="closeDetailNotification"/>
+        </div>
+      </transition>
+    </div>
   </view-box>
 </template>
 
@@ -165,48 +165,50 @@ export default {
     TransferDom
   },
   data () {
+    const firseLevelPages = [{
+      label: this.$t('home.name'),
+      iconImg: require('./assets/footer/home_normal.svg'),
+      iconImgActive: require('./assets/footer/home_pressed.svg'),
+      link: '/',
+      route: 'Home',
+      name: 'home'
+    }, {
+      label: this.$t('game.name'),
+      iconImg: require('./assets/footer/game_normal.svg'),
+      iconImgActive: require('./assets/footer/game_pressed.svg'),
+      link: '/game',
+      route: 'Game',
+      name: 'game'
+    }, {
+      label: this.$t('deposit.process'),
+      iconImg: require('./assets/footer/top_up_normal.svg'),
+      iconImgActive: require('./assets/footer/top_up_pressed.svg'),
+      link: '/my/deposit',
+      route: 'Deposit',
+      name: 'deposit'
+    }, {
+      label: this.$t('fin.name'),
+      iconImg: require('./assets/footer/finance_normal.svg'),
+      iconImgActive: require('./assets/footer/finance_pressed.svg'),
+      link: '/fin/bet_record',
+      route: 'Fin',
+      name: 'fin'
+    }, {
+      label: this.$t('my.name'),
+      iconImg: require('./assets/footer/me_normal.svg'),
+      iconImgActive: require('./assets/footer/me_pressed.svg'),
+      link: '/my',
+      route: 'My',
+      name: 'my',
+      unreadBadge: true
+    }]
     return {
       showRightMenu: false,
       showChatRoom: false,
       showGameMenu: false,
       showFeatureGuide: false,
-      menus: [{
-        label: this.$t('home.name'),
-        iconImg: require('./assets/footer/home_normal.svg'),
-        iconImgActive: require('./assets/footer/home_pressed.svg'),
-        link: '/',
-        route: 'Home',
-        name: 'home'
-      }, {
-        label: this.$t('game.name'),
-        iconImg: require('./assets/footer/game_normal.svg'),
-        iconImgActive: require('./assets/footer/game_pressed.svg'),
-        link: '/game',
-        route: 'Game',
-        name: 'game'
-      }, {
-        label: this.$t('deposit.process'),
-        iconImg: require('./assets/footer/top_up_normal.svg'),
-        iconImgActive: require('./assets/footer/top_up_pressed.svg'),
-        link: '/my/deposit',
-        route: 'Deposit',
-        name: 'deposit'
-      }, {
-        label: this.$t('fin.name'),
-        iconImg: require('./assets/footer/finance_normal.svg'),
-        iconImgActive: require('./assets/footer/finance_pressed.svg'),
-        link: '/fin/bet_record',
-        route: 'Fin',
-        name: 'fin'
-      }, {
-        label: this.$t('my.name'),
-        iconImg: require('./assets/footer/me_normal.svg'),
-        iconImgActive: require('./assets/footer/me_pressed.svg'),
-        link: '/my',
-        route: 'My',
-        name: 'my',
-        unreadBadge: true
-      }],
+      menus: firseLevelPages,
+      firseLevelPages,
       logo: '',
       userLoading: true,
       error: '',
@@ -228,6 +230,9 @@ export default {
     ...mapState([
       'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'winNotificationVisible', 'winNotification'
     ]),
+    isInfirstLevelPage () {
+      return !!(this.firseLevelPages.find((page) => this.$route.path.indexOf(page.link)))
+    },
     titleCondition () {
       let route = this.$route
       let title = {
@@ -329,16 +334,8 @@ export default {
   },
   watch: {
     'winNotification.length': function (val, oldVal) {
-      if (val > oldVal) {
-        if (!this.winNotificationVisible) {
-          this.$store.commit('SHOW_WINNOTIFICATION')
-        }
-      } else {
-        if (val > 0) {
-          this.$store.commit('SHOW_WINNOTIFICATION')
-        } else {
-          this.$store.commit('HIDE_WINNOTIFICATION')
-        }
+      if (val > 0 && !this.winNotificationVisible) {
+        this.$store.commit('SHOW_WINNOTIFICATION')
       }
     },
     'user.logined' (newStatus, old) {
@@ -705,10 +702,4 @@ export default {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
 </style>
