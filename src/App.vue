@@ -77,7 +77,7 @@
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
         :selected="selectedTab === menu.name"
-        v-for="(menu, index) in menus"
+        v-for="(menu, index) in firseLevelPages"
         :link="menu.link"
         :key="'tabbar' + index"
         @click.native="handleRouteChange(menu)">
@@ -139,7 +139,6 @@ import Calender from './components/Calender'
 import WinNotification from './components/WinNotification'
 import DetailWinNotification from './components/DetailWinNotification'
 import GhostSocketObj from './wsObj/eider.js'
-import { setTimeout } from 'timers'
 import { Indicator } from './utils'
 
 export default {
@@ -207,7 +206,6 @@ export default {
       showChatRoom: false,
       showGameMenu: false,
       showFeatureGuide: false,
-      menus: firseLevelPages,
       firseLevelPages,
       logo: '',
       userLoading: true,

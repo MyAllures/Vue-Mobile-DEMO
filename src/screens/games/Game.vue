@@ -292,11 +292,11 @@ export default {
           }
         }
 
-        // this.$store.dispatch('updateGameInfo', {
-        //   display_name: this.currentGame.display_name,
-        //   issue_number: this.schedule.issue_number,
-        //   game_code: this.currentGame.code
-        // })
+        this.$store.dispatch('updateGameInfo', {
+          display_name: this.currentGame.display_name,
+          issue_number: this.schedule.issue_number,
+          game_code: this.currentGame.code
+        })
         this.startScheduleTimer()
       }).catch(() => {})
     },
@@ -338,9 +338,9 @@ export default {
         const closeTime = this.schedule.schedule_close
         const resultTime = this.schedule.schedule_result
         this.closeCountDown = this.diffTime(closeTime)
-        // this.$store.dispatch('updateGameInfo', {
-        //   countdown: {...this.closeCountDown}
-        // })
+        this.$store.dispatch('updateGameInfo', {
+          countdown: {...this.closeCountDown}
+        })
         this.resultCountDown = this.diffTime(resultTime, true)
       }, 1000)
     },
