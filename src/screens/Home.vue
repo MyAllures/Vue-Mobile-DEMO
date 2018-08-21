@@ -1,13 +1,14 @@
 <template>
   <div class="container">
     <swiper
-      v-if="banners.length"
-      :list="banners"
       :aspect-ratio=".45"
       :show-dots="false"
       dots-position="center"
       auto
       loop>
+      <swiper-item v-for="(banner, index) in banners" :key="index">
+        <img :src="banner.img" width="100%" alt="banner">
+      </swiper-item>
     </swiper>
     <div class="announcement" v-if="announcements.length" @click="showDialog = true">
       <div class="speaker">
@@ -36,7 +37,8 @@
         v-for="(game, index) in allGames"
         :key="'game' + index"
         v-if="index < game_count">
-        <img slot="icon" class="game-icon" v-lazy="game.icon" />
+        <img slot="icon" class="game-icon" v-if="!game.icon" :src="require('../assets/loading.gif')"/>
+        <img slot="icon" class="game-icon" v-else v-lazy="game.icon" />
         <span slot="label">{{ game.display_name }}</span>
       </grid-item>
       <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
@@ -122,7 +124,7 @@ import {
   Group,
   Cell
 } from 'vux'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
@@ -142,22 +144,37 @@ export default {
   },
   mixins: [freetrial],
   computed: {
-    ...mapGetters([
-      'allGames'
-    ]),
     ...mapState([
       'user', 'systemConfig'
-    ])
+    ]),
+    allGames () {
+      const games = this.$store.state.games
+      if (games.length === 0) {
+        return Array.from(Array(this.game_count), x => {
+          return {
+            icon: '',
+            display_name: ''
+          }
+        })
+      }
+      return games
+    }
   },
   created () {
     fetchBanner()
       .then(res => {
-        this.banners = res.map(banner => {
+        const banners = res.map((banner, index) => {
           return {
             url: 'javascript:',
-            img: banner.image
+            img: index === 0 ? banner.image : ''
           }
         })
+        this.banners = banners
+        setTimeout(() => {
+          res.forEach((banner, index) => {
+            this.banners[index].img = banner.image
+          })
+        }, 2000)
       }).catch(() => {})
     fetchAnnouncements().then(
       result => {
@@ -189,6 +206,9 @@ export default {
       this.$router.push(`/promotions/${promotion.id}`)
     },
     chooseGame (game) {
+      if (!game.id) {
+        return
+      }
       this.sendGaEvent({
         label: game.display_name,
         category: '首页游戏选择',
