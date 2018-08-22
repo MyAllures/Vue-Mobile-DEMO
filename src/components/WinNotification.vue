@@ -1,21 +1,19 @@
 <template>
-  <transition name="fade">
-    <div class="wrapper" v-if="notification">
-      <x-icon type="ios-close" @click.native="close" class="dark-fill" size="24"></x-icon>
-      <div @click="handleTextClick" class="text-area">
-        <span>
-          <span class="game-name" v-if="type === 'win-notification'">
-            {{gameName}}中奖
-          </span>
-          <span class="congratulation" v-else>
-            恭喜中奖了！
-          </span>
+  <div class="wrapper" v-if="notification">
+    <x-icon type="ios-close" @click.native="close" class="dark-fill" size="24"></x-icon>
+    <div @click="handleTextClick" class="text-area">
+      <span>
+        <span class="game-name" v-if="type === 'win-notification'">
+          {{gameName}}中奖
         </span>
-        <span class="amount">总额: {{totalProfit | currency('￥')}}</span>
-        <span class="detail-link">明细</span>
-      </div>
+        <span class="congratulation" v-else>
+          恭喜中奖了！
+        </span>
+      </span>
+      <span class="amount">总额: {{totalProfit | currency('￥')}}</span>
+      <span class="detail-link">明细</span>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -25,7 +23,8 @@ export default {
   },
   data () {
     return {
-      timer: null
+      timer: null,
+      changingTimer: null
     }
   },
   methods: {
@@ -35,7 +34,7 @@ export default {
       clearTimeout(this.timer)
       this.timer = null
       if (this.$store.state.winNotification.length > 0) {
-        setTimeout(() => {
+        this.changingTimer = setTimeout(() => {
           this.$store.commit('SHOW_WINNOTIFICATION')
           this.startTimer()
         }, 1000)
@@ -47,6 +46,9 @@ export default {
       this.close()
     },
     startTimer () {
+      clearTimeout(this.changingTimer)
+      this.changingTimer = null
+
       this.timer = setTimeout(() => {
         this.close()
       }, 5000)
@@ -70,8 +72,7 @@ export default {
         this.startTimer()
       }
     }
-  },
-  beforeDestroy () { this.close() }
+  }
 }
 </script>
 

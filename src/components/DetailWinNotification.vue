@@ -30,6 +30,7 @@
               <li class="result" v-for="(bet, index) in game.win_bets" :key="index">
                 <span>{{`${index + 1}. ${bet.playgroup_name} @ ${bet.play_name}`}}</span>
                 <span>{{bet.profit| currency('￥')}}</span>
+                <p class="combination" v-if="bet.comb_desc">{{bet.comb_desc}}</p>
               </li>
             </ul>
           </div>
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import {TransferDom, XDialog, XButton} from 'vux'
+import {TransferDom, XDialog, XButton, dateFormat} from 'vux'
 
 export default {
   components: {
@@ -66,8 +67,9 @@ export default {
       this.dialogVisible = false
     },
     handleFooterClick () {
+      const today = dateFormat(new Date(), 'YYYY-MM-DD')
+      this.$router.push({ name: 'DetailBetRecord', params: {date: today} })
       this.handleClose()
-      this.$router.push({name: 'BetRecord'})
     }
   },
   computed: {
@@ -178,7 +180,13 @@ export default {
       display: inline-flex;
       width: 100%;
       justify-content: space-between;
+      flex-wrap: wrap;
       line-height: 2.2;
+    }
+    .combination {
+      width: 100%;
+      text-align: left;
+      padding-left: 15px;
     }
     .game-profit {
       .font-style(13px,  #026bb3, 600, inherit);
