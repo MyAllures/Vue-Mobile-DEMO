@@ -112,9 +112,11 @@
     </transition>
 
     <div v-if="isInfirstLevelPage">
-      <div v-show="winNotificationVisible">
-        <WinNotification :notification="winNotification[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
-      </div>
+      <transition name="fade">
+        <div v-show="winNotificationVisible">
+          <WinNotification :notification="winNotification[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
+        </div>
+      </transition>
       <transition name="fade">
         <div v-if="currentNotificationDetail">
           <DetailWinNotification :notification="currentNotificationDetail" @closeDetailNotification="closeDetailNotification"/>
@@ -331,11 +333,6 @@ export default {
     }
   },
   watch: {
-    'winNotification.length': function (val, oldVal) {
-      if (val > 0 && !this.winNotificationVisible) {
-        this.$store.commit('SHOW_WINNOTIFICATION')
-      }
-    },
     'user.logined' (newStatus, old) {
       let token = this.$cookie.get('access_token')
       if (!newStatus) {
