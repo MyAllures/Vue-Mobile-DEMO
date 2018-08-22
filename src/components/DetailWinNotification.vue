@@ -22,7 +22,7 @@
             <div class="info">
               <div>
                 <p class="name">{{game.game_name}}</p>
-                <p class="issue">{{game.issue_number}}期</p>
+                <p class="issue" v-if="game.issue_number">{{game.issue_number}}期</p>
               </div>
               <p class="amount">{{game.total_profit | currency('￥')}}</p>
             </div>
