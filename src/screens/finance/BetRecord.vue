@@ -7,7 +7,7 @@
       class="record-table">
       <thead>
         <tr class="record-thead">
-          <th>{{$t('fin.time')}}</th>
+          <th>{{$t('fin.date')}}</th>
           <th>{{$t('fin.records_count')}}</th>
           <th>
             <div>
@@ -19,8 +19,7 @@
         </tr>
       </thead>
       <tbody v-if="betRecords.length">
-        <tr
-            v-for="(record, index) in betRecords" :key="index"
+        <tr v-for="(record, index) in betRecords" :key="index"
             @click="toNext(record.time)">
           <td>
             <span>{{record.time | dateFilter}}</span>

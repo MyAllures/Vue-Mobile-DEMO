@@ -149,8 +149,8 @@ export default {
   removeKeepAlive: ({ commit }, page) => {
     commit(types.REMOVE_KEEP_ALIVE, page)
   },
-  setWs: ({commit}, ws) => {
-    commit(types.SET_WS, ws)
+  setWs: ({commit}, {ws, type}) => {
+    commit(types.SET_WS, {ws, type})
   },
   initMessage: ({ commit }, messages) => {
     commit(types.INIT_MESSAGE, messages)
@@ -181,5 +181,11 @@ export default {
   },
   setCurrentGameResult: ({ commit }, result) => {
     commit(types.SET_CURRENTGAME_RESULT, result)
+  },
+  removeWinNotification: ({ commit }) => {
+    commit(types.REMOVE_WINNOTIFICATION)
+  },
+  addWinNotification: ({ commit }, notification) => {
+    commit(types.ADD_WINNOTIFICATION, notification)
   }
 }

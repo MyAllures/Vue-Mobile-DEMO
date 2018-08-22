@@ -77,7 +77,7 @@
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
         :selected="selectedTab === menu.name"
-        v-for="(menu, index) in menus"
+        v-for="(menu, index) in firseLevelPages"
         :link="menu.link"
         :key="'tabbar' + index"
         @click.native="handleRouteChange(menu)">
@@ -110,6 +110,19 @@
         <Calender ref="calendar" @closeCalender="closeCalender"/>
       </div>
     </transition>
+
+    <div v-if="isInfirstLevelPage">
+      <transition name="fade">
+        <div v-show="winNotificationVisible">
+          <WinNotification :notification="winNotification[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
+        </div>
+      </transition>
+      <transition name="fade">
+        <div v-if="currentNotificationDetail">
+          <DetailWinNotification :notification="currentNotificationDetail" @closeDetailNotification="closeDetailNotification"/>
+        </div>
+      </transition>
+    </div>
   </view-box>
 </template>
 
@@ -125,6 +138,9 @@ import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
 import Calender from './components/Calender'
+import WinNotification from './components/WinNotification'
+import DetailWinNotification from './components/DetailWinNotification'
+import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
 
 export default {
@@ -142,60 +158,65 @@ export default {
     TryplayPopup,
     GameMenu,
     BetDialog,
-    Calender
+    Calender,
+    WinNotification,
+    DetailWinNotification
   },
   directives: {
     TransferDom
   },
   data () {
+    const firseLevelPages = [{
+      label: this.$t('home.name'),
+      iconImg: require('./assets/footer/home_normal.svg'),
+      iconImgActive: require('./assets/footer/home_pressed.svg'),
+      link: '/',
+      route: 'Home',
+      name: 'home'
+    }, {
+      label: this.$t('game.name'),
+      iconImg: require('./assets/footer/game_normal.svg'),
+      iconImgActive: require('./assets/footer/game_pressed.svg'),
+      link: '/game',
+      route: 'Game',
+      name: 'game'
+    }, {
+      label: this.$t('deposit.process'),
+      iconImg: require('./assets/footer/top_up_normal.svg'),
+      iconImgActive: require('./assets/footer/top_up_pressed.svg'),
+      link: '/my/deposit',
+      route: 'Deposit',
+      name: 'deposit'
+    }, {
+      label: this.$t('fin.name'),
+      iconImg: require('./assets/footer/finance_normal.svg'),
+      iconImgActive: require('./assets/footer/finance_pressed.svg'),
+      link: '/fin/bet_record',
+      route: 'Fin',
+      name: 'fin'
+    }, {
+      label: this.$t('my.name'),
+      iconImg: require('./assets/footer/me_normal.svg'),
+      iconImgActive: require('./assets/footer/me_pressed.svg'),
+      link: '/my',
+      route: 'My',
+      name: 'my',
+      unreadBadge: true
+    }]
     return {
       showRightMenu: false,
       showChatRoom: false,
       showGameMenu: false,
       showFeatureGuide: false,
-      menus: [{
-        label: this.$t('home.name'),
-        iconImg: require('./assets/footer/home_normal.svg'),
-        iconImgActive: require('./assets/footer/home_pressed.svg'),
-        link: '/',
-        route: 'Home',
-        name: 'home'
-      }, {
-        label: this.$t('game.name'),
-        iconImg: require('./assets/footer/game_normal.svg'),
-        iconImgActive: require('./assets/footer/game_pressed.svg'),
-        link: '/game',
-        route: 'Game',
-        name: 'game'
-      }, {
-        label: this.$t('deposit.process'),
-        iconImg: require('./assets/footer/top_up_normal.svg'),
-        iconImgActive: require('./assets/footer/top_up_pressed.svg'),
-        link: '/my/deposit',
-        route: 'Deposit',
-        name: 'deposit'
-      }, {
-        label: this.$t('fin.name'),
-        iconImg: require('./assets/footer/finance_normal.svg'),
-        iconImgActive: require('./assets/footer/finance_pressed.svg'),
-        link: '/fin/bet_record',
-        route: 'Fin',
-        name: 'fin'
-      }, {
-        label: this.$t('my.name'),
-        iconImg: require('./assets/footer/me_normal.svg'),
-        iconImgActive: require('./assets/footer/me_pressed.svg'),
-        link: '/my',
-        route: 'My',
-        name: 'my',
-        unreadBadge: true
-      }],
+      firseLevelPages,
       logo: '',
       userLoading: true,
       error: '',
       showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
+      refreshTokenInterval: null,
+      currentNotificationDetail: null,
       refreshTokenTimer: null,
       noBackRoute: !window.history.state,
       indicator: null
@@ -207,8 +228,11 @@ export default {
       'user'
     ]),
     ...mapState([
-      'isLoading', 'ws', 'roomInfo', 'roomId'
+      'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'winNotificationVisible', 'winNotification'
     ]),
+    isInfirstLevelPage () {
+      return !!(this.firseLevelPages.find((page) => this.$route.path.indexOf(page.link)))
+    },
     titleCondition () {
       let route = this.$route
       let title = {
@@ -255,7 +279,7 @@ export default {
       return title
     },
     unread () {
-      return this.$store.state.user.unread
+      return this.user.unread
     },
     isGameHall () {
       return this.$route.matched[0] && this.$route.matched[0].path === '/game'
@@ -268,12 +292,6 @@ export default {
     },
     showLinks () {
       return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
-    },
-    pageName: function () {
-      return this.$route.name
-    },
-    systemConfig () {
-      return this.$store.state.systemConfig
     },
     headerLeftTitle () {
       let name = this.$route.name
@@ -316,9 +334,14 @@ export default {
   },
   watch: {
     'user.logined' (newStatus, old) {
+      let token = this.$cookie.get('access_token')
       if (!newStatus) {
         clearInterval(this.unreadInterval)
+        if (this.ws.eider) {
+          this.ws.eider.closeConnect()
+        }
       } else {
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
         this.pollUnread()
       }
     },
@@ -336,7 +359,7 @@ export default {
       }
       this.closeChatRoom()
     },
-    'ws' (ws) {
+    'ws.raven' (ws) {
       if (!ws) {
         this.showChatRoom = false
       }
@@ -358,6 +381,12 @@ export default {
     }
   },
   methods: {
+    closeDetailNotification () {
+      this.currentNotificationDetail = null
+    },
+    getCurrentNotificationDetail (current) {
+      this.currentNotificationDetail = current
+    },
     toHome () {
       if (this.$route.name !== 'Home') {
         this.sendGaEvent({
@@ -403,7 +432,7 @@ export default {
     },
     replaceToken () {
       let refreshToken = this.$cookie.get('refresh_token')
-      if (!refreshToken || !this.$store.state.user.account_type) {
+      if (!refreshToken || !this.user.account_type) {
         return
       }
       getToken(refreshToken).then(res => {
@@ -432,8 +461,8 @@ export default {
     },
     closeChatRoom () {
       this.showChatRoom = false
-      if (this.ws && this.ws.roomId) {
-        this.ws.leaveRoom()
+      if (this.ws.raven && this.ws.raven.roomId) {
+        this.ws.raven.leaveRoom()
       }
     },
     openChatRoom () {
@@ -666,13 +695,6 @@ export default {
     float: left;
     display: inline-block;
   }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
 }
 
 </style>
