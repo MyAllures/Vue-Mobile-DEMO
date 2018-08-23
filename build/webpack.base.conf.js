@@ -4,6 +4,9 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const webpack = require('webpack')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+
+const favicon = process.env.company==='75ue_2' ? process.env.company : 'default'
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -88,6 +91,20 @@ const originalConfig = {
       manifest: require('../lib/tools-manifest.json')
     }),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|cn/),
+    new FaviconsWebpackPlugin({
+      logo: `./src/assets/favicon/${favicon}.png`,
+      prefix: 'mobile/static/icons-[hash]/',
+      icons: {
+        android: true,
+        appleIcon: true,
+        appleStartup: true,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        windows: false,
+        yandex: false
+      }
+    })
   ],
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue

@@ -1,13 +1,15 @@
 <template>
   <div class="container">
     <swiper
-      :aspect-ratio=".45"
-      :show-dots="false"
+      class="banner-slider"
+      :aspect-ratio=".5"
       dots-position="center"
+      dots-class="banner"
       auto
       loop>
-      <swiper-item v-for="(banner, index) in banners" :key="index">
-        <img :src="banner.img" width="100%" alt="banner">
+      <swiper-item v-for="(banner,index) in banners" :key="index">
+        <img width="100%" :src="banner.img" alt="banner">
+        <div class="swiper-desc-mask"></div>
       </swiper-item>
     </swiper>
     <div class="announcement" v-if="announcements.length" @click="showDialog = true">
@@ -15,82 +17,92 @@
         <img src="../assets/icon_bullhorn.svg" alt="bullhorn">
       </div>
       <div class="marquee">
-        <marquee :messages="announcements"></marquee>
+        <marquee :messages="announcements" height="32px"></marquee>
       </div>
     </div>
-    <group class="register-money" v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
-      <cell
-        is-link
-        link="/register">
-        <div slot="after-title">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
-      </cell>
-    </group>
-    <flexbox-item >
-      <h3 class="title">热门游戏</h3>
-      <span class="more" @click="$root.bus.$emit('showGameMenu')">
-        更多游戏<i class="arrow-right"></i>
-      </span>
-    </flexbox-item>
-    <grid :cols="3">
-      <grid-item
-        @click.native="chooseGame(game)"
-        v-for="(game, index) in allGames"
-        :key="'game' + index"
-        v-if="index < game_count">
-        <img slot="icon" class="game-icon" v-if="!game.icon" :src="require('../assets/loading.gif')"/>
-        <img slot="icon" class="game-icon" v-else v-lazy="game.icon" />
-        <span slot="label">{{ game.display_name }}</span>
-      </grid-item>
-      <a target="_blank" :href="systemConfig.customerServiceUrl" class="weui-grid" v-if="systemConfig.customerServiceUrl">
-        <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/icon_cs.png" alt="custom service" class="game-icon">
-        </div>
-        <div class="weui-grid__label">
-          <span>联系客服</span>
-        </div>
-      </a>
-      <a class="weui-grid" @click="openPClink" >
-        <div class="weui-grid__icon">
-          <img slot="icon" src="../assets/icon_desktop.png" alt="desktop" class="game-icon" >
-        </div>
-        <div class="weui-grid__label">
-          <span>电脑版</span>
-        </div>
-      </a>
-      <a class="weui-grid" @click="tryDemo" >
-        <div  v-if="!$store.state.user.logined">
-          <div class="weui-grid__icon"  >
-            <img slot="icon" src="../assets/icon_try.png" alt="trial" class="game-icon">
-          </div>
-          <div class="weui-grid__label">
-            <span>免费试玩</span>
-          </div>
-        </div>
-      </a>
-    </grid>
-    <div v-if="promotions.length > 0" class="activity">
-      <flexbox>
-        <flexbox-item>
-          <h3 class="title">优惠活动</h3>
-        </flexbox-item>
-        <flexbox-item v-if="promotions.length > 5"
-          class="text-right"
-          @click.native="$router.push({name: 'Promotions'})">
-          <span class="title more">更多活动</span>
-        </flexbox-item>
-      </flexbox>
-      <card
-        v-for="(promotion, index) in promotions"
-        :header="{title: promotion.name}"
-        :key="'card' + index"
-        v-if="promotions && index < 5"
-        @click.native="handleClick(promotion)">
-        <div slot="content" class>
-          <img v-lazy="promotion.image_mobile" alt="promotion.name">
-        </div>
-      </card>
+    <router-link
+      tag="div"
+      to="/register"
+      class="register-money"
+      v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
+      <div class="icon"></div>
+      <div class="text">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
+      <x-button type="primary" mini>立即注册</x-button>
+    </router-link>
+    <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
+      <tab :style="{width: tags.length > 3 ? `${tags.length * 100 / 3.5}vw` : ''}"
+          bar-active-color="#156fd8"
+          :animate="false"
+          active-color="#156fd8"
+          :line-width="2">
+        <tab-item
+          v-for="(tag,index) in tags"
+          :key="index"
+          :style="{flex: tags.length > 3?0:1}"
+          @on-item-click="switchTab"
+          :selected="tag === currentTag">
+          <span :class="{'ellipsis': tags.length > 3, 'selected': tag === currentTag}">{{tag}}</span>
+        </tab-item>
+      </tab>
     </div>
-
+    <div class="game-group">
+      <div
+        class="game-item"
+        v-for="game in currentGames"
+        :key="game.id"
+        @click="chooseGame(game)">
+        <img class="game-icon" v-lazy="game.icon" />
+        <div>{{ game.display_name }}</div>
+      </div>
+      <div v-if="currentTag==='热门游戏'" class="game-item" @click="$root.bus.$emit('showGameMenu')">
+        <img class="game-icon" v-lazy="require('../assets/all_games.png')" />
+        <div>所有游戏</div>
+      </div>
+    </div>
+    <div v-if="actions&&actions.length" :class="['btn-panel',{single: actions.length===1}]">
+      <template v-for="(action, index) in actions">
+        <a
+          v-if="action.type==='link'"
+          target="_blank"
+          :href="action.url"
+          class="btn"
+          :key="index">
+          <div :class="['icon', action.className]"></div>
+          {{action.text}}
+        </a>
+        <a
+          v-else
+          class="btn"
+          @click="action.click"
+          :key="index">
+          <div :class="['icon', action.className]"></div>
+          {{action.text}}
+        </a>
+      </template>
+    </div>
+    <div v-if="promotions.length > 0" class="activity">
+      <div class="activity-title">
+        优惠活动
+      </div>
+      <div
+        class="activity-item"
+        v-for="(promotion, index) in promotions.slice(0,5)"
+        :key="index"
+        @click="handleClick(promotion)">
+        <div class="activity-item-title">{{promotion.name}}</div>
+        <div class="activity-item-img">
+          <img height="100%" v-lazy="promotion.image_mobile" :alt="promotion.name" :key="promotion.image_mobile">
+        </div>
+      </div>
+      <div
+        class="activity-more"
+        v-if="promotions.length > 5"
+        @click="$router.push({name: 'Promotions'})">更多活动</div>
+    </div>
+    <div class="pc-link" @click="openPClink">
+        前往
+        <a class="pc-link-btn" href="javascript:;">电脑版</a>
+    </div>
     <x-dialog
       v-model="showDialog"
       :hide-on-blur="true">
@@ -122,7 +134,10 @@ import {
   Masker,
   Alert,
   Group,
-  Cell
+  Cell,
+  XButton,
+  Tab,
+  TabItem
 } from 'vux'
 import { mapState } from 'vuex'
 import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
@@ -139,13 +154,34 @@ export default {
       game_count: 15,
       showpromoPopup: false,
       promotions: [],
-      today: this.$moment()
+      today: this.$moment(),
+      currentTag: ''
     }
+  },
+  components: {
+    Swiper,
+    SwiperItem,
+    XDialog,
+    Flexbox,
+    FlexboxItem,
+    Masker,
+    Alert,
+    Card,
+    Grid,
+    GridItem,
+    InlineLoading,
+    TryplayPopup,
+    Group,
+    Cell,
+    XButton,
+    Marquee,
+    Tab,
+    TabItem
   },
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig'
+      'user', 'systemConfig', 'tagTable'
     ]),
     allGames () {
       const games = this.$store.state.games
@@ -158,6 +194,63 @@ export default {
         })
       }
       return games
+    },
+    tags () {
+      if (this.tagTable) {
+        return Object.keys(this.tagTable)
+      } else {
+        return []
+      }
+    },
+    currentGames () {
+      if (!this.tagTable || !this.currentTag) {
+        return []
+      }
+      return this.tagTable[this.currentTag]
+    },
+    actions () {
+      if (this.systemConfig.process !== 'fulfilled') {
+        return []
+      }
+      const actions = []
+      const config = this.systemConfig
+      if (config.customerServiceUrl) {
+        actions.push({
+          type: 'link',
+          className: 'service',
+          url: config.customerServiceUrl,
+          text: '联系客服'
+        })
+      }
+      if (config.appDownloadUrl) {
+        actions.push({
+          type: 'link',
+          className: 'download',
+          url: config.appDownloadUrl,
+          text: 'App 下载'
+        })
+      } else if (!this.user.logined) {
+        actions.push({
+          type: 'button',
+          className: 'trail',
+          click: this.tryDemo,
+          text: '立即试玩'
+        })
+      }
+      return actions
+    }
+  },
+  watch: {
+    'tags': {
+      immediate: true,
+      handler (tags) {
+        if (tags && tags.length > 0) {
+          this.switchTab(0)
+        }
+      }
+    },
+    'user.logined': function () {
+      this.fetchPromotions()
     }
   },
   created () {
@@ -193,9 +286,10 @@ export default {
         this.announcements = datas.map(data => data.announcement)
       }
     )
-    getPromotions().then(response => {
-      this.promotions = response.filter(item => item.image_mobile)
-    })
+    this.fetchPromotions()
+  },
+  activated () {
+    this.fetchPromotions()
   },
   methods: {
     openPClink () {
@@ -216,24 +310,15 @@ export default {
       })
       localStorage.setItem('lastGame', game.id)
       this.$router.push(`/game/${game.id}`)
+    },
+    switchTab (i) {
+      this.currentTag = this.tags[i]
+    },
+    fetchPromotions () {
+      getPromotions().then(response => {
+        this.promotions = response.filter(item => item.image_mobile)
+      })
     }
-  },
-  components: {
-    Swiper,
-    SwiperItem,
-    XDialog,
-    Flexbox,
-    FlexboxItem,
-    Masker,
-    Alert,
-    Card,
-    Grid,
-    GridItem,
-    InlineLoading,
-    TryplayPopup,
-    Group,
-    Cell,
-    Marquee
   }
 }
 </script>
@@ -245,20 +330,30 @@ export default {
 }
 .container /deep/ .vux-swiper {
   min-height: 45w;
+
 }
+
+.swiper-desc-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+}
+
 .announcement {
   display: flex;
   height: 36px;
   width: 100%;
   overflow: hidden;
   background: #fff;
-}
-.announcement {
   .speaker {
     flex: 0 0 auto;
     display: flex;
-    height: 36px;
-    width: 36px;
+    height: 32px;
+    width: 32px;
     justify-content: center;
     align-items: center;
     color: #666;
@@ -268,7 +363,12 @@ export default {
   }
   .marquee {
     flex: 1 1 auto;
-    height: 36px;
+    height: 32px;
+    color: #666;
+    font-size: 14px;
+  }
+  +.tab-selector{
+    margin-top: 20px;
   }
 }
 
@@ -303,11 +403,29 @@ export default {
   }
 }
 .register-money {
-  /deep/ .weui-cells.vux-no-group-title {
-    margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  width: 100%;
+  margin: 12px 0;
+  background: #fff;
+  .icon {
+    width: 40px;
+    height: 40px;
+    background: url('../assets/present.png') no-repeat;
+    background-size: contain;
+    margin-right: 4px;
   }
-  color: @red;
-  text-align: center;
+  .text {
+    color: #333;
+    font-size: 16px;
+    margin-right: 14px;
+  }
+  .weui-btn {
+    padding: 0px 12px;
+    margin: 0;
+  }
 }
 .game-title {
   display: flex;
@@ -338,25 +456,70 @@ export default {
   padding: 0 0 0 10px;
 }
 .activity {
-  .more:after {
-    content: '';
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
-    border-color: #C8C8CD;
-    border-style: solid;
-    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
-    margin-right: 5px;
-    margin-left: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: #fff;
+  .activity-title {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    font-size: 16px;
+    color: #666;
+    &::after {
+      content: " ";
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 1px;
+      width: 100%;
+      bottom: 0;
+      border-bottom: 1px solid #D9D9D9;
+      color: #D9D9D9;
+      transform-origin: 100% 0;
+      transform: scaleY(0.5);
+    }
   }
-  /deep/ .vux-card-content {
-    text-align: center;
-    img {
-      display: block;
-      margin: auto;
-      max-height: 80px;
-      padding: 5px 0;
+  .activity-more {
+    position: relative;
+    box-sizing: border-box;
+    width: 50%;
+    height: 40px;
+    line-height: 40px;
+    padding-right: 24px;
+    font-size: 14px;
+    text-align: right;
+    color: #333;
+    &::after {
+      content: '';
+      display: inline-block;
+      height: 6px;
+      width: 6px;
+      border-width: 2px 2px 0 0;
+      border-color: #999;
+      border-style: solid;
+      transform: matrix(0.71, 0.71, -0.71, 0.71, 0, -1);
+    }
+  }
+  .activity-item {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 20px 16px 20px;
+    .activity-item-title {
+      height: 36px;
+      line-height: 36px;
+      width: 100%;
+      font-size: 16px;
+      color: #333;
+      text-align: center;
+    }
+    .activity-item-img {
+      width: calc(~"100vw" - 40px);
+      height: calc(~"25vw" - 10px);
+      text-align: center;
     }
   }
 }
@@ -365,9 +528,109 @@ export default {
   background: #fff;
   padding: 100px 0;
 }
-.game-icon {
-  display: block;
-  border-radius: 10px;
-  min-height: 15vw;
+
+.tab-selector {
+  width: 100%;
+  overflow: scroll;
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 100/3.5vw;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .selected {
+    font-size: 16px;
+  }
+  .vux-tab {
+    overflow-x: auto;
+  }
+}
+
+.game-group {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  background: #fff;
+  margin-bottom: 20px;
+  .game-item {
+    box-sizing: border-box;
+    width: calc(~"100%" / 3);
+    padding-bottom: 10px;
+    color: #333;
+    text-align: center;
+    font-size: 16px;
+    .game-icon {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      min-height: 10vh;
+      padding: 10px 20% 8px 20%;
+    }
+  }
+}
+
+.btn-panel {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  margin-bottom: 20px;
+  .btn {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+    background: #fff;
+    font-size: 16px;
+    color: #333;
+    &::before {
+      content: " ";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 1px;
+      bottom: 0;
+      border-right: 1px solid #D9D9D9;
+      color: #D9D9D9;
+      transform-origin: 100% 0;
+      transform: scaleX(0.5);
+    }
+    .service {
+      background-image: url('../assets/service.png')
+    }
+    .trail {
+      background-image: url('../assets/trail.svg')
+    }
+    .download {
+      background-image: url('../assets/download_app.svg')
+    }
+    .icon {
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      margin-right: 8px;
+    }
+  }
+  &.single {
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+.pc-link {
+  height: 62px;
+  line-height: 62px;
+  width: 100px;
+  margin: 0 auto;
+  text-align: center;
+  .pc-link-btn {
+    color: #166fd8;
+  }
 }
 </style>

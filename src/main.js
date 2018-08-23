@@ -179,6 +179,7 @@ gethomePage().then(
     const chatroomEnabled = pref.chatroom_enabled === 'true'
     store.dispatch('setSystemConfig',
       {
+        process: 'fulfilled',
         homePageLogo: response.icon,
         customerServiceUrl: pref.customer_service_url,
         agentDashboardUrl: pref.agent_dashboard_url,
@@ -195,7 +196,8 @@ gethomePage().then(
         needBankinfo: response.need_bankinfo,
         stickerGroups: response.sticker_groups || [],
         envelopeSettings: pref.red_envelope_settings || {},
-        smsValidationEnabled: pref.sms_validation_enabled === 'true'
+        smsValidationEnabled: pref.sms_validation_enabled === 'true',
+        appDownloadUrl: pref.app_download_url
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')

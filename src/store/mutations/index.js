@@ -142,5 +142,8 @@ export default {
   },
   [types.CLEAR_WINNOTIFICATION]: (state, index) => {
     state.winNotification = []
+  },
+  [types.TAG_TABLE]: (state, table) => {
+    state.tagTable = table
   }
 }

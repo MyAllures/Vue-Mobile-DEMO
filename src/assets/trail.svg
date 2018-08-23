@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_trail</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FBB649" offset="0%"></stop>
+            <stop stop-color="#FF9023" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icon_trail" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-11">
+            <circle id="Oval-3" fill="url(#linearGradient-1)" cx="12" cy="12" r="11"></circle>
+            <polygon id="Star" fill-opacity="0.85" fill="#FFFFFF" transform="translate(12.000000, 11.000000) rotate(-16.000000) translate(-12.000000, -11.000000) " points="12 14.5 7.88550323 16.663119 8.67130219 12.0815595 5.34260439 8.83688104 9.94275162 8.16844052 12 4 14.0572484 8.16844052 18.6573956 8.83688104 15.3286978 12.0815595 16.1144968 16.663119"></polygon>
+        </g>
+    </g>
+</svg>
