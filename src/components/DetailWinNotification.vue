@@ -68,7 +68,13 @@ export default {
     },
     handleFooterClick () {
       const today = dateFormat(new Date(), 'YYYY-MM-DD')
-      this.$router.push({ name: 'DetailBetRecord', params: {date: today} })
+
+      if (this.notification.type === 'win-notification-batch') {
+        this.$router.push({ name: 'BetRecord' })
+      } else {
+        this.$router.push({ name: 'DetailBetRecord', params: {date: today} })
+      }
+
       this.handleClose()
     }
   },
