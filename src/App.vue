@@ -512,6 +512,11 @@ export default {
           this.replaceToken()
         }, expireFromNow - 300000)
       }
+
+      let currentToken = this.$cookie.get('access_token')
+      if (currentToken) {
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(currentToken), type: 'eider' })
+      }
     }, () => {
 
     })
