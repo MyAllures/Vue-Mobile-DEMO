@@ -56,7 +56,7 @@ const originalConfig = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 1500000,
+          limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },

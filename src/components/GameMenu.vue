@@ -16,7 +16,7 @@
             v-for="(game, index) in allGames"
             :key="index"
             @click.native="switchGame(game)">
-            <img class="icon" :src="game.icon" width="36" height="36"/>
+            <img class="icon" v-lazy="game.icon" width="36" height="36"/>
             <p class="name">{{game.display_name || ''}}</p>
           </grid-item>
         </grid>
