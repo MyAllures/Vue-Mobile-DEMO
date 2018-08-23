@@ -268,6 +268,9 @@ export default {
       }, startPollingTime)
     },
     fetchScheduleAndResult () {
+      if (!this.gameId) {
+        return
+      }
       Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return

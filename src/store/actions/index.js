@@ -101,6 +101,20 @@ export default {
       commit(types.SET_GAMES, {
         games: res
       })
+      const tagTable = {}
+      res.forEach(game => {
+        game.tag.forEach(t => {
+          let gamesForTag
+          if (tagTable[t]) {
+            gamesForTag = tagTable[t]
+          } else {
+            gamesForTag = []
+            tagTable[t] = gamesForTag
+          }
+          gamesForTag.push(game)
+        })
+      })
+      commit(types.TAG_TABLE, tagTable)
       fetchGamesDetail().then(gamesDetial => {
         gamesDetial.forEach(({id, categories}) => {
           commit(types.SET_CATEGORIES, {
