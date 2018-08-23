@@ -8,7 +8,6 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
@@ -105,21 +104,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       publicPath: '/mobile/static/js',
       outputPath: 'mobile/static/js',
       includeSourcemap: false
-    }]),
-    new FaviconsWebpackPlugin({
-      logo: './src/assets/favicon.png',
-      prefix: 'static/icons-[hash]/',
-      icons: {
-        android: true,
-        appleIcon: true,
-        appleStartup: true,
-        coast: false,
-        favicons: true,
-        firefox: false,
-        windows: false,
-        yandex: false
-      }
-    })
+    }])
   ]
 })
 

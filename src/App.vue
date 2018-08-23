@@ -48,11 +48,11 @@
       <div v-if="showLinks && !showGameMenu"
         class="actions"
         slot="right">
-        <router-link class="link" to="/login">登录</router-link>
+        <a class="link" @click="tryDemo">试玩</a>
+        <div class="divide"></div>
         <router-link class="link" to="/register">注册</router-link>
-        <div class="link" @click="tryDemo"><div class="try">试玩</div></div>
+        <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
       </div>
-
       <span v-else-if="!isGameHall && !!user.username"
         slot="right"
         class="balance fr"
@@ -512,6 +512,11 @@ export default {
           this.replaceToken()
         }, expireFromNow - 300000)
       }
+
+      let currentToken = this.$cookie.get('access_token')
+      if (currentToken) {
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(currentToken), type: 'eider' })
+      }
     }, () => {
 
     })
@@ -618,6 +623,8 @@ export default {
     box-sizing: border-box;
     padding-right: 5px;
     .link {
+      display: flex;
+      align-items: center;
       margin-top: 2px;
       box-sizing: border-box;
       padding: 5px 5px;
@@ -626,13 +633,24 @@ export default {
       color: #fff;
       float: left;
       margin-left: 5px;
-      .try {
+      .login {
         box-sizing: border-box;
-        padding: 0 10px;
-        height: 100%;
+        height: 28px;
+        line-height: 28px;
+        width: 60px;
+        text-align: center;
+        border-radius: 4px;
         background: #fff;
-        color: #666;
+        color: #166fd8;
       }
+    }
+    .divide {
+      float: left;
+      height: 16px;
+      width: 1px;
+      margin-top: 15px;
+      margin-left: 5px;
+      background: #fff;
     }
   }
 }

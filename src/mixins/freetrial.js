@@ -2,11 +2,17 @@ import { register } from '../api'
 import { msgFormatter } from '../utils'
 
 export default {
+  data () {
+    return {
+      tryDemoLoading: false
+    }
+  },
   methods: {
     tryDemo: function () {
-      if (this.$store.state.user.logined) {
+      if (this.$store.state.user.logined || this.tryDemoLoading) {
         return
       }
+      this.tryDemoLoading = true
       register({ account_type: 0 }).then(user => {
         if (user.trial_auth_req === 1) {
           this.$store.dispatch('openVerifyPopup')
@@ -24,13 +30,15 @@ export default {
           })
       }).then(result => {
         this.$store.dispatch('fetchUser')
-      }, errorMsg => {
+      }).catch(errorMsg => {
         if (errorMsg) {
           this.$vux.toast.show({
             text: msgFormatter(errorMsg),
             type: 'warn'
           })
         }
+      }).finally(() => {
+        this.tryDemoLoading = false
       })
     }
   }
