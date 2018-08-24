@@ -3,7 +3,7 @@
     'height': height,
     'background-image': backgroundImage,
     'width': width
-  }">
+  }" :class="{highlight: highlight}">
   </div>
 </template>
 
@@ -18,18 +18,22 @@ export default {
       type: String,
       default: '20px'
     },
-    // number/percent only
+    // 1.number to percent only. 2.if u want a full row, just ignore this prop.
     seperatePoints: {
       type: Array,
-      default: [30, 40]
+      required: false
     },
     color: {
       type: String,
       default: '#166fd8'
+    },
+    highlight: {
+      type: String
     }
   },
   computed: {
     backgroundImage () {
+      let backgroundImageStr = ''
       if (Array.isArray(this.seperatePoints)) {
         let str = ''
         // apply css rule
@@ -49,11 +53,33 @@ export default {
             str += `${this.color} ${point}%, transparent ${point}%`
           }
         })
-        return `linear-gradient(to right, ${str})`
+
+        backgroundImageStr = `linear-gradient(to right, ${str})`
       } else {
-        return 'transparent'
+        backgroundImageStr = `linear-gradient(to right, ${this.color}, ${this.color})`
+      }
+
+      if (this.highlight) {
+        let highlight = `linear-gradient( 100deg, transparent, ${this.highlight} 50%, transparent 80% ),`
+        return `${highlight} ${backgroundImageStr}`
+      } else {
+        return backgroundImageStr
       }
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.highlight {
+  background-position: 120% 0, 0 0;
+  background-size: 70% 100%, 100% 100%;
+  animation: highlight 1s infinite;
+}
+@keyframes highlight {
+  to {
+    background-position:
+      0 0, 100% 0
+  }
+}
+</style>

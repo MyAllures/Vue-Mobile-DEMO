@@ -3,22 +3,22 @@
     <div class="data-section">
       <div>
         <GameResult v-if="result" :result="result" :loading="resultLoading"/>
-        <div class="p-sm" v-else>
-          <rowSkeleton></rowSkeleton>
+        <div class="result-skeleton-wrapper" v-else>
+          <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
       </div>
       <div>
-      <Countdown
-        :schedule="schedule"
-        :realSchedule="realSchedule"
-        v-if="schedule.id"
-        :currentGame="currentGame"
-        :gameClosed="gameClosed"
-        :closeCountDown="closeCountDown"
-        :resultCountDown="resultCountDown"/>
-        <div class="p" v-else>
-          <rowSkeleton :seperatePoints="[20,40,60,80]"></rowSkeleton>
-        </div>
+        <Countdown
+          :schedule="schedule"
+          :realSchedule="realSchedule"
+          v-if="schedule.id"
+          :currentGame="currentGame"
+          :gameClosed="gameClosed"
+          :closeCountDown="closeCountDown"
+          :resultCountDown="resultCountDown"/>
+          <div class="p" v-else-if="!gameClosed">
+            <rowSkeleton highlight="#1568CA" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+          </div>
       </div>
     </div>
     <div class="bet-area">
@@ -642,5 +642,12 @@ export default {
       overflow: visible;
     }
   }
+}
+
+.result-skeleton-wrapper {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
 }
 </style>
