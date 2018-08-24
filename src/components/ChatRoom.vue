@@ -71,7 +71,7 @@ export default {
 
       fetchChatToken().then((res) => {
         this.$store.dispatch('setWs', {
-          ws: new WebSocketObj(token, this.RECEIVER),
+          ws: new WebSocketObj(res.chat_token, this.RECEIVER),
           type: 'raven'
         })
       }).catch(() => {})
