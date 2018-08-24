@@ -124,7 +124,9 @@
     "coverageReporters": ["lcov", "text-summary"],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
-      "^vue$": "vue/dist/vue.common.js"
+      "^vue$": "vue/dist/vue.common.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test/unit/assetsTransformer.js",
+      "\\.(css|less)$": "<rootDir>/test/unit/assetsTransformer.js"
     },
     "moduleFileExtensions": [
       "js",

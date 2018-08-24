@@ -205,6 +205,9 @@ export default {
       if (!this.result) {
         return
       }
+      if (!this.result.next_draw) {
+        return
+      }
       let drawFromNow = this.$moment(this.result.next_draw).subtract(this.diffBetweenServerAndClient).diff(this.$moment(), 'ms')
       let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
 
@@ -273,11 +276,20 @@ export default {
           return
         }
         const schedule = results[0][0]
-        this.schedule = schedule
-        let serverTime = this.$moment(this.schedule.schedule_result)
-        this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
-        this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
-        this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
+        if (schedule) {
+          this.schedule = schedule
+          let serverTime = this.$moment(this.schedule.schedule_result)
+          this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
+          this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
+          this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
+        } else {
+          this.closeCountDown = {
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+          }
+        }
         const result = results[1][0]
         if (result.zodiac) {
           result.zodiac = result.zodiac.split(',')
