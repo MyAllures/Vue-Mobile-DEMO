@@ -222,7 +222,7 @@ export function takeEnvelope (envelopId, userId) {
   })
 }
 
-export function fetchChatInfo (username) {
+export function fetchChatUserInfo (username) {
   return axiosChat.get(`${urls.chatinfo}${username}/`)
 }
 

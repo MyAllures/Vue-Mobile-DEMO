@@ -1,16 +1,16 @@
 <template>
   <div>
     <div class="promo-container" v-if="promotions.length && !$route.params.promoId">
-      <card
-        v-if="promotion.image_mobile"
+      <div
+        class="activity-item"
         v-for="(promotion, index) in promotions"
-        @click.native="$router.push(`/promotions/${promotion.id}`)"
-        :key="index">
-        <img slot="header"  class="promo-image" :src="promotion.image_mobile" :alt="promotion.image_mobile">
-        <div slot="content" class="caption">
-          <span>{{promotion.name}}</span>
+        :key="index"
+        @click="$router.push(`/promotions/${promotion.id}`)">
+        <div class="activity-item-title">{{promotion.name}}</div>
+        <div class="activity-item-img">
+          <img height="100%" v-lazy="promotion.image_mobile" :alt="promotion.name" :key="promotion.image_mobile">
         </div>
-      </card>
+      </div>
     </div>
     <div v-else>
       <router-view></router-view>
@@ -20,40 +20,42 @@
 
 <script>
 import { Card } from 'vux'
-import { getPromotions } from '../api'
+import { mapState } from 'vuex'
 export default {
   name: 'Promotions',
-  data () {
-    return {
-      promotions: [],
-      today: this.$moment()
-    }
-  },
-  created () {
-    getPromotions().then(response => {
-      this.promotions = response.filter(item => item.image_mobile)
-    })
-  },
   components: {
     Card
+  },
+  computed: {
+    ...mapState([
+      'promotions'
+    ])
   }
 }
 </script>
 
 <style lang="less" scoped>
 .promo-container {
-  padding: 10px;
   background-color: #fff;
 }
 
-.promo-image {
+.activity-item {
+  box-sizing: border-box;
   width: 100%;
-  height: 130px;
-}
-
-.caption {
-  font-size: 14px;
-  color: #999
+  padding: 0 20px 16px 20px;
+  .activity-item-title {
+    height: 36px;
+    line-height: 36px;
+    width: 100%;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+  }
+  .activity-item-img {
+    width: calc(~"100vw" - 40px);
+    height: calc(~"25vw" - 10px);
+    text-align: center;
+  }
 }
 
 </style>

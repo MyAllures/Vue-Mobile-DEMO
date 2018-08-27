@@ -41,7 +41,7 @@
           :style="{flex: tags.length > 3?0:1}"
           @on-item-click="switchTab"
           :selected="tag === currentTag">
-          <span :class="{'ellipsis': tags.length > 3, 'selected': tag === currentTag}">{{tag}}</span>
+          <span :class="{'ellipsis': tags.length > 3}">{{tag}}</span>
         </tab-item>
       </tab>
     </div>
@@ -140,7 +140,7 @@ import {
   TabItem
 } from 'vux'
 import { mapState } from 'vuex'
-import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
+import { fetchBanner, fetchAnnouncements } from '../api'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
@@ -153,7 +153,6 @@ export default {
       showDialog: false,
       game_count: 15,
       showpromoPopup: false,
-      promotions: [],
       today: this.$moment(),
       currentTag: ''
     }
@@ -181,7 +180,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable'
+      'user', 'systemConfig', 'tagTable', 'promotions'
     ]),
     allGames () {
       const games = this.$store.state.games
@@ -229,7 +228,7 @@ export default {
           url: config.appDownloadUrl,
           text: 'App 下载'
         })
-      } else if (!this.user.logined) {
+      } else if (this.user.logined === false) {
         actions.push({
           type: 'button',
           className: 'trail',
@@ -248,9 +247,6 @@ export default {
           this.switchTab(0)
         }
       }
-    },
-    'user.logined': function () {
-      this.fetchPromotions()
     }
   },
   created () {
@@ -286,10 +282,6 @@ export default {
         this.announcements = datas.map(data => data.announcement)
       }
     )
-    this.fetchPromotions()
-  },
-  activated () {
-    this.fetchPromotions()
   },
   methods: {
     openPClink () {
@@ -313,11 +305,6 @@ export default {
     },
     switchTab (i) {
       this.currentTag = this.tags[i]
-    },
-    fetchPromotions () {
-      getPromotions().then(response => {
-        this.promotions = response.filter(item => item.image_mobile)
-      })
     }
   }
 }
@@ -538,9 +525,6 @@ export default {
     width: 100/3.5vw;
     text-overflow: ellipsis;
     overflow: hidden;
-  }
-  .selected {
-    font-size: 16px;
   }
   .vux-tab {
     overflow-x: auto;

@@ -14,7 +14,7 @@ const loadingImg = require('../assets/loading.gif')
 export default new Vuex.Store({
   state: {
     user: {
-      logined: '',
+      logined: 'pending',
       unread: 0
     },
     isLoading: false,
@@ -65,6 +65,7 @@ export default new Vuex.Store({
     currentGameResult: null,
     emojis: null,
     keepAlivePage: ['Home'],
+    promotions: [],
     ws: {
       raven: null,
       eider: null
