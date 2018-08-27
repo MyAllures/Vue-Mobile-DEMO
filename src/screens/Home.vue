@@ -41,7 +41,7 @@
           :style="{flex: tags.length > 3?0:1}"
           @on-item-click="switchTab"
           :selected="tag === currentTag">
-          <span :class="{'ellipsis': tags.length > 3, 'selected': tag === currentTag}">{{tag}}</span>
+          <span :class="{'ellipsis': tags.length > 3}">{{tag}}</span>
         </tab-item>
       </tab>
     </div>
@@ -525,9 +525,6 @@ export default {
     width: 100/3.5vw;
     text-overflow: ellipsis;
     overflow: hidden;
-  }
-  .selected {
-    font-size: 16px;
   }
   .vux-tab {
     overflow-x: auto;
