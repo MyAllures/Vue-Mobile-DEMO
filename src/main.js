@@ -11,7 +11,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
@@ -67,11 +67,7 @@ const i18n = new VueI18n({
   messages: locales
 })
 
-const token = Vue.cookie.get('access_token')
-if (token) {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-}
-
+// axios config
 axios.interceptors.request.use((config) => {
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
@@ -122,12 +118,13 @@ axios.interceptors.response.use(res => {
 Vue.config.productionTip = false
 
 const toLogin = function (router) {
-  store.commit('RESET_USER')
+  store.dispatch('resetUser')
   router.push({
     path: '/login'
   })
 }
 
+// router config
 router.beforeEach((to, from, next) => {
   // fisrMacthed might be the top-level parent route of others
   const firstMatched = to.matched.length ? to.matched[0] : null
@@ -135,15 +132,23 @@ router.beforeEach((to, from, next) => {
     if (from && from.matched[0] && from.matched[0].path === to.matched[0].path) {
       next()
     } else {
-      store.dispatch('fetchUser')
-        .then(res => {
-          next()
+      const user = store.state.user
+      if (user.logined === 'pending') {
+        const unwatch = store.watch((state) => {
+          return state.user.logined
+        }, (logined) => {
+          unwatch()
+          if (logined) {
+            next()
+          } else {
+            toLogin(router)
+          }
         })
-        .catch(error => {
-          // can't get user info
-          toLogin(router)
-          return Promise.resolve(error)
-        })
+      } else if (user.logined === true) {
+        next()
+      } else {
+        toLogin(router)
+      }
     }
   } else {
     next()
@@ -169,6 +174,58 @@ Vue.mixin({
       if (store.state.systemConfig.gaTrackingId) {
         window.gtag('event', action, {'event_category': category, 'event_label': label})
       }
+    }
+  }
+})
+
+const setChatRoomSetting = (username) => {
+  if (store.state.systemConfig.chatroomEnabled) {
+    fetchChatUserInfo(store.state.user.username).then(res => {
+      store.dispatch('setUser', {
+        planMakerRoom: res.data.plan_maker_rooms || []
+      })
+    }).catch(() => {})
+    fetchRoomInfo().then(res => {
+      const roomInfo = {}
+      res.forEach(room => {
+        roomInfo[room.id] = {name: room.title, status: room.status}
+      })
+      store.commit(types.SET_ROOM_INFO, roomInfo)
+    }).catch(() => {})
+  }
+}
+
+// init data
+const token = Vue.cookie.get('access_token')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  store.dispatch('fetchUser').then(() => {
+
+  }).catch(() => {})
+} else {
+  Vue.nextTick(() => {
+    store.dispatch('resetUser')
+  })
+}
+
+store.dispatch('fetchGames')
+
+store.watch((state) => {
+  return state.user.logined
+}, (logined) => {
+  store.dispatch('fetchPromotions')
+  if (store.state.user.account_type) {
+    if (store.state.systemConfig.state === 'pending') {
+      const unwatch = store.watch((state) => {
+        return state.systemConfig.state
+      }, (configState) => {
+        unwatch()
+        if (configState === 'fulfilled') {
+          setChatRoomSetting()
+        }
+      })
+    } else {
+      setChatRoomSetting()
     }
   }
 })
