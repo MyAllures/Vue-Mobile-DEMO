@@ -10,13 +10,11 @@ import {
   fetchGamesDetail,
   fetchUnread,
   fetchCategories,
-  getPromotions,
-  sendHeartBeat
+  getPromotions
 } from '../../api'
 
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
-    sendHeartBeat().catch(() => {})
     if (state.user.logined) {
       commit('RESET_USER')
     }

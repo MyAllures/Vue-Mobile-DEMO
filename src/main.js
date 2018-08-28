@@ -210,6 +210,15 @@ if (token) {
 
 store.dispatch('fetchGames')
 
+let heartBeatInterval
+const setHeartBeatInterval = () => {
+  sendHeartBeat().catch(() => {})
+  clearInterval(heartBeatInterval)
+  heartBeatInterval = setInterval(() => {
+    sendHeartBeat().catch(() => {})
+  }, 5 * 60 * 1000)
+}
+
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
@@ -227,6 +236,11 @@ store.watch((state) => {
     } else {
       setChatRoomSetting()
     }
+  }
+  if (logined) {
+    setHeartBeatInterval()
+  } else {
+    clearInterval(heartBeatInterval)
   }
 })
 
@@ -274,10 +288,6 @@ gethomePage().then(
     // }
   }
 )
-
-setInterval(() => {
-  sendHeartBeat().catch(() => {})
-}, 5 * 60 * 1000)
 
 /* eslint-disable no-new */
 new Vue({
