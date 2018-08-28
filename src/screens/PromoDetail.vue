@@ -1,34 +1,27 @@
 <template>
-  <div class="promotion">
+  <div class="promotion" v-if="promo">
     <h2>{{promo.name}}</h2>
     <figure>
       <img class="image" :src="promo.image_mobile" :alt="promo.id">
-      <figcaption class="caption">{{promo.name}}</figcaption>
     </figure>
     <article class="article" v-html="promo.mobile_description"></article>
   </div>
 </template>
 
 <script>
-import { getPromotions } from '../api'
-import _ from 'lodash'
+import { mapState } from 'vuex'
 
 export default {
-  name: 'Promotions',
-  data () {
-    return {
-      allPromotions: [],
-      promo: {}
-    }
+  name: 'PromotionDetail',
+  props: {
+    promotion: Object
   },
-  created () {
-    getPromotions().then(allPromotions => {
-      this.allPromotions = allPromotions
-    })
-  },
-  watch: {
-    'allPromotions': function (allPromotions) {
-      this.promo = _.find(allPromotions, promo => (promo.id + '') === this.$route.params.promoId)
+  computed: {
+    ...mapState([
+      'promotions'
+    ]),
+    promo () {
+      return this.promotions.find(promo => (promo.id + '') === this.$route.params.promoId)
     }
   }
 }
@@ -36,8 +29,8 @@ export default {
 
 <style lang="less" scoped>
 .image {
-  width: 100%;
-  height: 120px;
+  width: calc(~"100vw" - 20px);
+  height: calc(~"25vw" - 5px);
 }
 
 .caption {

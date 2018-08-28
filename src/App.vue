@@ -291,7 +291,7 @@ export default {
       return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game', 'GameDetail'].includes(this.$route.name)
     },
     showLinks () {
-      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && !this.user.logined
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && this.user.logined === false
     },
     headerLeftTitle () {
       let name = this.$route.name
@@ -489,15 +489,6 @@ export default {
       this.closeMenus()
     })
 
-    this.$store.dispatch('fetchGames')
-    if (this.$cookie.get('access_token')) {
-      this.$store.dispatch('fetchUser').then(() => {
-      }, errRes => {
-        this.performLogin()
-      }).catch(() => {
-        this.performLogin()
-      })
-    }
     this.indicator = new Indicator(() => {
       const expireTime = localStorage.getItem('token_expire')
       if (!expireTime) {

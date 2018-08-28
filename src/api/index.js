@@ -222,7 +222,7 @@ export function takeEnvelope (envelopId, userId) {
   })
 }
 
-export function fetchChatInfo (username) {
+export function fetchChatUserInfo (username) {
   return axiosChat.get(`${urls.chatinfo}${username}/`)
 }
 
@@ -234,4 +234,8 @@ export function sendSMSCode (phoneNumber) {
   return axios.put(urls.smscode, {phone_number: phoneNumber}, {
     'Content-Type': 'application/json'
   })
+}
+
+export function sendHeartBeat () {
+  return axios.get(urls.onine_heartbeat)
 }

@@ -41,7 +41,7 @@
           :style="{flex: tags.length > 3?0:1}"
           @on-item-click="switchTab"
           :selected="tag === currentTag">
-          <span :class="{'ellipsis': tags.length > 3, 'selected': tag === currentTag}">{{tag}}</span>
+          <span :class="{'ellipsis': tags.length > 3}">{{tag}}</span>
         </tab-item>
       </tab>
     </div>
@@ -51,10 +51,14 @@
         v-for="game in currentGames"
         :key="game.id"
         @click="chooseGame(game)">
+        <div class="game-label">
+          <span v-if="game.label" class="game-label-text">{{game.label}}</span>
+        </div>
         <img class="game-icon" v-lazy="game.icon" />
         <div>{{ game.display_name }}</div>
       </div>
       <div v-if="currentTag==='热门游戏'" class="game-item" @click="$root.bus.$emit('showGameMenu')">
+        <div class="game-label"></div>
         <img class="game-icon" v-lazy="require('../assets/all_games.png')" />
         <div>所有游戏</div>
       </div>
@@ -140,7 +144,7 @@ import {
   TabItem
 } from 'vux'
 import { mapState } from 'vuex'
-import { fetchBanner, fetchAnnouncements, getPromotions } from '../api'
+import { fetchBanner, fetchAnnouncements } from '../api'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
@@ -153,7 +157,6 @@ export default {
       showDialog: false,
       game_count: 15,
       showpromoPopup: false,
-      promotions: [],
       today: this.$moment(),
       currentTag: ''
     }
@@ -181,7 +184,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable'
+      'user', 'systemConfig', 'tagTable', 'promotions'
     ]),
     allGames () {
       const games = this.$store.state.games
@@ -229,7 +232,7 @@ export default {
           url: config.appDownloadUrl,
           text: 'App 下载'
         })
-      } else if (!this.user.logined) {
+      } else if (this.user.logined === false) {
         actions.push({
           type: 'button',
           className: 'trail',
@@ -248,9 +251,6 @@ export default {
           this.switchTab(0)
         }
       }
-    },
-    'user.logined': function () {
-      this.fetchPromotions()
     }
   },
   created () {
@@ -286,10 +286,6 @@ export default {
         this.announcements = datas.map(data => data.announcement)
       }
     )
-    this.fetchPromotions()
-  },
-  activated () {
-    this.fetchPromotions()
   },
   methods: {
     openPClink () {
@@ -313,11 +309,6 @@ export default {
     },
     switchTab (i) {
       this.currentTag = this.tags[i]
-    },
-    fetchPromotions () {
-      getPromotions().then(response => {
-        this.promotions = response.filter(item => item.image_mobile)
-      })
     }
   }
 }
@@ -539,9 +530,6 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  .selected {
-    font-size: 16px;
-  }
   .vux-tab {
     overflow-x: auto;
   }
@@ -555,18 +543,37 @@ export default {
   background: #fff;
   margin-bottom: 20px;
   .game-item {
+    position: relative;
     box-sizing: border-box;
     width: calc(~"100%" / 3);
     padding-bottom: 10px;
     color: #333;
     text-align: center;
     font-size: 16px;
+    .game-label {
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      height: 30px;
+      .game-label-text {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        padding: 2px 5px;
+        border-radius: 10px;
+        background-color: #d0e2f7;
+        color: #113f7c;
+        font-size: 13px;
+      }
+    }
     .game-icon {
       box-sizing: border-box;
       display: block;
       width: 100%;
       min-height: 10vh;
-      padding: 10px 20% 8px 20%;
+      padding: 5px 20% 8px 20%;
     }
   }
 }

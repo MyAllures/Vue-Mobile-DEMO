@@ -10,11 +10,10 @@ import {
   fetchGamesDetail,
   fetchUnread,
   fetchCategories,
-  fetchChatInfo,
-  fetchRoomInfo
+  getPromotions
 } from '../../api'
 
-const login = function ({ commit, state }, { user }) {
+const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
       commit('RESET_USER')
@@ -31,14 +30,7 @@ const login = function ({ commit, state }, { user }) {
       axios.defaults.withCredentials = true
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
     }
-    Vue.nextTick(() => {
-      commit(types.SET_USER, {
-        user: {
-          logined: true
-        }
-      })
-    })
-    return Promise.resolve(res)
+    return dispatch('fetchUser')
   }, error => {
     return Promise.reject(error)
   })
@@ -54,34 +46,19 @@ export default {
       errRes => Promise.reject(errRes)
     )
   },
+  setUser: ({commit}, data) => {
+    commit(types.SET_USER, data)
+  },
+  resetUser: ({commit}) => {
+    commit(types.RESET_USER)
+  },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
       if (res.length > 0) {
         const user = res[0]
-        if (user.account_type && !state.user.planMakerRoom) {
-          fetchChatInfo(user.username).then(res => {
-            commit(types.SET_USER, {
-              user: {
-                planMakerRoom: res.data.plan_maker_rooms || []
-              }
-            })
-          }).catch(e => { })
-        }
-        if (!state.roomInfo) {
-          fetchRoomInfo().then(res => {
-            const roomInfo = {}
-            res.forEach(room => {
-              roomInfo[room.id] = {name: room.title, status: room.status}
-            })
-            commit(types.SET_ROOM_INFO, roomInfo)
-          }).catch(() => {})
-        }
         commit(types.SET_USER, {
-          user: {
-            ...user,
-            logined: true,
-            planMakerRoom: state.user.planMakerRoom || []
-          }
+          ...user,
+          logined: true
         })
         return Promise.resolve(res[0])
       } else {
@@ -89,9 +66,7 @@ export default {
       }
     }, error => {
       commit(types.SET_USER, {
-        user: {
-          logined: false
-        }
+        logined: false
       })
       return Promise.reject(error)
     })
@@ -201,5 +176,10 @@ export default {
   },
   addWinNotification: ({ commit }, notification) => {
     commit(types.ADD_WINNOTIFICATION, notification)
+  },
+  fetchPromotions: ({commit}) => {
+    return getPromotions().then(response => {
+      commit(types.SET_PROMOTION, response.filter(item => item.image_mobile))
+    })
   }
 }
