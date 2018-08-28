@@ -10,11 +10,16 @@ import {
   fetchGamesDetail,
   fetchUnread,
   fetchCategories,
-  getPromotions
+  getPromotions,
+  sendHeartBeat
 } from '../../api'
 
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
+    sendHeartBeat().catch(() => {})
+    if (state.user.logined) {
+      commit('RESET_USER')
+    }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
       localStorage.setItem('token_expire', res.expires_in)

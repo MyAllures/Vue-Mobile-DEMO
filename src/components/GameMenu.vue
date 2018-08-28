@@ -16,6 +16,9 @@
             v-for="(game, index) in allGames"
             :key="index"
             @click.native="switchGame(game)">
+            <div class="game-label">
+              <span v-if="game.label" class="game-label-text">{{game.label}}</span>
+            </div>
             <img class="icon" v-lazy="game.icon" width="36" height="36"/>
             <p class="name">{{game.display_name || ''}}</p>
           </grid-item>
@@ -111,7 +114,7 @@ export default {
   width: 100%;
 
   .grid-item.weui-grid {
-    padding: 10px;
+    padding: 0 10px 10px 10px;
     overflow: hidden;
     color: #333;
     .icon {
@@ -124,6 +127,26 @@ export default {
       line-height: 20px;
       white-space: pre;
     }
+  }
+}
+
+.game-label {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  height: 34px;
+  padding-bottom: 4px;
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background-color: #d0e2f7;
+    color: #113f7c;
+    font-size: 13px;
   }
 }
 </style>
