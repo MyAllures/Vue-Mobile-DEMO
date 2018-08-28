@@ -11,7 +11,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin } from 'vux'
@@ -274,6 +274,10 @@ gethomePage().then(
     // }
   }
 )
+
+setInterval(() => {
+  sendHeartBeat().catch(() => {})
+}, 5 * 60 * 1000)
 
 /* eslint-disable no-new */
 new Vue({

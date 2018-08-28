@@ -235,3 +235,7 @@ export function sendSMSCode (phoneNumber) {
     'Content-Type': 'application/json'
   })
 }
+
+export function sendHeartBeat () {
+  return axios.get(urls.onine_heartbeat)
+}

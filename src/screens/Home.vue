@@ -51,10 +51,14 @@
         v-for="game in currentGames"
         :key="game.id"
         @click="chooseGame(game)">
+        <div class="game-label">
+          <span v-if="game.label" class="game-label-text">{{game.label}}</span>
+        </div>
         <img class="game-icon" v-lazy="game.icon" />
         <div>{{ game.display_name }}</div>
       </div>
       <div v-if="currentTag==='热门游戏'" class="game-item" @click="$root.bus.$emit('showGameMenu')">
+        <div class="game-label"></div>
         <img class="game-icon" v-lazy="require('../assets/all_games.png')" />
         <div>所有游戏</div>
       </div>
@@ -539,18 +543,37 @@ export default {
   background: #fff;
   margin-bottom: 20px;
   .game-item {
+    position: relative;
     box-sizing: border-box;
     width: calc(~"100%" / 3);
     padding-bottom: 10px;
     color: #333;
     text-align: center;
     font-size: 16px;
+    .game-label {
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      height: 30px;
+      .game-label-text {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        padding: 2px 5px;
+        border-radius: 10px;
+        background-color: #d0e2f7;
+        color: #113f7c;
+        font-size: 13px;
+      }
+    }
     .game-icon {
       box-sizing: border-box;
       display: block;
       width: 100%;
       min-height: 10vh;
-      padding: 10px 20% 8px 20%;
+      padding: 5px 20% 8px 20%;
     }
   }
 }
