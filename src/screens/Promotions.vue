@@ -8,7 +8,7 @@
         @click="$router.push(`/promotions/${promotion.id}`)">
         <div class="activity-item-title">{{promotion.name}}</div>
         <div class="activity-item-img">
-          <img height="100%" v-lazy="promotion.image_mobile" :alt="promotion.name" :key="promotion.image_mobile">
+          <img width="100%" v-lazy="promotion.image_mobile" :alt="promotion.name" :key="promotion.image_mobile">
         </div>
       </div>
     </div>
