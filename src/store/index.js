@@ -9,16 +9,22 @@ Vue.use(Vuex)
 const isDebugMode = process.env.NODE_ENV !== 'production'
 Vue.config.debug = isDebugMode
 Vue.config.devtools = isDebugMode
+const loadingImg = require('../assets/loading.gif')
 
 export default new Vuex.Store({
   state: {
     user: {
-      logined: '',
+      logined: 'pending',
       unread: 0
     },
     isLoading: false,
     showVerifyPopup: false,
     games: [],
+    tagTable: {
+      ' ': [{icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}],
+      '  ': [{icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}],
+      '   ': [{icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}]
+    },
     gameInfo: {
       display_name: '',
       game_code: '',
@@ -39,6 +45,7 @@ export default new Vuex.Store({
     },
     categories: {},
     systemConfig: {
+      process: 'pending',
       customerServiceUrl: '',
       agentDashboardUrl: '',
       homePageLogo: '',
@@ -51,13 +58,14 @@ export default new Vuex.Store({
       regPresentAmount: undefined,
       envelopeSettings: {},
       stickerGroups: [],
-      smsValidationEnabled: false
+      smsValidationEnabled: false,
+      appDownloadUrl: ''
     },
     envelope: {},
     currentGameResult: null,
     emojis: null,
-    keepAlivePage: [],
-    // ws: null,
+    keepAlivePage: ['Home'],
+    promotions: [],
     ws: {
       raven: null,
       eider: null

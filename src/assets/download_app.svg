@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_download app</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#BD62E1" offset="0%"></stop>
+            <stop stop-color="#973BE7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icon_download-app" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M16.8011337,2.81365579e-05 L7.19981105,2.81365579e-05 C5.43977326,-0.00705750401 4.00755786,1.32504292 4,2.97511147 L4,2.99105416 L4,21.0080667 C4,22.6572496 5.4322154,23.9999785 7.19981105,23.9999785 L16.8011337,23.9999785 C18.5611715,24.0061784 19.9943316,22.6731923 20,21.022238 L20,21.0080667 L20,2.99105416 C20,1.34275702 18.5696741,2.81365579e-05 16.8011337,2.81365579e-05 Z" id="Path" fill="url(#linearGradient-1)"></path>
+        <path d="M18,18 L6,18 L6,3.52808302 C6,2.73106404 6.67847653,2.08695652 7.49512843,2.08695652 L16.5039858,2.08695652 C17.3303809,2.08695652 18,2.73020978 18,3.52808302 L18,18 Z" id="Path" fill-opacity="0.85" fill="#FFFFFF"></path>
+        <path d="M11,20.2986335 C11,19.4614658 11.6688235,18.7826087 12.4947059,18.7826087 C13.3197059,18.7826087 13.9894118,19.4614658 13.9894118,20.2986335 C13.9885294,21.1340124 13.3197059,21.8119752 12.4947059,21.8119752 C11.6697059,21.8119752 11.0008824,21.1340124 11,20.2986335 Z" id="Path" fill-opacity="0.8" fill="#FFFFFF"></path>
+    </g>
+</svg>

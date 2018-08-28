@@ -1,15 +1,25 @@
 <template>
   <div class="game">
     <div class="data-section">
-      <GameResult :result="result" :loading="resultLoading"/>
-      <Countdown
-        :schedule="schedule"
-        :realSchedule="realSchedule"
-        v-if="schedule.id"
-        :currentGame="currentGame"
-        :gameClosed="gameClosed"
-        :closeCountDown="closeCountDown"
-        :resultCountDown="resultCountDown"/>
+      <div>
+        <GameResult v-if="result" :result="result" :loading="resultLoading"/>
+        <div class="result-skeleton-wrapper" v-else>
+          <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
+        </div>
+      </div>
+      <div>
+        <Countdown
+          :schedule="schedule"
+          :realSchedule="realSchedule"
+          v-if="schedule.id"
+          :currentGame="currentGame"
+          :gameClosed="gameClosed"
+          :closeCountDown="closeCountDown"
+          :resultCountDown="resultCountDown"/>
+          <div class="p" v-else-if="!gameClosed">
+            <rowSkeleton highlight="#1568CA" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+          </div>
+      </div>
     </div>
     <div class="bet-area">
       <group class="aside">
@@ -71,6 +81,7 @@ import { fetchSchedule, fetchGameResult } from '../../api'
 import { Indicator, validateAmount } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
+import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
 
 export default {
@@ -89,7 +100,8 @@ export default {
     Toast,
     InlineLoading,
     CellBox,
-    CheckIcon
+    CheckIcon,
+    rowSkeleton
   },
   directives: {
     TransferDom
@@ -271,6 +283,9 @@ export default {
       }, startPollingTime)
     },
     fetchScheduleAndResult () {
+      if (!this.gameId) {
+        return
+      }
       Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
@@ -627,5 +642,12 @@ export default {
       overflow: visible;
     }
   }
+}
+
+.result-skeleton-wrapper {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
 }
 </style>

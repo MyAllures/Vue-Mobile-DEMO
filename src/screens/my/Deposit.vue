@@ -66,7 +66,7 @@
           <div :class="['amount-box', {warn: warnMessage}]">
             <label class="amount-field">
               <span class="amount-field-text">存款金额</span>
-              <input class="amount-field-input" type="text" name="amount" v-model="currentPay.amount" @input="inputAmount(currentPay.amount)">
+              <input class="amount-field-input" type="text" name="amount" v-model="currentPay.amount" @input="inputAmountEvt">
               <span class="amount-icon">¥</span>
             </label>
             <div class="hint">{{warnMessage||limitHint}}</div>
@@ -262,6 +262,14 @@ export default {
           this.validateAmount(this.currentPay.amount)
         })
       }
+    },
+    inputAmountEvt (evt) {
+      let value = evt.target.value
+      let formatted = !value ? '' : value.replace(/^[0]|[^0-9]/g, '')
+      this.$nextTick(() => {
+        this.currentPay.amount = formatted
+        this.validateAmount(formatted)
+      })
     },
     validateAmount (value) {
       if (value === '') {

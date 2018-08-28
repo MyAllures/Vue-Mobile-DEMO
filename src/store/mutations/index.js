@@ -2,7 +2,7 @@ import Vue from 'vue'
 import * as types from './mutation-types'
 
 export default {
-  [types.SET_USER]: (state, { user }) => {
+  [types.SET_USER]: (state, user) => {
     Vue.set(state, 'user', {
       ...state.user,
       ...user
@@ -142,5 +142,11 @@ export default {
   },
   [types.CLEAR_WINNOTIFICATION]: (state, index) => {
     state.winNotification = []
+  },
+  [types.TAG_TABLE]: (state, table) => {
+    state.tagTable = table
+  },
+  [types.SET_PROMOTION]: (state, promotions) => {
+    state.promotions = promotions
   }
 }

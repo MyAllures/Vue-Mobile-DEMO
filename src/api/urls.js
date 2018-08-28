@@ -55,5 +55,6 @@ export default {
   envelope: apiv2 + '/red_envelope/',
   chatinfo: apiChat + '/v1/user/',
   roomInfo: apiChat + '/v1/member/room/',
-  smscode: apiv2 + '/sms_verification/'
+  smscode: apiv2 + '/sms_verification/',
+  onine_heartbeat: apiv2 + '/heart_beat/'
 }
