@@ -8,7 +8,7 @@
       auto
       loop>
       <swiper-item v-for="(banner,index) in banners" :key="index">
-        <img width="100%" :src="banner.img" alt="banner">
+        <div class="swiper-image" :style="{'background-image': `url('${banner.img}')`}"></div>
         <div class="swiper-desc-mask"></div>
       </swiper-item>
     </swiper>
@@ -94,9 +94,7 @@
         :key="index"
         @click="handleClick(promotion)">
         <div class="activity-item-title">{{promotion.name}}</div>
-        <div class="activity-item-img">
-          <img width="100%" v-lazy="promotion.image_mobile" :alt="promotion.name" :key="promotion.image_mobile">
-        </div>
+        <div class="activity-item-img" v-lazy:background-image="promotion.image_mobile" :key="promotion.image_mobile"></div>
       </div>
       <div
         class="activity-more"
@@ -267,7 +265,7 @@ export default {
           res.forEach((banner, index) => {
             this.banners[index].img = banner.image
           })
-        }, 2000)
+        }, 1000)
       }).catch(() => {})
     fetchAnnouncements().then(
       result => {
@@ -321,9 +319,14 @@ export default {
 }
 .container /deep/ .vux-swiper {
   min-height: 45w;
-
 }
-
+.swiper-image {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
 .swiper-desc-mask {
   position: absolute;
   left: 0;
@@ -511,6 +514,9 @@ export default {
       width: calc(~"100vw" - 40px);
       height: calc(~"25vw" - 10px);
       text-align: center;
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
   }
 }
