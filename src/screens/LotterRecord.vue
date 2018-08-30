@@ -851,7 +851,7 @@ export default {
   }
   .luck-lottery {
     height: 50px;
-    width: 230px;
+    width: 270px;
     margin:  0 auto;
     overflow: hidden;
   }
