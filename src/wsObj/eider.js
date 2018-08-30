@@ -1,5 +1,6 @@
 import store from '../store'
 import urls from '../api/urls'
+import Vue from 'vue'
 
 function GhostSocketObj (token, callback) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
@@ -36,6 +37,15 @@ function GhostSocketObj (token, callback) {
             if (!winNotificationVisible) {
               store.commit('SHOW_WINNOTIFICATION')
             }
+            break
+          case 'balance-updated':
+            store.dispatch('setUser', {
+              balance: data.balance
+            })
+            Vue.$vux.toast.show({
+              text: '余额已更新',
+              type: 'sucess'
+            })
             break
         }
       } catch (e) {
