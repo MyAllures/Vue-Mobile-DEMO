@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="user.account_type">
-      <group title="请选择支付方式" v-show="$route.path==='/my/deposit'"  class="payment-types">
+      <group v-if="payees.length" title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="payment-types">
         <template v-for="(payeeGroup,payeeGroupIndex) in payees">
           <div v-if="payeeGroup.detail.length>1" :class="['sub-group', payeeGroup.folded?'folded': '']" :key="payeeGroupIndex">
             <cell
@@ -31,6 +31,12 @@
           </cell>
         </template>
       </group>
+      <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="payment-types">
+        <cell class="title skeleton" :class="'child' + i" v-for="i in 5" :key="i">
+          <div slot="icon" class="payee-icon" :title="i"></div>
+        </cell>
+      </group>
+
       <router-view v-if="selectedPayee" :payee="selectedPayee"></router-view>
     </div>
     <div v-else class="unregistered-box">
@@ -328,6 +334,44 @@ export default {
       &.selected .vux-label-desc {
         color:  #f90;
       }
+
+      &.skeleton {
+        .payee-icon {
+          background: #ddd;
+          border-radius: 50%;
+        }
+
+        .vux-cell-bd.vux-cell-primary {
+          background-color: #ddd;
+          height: 18px;
+        }
+
+        &.child1 {
+          .vux-cell-bd.vux-cell-primary {
+            flex: 0 0 100px;
+          }
+        }
+        &.child2 {
+          .vux-cell-bd.vux-cell-primary {
+            flex: 0 0 130px;
+          }
+        }
+        &.child3 {
+          .vux-cell-bd.vux-cell-primary {
+            flex: 0 0 170px;
+          }
+        }
+        &.child4 {
+          .vux-cell-bd.vux-cell-primary {
+            flex: 0 0 120px;
+          }
+        }
+        &.child5 {
+          .vux-cell-bd.vux-cell-primary {
+            flex: 0 0 140px;
+          }
+        }
+      }
     }
   }
   .weui-cell.selected {
@@ -480,4 +524,5 @@ export default {
   background-repeat: no-repeat;
   background-size: contain;
 }
+
 </style>

@@ -276,4 +276,8 @@
     box-sizing: border-box;
     padding: 10px 30px 40px 30px;
   }
+
+  .vux-datetime {
+    margin: 10px;
+  }
 </style>
