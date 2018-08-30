@@ -2,20 +2,16 @@
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
     <div :class="['balls-number', 'wrapper-' + result.game_code]" v-if="result && !loading">
-      <div v-if="result.status!=='valid'">官方开奖无效</div>
-      <span
-        v-else
-        v-for="(num, index) in resultNums"
-        :key="index"
-        :class="getResultClass(num)">
-        <b> {{num}} </b>
-        <p class="ball-zodiac" v-if="result.zodiac"> {{result.zodiac[index]}} </p>
-      </span>
-      <div class="ball-sum" v-if="showSum">
-        {{$t('common.total')}}
-        <span>
-          <b>{{resultsSum}}</b>
-        </span>
+      <div class="balls-frame">
+        <div v-if="result.status!=='valid'">官方开奖无效</div>
+        <div
+          v-else
+          v-for="(num, index) in resultNums"
+          :key="index"
+          :class="getResultClass(num)">
+          <b> {{num.data}} </b>
+          <p class="ball-zodiac" v-if="resultZodiac"> {{resultZodiac[index]}} </p>
+        </div>
       </div>
     </div>
     <game-result-animate v-else-if="result" :gameCode="result.game_code" :resultNums="resultNums" />
@@ -36,6 +32,9 @@ export default {
   },
   computed: {
     resultNums () {
+      if (!this.result.result_str) {
+        return this.$t('navMenu.no_result')
+      }
       let rawNums = this.result.result_str.split(',')
       let formattedNums = []
       if (this.result.game_code === 'bjkl8') {
@@ -43,31 +42,38 @@ export default {
       }
       rawNums.forEach((rawBall) => {
         if (rawBall[0] === '0' && rawBall !== '0') {
-          formattedNums.push(rawBall.slice(1))
+          formattedNums.push({type: 'num', data: rawBall.slice(1)})
           return
         }
-        formattedNums.push(rawBall)
+        formattedNums.push({type: 'num', data: rawBall})
       })
-      if (!this.result.result_str) {
-        return this.$t('navMenu.no_result')
+      if (this.result.game_code === 'luckl' || this.result.game_code === 'hkl') {
+        formattedNums.splice(6, 0, {type: 'text', data: '＋'})
+      } else if (this.result.game_code === 'pcdd' || this.result.game_code === 'jnd28' || this.result.game_code === 'luckdd') {
+        formattedNums.push({type: 'text', data: '总和'})
+        const sum = _.reduce(rawNums, (sum, nums) => { return sum + Number(nums) }, 0)
+        formattedNums.push({type: 'num', data: sum})
       }
       return formattedNums
     },
-    resultsSum () {
-      return _.reduce(this.resultNums, (sum, nums) => { return sum + Number(nums) }, 0)
-    },
-    showSum () {
-      if (!this.result) {
-        return false
+    resultZodiac () {
+      if (this.result.zodiac) {
+        const arr = this.result.zodiac.slice()
+        arr.splice(6, 0, '＋')
+        return arr
+      } else {
+        return null
       }
-      return this.result.game_code === 'pcdd' || this.result.game_code === 'jnd28' || this.result.game_code === 'luckdd'
     }
   },
   methods: {
-    getResultClass (resultNum) {
+    getResultClass (num) {
+      if (num.type === 'text') {
+        return ['text', 'ball']
+      }
       let gameClass = `result-${this.result.game_code}`
-      let resultClass = `resultnum-${resultNum}`
-      return [gameClass, resultClass]
+      let resultClass = `resultnum-${num.data}`
+      return [gameClass, resultClass, 'ball']
     }
   }
 }
@@ -94,25 +100,40 @@ export default {
     }
   }
   .balls-number {
+    display: flex;
     flex: 2.5;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     text-align: center;
     height: 100%;
+    .balls-frame {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      max-width: 265px;
+    }
   }
-  span {
-    display: inline-block;
+  .text {
+    font-size: 12px;
+    .ball-zodiac {
+      display: none;
+    }
+  }
+
+  .ball {
     margin-right: 3px;
   }
   .ball-sum {
     display: inline-block;
     font-size: 12px;
   }
-  .wrapper-hkl span{
+  .wrapper-hkl .ball{
     margin-bottom: 10px;
   }
-  .wrapper-luckl span{
+  .wrapper-luckl .ball{
     margin-bottom: 10px;
   }
 }

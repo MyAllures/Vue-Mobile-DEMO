@@ -1,11 +1,16 @@
 <template>
   <div :class="['balls-number', 'wrapper-' + gameCode]">
-    <template v-if="gameCode === 'hkl' || gameCode === 'luckl'">
+    <div class="balls-frame">
+      <div v-if="gameCode === 'jsk3'">
+        <img class="jsk3-loading" :src="require('../assets/loading_dice.gif')" alt="dice">
+      </div>
       <div
-        :class="`result-${gameCode} view`"
-        v-for="(chunk, chunkIndex) in resultChunks.slice(0,-1)"
+        v-else
+        :class="getResultClass(chunk)"
+        v-for="(chunk, chunkIndex) in resultChunks"
         :key="chunkIndex">
-        <ul :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
+        <b v-if="chunk.type==='text'">{{chunk.data}}</b>
+        <ul v-else :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
           <li
             v-for="(num, index) in chunk"
             :key="index"
@@ -14,35 +19,6 @@
           </li>
         </ul>
       </div>
-      <div class="cross">＋</div>
-      <div
-        :class="`result-${gameCode} view`">
-        <ul :class="`${animate}-even`">
-          <li
-            v-for="(num, index) in resultChunks[resultChunks.length-1]"
-            :key="index"
-            :class="`result-${gameCode} resultnum-${num}`">
-            <b> {{num}} </b>
-          </li>
-        </ul>
-      </div>
-    </template>
-    <div v-else-if="gameCode === 'jsk3'">
-      <img class="jsk3-loading" :src="require('../assets/loading_dice.gif')" alt="dice">
-    </div>
-    <div
-      v-else
-      :class="`result-${gameCode} view`"
-      v-for="(chunk, chunkIndex) in resultChunks"
-      :key="chunkIndex">
-      <ul :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
-        <li
-          v-for="(num, index) in chunk"
-          :key="index"
-          :class="`result-${gameCode} resultnum-${num}`">
-          <b> {{num}} </b>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -81,17 +57,29 @@ export default {
   computed: {
     resultChunks () {
       const randomGenerator = randomGeneratorFactory(this.gameCode)
-      return this.resultNums.map(() => {
-        const arr = []
-        for (let i = 0; i < 4; i++) {
-          arr.push(randomGenerator())
+      return this.resultNums.map(num => {
+        if (num.type === 'text') {
+          return num
+        } else {
+          const arr = []
+          for (let i = 0; i < 4; i++) {
+            arr.push(randomGenerator())
+          }
+          arr.push(arr[0])
+          return arr
         }
-        arr.push(arr[0])
-        return arr
       })
     },
     animate () {
       return GameOnlyChange.includes(this.gameCode) ? 'step' : 'scroll'
+    }
+  },
+  methods: {
+    getResultClass (num) {
+      if (num.type === 'text') {
+        return ['text', 'view']
+      }
+      return [`result-${this.gameCode}`, 'view']
     }
   }
 }
@@ -105,14 +93,27 @@ export default {
   justify-content: center;
   text-align: center;
   height: 100%;
+  .balls-frame {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 265px;
+  }
 }
 .view {
-  display: inline-block;
   margin-right: 3px;
   background: none;
   overflow: hidden;
   border-radius: 0;
-  vertical-align: bottom;
+  &::before {
+    display: none;
+  }
+  &.text {
+    font-size: 12px;
+  }
   .scroll-odd {
     width: 100%;
     animation: 1s scrollUp linear infinite normal;
@@ -172,12 +173,6 @@ export default {
   100% {
       transform: translateY(-80%);
   }
-}
-.cross {
-  display: inline-block;
-  margin-bottom: 10px;
-  height: 26px;
-  margin-left: -8px;
 }
 
 .jsk3-loading {
