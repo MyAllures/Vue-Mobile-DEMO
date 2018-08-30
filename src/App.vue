@@ -24,7 +24,7 @@
 
       <div @click="titleCondition.onClick">
         {{titleCondition.text}}
-        <i v-if="titleCondition.showDropdown"
+        <i v-if="titleCondition.showDropdown && titleCondition.text"
           :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
       </div>
 
