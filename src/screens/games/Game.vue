@@ -1,13 +1,13 @@
 <template>
   <div class="game">
     <div class="data-section">
-      <div>
+      <div class="wrapper">
         <GameResult v-if="result" :result="result" :loading="resultLoading"/>
         <div class="result-skeleton-wrapper" v-else>
           <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
       </div>
-      <div>
+      <div class="wrapper">
         <Countdown
           :schedule="schedule"
           :realSchedule="realSchedule"
@@ -478,8 +478,17 @@ export default {
   overflow-x: hidden;
   flex-direction: column;
   height: 100%;
+
   .data-section {
-    background: #1568CA;
+    display: flex;
+    flex-wrap: wrap;
+    background: linear-gradient(to bottom, #166fd8, #1053A1);
+    min-height: 100px;
+    align-items: center
+  }
+
+  .wrapper {
+    width: 100%;
   }
 }
 
@@ -487,6 +496,7 @@ export default {
   background: @azul;
   color: #fff;
 }
+
 .bet-area {
   flex: 1 1 auto;
   display: flex;
