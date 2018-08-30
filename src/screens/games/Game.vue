@@ -2,7 +2,7 @@
   <div class="game">
     <div class="data-section">
       <div class="wrapper">
-        <GameResult v-if="!result" :result="result" :loading="resultLoading"/>
+        <GameResult v-if="result" :result="result" :loading="resultLoading"/>
         <div class="result-skeleton-wrapper" v-else>
           <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
@@ -11,7 +11,7 @@
         <Countdown
           :schedule="schedule"
           :realSchedule="realSchedule"
-          v-if="!schedule.id"
+          v-if="schedule.id"
           :currentGame="currentGame"
           :gameClosed="gameClosed"
           :closeCountDown="closeCountDown"
