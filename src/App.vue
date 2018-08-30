@@ -2,9 +2,7 @@
   <view-box ref="viewBox"
     body-padding-top="46px"
     :body-padding-bottom="$route.meta.tabbarHidden? 0 : '55px'">
-    <x-header :class="{'gamehall': isGameHall}"
-      v-show="!$route.meta.headerHidden"
-      @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
+    <x-header @on-click-more="showRightMenu = true; closeGameMenu(); closeCalender()"
       :right-options="{
         showMore: !!user.username && isGameHall,
       }"
@@ -70,10 +68,7 @@
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view :showChatRoom="showChatRoom" @closeChatRoom="showChatRoom = false"></router-view>
     </keep-alive>
-    <tabbar
-      slot="bottom"
-      v-show="!$route.meta.tabbarHidden"
-      class="tabbar">
+    <tabbar slot="bottom" v-show="!tabbarHidden" class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
         :selected="selectedTab === menu.name"
@@ -219,7 +214,8 @@ export default {
       currentNotificationDetail: null,
       refreshTokenTimer: null,
       noBackRoute: !window.history.state,
-      indicator: null
+      indicator: null,
+      tabbarHidden: true
     }
   },
   mixins: [freetrial],
@@ -346,6 +342,7 @@ export default {
       }
     },
     '$route' (to, from) {
+      this.tabbarHidden = to.meta.tabbarHidden
       this.noBackRoute = !window.history.state
 
       if (window.self === window.top) { // 非內嵌iframe時才設成auto
