@@ -224,12 +224,12 @@ store.watch((state) => {
 }, (logined) => {
   store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
-    if (store.state.systemConfig.state === 'pending') {
+    if (store.state.systemConfig.process === 'pending') {
       const unwatch = store.watch((state) => {
-        return state.systemConfig.state
-      }, (configState) => {
+        return state.systemConfig.process
+      }, (configProcess) => {
         unwatch()
-        if (configState === 'fulfilled') {
+        if (configProcess === 'fulfilled') {
           setChatRoomSetting()
         }
       })
