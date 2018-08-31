@@ -1,8 +1,37 @@
 <template>
   <div :class="['balls-number', 'wrapper-' + gameCode]">
     <div class="balls-frame">
-      <div v-if="gameCode === 'jsk3'">
-        <img class="jsk3-loading" :src="require('../assets/loading_dice.gif')" alt="dice">
+      <div v-if="gameCode === 'jsk3'" class="jsk3-loading">
+        <div class="camera">
+          <div class="space space1">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
+        <div class="camera">
+          <div class="space space2">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
+        <div class="camera">
+          <div class="space space3">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
       </div>
       <div
         v-else
@@ -174,8 +203,95 @@ export default {
       transform: translateY(-80%);
   }
 }
-
 .jsk3-loading {
-  height: 35px;
+  display: flex;
+  height: 27px;
+}
+.camera{
+    width: 27px;
+    height: 27px;
+    perspective-origin:center center;
+    perspective:500px;
+    &:nth-child(2){
+      margin: 0 15px;
+    }
+}
+.space{
+    position:relative;
+    width: 27px;
+    height: 27px;
+    transform-style:preserve-3d;
+    transform-origin: 13px center -13px;
+}
+.space1 {
+  animation:roll .2s linear .1s infinite;
+}
+.space2 {
+  animation:roll2 .2s linear .2s infinite;
+}
+.space3 {
+  animation:roll3 .2s linear .3s infinite;
+}
+.dice {
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 27px;
+  height: 27px;
+  background-size: 27px 162px;
+  background-image: url("../assets/ball_4.png");
+  background-repeat:  no-repeat;
+}
+.dice1{
+    background-position: 0 0;
+}
+.dice2{
+    background-position: 0 (-27px * 1);
+    transform-origin:left top;
+    transform:translateX(26px) rotateY(90deg);
+}
+.dice3{
+    background-position: 0 (-27px * 2);
+    transform:translateZ(-26px) rotateY(180deg);
+}
+.dice4{
+    background-position: 0 (-27px * 3);
+    transform-origin:right top;
+    transform:translateX(-26px) rotateY(-90deg);
+}
+.dice5{
+    background-position: 0 (-27px * 4);
+    transform-origin:center bottom;
+    transform:translateY(-26px) rotateX(90deg);
+}
+.dice6{
+    background-position: 0 (-27px * 5);
+    transform-origin:center top;
+    transform:translateY(26px) rotateX(-90deg);
+}
+
+@keyframes roll{
+    0%{
+        transform:rotateY(0) rotateZ(30deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(30deg);
+    }
+}
+@keyframes roll2{
+    0%{
+        transform:rotateY(0) rotateZ(45deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(45deg);
+    }
+}
+@keyframes roll3{
+    0%{
+        transform:rotateY(0) rotateZ(60deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(60deg);
+    }
 }
 </style>

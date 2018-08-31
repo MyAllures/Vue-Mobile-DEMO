@@ -68,11 +68,9 @@ $racing_length: length($results_racing);
   background: url("../assets/ball_4.png") no-repeat;
   background-size: 27px 162px;
   height: 27px;
+  width: 27px;
   b {
-    display: inline-block;
-    text-indent: -9999px;
-    width: 24px;
-    margin-left: 5px;
+    display: none;
   }
 
   @for $num from 1 through 6 {
