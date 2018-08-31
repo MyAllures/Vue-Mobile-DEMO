@@ -26,15 +26,20 @@
             :title="payeeGroup.display_name"
             :inline-desc="payeeGroup.client_description"
             :key="payeeGroupIndex"
-            @click.native="selectPayee(payeeGroup.detail[0]);toggleGroup(payeeGroup);">
+            @click.native="selectPayee(payeeGroup.detail[0]); toggleGroup(payeeGroup);">
             <div slot="icon" class="payee-icon" :style="{'background-image': `url(${payeeGroup.icon})`}"></div>
           </cell>
         </template>
       </group>
-      <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="payment-types">
-        <cell class="title skeleton" :class="'child' + i" v-for="i in 5" :key="i">
-          <div slot="icon" class="payee-icon" :title="i"></div>
-        </cell>
+      <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="skeletons">
+        <div class="row" v-for="i in 5" :key="i">
+          <div class="icon">
+            <rowSkeleton color="#ddd" height="100%" style="border-radius: 50%"></rowSkeleton>
+          </div>
+          <div class="bar">
+            <rowSkeleton color="#eee" :seperatePoints="[skeletonBar[i - 1], 100]" highlight="#fff"></rowSkeleton>
+          </div>
+        </div>
       </group>
 
       <router-view v-if="selectedPayee" :payee="selectedPayee"></router-view>
@@ -93,6 +98,8 @@ import { getOnlinepayees, getRemitPayees } from '../../api'
 import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
 import urls from '../../api/urls'
+import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
+
 export default {
   name: 'Deposit',
   data () {
@@ -118,7 +125,8 @@ export default {
       inputErrors: [],
       warnMessage: '',
       showDialog: false,
-      dialogStyle
+      dialogStyle,
+      skeletonBar: [35, 30, 40, 20, 25]
     }
   },
   components: {
@@ -130,7 +138,8 @@ export default {
     Group,
     XInput,
     GroupTitle,
-    XDialog
+    XDialog,
+    rowSkeleton
   },
   directives: {
     TransferDom
@@ -334,44 +343,6 @@ export default {
       &.selected .vux-label-desc {
         color:  #f90;
       }
-
-      &.skeleton {
-        .payee-icon {
-          background: #ddd;
-          border-radius: 50%;
-        }
-
-        .vux-cell-bd.vux-cell-primary {
-          background-color: #ddd;
-          height: 18px;
-        }
-
-        &.child1 {
-          .vux-cell-bd.vux-cell-primary {
-            flex: 0 0 100px;
-          }
-        }
-        &.child2 {
-          .vux-cell-bd.vux-cell-primary {
-            flex: 0 0 130px;
-          }
-        }
-        &.child3 {
-          .vux-cell-bd.vux-cell-primary {
-            flex: 0 0 170px;
-          }
-        }
-        &.child4 {
-          .vux-cell-bd.vux-cell-primary {
-            flex: 0 0 120px;
-          }
-        }
-        &.child5 {
-          .vux-cell-bd.vux-cell-primary {
-            flex: 0 0 140px;
-          }
-        }
-      }
     }
   }
   .weui-cell.selected {
@@ -525,4 +496,27 @@ export default {
   background-size: contain;
 }
 
+.skeletons {
+  .row {
+    box-sizing: border-box;
+    width: 100%;
+    height: 42px;
+    padding: 5px 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .icon, .bar {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .bar {
+    width: 50%;
+  }
+}
 </style>
