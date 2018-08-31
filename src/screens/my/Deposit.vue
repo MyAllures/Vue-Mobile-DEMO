@@ -32,12 +32,12 @@
         </template>
       </group>
       <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="skeletons">
-        <div class="row" v-for="i in 5" :key="i">
+        <div class="row" v-for="i in 3" :key="i">
           <div class="icon">
             <rowSkeleton color="#ddd" height="100%" style="border-radius: 50%"></rowSkeleton>
           </div>
           <div class="bar">
-            <rowSkeleton color="#eee" :seperatePoints="[skeletonBar[i - 1], 100]" highlight="#fff"></rowSkeleton>
+            <rowSkeleton color="#eee" height="18px" :seperatePoints="[skeletonBar[i - 1], 100]" highlight="#fff"></rowSkeleton>
           </div>
         </div>
       </group>

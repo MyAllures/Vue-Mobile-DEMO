@@ -39,7 +39,7 @@ export default {
         // apply css rule
         this.seperatePoints.forEach((point, index) => {
           if (index % 2) {
-            let even = `, transparent ${point}%, ${this.color} ${point}%`
+            let even = `, rgba(0, 0, 0, 0) ${point}%, ${this.color} ${point}%`
             if ((index + 1) === this.seperatePoints.length) { // last
               str += even
               return
@@ -50,7 +50,7 @@ export default {
             if (index === 0) {
               str += `${this.color} 0, `
             }
-            str += `${this.color} ${point}%, transparent ${point}%`
+            str += `${this.color} ${point}%, rgba(0, 0, 0, 0) ${point}%`
           }
         })
 
@@ -60,7 +60,7 @@ export default {
       }
 
       if (this.highlight) {
-        let highlight = `linear-gradient( 100deg, transparent, ${this.highlight} 50%, transparent 80% ),`
+        let highlight = `linear-gradient( 100deg, rgba(0, 0, 0, 0), ${this.highlight} 50%, rgba(0, 0, 0, 0) 80% ),`
         return `${highlight} ${backgroundImageStr}`
       } else {
         return backgroundImageStr
