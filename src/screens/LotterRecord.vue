@@ -42,7 +42,8 @@
           <div class="invalid text-center" v-else>官方开奖无效</div>
         </td>
       </tr>
-      <tr class="condition text-center" v-if="loading">
+
+      <tr class="condition loading text-center p-t-lg" v-if="loading">
         <inline-loading></inline-loading>
       </tr>
 
@@ -803,6 +804,10 @@ export default {
     width: 100%;
     padding: 5px;
     border-bottom: 1px solid #ddd;
+    &.loading {
+      border: none;
+      padding-top: 20px;
+    }
   }
   .row {
     display: flex;
