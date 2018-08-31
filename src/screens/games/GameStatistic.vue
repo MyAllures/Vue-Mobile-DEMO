@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="wrapper" v-if="contentType === 'roadbeads' && gameCode">
-      <road-beads
+      <road-beads :loading="loading"
+        :firstFetch="firstFetch"
         v-if="!noRoadBeadGames.includes(gameCode)"
         :gameCode="gameCode"
         :resultStatistic="resultStatistic">
@@ -9,21 +10,24 @@
       <p v-else class="no-data text-center">暂无路珠统计</p>
     </div>
     <div class="wrapper" v-if="contentType === 'leaderboard' && gameCode">
-      <leaderboards :listItems="leaderboard"
-        :gameCode="gameCode">
+      <leaderboards v-if="!noLeaderBoardGames.includes(gameCode)"
+        :loading="loading"
+        :firstFetch="firstFetch"
+        :listItems="leaderboard">
       </leaderboards>
+      <p v-else class="no-data text-center">暂无排行榜</p>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import RoadBeads from './RoadBeads'
 import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
+const noLeaderBoardGames = []
 
 export default {
   name: 'GameStastics',
@@ -41,7 +45,10 @@ export default {
       resultStatistic: {},
       leaderboardData: [],
       loading: false,
-      noRoadBeadGames
+      noRoadBeadGames,
+      noLeaderBoardGames,
+      firstFetch: true
+
     }
   },
   methods: {
@@ -94,14 +101,16 @@ export default {
         this.loading = false
       })
     },
-    pollStatistic () { // todo: use websocket
+    pollStatistic () {
       this.interval = setInterval(() => {
         this.fetchStatistic()
+        this.firstFetch = false
       }, 10000)
     },
     pollLeaderboard () {
       this.interval = setInterval(() => {
         this.fetchLeaderboard()
+        this.firstFetch = false
       }, 10000)
     },
     initFetch () {
@@ -116,9 +125,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'allGames'
-    ]),
     leaderboard () {
       return this.leaderboardData.sort((a, b) => {
         return b.num - a.num
