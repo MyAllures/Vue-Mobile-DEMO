@@ -13,12 +13,18 @@
             <span class="sent-at">{{message.sent_at | moment('YYYY-MM-DD hh:mm')}}</span>
           </div>
         </cell>
-        <p class="content" v-if="message.showContent" v-html="message.content">
-        </p>
+        <p class="content" v-if="message.showContent" v-html="message.content"></p>
       </template>
     </group>
     <div class="view-more" v-if='!ended'>
       <x-button @click.native="getMessages">查看更多</x-button>
+    </div>
+  </div>
+  <div class="skeleton" v-else-if="loading">
+    <div class="cell" v-for="i in 5" :key="i">
+      <div class="row">
+        <rowSkeleton color="#eee" :seperatePoints="[skeletonBar[i - 1], 70]" highlight="#fff"></rowSkeleton>
+      </div>
     </div>
   </div>
   <div class="text-center p-t-lg grey" v-else>
@@ -29,6 +35,7 @@
 <script>
 import { Group, Cell, XButton } from 'vux'
 import { readMessage, fetchMessages } from '../../api'
+import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
 
 export default {
   data () {
@@ -36,7 +43,9 @@ export default {
       messages: [],
       page: 0,
       limit: 20,
-      ended: false
+      ended: false,
+      loading: false,
+      skeletonBar: [30, 40, 25, 35, 30]
     }
   },
   created () {
@@ -56,6 +65,7 @@ export default {
       }
     },
     getMessages () {
+      this.loading = true
       fetchMessages(this.limit, this.page)
         .then(res => {
           this.messages = this.page === 0 ? res.results : this.messages.concat(res.results)
@@ -64,13 +74,15 @@ export default {
           } else {
             this.ended = true
           }
+          this.loading = false
         })
     }
   },
   components: {
     Group,
     Cell,
-    XButton
+    XButton,
+    rowSkeleton
   }
 }
 </script>
@@ -109,5 +121,26 @@ export default {
 
 .landing-msgs /deep/ .weui-cells {
   margin-top: 0;
+}
+
+.skeleton {
+  height: 250px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  .cell {
+    width: 90%;
+    height: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .row {
+    width: 100%;
+  }
 }
 </style>
