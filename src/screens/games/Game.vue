@@ -506,6 +506,9 @@ export default {
     width: 100%;
     background: #f9f9f9;
     overflow-y: auto;
+    &::after {
+      display: none;
+    }
   }
   .aside {
     display: flex;
