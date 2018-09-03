@@ -483,7 +483,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     background: linear-gradient(to bottom, #166fd8, #1053A1);
-    min-height: 100px;
+    min-height: 80px;
     align-items: center
   }
 
