@@ -60,7 +60,7 @@ export default {
       }
 
       if (this.highlight) {
-        let highlight = `linear-gradient( 100deg, rgba(0, 0, 0, 0), ${this.highlight} 50%, rgba(0, 0, 0, 0) 80% ),`
+        let highlight = `linear-gradient(120deg, rgba(255,255,255,0) 10%, ${this.highlight} 30%, rgba(255,255,255,0) 50% ),`
         return `${highlight} ${backgroundImageStr}`
       } else {
         return backgroundImageStr
@@ -72,14 +72,14 @@ export default {
 
 <style lang="scss" scoped>
 .highlight {
-  background-position: 120% 0, 0 0;
+  background-position: 0 0, 0 0;
   background-size: 70% 100%, 100% 100%;
   animation: highlight 1s infinite;
 }
 @keyframes highlight {
   to {
     background-position:
-      0 0, 100% 0
+      100% 0, 0 0
   }
 }
 </style>
