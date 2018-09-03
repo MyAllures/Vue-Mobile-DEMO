@@ -417,7 +417,7 @@ export default {
       this.showGameMenu = false
       setTimeout(() => {
         this.headerZindex = 100
-      }, 320)
+      }, 400)
     },
     triggerAction (key, item) {
       if (item) {

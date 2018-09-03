@@ -24,7 +24,7 @@ $ssc_length: length($results_ssc);
   .result-#{nth($results_ssc, $index)} {
     @extend %plain-ball;
   }
-  @media screen and (max-width: 320px) {
+  @media screen and (max-width: 361px) {
     .result-#{nth($results_ssc, $index)} {
       height: 19px;
       line-height: 19px;
