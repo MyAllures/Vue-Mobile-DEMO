@@ -88,20 +88,20 @@
 // hkl
 .hk6ball {
   display: inline-block;
-  width: 28px;
-  height: 28px;
+  width: 27px;
+  height: 27px;
   margin-left: 5px;
   background-image: url('../assets/ball_hk6.png');
-  background-size: 28px 1372px;
+  background-size: 27px 1323px;
   vertical-align: middle;
   text-indent: -9999px;
 }
 
-.hkl-if(@i) when (@i < 10) {
+  .hkl-if(@i) when (@i < 10) {
     .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
-      background-position: 0 (-28px * (@i - 1));;
+      background-position: 0 (-27px * (@i - 1));;
     }
   }
 
@@ -111,7 +111,7 @@
   .luckl-@{i},
   .hkl-@{i} {
     &:extend(.hk6ball);
-    background-position: 0 (-28px * (@i - 1));;
+    background-position: 0 (-27px * (@i - 1));;
   }
 }
 
@@ -208,23 +208,31 @@
   gdklsf 20,
   jnd28 27,
   cqlf 20,
-  fc3d 10;
+  fc3d 99;
 
-.plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
+  .plaingames-loop(@gameindex: length(@plainballgames)) when (@gameindex > 0) {
 
-  @device: extract(@plainballgames, @gameindex);
-  @name:   extract(@device, 1);
-  @size:   extract(@device, 2);
+    @device: extract(@plainballgames, @gameindex);
+    @name:   extract(@device, 1);
+    @size:   extract(@device, 2);
 
-  .number-loop(@num: @size) when (@num >= 0) {
-    .@{name}-@{num} {
-      &:extend(.plainball);
+
+
+    .number-loop(@num: @size) when (@num >= 0) {
+      .plaingames-if(@i) when (@num < 10) {
+        .@{name}-0@{i} {
+          &:extend(.plainball);
+        }
+      }
+      .@{name}-@{num} {
+        &:extend(.plainball);
+      }
+      .plaingames-if(@num);
+      .number-loop(@num - 1);
     }
-    .number-loop(@num - 1);
+
+    .number-loop();
+    .plaingames-loop(@gameindex - 1);
   }
 
-  .number-loop();
-  .plaingames-loop(@gameindex - 1);
-}
-
-.plaingames-loop();
+  .plaingames-loop();
