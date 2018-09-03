@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="user.account_type">
-      <group title="请选择支付方式" v-show="$route.path==='/my/deposit'"  class="payment-types">
+      <group v-if="payees.length" title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="payment-types">
         <template v-for="(payeeGroup,payeeGroupIndex) in payees">
           <div v-if="payeeGroup.detail.length>1" :class="['sub-group', payeeGroup.folded?'folded': '']" :key="payeeGroupIndex">
             <cell
@@ -26,11 +26,22 @@
             :title="payeeGroup.display_name"
             :inline-desc="payeeGroup.client_description"
             :key="payeeGroupIndex"
-            @click.native="selectPayee(payeeGroup.detail[0]);toggleGroup(payeeGroup);">
+            @click.native="selectPayee(payeeGroup.detail[0]); toggleGroup(payeeGroup);">
             <div slot="icon" class="payee-icon" :style="{'background-image': `url(${payeeGroup.icon})`}"></div>
           </cell>
         </template>
       </group>
+      <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="skeletons">
+        <div class="row" v-for="i in 3" :key="i">
+          <div class="icon">
+            <rowSkeleton color="#ddd" height="100%" style="border-radius: 50%"></rowSkeleton>
+          </div>
+          <div class="bar">
+            <rowSkeleton color="#eee" height="18px" :seperatePoints="[skeletonBar[i - 1], 100]" highlight="#fff"></rowSkeleton>
+          </div>
+        </div>
+      </group>
+
       <router-view v-if="selectedPayee" :payee="selectedPayee"></router-view>
     </div>
     <div v-else class="unregistered-box">
@@ -87,6 +98,8 @@ import { getOnlinepayees, getRemitPayees } from '../../api'
 import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
 import urls from '../../api/urls'
+import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
+
 export default {
   name: 'Deposit',
   data () {
@@ -112,7 +125,8 @@ export default {
       inputErrors: [],
       warnMessage: '',
       showDialog: false,
-      dialogStyle
+      dialogStyle,
+      skeletonBar: [35, 30, 40, 20, 25]
     }
   },
   components: {
@@ -124,7 +138,8 @@ export default {
     Group,
     XInput,
     GroupTitle,
-    XDialog
+    XDialog,
+    rowSkeleton
   },
   directives: {
     TransferDom
@@ -479,5 +494,29 @@ export default {
   height: 32px;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.skeletons {
+  .row {
+    box-sizing: border-box;
+    width: 100%;
+    height: 42px;
+    padding: 5px 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .icon, .bar {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .bar {
+    width: 50%;
+  }
 }
 </style>

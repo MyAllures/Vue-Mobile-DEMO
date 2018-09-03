@@ -1,6 +1,9 @@
 <template>
   <div class="leaderbaord-container">
-    <div class="leaderbaord" v-if="listItems.length">
+    <div v-if="loading && firstFetch" class="text-center p-t-lg">
+      <InlineLoading></InlineLoading>
+    </div>
+    <div class="leaderbaord" v-else>
       <x-table full-bordered class="table">
         <thead>
           <tr>
@@ -21,18 +24,23 @@
         </x-table>
       <divider>{{$t('misc.nomore_data')}}</divider>
     </div>
-    <div class="no-data text-center" v-else>暂无排行榜</div>
   </div>
 </template>
 
 <script>
-import { Divider, XTable } from 'vux'
+import { Divider, XTable, InlineLoading } from 'vux'
 
 export default {
   name: 'Leaderboards',
   props: {
     listItems: {
       type: Array
+    },
+    loading: {
+      type: Boolean
+    },
+    firstFetch: {
+      type: Boolean
     }
   },
   filters: {
@@ -140,7 +148,7 @@ export default {
     }
   },
   components: {
-    Divider, XTable
+    Divider, XTable, InlineLoading
   }
 }
 </script>

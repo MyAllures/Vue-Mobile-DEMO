@@ -40,6 +40,9 @@
           </td>
         </tr>
       </tbody>
+      <tbody v-else-if="loading">
+        <tr class="no-data"></tr>
+      </tbody>
       <tbody v-else>
         <tr class="no-data">
           <td colspan="4">{{$t('misc.no_data_yet')}}</td>

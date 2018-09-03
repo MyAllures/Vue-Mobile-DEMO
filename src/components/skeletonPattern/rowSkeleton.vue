@@ -39,7 +39,7 @@ export default {
         // apply css rule
         this.seperatePoints.forEach((point, index) => {
           if (index % 2) {
-            let even = `, transparent ${point}%, ${this.color} ${point}%`
+            let even = `, rgba(0, 0, 0, 0) ${point}%, ${this.color} ${point}%`
             if ((index + 1) === this.seperatePoints.length) { // last
               str += even
               return
@@ -50,7 +50,7 @@ export default {
             if (index === 0) {
               str += `${this.color} 0, `
             }
-            str += `${this.color} ${point}%, transparent ${point}%`
+            str += `${this.color} ${point}%, rgba(0, 0, 0, 0) ${point}%`
           }
         })
 
@@ -60,7 +60,7 @@ export default {
       }
 
       if (this.highlight) {
-        let highlight = `linear-gradient( 100deg, transparent, ${this.highlight} 50%, transparent 80% ),`
+        let highlight = `linear-gradient(120deg, rgba(255,255,255,0) 10%, ${this.highlight} 30%, rgba(255,255,255,0) 50% ),`
         return `${highlight} ${backgroundImageStr}`
       } else {
         return backgroundImageStr
@@ -72,14 +72,14 @@ export default {
 
 <style lang="scss" scoped>
 .highlight {
-  background-position: 120% 0, 0 0;
+  background-position: 0 0, 0 0;
   background-size: 70% 100%, 100% 100%;
   animation: highlight 1s infinite;
 }
 @keyframes highlight {
   to {
     background-position:
-      0 0, 100% 0
+      100% 0, 0 0
   }
 }
 </style>

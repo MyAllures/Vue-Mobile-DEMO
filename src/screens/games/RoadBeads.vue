@@ -1,54 +1,57 @@
 <template>
-  <div class="roadbead-container">
-    <div class="aside" v-if="statistics.length > 0">
-      <ul :cols="1">
-        <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
-          <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
-        </li>
-      </ul>
+  <div class="container">
+    <div v-if="loading && firstFetch" class="text-center p-t-lg">
+      <InlineLoading></InlineLoading>
     </div>
-    <div :class="['statistics', {'full-width': statistics.length === 0}]">
-      <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
-        <tab v-if="currentHistoryTag.length"
-          bar-active-color="#156fd8"
-          :animate="false"
-          active-color="#156fd8" >
-          <tab-item v-for="(item, index) in  currentHistoryTag"
-            @on-item-click="changeActiveHistoryTag(item)"
-            :key="index"
-            :selected="item.key === activeHistoryTag">
-            <span :class="{'ellipsis': currentHistoryTag.length > 4}">{{item.key}}</span>
-          </tab-item>
-        </tab>
-      </div>
-      <div class="data-container">
-        <ul class="consolidation-grid">
-          <li class="item" v-for="num in currentTableSetting" :key="num">
-            <div class="number text-center">{{num | fullDigits}}</div>
-            <div class="result text-center" v-if="currentTab">{{currentTab[num] | fullDigits}}</div>
+    <div class="roadbead-container" v-else>
+      <div class="aside" v-if="statistics.length > 0">
+        <ul :cols="1">
+          <li class="category" v-for="(item, index) in statistics" :key="index" @click="changeActiveName(item)">
+            <span :class="['text', {'active' : item.label === activeName}]">{{item.label}}</span>
           </li>
         </ul>
-        <group title="累计次数">
-          <cell :title="item.key | typeFilter" v-for="(item, index) in cumulative" :key="index">
-            <div>
-              <span class="cumulative-number">{{item.value | fullDigits}}</span>
-            </div>
-          </cell>
-        </group>
-        <group>
-          <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex" class="item-cell">
-            <span v-for="(data, index) in datas" :key="index">{{data | typeFilter}} </span>
-          </cell>
-        </group>
       </div>
-
+      <div :class="['statistics', {'full-width': statistics.length === 0}]">
+        <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
+          <tab v-if="currentHistoryTag.length"
+            bar-active-color="#156fd8"
+            :animate="false"
+            active-color="#156fd8" >
+            <tab-item v-for="(item, index) in  currentHistoryTag"
+              @on-item-click="changeActiveHistoryTag(item)"
+              :key="index"
+              :selected="item.key === activeHistoryTag">
+              <span :class="{'ellipsis': currentHistoryTag.length > 4}">{{item.key}}</span>
+            </tab-item>
+          </tab>
+        </div>
+        <div class="data-container">
+          <ul class="consolidation-grid">
+            <li class="item" v-for="num in currentTableSetting" :key="num">
+              <div class="number text-center">{{num | fullDigits}}</div>
+              <div class="result text-center" v-if="currentTab">{{currentTab[num] | fullDigits}}</div>
+            </li>
+          </ul>
+          <group title="累计次数">
+            <cell :title="item.key | typeFilter" v-for="(item, index) in cumulative" :key="index">
+              <div>
+                <span class="cumulative-number">{{item.value | fullDigits}}</span>
+              </div>
+            </cell>
+          </group>
+          <group>
+            <cell v-for="(datas, groupIndex) in currentHistory" :key="groupIndex" class="item-cell">
+              <span v-for="(data, index) in datas" :key="index">{{data | typeFilter}} </span>
+            </cell>
+          </group>
+        </div>
+      </div>
     </div>
-
   </div>
 </template>
 
 <script>
-import { Group, Cell, Tab, TabItem, GridItem, Grid, Swiper, SwiperItem } from 'vux'
+import { Group, Cell, Tab, TabItem, GridItem, Grid, Swiper, SwiperItem, InlineLoading } from 'vux'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
 
@@ -60,6 +63,12 @@ export default {
     },
     resultStatistic: {
       type: Object
+    },
+    loading: {
+      type: Boolean
+    },
+    firstFetch: {
+      type: Boolean
     }
   },
   data () {
@@ -396,7 +405,7 @@ export default {
     deep: true
   },
   components: {
-    Group, Cell, Tab, TabItem, Grid, GridItem, Swiper, SwiperItem
+    Group, Cell, Tab, TabItem, Grid, GridItem, Swiper, SwiperItem, InlineLoading
   }
 }
 </script>
@@ -412,6 +421,9 @@ export default {
     @media (min-width: 481px) { @rules(); }
 }
 
+.container {
+  height: 100%;
+}
 
 .roadbead-container {
   display: inline-flex;
