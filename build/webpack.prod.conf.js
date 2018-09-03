@@ -12,6 +12,7 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const skeletons = require('./skeletons')
+const launchScreen = require('./launch')
 
 const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
@@ -68,6 +69,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       title: env.SITE_TITLE.replace(/\"/g, ''),
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
       inject: true,
       minify: {
         removeComments: true,
