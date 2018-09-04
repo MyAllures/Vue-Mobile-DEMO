@@ -44,7 +44,7 @@ export default {
   readMessage: apiv2 + '/message/read/',
   messages: apiv2 + '/messages/',
   unread: apiv2 + '/message/count/',
-  gamehistory: apiv2 + '/history/tmp/',
+  gamehistory: apiv2 + '/history/',
   statistic: apiv2 + '/statistic/',
   chatEmoji: apiChat + '/v1/emoji/',
   sendImgToChat: host + '/v1/manage/attachment/',
