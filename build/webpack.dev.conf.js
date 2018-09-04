@@ -10,7 +10,8 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
-
+const skeletons = require('./skeletons')
+const launchScreen = require('./launch')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -55,6 +56,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       host: process.env.HOST || '',
+      homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
       inject: true
     }),
     new AddAssetHtmlPlugin([{

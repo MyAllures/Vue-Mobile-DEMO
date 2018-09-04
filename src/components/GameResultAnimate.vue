@@ -1,11 +1,45 @@
 <template>
   <div :class="['balls-number', 'wrapper-' + gameCode]">
-    <template v-if="gameCode === 'hkl' || gameCode === 'luckl'">
+    <div class="balls-frame">
+      <div v-if="gameCode === 'jsk3'" class="jsk3-loading">
+        <div class="camera">
+          <div class="space space1">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
+        <div class="camera">
+          <div class="space space2">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
+        <div class="camera">
+          <div class="space space3">
+              <div class="dice dice1"></div>
+              <div class="dice dice2"></div>
+              <div class="dice dice3"></div>
+              <div class="dice dice4"></div>
+              <div class="dice dice5"></div>
+              <div class="dice dice6"></div>
+          </div>
+        </div>
+      </div>
       <div
-        :class="`result-${gameCode} view`"
-        v-for="(chunk, chunkIndex) in resultChunks.slice(0,-1)"
+        v-else
+        :class="getResultClass(chunk)"
+        v-for="(chunk, chunkIndex) in resultChunks"
         :key="chunkIndex">
-        <ul :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
+        <b v-if="chunk.type==='text'">{{chunk.data}}</b>
+        <ul v-else :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
           <li
             v-for="(num, index) in chunk"
             :key="index"
@@ -14,35 +48,6 @@
           </li>
         </ul>
       </div>
-      <div class="cross">＋</div>
-      <div
-        :class="`result-${gameCode} view`">
-        <ul :class="`${animate}-even`">
-          <li
-            v-for="(num, index) in resultChunks[resultChunks.length-1]"
-            :key="index"
-            :class="`result-${gameCode} resultnum-${num}`">
-            <b> {{num}} </b>
-          </li>
-        </ul>
-      </div>
-    </template>
-    <div v-else-if="gameCode === 'jsk3'">
-      <img class="jsk3-loading" :src="require('../assets/loading_dice.gif')" alt="dice">
-    </div>
-    <div
-      v-else
-      :class="`result-${gameCode} view`"
-      v-for="(chunk, chunkIndex) in resultChunks"
-      :key="chunkIndex">
-      <ul :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
-        <li
-          v-for="(num, index) in chunk"
-          :key="index"
-          :class="`result-${gameCode} resultnum-${num}`">
-          <b> {{num}} </b>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -81,17 +86,29 @@ export default {
   computed: {
     resultChunks () {
       const randomGenerator = randomGeneratorFactory(this.gameCode)
-      return this.resultNums.map(() => {
-        const arr = []
-        for (let i = 0; i < 4; i++) {
-          arr.push(randomGenerator())
+      return this.resultNums.map(num => {
+        if (num.type === 'text') {
+          return num
+        } else {
+          const arr = []
+          for (let i = 0; i < 4; i++) {
+            arr.push(randomGenerator())
+          }
+          arr.push(arr[0])
+          return arr
         }
-        arr.push(arr[0])
-        return arr
       })
     },
     animate () {
       return GameOnlyChange.includes(this.gameCode) ? 'step' : 'scroll'
+    }
+  },
+  methods: {
+    getResultClass (num) {
+      if (num.type === 'text') {
+        return ['text', 'view']
+      }
+      return [`result-${this.gameCode}`, 'view']
     }
   }
 }
@@ -105,14 +122,27 @@ export default {
   justify-content: center;
   text-align: center;
   height: 100%;
+  .balls-frame {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 265px;
+  }
 }
 .view {
-  display: inline-block;
   margin-right: 3px;
   background: none;
   overflow: hidden;
   border-radius: 0;
-  vertical-align: bottom;
+  &::before {
+    display: none;
+  }
+  &.text {
+    font-size: 12px;
+  }
   .scroll-odd {
     width: 100%;
     animation: 1s scrollUp linear infinite normal;
@@ -173,14 +203,95 @@ export default {
       transform: translateY(-80%);
   }
 }
-.cross {
-  display: inline-block;
-  margin-bottom: 10px;
-  height: 26px;
-  margin-left: -8px;
+.jsk3-loading {
+  display: flex;
+  height: 27px;
+}
+.camera{
+    width: 27px;
+    height: 27px;
+    perspective-origin:center center;
+    perspective:500px;
+    &:nth-child(2){
+      margin: 0 15px;
+    }
+}
+.space{
+    position:relative;
+    width: 27px;
+    height: 27px;
+    transform-style:preserve-3d;
+    transform-origin: 13px center -13px;
+}
+.space1 {
+  animation:roll .2s linear .1s infinite;
+}
+.space2 {
+  animation:roll2 .2s linear .2s infinite;
+}
+.space3 {
+  animation:roll3 .2s linear .3s infinite;
+}
+.dice {
+  position:absolute;
+  top: 0;
+  left: 0;
+  width: 27px;
+  height: 27px;
+  background-size: 27px 162px;
+  background-image: url("../assets/ball_4.png");
+  background-repeat:  no-repeat;
+}
+.dice1{
+    background-position: 0 0;
+}
+.dice2{
+    background-position: 0 (-27px * 1);
+    transform-origin:left top;
+    transform:translateX(26px) rotateY(90deg);
+}
+.dice3{
+    background-position: 0 (-27px * 2);
+    transform:translateZ(-26px) rotateY(180deg);
+}
+.dice4{
+    background-position: 0 (-27px * 3);
+    transform-origin:right top;
+    transform:translateX(-26px) rotateY(-90deg);
+}
+.dice5{
+    background-position: 0 (-27px * 4);
+    transform-origin:center bottom;
+    transform:translateY(-26px) rotateX(90deg);
+}
+.dice6{
+    background-position: 0 (-27px * 5);
+    transform-origin:center top;
+    transform:translateY(26px) rotateX(-90deg);
 }
 
-.jsk3-loading {
-  height: 35px;
+@keyframes roll{
+    0%{
+        transform:rotateY(0) rotateZ(30deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(30deg);
+    }
+}
+@keyframes roll2{
+    0%{
+        transform:rotateY(0) rotateZ(45deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(45deg);
+    }
+}
+@keyframes roll3{
+    0%{
+        transform:rotateY(0) rotateZ(60deg);
+    }
+    100%{
+        transform:rotateY(-359.9deg) rotateZ(60deg);
+    }
 }
 </style>

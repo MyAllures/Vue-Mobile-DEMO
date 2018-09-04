@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="tip">请前请先截屏并用{{payee.display_name}}扫描进行充值，再填写入款信息</div>
+    <div class="tip">请先截屏并用{{payee.display_name}}扫描进行充值，再填写入款信息</div>
     <div class="dot-title">
       <span class="dot"></span>
       请扫描二维码进行充值

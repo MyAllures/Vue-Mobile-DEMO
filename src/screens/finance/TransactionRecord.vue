@@ -33,6 +33,9 @@
           </td>
         </tr>
       </tbody>
+      <tbody v-else-if="loading">
+        <tr class="no-data"></tr>
+      </tbody>
       <tbody v-else>
         <tr class="no-data">
           <td colspan="4">{{$t('misc.no_data_yet')}}</td>
@@ -43,7 +46,7 @@
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
   <div v-else class="tip">
-    <p >请注册会员后访问</p>
+    <p>请注册会员后访问</p>
     <x-button type="primary" link="/register">立即注册</x-button>
   </div>
 </template>

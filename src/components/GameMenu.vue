@@ -114,7 +114,7 @@ export default {
   width: 100%;
 
   .grid-item.weui-grid {
-    padding: 0 0 10px 0;
+    padding: 0 0 5px 0;
     overflow: hidden;
     color: #333;
     .icon {
@@ -124,7 +124,7 @@ export default {
     }
     .name {
       font-size: 14px;
-      line-height: 20px;
+      line-height: 14px;
       white-space: pre;
     }
   }
@@ -136,8 +136,8 @@ export default {
   justify-content: center;
   align-items: flex-end;
   width: 100%;
-  height: 34px;
-  padding-bottom: 4px;
+  height: 30px;
+  padding-bottom: 3px;
   .game-label-text {
     display: inline-block;
     height: 20px;

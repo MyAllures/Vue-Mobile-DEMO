@@ -6,6 +6,7 @@
     <% if (htmlWebpackPlugin.options.host) { %>
       <link rel="preconnect" href="<%=htmlWebpackPlugin.options.host%>">
     <% } %>
+    <%= htmlWebpackPlugin.options.launchScreen.style %>
     <title><%= htmlWebpackPlugin.options.title%></title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script>
@@ -15,7 +16,10 @@
     </script>
   </head>
   <body>
+    <div id="skeleton"><%= htmlWebpackPlugin.options.homeSkeleton%></div>
     <div id="app"></div>
+    <%= htmlWebpackPlugin.options.launchScreen.html %>
+    <%= htmlWebpackPlugin.options.launchScreen.script %>
     <!-- built files will be auto injected -->
   </body>
 </html>
