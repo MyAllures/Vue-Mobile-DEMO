@@ -256,11 +256,6 @@ export default {
       return this.requiredField.every((feild) => user[feild])
     }
   },
-  watch: {
-    'user.hasAgree': function (hasAgree) {
-      this.validate(hasAgree, 'hasAgree')
-    }
-  },
   created () {
     this.fetchCaptcha()
   },
