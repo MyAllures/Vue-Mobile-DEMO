@@ -140,6 +140,7 @@ export default {
       if (this.loading || this.betRecords.length >= this.totalCount) {
         return
       }
+      this.loading = true
       fetchBetHistory({
         status: 'win,lose,tie,ongoing,cancelled,no_draw',
         bet_date: this.date,
