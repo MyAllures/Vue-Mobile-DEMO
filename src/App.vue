@@ -332,11 +332,13 @@ export default {
     'user.logined' (newStatus, old) {
       let token = this.$cookie.get('access_token')
       if (!newStatus) {
+        clearInterval(this.unreadInterval)
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
       } else {
         this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        this.pollUnread()
       }
     },
     '$route' (to, from) {
@@ -444,6 +446,15 @@ export default {
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
+    },
+    pollUnread () {
+      this.unreadInterval = setInterval(() => {
+        if (!this.$cookie.get('access_token')) {
+          clearInterval(this.unreadInterval)
+        } else if (this.user.account_type) {
+          this.$store.dispatch('fetchUnread').catch(() => {})
+        }
+      }, 11000)
     },
     closeChatRoom () {
       this.showChatRoom = false

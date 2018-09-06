@@ -41,12 +41,11 @@ export default {
   data () {
     return {
       messages: [],
-      limit: 10,
+      page: 0,
+      limit: 20,
       ended: false,
       loading: false,
-      skeletonBar: [30, 40, 25, 35, 30],
-      count: 0,
-      delta: 0
+      skeletonBar: [30, 40, 25, 35, 30]
     }
   },
   created () {
@@ -56,34 +55,27 @@ export default {
     read (message) {
       this.$set(message, 'showContent', !message.showContent)
       if (!message.status) {
-        readMessage(message.id).then((response) => {
+        readMessage(message).then((response) => {
           message.status = 1
+          this.$root.unread = this.$root.unread - 1 + ''
+          if (this.$root.unread <= 0) {
+            this.$root.unread = 0
+          }
         })
       }
     },
     getMessages () {
       this.loading = true
-      fetchMessages(this.limit, this.messages.length).then(res => {
-        this.count = res.count
-        this.messages = [...this.messages, ...res.results]
-        this.ended = (this.messages.length === this.count)
-        this.loading = false
-      })
-    },
-    updateUnreadMessages () {
-      this.loading = true
-      fetchMessages(this.delta, 0).then(res => {
-        this.messages.unshift(...res.results)
-        this.loading = false
-      })
-    }
-  },
-  watch: {
-    '$store.state.user.unread': function (val, oldVal) {
-      if (val > oldVal) {
-        this.delta = (val - oldVal)
-        this.updateUnreadMessages()
-      }
+      fetchMessages(this.limit, this.page)
+        .then(res => {
+          this.messages = this.page === 0 ? res.results : this.messages.concat(res.results)
+          if (this.messages.length === this.limit) {
+            this.page += 1
+          } else {
+            this.ended = true
+          }
+          this.loading = false
+        })
     }
   },
   components: {
