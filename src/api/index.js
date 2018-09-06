@@ -146,12 +146,16 @@ export function changeUserInformation (id, member) {
   return axios.put(urls.user + id + '/', member)
 }
 
-export function fetchMessages (limit, offset) {
-  return axios.get(urls.messages + `?limit=${limit}&offset=${offset}`)
+export function fetchMessages (limit, page) {
+  return axios.get(urls.messages + `?limit=${limit}&offset=${page * limit}`)
 }
 
-export function readMessage (messageId) {
-  return axios.post(urls.readMessage, {ids: [messageId]})
+export function readMessage (message) {
+  return axios.put(urls.messages + '' + message.id + '/')
+}
+
+export function fetchUnread () {
+  return axios.get(urls.unread)
 }
 
 export function onlinepaySuccess (transactionId) {
