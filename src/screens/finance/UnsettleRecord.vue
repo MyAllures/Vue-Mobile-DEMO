@@ -151,6 +151,7 @@ export default {
       if (this.loading || this.betRecords.length >= this.totalCount) {
         return
       }
+      this.loading = true
       fetchBetHistory({
         status: 'ongoing,cancelled,no_draw',
         offset: this.betRecords.length,
