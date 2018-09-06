@@ -43,6 +43,7 @@ export default {
   remit: apiv2 + '/remit_transaction/',
   readMessage: apiv2 + '/message/read/',
   messages: apiv2 + '/messages/',
+  unread: apiv2 + '/message/count/',
   gamehistory: apiv2 + '/history/tmp/',
   statistic: apiv2 + '/statistic/',
   chatEmoji: apiChat + '/v1/emoji/',
