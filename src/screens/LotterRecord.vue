@@ -18,7 +18,7 @@
           </p>
         </td>
         <td class="show-count">
-          <div v-if="schedule.result_status === 'valid' && schedule.result_category">
+          <div v-if="schedule.result_status === 'valid'">
             <div class="lottery-result"
               :class="{'luck-lottery': codeKl}"
               v-for="(num, index) in lotteryResult"
@@ -31,7 +31,8 @@
                       :class="[`lottery-${gameCode}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
               </span>
             </div>
-            <div v-if="!codeKl" class="compare-content">
+            <div v-if="!schedule.result_category" class="compare-content lottery-compare">暂无统计资料</div>
+            <div v-else-if="!codeKl" class="compare-content">
               <span class="lottery-compare"
                 v-for="(subHead, index) in lotteryCompare"
                 :key="'subHead' + index">
