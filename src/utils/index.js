@@ -107,7 +107,7 @@ const pattern = {
   username: /^[a-zA-Z0-9]{6,15}$/,
   password: /^[a-zA-Z0-9]{6,15}$/,
   qq: /^[0-9]{4,}$/,
-  phone: /^[1][3-8]\d{9}$/,
+  phone: /^[1][3-9]\d{9}$/,
   bankAccount: /^[0-9]{10,}$/,
   withdrawPassword: /^[0-9]{6}$/,
   amount: /^([0-9][0-9]*([.][0-9]{0,1})?)$/,
