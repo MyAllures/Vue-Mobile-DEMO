@@ -30,8 +30,11 @@ export default {
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
   },
-  [types.SET_UNREAD]: (state, { unread }) => {
-    state.user.unread = unread
+  [types.SET_UNREAD]: (state, count) => {
+    state.user.unread = count
+  },
+  [types.ADD_UNREAD]: (state, count) => {
+    state.user.unread += count
   },
   [types.SHOW_VERIFY_POPUP]: (state) => {
     state.showVerifyPopup = true
