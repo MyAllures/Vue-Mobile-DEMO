@@ -8,7 +8,6 @@ import {
   logout,
   fetchGames,
   fetchGamesDetail,
-  fetchUnread,
   fetchCategories,
   getPromotions
 } from '../../api'
@@ -101,12 +100,11 @@ export default {
       return Promise.resolve(res)
     })
   },
-  fetchUnread: ({ commit, state }) => {
-    return fetchUnread().then(res => {
-      commit(types.SET_UNREAD, {
-        unread: res.message_count
-      })
-    })
+  setUnread: ({commit}, count) => {
+    commit(types.SET_UNREAD, count)
+  },
+  addUnread: ({commit}, count) => {
+    commit(types.ADD_UNREAD, count)
   },
   fetchCategories: ({ commit, state }, gameId) => {
     return fetchCategories(gameId).then(res => {

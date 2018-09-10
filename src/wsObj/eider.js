@@ -47,6 +47,13 @@ function GhostSocketObj (token, callback) {
               type: 'sucess'
             })
             break
+          case 'message-count-initial':
+            store.dispatch('setUnread', data.count)
+            break
+          case 'message-count-delta':
+            store.dispatch('addUnread', data.delta)
+
+            break
         }
       } catch (e) {
         console.log(e, 'error')
