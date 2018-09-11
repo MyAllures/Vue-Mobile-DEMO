@@ -74,4 +74,16 @@ GhostSocketObj.prototype.closeConnect = function () {
   })
 }
 
+GhostSocketObj.prototype.checkLiving = function () {
+  this.ws.send(JSON.stringify({
+    'command': 'ping'
+  }))
+  if (this.ws.readyState !== 1) {
+    store.dispatch('setWs', {
+      ws: null,
+      type: 'eider'
+    })
+  }
+}
+
 export default GhostSocketObj
