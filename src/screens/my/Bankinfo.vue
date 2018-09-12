@@ -184,9 +184,6 @@ export default {
     submit () {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          // if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
-          //   return
-          // }
           const _this = this
           _this.$vux.confirm.show({
             content: _this.$t('profile.bankinfo_confirm'),
