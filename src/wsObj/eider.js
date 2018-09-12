@@ -2,8 +2,24 @@ import store from '../store'
 import urls from '../api/urls'
 import Vue from 'vue'
 
-function GhostSocketObj (token, callback) {
+let wsLivingCount = 0
+function GhostSocketObj (token) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
+
+  this.ws.onopen = (e) => {
+    this.checkWsLivingInterval = setInterval(() => {
+      if (wsLivingCount > 3) {
+        clearInterval(this.checkWsLivingInterval)
+      } else {
+        try {
+          this.ws.checkLiving()
+          wsLivingCount = 0
+        } catch (err) {
+          wsLivingCount += 1
+        }
+      }
+    }, 3000)
+  }
 
   this.ws.onclose = (e) => {
     store.dispatch('setWs', {
@@ -13,10 +29,7 @@ function GhostSocketObj (token, callback) {
   }
 
   this.ws.onerror = (e) => {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
+    reconnect()
   }
 
   this.ws.onmessage = (response) => {
@@ -38,6 +51,7 @@ function GhostSocketObj (token, callback) {
               store.commit('SHOW_WINNOTIFICATION')
             }
             break
+
           case 'balance-updated':
             store.dispatch('setUser', {
               balance: data.balance
@@ -47,13 +61,25 @@ function GhostSocketObj (token, callback) {
               type: 'sucess'
             })
             break
+
           case 'message-count-initial':
             store.dispatch('setUnread', data.count)
             break
+
           case 'message-count-delta':
             store.dispatch('addUnread', data.delta)
-
             break
+        }
+
+        if (data['ping']) {
+          this.ws.send(JSON.stringify({
+            'command': 'pong',
+            'key': data['ping']
+          }))
+        }
+
+        if (data['pong']) {
+          this.ws.lastCheckTime = Vue.moment()
         }
       } catch (e) {
         console.log(e, 'error')
@@ -63,26 +89,37 @@ function GhostSocketObj (token, callback) {
 }
 
 GhostSocketObj.prototype.closeConnect = function () {
-  this.ws.send(JSON.stringify({
-    'command': 'close'
-  }))
   store.commit('CLEAR_WINNOTIFICATION')
-  this.ws.close()
+  if (this.ws) {
+    this.ws.send(JSON.stringify({
+      'command': 'close'
+    }))
+    this.ws.close()
+  }
+  clearInterval(this.checkWsLivingInterval)
   store.dispatch('setWs', {
     ws: null,
     type: 'eider'
   })
 }
 
+const reconnect = () => {
+  let token = Vue.cookie.get('access_token')
+  this.ws = new GhostSocketObj(token)
+}
+
 GhostSocketObj.prototype.checkLiving = function () {
+  // backend has no response too long
+  if (this.ws.lastCheckTime && Vue.moment(this.ws.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
+    reconnect()
+  }
+
   this.ws.send(JSON.stringify({
     'command': 'ping'
   }))
+
   if (this.ws.readyState !== 1) {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
+    reconnect()
   }
 }
 
