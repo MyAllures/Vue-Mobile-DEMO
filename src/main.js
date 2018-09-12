@@ -14,7 +14,7 @@ import { sync } from 'vuex-router-sync'
 import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
-import { ToastPlugin } from 'vux'
+import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import icon from './utils/icon'
 import color from './styles'
@@ -56,6 +56,7 @@ Vue.use(Vue2Filters)
 Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
+Vue.use(ConfirmPlugin)
 Vue.use(VueLazyload, {
   error: require('./assets/error.png'),
   loading: require('./assets/loading.gif'),

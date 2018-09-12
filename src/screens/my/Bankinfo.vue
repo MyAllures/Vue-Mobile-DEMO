@@ -184,19 +184,22 @@ export default {
     submit () {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          if (!window.confirm(this.$t('profile.bankinfo_confirm'))) {
-            return
-          }
-          this.loading = true
-          addUserBank(this.user, this.member).then((response) => {
-            this.loading = false
-            this.$store.dispatch('fetchUser')
-            setTimeout(() => {
-              this.$router.push({name: 'My'})
-            }, 2000)
-          }).catch(errRes => {
-            this.errorMsg = msgFormatter(errRes)
-            this.loading = false
+          const _this = this
+          _this.$vux.confirm.show({
+            content: _this.$t('profile.bankinfo_confirm'),
+            onConfirm () {
+              _this.loading = true
+              addUserBank(_this.user, _this.member).then((response) => {
+                _this.loading = false
+                _this.$store.dispatch('fetchUser')
+                setTimeout(() => {
+                  _this.$router.push({name: 'My'})
+                }, 2000)
+              }).catch(errRes => {
+                _this.errorMsg = msgFormatter(errRes)
+                _this.loading = false
+              })
+            }
           })
         } else {
           return false
