@@ -73,9 +73,9 @@ export default {
       let viewL = this.$refs.view.scrollLeft
       let windowW = window.innerWidth
       if (targetL + targetW - viewL > windowW + 10) {
-        this.$refs.view.scrollLeft = viewL + targetL + targetW - windowW
+        this.$refs.view.scrollLeft = viewL + targetW
       } else if (targetR > viewL && targetL < viewL) {
-        this.$refs.view.scrollLeft = targetL
+        this.$refs.view.scrollLeft = targetL - targetW / 2
       }
       if (this.$route.name !== name) {
         this.sendGaEvent({

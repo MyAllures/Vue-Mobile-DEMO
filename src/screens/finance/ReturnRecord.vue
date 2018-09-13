@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$store.state.user.account_type">
+  <div v-if="$store.state.user.account_type" class="container">
     <div class="filter-area">
       <div class="icon"></div>
       <datetime class="filter" v-model="date"></datetime>
@@ -148,9 +148,11 @@ export default {
       })
     },
     '$route': function (to) {
-      this.selectedGame = [to.query.game]
-      this.date = to.query.date
-      this.initFetchReturnRecord(this.conditions)
+      if (to.name === 'ReturnRecord') {
+        this.selectedGame = [to.query.game]
+        this.date = to.query.date
+        this.initFetchReturnRecord(this.conditions)
+      }
     }
   },
   created () {
@@ -196,7 +198,7 @@ export default {
 @import '../../styles/vars.less';
 .filter-area {
   position: sticky;
-  top: 46px;
+  top: 0;
   z-index: 1;
   display: flex;
   box-sizing: border-box;
@@ -206,6 +208,7 @@ export default {
   border-bottom: 2px solid #eee;
   color: #666;
   font-size: 13px;
+  overflow: hidden;
   .icon {
     flex: 0 0 auto;
     box-sizing: border-box;
