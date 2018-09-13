@@ -107,6 +107,20 @@ export function fetchBetHistory (option) {
   return axios.get(url)
 }
 
+export function fetchReturnRecord (option) {
+  let url = `${urls.return_amount}?`
+  Object.keys(option).forEach(key => {
+    if (option[key]) {
+      if (key === 'date') {
+        url += `&start_date=${option[key]}&end_date=${option[key]}`
+      } else {
+        url += `&${key}=${option[key]}`
+      }
+    }
+  })
+  return axios.get(url)
+}
+
 export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
 }
