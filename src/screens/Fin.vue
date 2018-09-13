@@ -1,13 +1,15 @@
 <template>
   <div>
-    <div class="tab" v-if="tabs.length && $route.name !== 'DetailBetRecord'">
-      <div
-        v-for="(tab,index) in tabs"
-        :key="index"
-        :class="['tab-item', {selected: tab.name === activeTab}]"
-        :style="{width: Math.floor(100/tabs.length) + '%'}"
-        @click="switchTab(tab)">
-        <span class="tab-item-text">{{tab.label}}</span>
+    <div class="tab-view" v-if="tabs.length && $route.name !== 'DetailBetRecord'" ref="view">
+      <div class="tab">
+        <div
+          v-for="(tab,index) in tabs"
+          :key="index"
+          :class="['tab-item', {selected: tab.name === activeTab}]"
+          data-type="tab-item"
+          @click="switchTab($event, tab)">
+          <span class="tab-item-text">{{tab.label}}</span>
+        </div>
       </div>
     </div>
     <transition  name="component-fade" mode="out-in">
@@ -32,9 +34,17 @@ const tabs = [{
 }, {
   label: '优惠和红包',
   name: 'PromotionRecord'
+}, {
+  label: '反水纪录',
+  name: 'ReturnRecord'
 }]
 export default {
   name: 'Home',
+  components: {
+    Tab,
+    TabItem,
+    XButton
+  },
   computed: {
     tabs () {
       return this.$store.state.user.account_type === 0 ? [] : tabs
@@ -43,8 +53,30 @@ export default {
       return this.$route.name
     }
   },
+  mounted () {
+    let idx = tabs.findIndex(tab => tab.name === this.activeTab)
+    this.$refs.view.scrollLeft = window.innerWidth / 3.5 * idx
+  },
   methods: {
-    switchTab ({name, label}) {
+    switchTab (e, {name, label}) {
+      let target = e.target
+      while (target.dataset.type !== 'tab-item') {
+        if (target.nodeName === 'BODY') {
+          return
+        }
+        target = target.parentNode
+      }
+
+      let targetL = target.offsetLeft
+      let targetW = target.offsetWidth
+      let targetR = targetL + targetW
+      let viewL = this.$refs.view.scrollLeft
+      let windowW = window.innerWidth
+      if (targetL + targetW - viewL > windowW + 10) {
+        this.$refs.view.scrollLeft = viewL + targetL + targetW - windowW
+      } else if (targetR > viewL && targetL < viewL) {
+        this.$refs.view.scrollLeft = targetL
+      }
       if (this.$route.name !== name) {
         this.sendGaEvent({
           category: label,
@@ -53,11 +85,6 @@ export default {
         this.$router.push({name: name})
       }
     }
-  },
-  components: {
-    Tab,
-    TabItem,
-    XButton
   }
 }
 </script>
@@ -65,30 +92,34 @@ export default {
 <style lang="less" scoped>
 @import '../styles/vars.less';
 
-.tab {
+.tab-view {
   box-sizing: border-box;
   width: 100%;
   height: 44px;
-  padding: 8px 0;
   background: #166fd8;
   text-align: center;
+  overflow-x: scroll;
   font-size: 14px;
   @media screen and (max-width: 320px) {
     font-size: 12px;
   }
-  .tab-item {
-    display: inline-block;
-    height: 28px;
-    line-height: 28px;
-    color: rgba(255, 255, 255, 0.8);
-    &.selected{
-      .tab-item-text {
-        display: inline-block;
-        height: 28px;
-        background: #fff;
-        border-radius: 14px;
-        padding: 0 8px;
-        color: #166fd8;
+  .tab {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 44px;
+    .tab-item {
+      flex: 0 0 auto;
+      height: 44px;
+      line-height: 44px;
+      width: 100/3.5vw;
+      color: rgba(255, 255, 255, 0.8);
+      &.selected{
+        .tab-item-text {
+          background: #fff;
+          border-radius: 14px;
+          padding: 7px 8px;
+          color: #166fd8;
+        }
       }
     }
   }

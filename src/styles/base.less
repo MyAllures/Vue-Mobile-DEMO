@@ -417,3 +417,26 @@ body .vux-header {
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+.filter.vux-datetime.weui-cell.weui-cell_access {
+  .weui-cell__ft {
+    width: 100px;
+    text-align: left;
+    color: #666;
+    padding: 0;
+    &::after {
+      display: none;
+    }
+  }
+}
+.filter.vux-cell-box {
+  .weui-cell.vux-tap-active.weui-cell_access{
+    display: flex;
+    flex: 1;
+    width: 100px;
+    padding: 0;
+    .weui-cell__ft {
+      display: none;
+    }
+  }
+}
