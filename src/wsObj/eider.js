@@ -7,6 +7,7 @@ function GhostSocketObj (token) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
 
   this.ws.onopen = (e) => {
+    clearInterval(this.checkWsLivingInterval)
     this.checkWsLivingInterval = setInterval(() => {
       if (wsLivingCount > 3) {
         clearInterval(this.checkWsLivingInterval)
@@ -94,7 +95,7 @@ GhostSocketObj.prototype.closeConnect = function () {
 
 const reconnect = (socketObj) => {
   let token = Vue.cookie.get('access_token')
-  socketObj.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
+  socketObj.ws = new GhostSocketObj(token).ws
 }
 
 GhostSocketObj.prototype.checkLiving = function () {
