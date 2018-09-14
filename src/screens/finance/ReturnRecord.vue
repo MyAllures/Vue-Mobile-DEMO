@@ -72,7 +72,7 @@ import infiniteScroll from 'vue-infinite-scroll'
 const today = Vue.moment().format('YYYY-MM-DD')
 const DateFormat = Vue.extend({
   render: function (createElement) {
-    const timeFormat = this.$moment(this.time).format('YYYY-MM-DD HH:mm:ss').split(' ')
+    const timeFormat = this.$moment(this.time).format('YYYY-MM-DD HH:mm').split(' ')
     return createElement('div', {class: 'time'}, [createElement('div', timeFormat[0]), createElement('div', timeFormat[1])])
   },
   props: {
