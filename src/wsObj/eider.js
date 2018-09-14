@@ -4,6 +4,10 @@ import Vue from 'vue'
 
 let wsLivingCount = 0
 function GhostSocketObj (token) {
+  this.initWs(token)
+}
+
+GhostSocketObj.prototype.initWs = function (token) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
 
   this.ws.onopen = (e) => {
@@ -93,19 +97,21 @@ GhostSocketObj.prototype.closeConnect = function () {
   })
 }
 
-const reconnect = (socketObj) => {
+GhostSocketObj.prototype.reconnect = function () {
+  clearInterval(this.checkWsLivingInterval)
+
   let token = Vue.cookie.get('access_token')
-  socketObj.ws = new GhostSocketObj(token).ws
+  if (token) this.initWs(token)
 }
 
 GhostSocketObj.prototype.checkLiving = function () {
   // backend has no response too long
   if (this.lastCheckTime && Vue.moment(this.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
-    reconnect(this)
+    this.reconnect()
     return
   }
   if (this.ws.readyState !== 1) {
-    reconnect(this)
+    this.reconnect()
     return
   }
   this.ws.send(JSON.stringify({
