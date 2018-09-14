@@ -7,6 +7,7 @@ function GhostSocketObj (token) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
 
   this.ws.onopen = (e) => {
+    clearInterval(this.checkWsLivingInterval)
     this.checkWsLivingInterval = setInterval(() => {
       if (wsLivingCount > 3) {
         clearInterval(this.checkWsLivingInterval)
