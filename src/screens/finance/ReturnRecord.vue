@@ -31,7 +31,7 @@
         <tr
           v-for="(record, index) in records" :key="index">
           <td :style="{'line-height':'20px'}">
-            <date-format :time="record.date"/>
+            <date-format :record="record"/>
           </td>
           <td>
             <span>{{record.display_name}}</span>
@@ -72,12 +72,17 @@ import infiniteScroll from 'vue-infinite-scroll'
 const today = Vue.moment().format('YYYY-MM-DD')
 const DateFormat = Vue.extend({
   render: function (createElement) {
-    const timeFormat = this.$moment(this.time).format('YYYY-MM-DD HH:mm').split(' ')
-    return createElement('div', {class: 'time'}, [createElement('div', timeFormat[0]), createElement('div', timeFormat[1])])
+    if (this.record.finish_return_amount) {
+      let timeFormat = this.$moment(this.record.created_at).format('YYYY-MM-DD HH:mm').split(' ')
+      return createElement('div', {class: 'time'}, [createElement('div', timeFormat[0]), createElement('div', timeFormat[1])])
+    } else {
+      let timeFormat = this.$moment(this.record.date).format('YYYY-MM-DD')
+      return createElement('div', {class: 'time'}, [createElement('div', timeFormat)])
+    }
   },
   props: {
-    time: {
-      type: String,
+    record: {
+      type: Object,
       required: true
     }
   }
