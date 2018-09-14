@@ -12,24 +12,13 @@ function GhostSocketObj (token) {
         clearInterval(this.checkWsLivingInterval)
       } else {
         try {
-          this.ws.checkLiving()
+          this.checkLiving()
           wsLivingCount = 0
         } catch (err) {
           wsLivingCount += 1
         }
       }
     }, 3000)
-  }
-
-  this.ws.onclose = (e) => {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
-  }
-
-  this.ws.onerror = (e) => {
-    reconnect()
   }
 
   this.ws.onmessage = (response) => {
@@ -79,7 +68,7 @@ function GhostSocketObj (token) {
         }
 
         if (data['pong']) {
-          this.ws.lastCheckTime = Vue.moment()
+          this.lastCheckTime = Vue.moment()
         }
       } catch (e) {
         console.log(e, 'error')
@@ -103,24 +92,24 @@ GhostSocketObj.prototype.closeConnect = function () {
   })
 }
 
-const reconnect = () => {
+const reconnect = (socketObj) => {
   let token = Vue.cookie.get('access_token')
-  this.ws = new GhostSocketObj(token)
+  socketObj.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
 }
 
 GhostSocketObj.prototype.checkLiving = function () {
   // backend has no response too long
-  if (this.ws.lastCheckTime && Vue.moment(this.ws.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
-    reconnect()
+  if (this.lastCheckTime && Vue.moment(this.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
+    reconnect(this)
+    return
   }
-
+  if (this.ws.readyState !== 1) {
+    reconnect(this)
+    return
+  }
   this.ws.send(JSON.stringify({
     'command': 'ping'
   }))
-
-  if (this.ws.readyState !== 1) {
-    reconnect()
-  }
 }
 
 export default GhostSocketObj
