@@ -34,6 +34,7 @@
               <v-input
                 type="password"
                 autocapitalize="off"
+                autocomplete="new-password"
                 v-model="withdraw.withdraw_password">
               </v-input>
             </v-form-item>

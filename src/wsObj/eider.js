@@ -85,9 +85,11 @@ GhostSocketObj.prototype.initWs = function (token) {
 GhostSocketObj.prototype.closeConnect = function () {
   store.commit('CLEAR_WINNOTIFICATION')
   if (this.ws) {
-    this.ws.send(JSON.stringify({
-      'command': 'close'
-    }))
+    if (this.ws.readyState === 1) { // 若連線已建立才返回訊息
+      this.ws.send(JSON.stringify({
+        'command': 'close'
+      }))
+    }
     this.ws.close()
   }
   clearInterval(this.checkWsLivingInterval)
