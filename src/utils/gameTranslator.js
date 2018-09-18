@@ -193,6 +193,7 @@ export default {
   'bcr': transformerTranslator,
   'mlaft': transformerTranslator,
   'er75ft': transformerTranslator,
+  'cs60cr': transformerTranslator,
   'cqssc': ssTranslator,
   'jsssc': ssTranslator,
   'csffc': ssTranslator,
