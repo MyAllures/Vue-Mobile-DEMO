@@ -35,7 +35,7 @@
         <x-button type="primary"
                   action-type ="button"
                   :show-loading="loading"
-                  :disabled="!valid"
+                  :disabled="!valid||loading"
                   @click.native="submit">{{$t('misc.login')}}
         </x-button>
         <flexbox class="m-t text-buttons">
@@ -127,7 +127,6 @@ export default {
               category: '会员登入',
               action: '登入'
             })
-            this.$store.dispatch('fetchUser')
             this.illegalTriedLogin = false
             this.error = ''
             this.loading = false

@@ -41,6 +41,7 @@ const er75ft = (resolve) => require(['@/screens/games/rules/er75ft'], resolve)
 const auluck8 = (resolve) => require(['@/screens/games/rules/auluck8'], resolve)
 const jnd28 = (resolve) => require(['@/screens/games/rules/jnd28'], resolve)
 const fc3d = (resolve) => require(['@/screens/games/rules/fc3d'], resolve)
+const cs60cr = (resolve) => require(['@/screens/games/rules/cs60cr'], resolve)
 const GameStatistic = (resolve) => require(['@/screens/games/GameStatistic'], resolve)
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 
@@ -107,6 +108,7 @@ export default {
     auluck8,
     jnd28,
     fc3d,
+    cs60cr,
     GameStatistic,
     LotterRecord,
     Datetime,

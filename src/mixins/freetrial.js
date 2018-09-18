@@ -28,8 +28,6 @@ export default {
             })
             this.$router.push({name: 'Home'})
           })
-      }).then(result => {
-        this.$store.dispatch('fetchUser')
       }).catch(errorMsg => {
         if (errorMsg) {
           this.$vux.toast.show({
