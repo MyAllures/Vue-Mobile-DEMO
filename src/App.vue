@@ -215,9 +215,7 @@ export default {
       refreshTokenTimer: null,
       noBackRoute: !window.history.state,
       indicator: null,
-      tabbarHidden: true,
-      checkWsLivingInterval: null,
-      wsLivingCount: 0
+      tabbarHidden: true
     }
   },
   mixins: [freetrial],
@@ -334,26 +332,11 @@ export default {
     'user.logined' (newStatus, old) {
       let token = this.$cookie.get('access_token')
       if (!newStatus) {
-        clearInterval(this.checkWsLivingInterval)
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
       } else {
-        this.checkWsLivingInterval = setInterval(() => {
-          if (this.wsLivingCount > 3) {
-            clearInterval(this.checkWsLivingInterval)
-          }
-          if (this.ws.eider) {
-            this.ws.eider.checkLiving()
-          } else {
-            try {
-              this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
-              this.wsLivingCount = 0
-            } catch (e) {
-              this.wsLivingCount += 1
-            }
-          }
-        }, 3000)
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
       }
     },
     '$route' (to, from) {
@@ -511,7 +494,6 @@ export default {
     })
   },
   beforeDestroy () {
-    clearInterval(this.checkWsLivingInterval)
     window.clearTimeout(this.refreshTokenTimer)
   }
 }

@@ -109,6 +109,16 @@ export default new Router({
           component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
         },
         {
+          path: 'return_record',
+          name: 'ReturnRecord',
+          meta: {
+            title: '财务纪录',
+            gaTitle: '反水纪录',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/ReturnRecord.vue'], resolve) }
+        },
+        {
           path: 'bet_record/:date',
           name: 'DetailBetRecord',
           meta: {

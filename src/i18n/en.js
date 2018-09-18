@@ -63,7 +63,9 @@ export default {
     expected_win: 'Expected',
     issue_number: 'Issue',
     play: 'Play',
-    amount: 'Amount'
+    amount: 'Amount',
+    game: 'Game',
+    accumulation: 'Accumulation'
   },
   my: {
     select: 'Select',

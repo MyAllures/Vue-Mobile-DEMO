@@ -2,21 +2,28 @@ import store from '../store'
 import urls from '../api/urls'
 import Vue from 'vue'
 
-function GhostSocketObj (token, callback) {
+let wsLivingCount = 0
+function GhostSocketObj (token) {
+  this.initWs(token)
+}
+
+GhostSocketObj.prototype.initWs = function (token) {
   this.ws = new WebSocket(`${urls.wsEiderHost}/ws?token=${token}`)
 
-  this.ws.onclose = (e) => {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
-  }
-
-  this.ws.onerror = (e) => {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
+  this.ws.onopen = (e) => {
+    clearInterval(this.checkWsLivingInterval)
+    this.checkWsLivingInterval = setInterval(() => {
+      if (wsLivingCount > 3) {
+        clearInterval(this.checkWsLivingInterval)
+      } else {
+        try {
+          this.checkLiving()
+          wsLivingCount = 0
+        } catch (err) {
+          wsLivingCount += 1
+        }
+      }
+    }, 3000)
   }
 
   this.ws.onmessage = (response) => {
@@ -38,6 +45,7 @@ function GhostSocketObj (token, callback) {
               store.commit('SHOW_WINNOTIFICATION')
             }
             break
+
           case 'balance-updated':
             store.dispatch('setUser', {
               balance: data.balance
@@ -47,13 +55,25 @@ function GhostSocketObj (token, callback) {
               type: 'sucess'
             })
             break
+
           case 'message-count-initial':
             store.dispatch('setUnread', data.count)
             break
+
           case 'message-count-delta':
             store.dispatch('addUnread', data.delta)
-
             break
+        }
+
+        if (data['ping']) {
+          this.ws.send(JSON.stringify({
+            'command': 'pong',
+            'key': data['ping']
+          }))
+        }
+
+        if (data['pong']) {
+          this.lastCheckTime = Vue.moment()
         }
       } catch (e) {
         console.log(e, 'error')
@@ -63,27 +83,40 @@ function GhostSocketObj (token, callback) {
 }
 
 GhostSocketObj.prototype.closeConnect = function () {
-  this.ws.send(JSON.stringify({
-    'command': 'close'
-  }))
   store.commit('CLEAR_WINNOTIFICATION')
-  this.ws.close()
+  if (this.ws) {
+    this.ws.send(JSON.stringify({
+      'command': 'close'
+    }))
+    this.ws.close()
+  }
+  clearInterval(this.checkWsLivingInterval)
   store.dispatch('setWs', {
     ws: null,
     type: 'eider'
   })
 }
 
+GhostSocketObj.prototype.reconnect = function () {
+  clearInterval(this.checkWsLivingInterval)
+
+  let token = Vue.cookie.get('access_token')
+  if (token) this.initWs(token)
+}
+
 GhostSocketObj.prototype.checkLiving = function () {
+  // backend has no response too long
+  if (this.lastCheckTime && Vue.moment(this.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
+    this.reconnect()
+    return
+  }
+  if (this.ws.readyState !== 1) {
+    this.reconnect()
+    return
+  }
   this.ws.send(JSON.stringify({
     'command': 'ping'
   }))
-  if (this.ws.readyState !== 1) {
-    store.dispatch('setWs', {
-      ws: null,
-      type: 'eider'
-    })
-  }
 }
 
 export default GhostSocketObj

@@ -64,7 +64,9 @@ export default {
     expected_win: '可赢',
     issue_number: '期号',
     play: '玩法',
-    amount: '注额'
+    amount: '注额',
+    game: '游戏',
+    accumulation: '金额累计'
   },
   my: {
     select: '请选择',
