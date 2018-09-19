@@ -520,6 +520,10 @@ export default {
         table: TransformerTable
       },
       {
+        code: 'cs60cr',
+        table: TransformerTable
+      },
+      {
         code: 'bcr',
         table: TransformerTable
       },
@@ -910,6 +914,7 @@ export default {
   jspk10 10,
   bcr 10 ,
   mlaft 10,
+  cs60cr 10,
   er75ft 10;
 
 .racinggames-loop(@gameindex: length(@racinggames)) when (@gameindex > 0) {
