@@ -72,6 +72,7 @@
 <script>
 import _ from 'lodash'
 import { Grid, GridItem, Tab, TabItem } from 'vux'
+import { customPlayGroups } from '../../config'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
 const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
@@ -147,21 +148,22 @@ export default {
     customPlayGroupsSetting () {
       let currentPlayGroup = _.find(this.categories, item => item.id + '' === this.$route.params.categoryId)
       let playGroupCode = currentPlayGroup.code
-      return _.find(this.$store.state.customPlayGroups, item => (item.id + '') === playGroupCode)
+      return _.find(customPlayGroups, item => item.code.includes(playGroupCode))
     },
     categories () {
       return this.$store.state.categories[this.$route.params.gameId] || []
     },
+    currentCategory () {
+      const categories = this.$store.state.categories[this.$route.params.gameId]
+      if (!categories || categories.length === 0) {
+        return undefined
+      }
+      const categoryId = this.$route.params.categoryId
+      return _.find(categories, item => (item.id + '') === categoryId)
+    },
     zodiacMap () {
-      if (!this.categories || this.categories.length === 0) {
-        return null
-      } else {
-        for (let i = 0, len = this.categories.length; i < len; i++) {
-          const category = this.categories[i]
-          if (category.extra_info) {
-            return category.extra_info.shaw
-          }
-        }
+      if (this.currentCategory.extra_info) {
+        return this.currentCategory.extra_info.shaw
       }
       return null
     }
@@ -189,13 +191,13 @@ export default {
         }
       })
     },
-    'categories': function (categories) {
-      this.initPlayAndGroups(categories)
+    'currentCategory': function (currentCategory) {
+      this.initPlayAndGroups(currentCategory)
     }
   },
   created () {
-    if (this.categories.length > 0) {
-      this.initPlayAndGroups(this.categories)
+    if (this.currentCategory) {
+      this.initPlayAndGroups(this.currentCategory)
     }
   },
   methods: {
@@ -251,9 +253,7 @@ export default {
       this.$set(play, 'combinations', [])
       this.$set(play, 'activedOptions', [])
     },
-    initPlayAndGroups (categories) {
-      const categoryId = this.$route.params.categoryId
-      const currentCategory = _.find(categories, item => (item.id + '') === categoryId)
+    initPlayAndGroups (currentCategory) {
       if (!currentCategory) {
         return
       }

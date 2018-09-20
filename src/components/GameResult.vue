@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + result.game_code]" v-if="result && !loading">
+    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !loading">
       <div class="balls-frame">
         <div v-if="result.status!=='valid'">官方开奖无效</div>
         <div
@@ -21,6 +21,7 @@
 <script>
 import GameResultAnimate from './GameResultAnimate'
 import _ from 'lodash'
+import {HKL_GAMES} from '../config'
 
 export default {
   props: {
@@ -31,6 +32,12 @@ export default {
     GameResultAnimate
   },
   computed: {
+    gameType () {
+      if (HKL_GAMES.includes(this.result.game_code)) {
+        return 'hkl'
+      }
+      return this.result.game_code
+    },
     resultNums () {
       if (!this.result.result_str) {
         return this.$t('navMenu.no_result')
@@ -47,7 +54,7 @@ export default {
         }
         formattedNums.push({type: 'num', data: rawBall})
       })
-      if (this.result.game_code === 'luckl' || this.result.game_code === 'hkl') {
+      if (this.gameType === 'hkl') {
         formattedNums.splice(6, 0, {type: 'text', data: '＋'})
       } else if (this.result.game_code === 'pcdd' || this.result.game_code === 'jnd28' || this.result.game_code === 'luckdd') {
         formattedNums.push({type: 'text', data: '总和'})
@@ -131,9 +138,6 @@ export default {
     font-size: 12px;
   }
   .wrapper-hkl .ball{
-    margin-bottom: 10px;
-  }
-  .wrapper-luckl .ball{
     margin-bottom: 10px;
   }
 }
