@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'hkl', 'luckl', 'jsk3']
+const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'hkl', 'luckl', 'jsk3', 'cs60cr']
 const rand1to10 = ['jspk10', 'bcr', 'mlaft', 'er75ft']
 const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'csffc']
 const rand1to11 = ['gd11x5']
