@@ -50,10 +50,12 @@ GhostSocketObj.prototype.initWs = function (token) {
             store.dispatch('setUser', {
               balance: data.balance
             })
-            Vue.$vux.toast.show({
-              text: '余额已更新',
-              type: 'sucess'
-            })
+            if (data.to_display) {
+              Vue.$vux.toast.show({
+                text: '余额已更新',
+                type: 'sucess'
+              })
+            }
             break
 
           case 'message-count-initial':
