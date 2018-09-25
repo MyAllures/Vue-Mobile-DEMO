@@ -25,10 +25,10 @@
               :key="'lotteryResult' + index">
               <span v-for="(loteryData, lotteryIndex) in (schedule[num.key1]).split(',')"
               :key="'lotteryIndex' + lotteryIndex">
-                <span v-if='gameCode != "bjkl8" && gameCode != "auluck8"'
-                      :class="`lottery-${gameCode}-${~~loteryData}`">{{~~loteryData}}</span>
-                <span v-if='gameCode === "bjkl8" || gameCode === "auluck8"'
-                      :class="[`lottery-${gameCode}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
+                <span v-if='gameType !== "bjkl8" && gameType !== "auluck8"'
+                      :class="`lottery-${gameType}-${~~loteryData}`">{{~~loteryData}}</span>
+                <span v-if='gameType === "bjkl8" || gameType === "auluck8"'
+                      :class="[`lottery-${gameType}-${~~loteryData}`, 'bjkl-class']">{{~~loteryData}}</span>
               </span>
             </div>
             <div v-if="!schedule.result_category" class="compare-content lottery-compare">暂无统计资料</div>
@@ -70,6 +70,7 @@
 <script>
 import { XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box, InlineLoading } from 'vux'
 import { getGameHistoryData } from '../api'
+import {HKL_GAMES} from '../config'
 import _ from 'lodash'
 
 export default {
@@ -596,10 +597,6 @@ export default {
         table: hklTable
       },
       {
-        code: 'luckl',
-        table: hklTable
-      },
-      {
         code: 'fc3d',
         table: fc3dTable
       }
@@ -693,6 +690,14 @@ export default {
   created () {
     this.initRecords()
   },
+  computed: {
+    gameType () {
+      if (HKL_GAMES.includes(this.gameCode)) {
+        return 'hkl'
+      }
+      return this.gameCode
+    }
+  },
   watch: {
     'currentGame': function () {
       this.initRecords()
@@ -722,7 +727,7 @@ export default {
         time: this.date
       }
       this.nowGameTable = _.find(this.gameTable, item => {
-        return item.code === this.gameCode
+        return item.code === this.gameType
       })
 
       if (!this.nowGameTable || !this.nowGameTable.table) {
@@ -736,7 +741,7 @@ export default {
         this.codeKl = false
         this.records = response
 
-        if (this.gameCode === 'auluck8' || this.gameCode === 'bjkl8') {
+        if (this.gameType === 'auluck8' || this.gameType === 'bjkl8') {
           this.codeKl = true
         }
 
@@ -744,7 +749,7 @@ export default {
         this.lotteryTime = this.nowGameTable.table[1].subTime
         this.lotteryResult = this.nowGameTable.table[2].resultNum
 
-        if (this.gameCode !== 'auluck8' || this.gameCode !== 'bjkl8') {
+        if (this.gameType !== 'auluck8' || this.gameType !== 'bjkl8') {
           this.lotteryCompare = this.nowGameTable.table[3].subHeads
         }
 
@@ -1021,7 +1026,6 @@ export default {
 }
 
 .hkl-if(@i) when (@i < 10) {
-    .luckl-0@{i},
     .hkl-0@{i} {
       &:extend(.hk6ball);
       background-position: 0 (-28px * (@i - 1));;
@@ -1031,7 +1035,6 @@ export default {
 .hk6-loop(@i) when (@i < 50) {
   .hk6-loop(@i + 1);
   .hkl-if(@i);
-  .lottery-luckl-@{i},
   .lottery-hkl-@{i} {
     &:extend(.hk6ball);
     background-position: 0 (-28px * (@i - 1));;
