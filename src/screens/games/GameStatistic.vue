@@ -3,14 +3,14 @@
     <div class="wrapper" v-if="contentType === 'roadbeads' && gameCode">
       <road-beads :loading="loading"
         :firstFetch="firstFetch"
-        v-if="!noRoadBeadGames.includes(gameCode)"
+        v-if="!noRoadBeadGames.includes(gameType)"
         :gameCode="gameCode"
         :resultStatistic="resultStatistic">
       </road-beads>
       <p v-else class="no-data text-center">暂无路珠统计</p>
     </div>
     <div class="wrapper" v-if="contentType === 'leaderboard' && gameCode">
-      <leaderboards v-if="!noLeaderBoardGames.includes(gameCode)"
+      <leaderboards v-if="!noLeaderBoardGames.includes(gameType)"
         :loading="loading"
         :firstFetch="firstFetch"
         :listItems="leaderboard">
@@ -26,7 +26,8 @@ import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
-const noRoadBeadGames = ['fc3d', 'hkl', 'luckl']
+import {HKL_GAMES} from '../../config'
+const noRoadBeadGames = ['fc3d', 'hkl']
 const noLeaderBoardGames = []
 
 export default {
@@ -72,7 +73,7 @@ export default {
           this.loading = false
           return
         }
-        const translator = gameTranslator[code]
+        const translator = gameTranslator[this.gameType]
         const frequencyStats = result.frequency_stats
         const keys = Object.keys(frequencyStats)
         const statistic = []
@@ -129,6 +130,12 @@ export default {
       return this.leaderboardData.sort((a, b) => {
         return b.num - a.num
       })
+    },
+    gameType () {
+      if (HKL_GAMES.includes(this.gameCode)) {
+        return 'hkl'
+      }
+      return this.gameCode
     }
   },
   watch: {

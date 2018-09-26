@@ -33,6 +33,7 @@ const pcdd = (resolve) => require(['@/screens/games/rules/pcdd'], resolve)
 const luckdd = (resolve) => require(['@/screens/games/rules/luckdd'], resolve)
 const hkl = (resolve) => require(['@/screens/games/rules/hkl'], resolve)
 const luckl = (resolve) => require(['@/screens/games/rules/luckl'], resolve)
+const cshkl = (resolve) => require(['@/screens/games/rules/cshkl'], resolve)
 const xjssc = (resolve) => require(['@/screens/games/rules/xjssc'], resolve)
 const tjssc = (resolve) => require(['@/screens/games/rules/tjssc'], resolve)
 const csffc = (resolve) => require(['@/screens/games/rules/csffc'], resolve)
@@ -100,6 +101,7 @@ export default {
     luckdd,
     hkl,
     luckl,
+    cshkl,
     xjssc,
     tjssc,
     csffc,

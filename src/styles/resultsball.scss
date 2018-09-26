@@ -80,6 +80,7 @@ $racing_length: length($results_racing);
   }
 }
 
+.result-cshkl,
 .result-luckl,
 .result-hkl {
   background: url("../assets/ball_hk6.png") no-repeat;
@@ -107,6 +108,7 @@ $racing_length: length($results_racing);
 }
 
 @media screen and (max-width: 320px) {
+  .result-cshkl,
   .result-luckl,
   .result-hkl {
     background-size: 24px 1176px;
