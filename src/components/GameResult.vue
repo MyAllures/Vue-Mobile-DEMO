@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !loading">
+    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading">
       <div class="balls-frame">
         <div v-if="result.status!=='valid'">官方开奖无效</div>
         <div
@@ -25,8 +25,7 @@ import {HKL_GAMES} from '../config'
 
 export default {
   props: {
-    result: Object,
-    loading: Boolean
+    result: Object
   },
   components: {
     GameResultAnimate
@@ -65,7 +64,13 @@ export default {
     },
     resultZodiac () {
       if (this.result.zodiac) {
-        const arr = this.result.zodiac.slice()
+        let arr
+        if (typeof (this.result.zodiac) === 'string') {
+          arr = this.result.zodiac.split(',')
+        } else {
+          arr = this.result.zodiac.slice()
+        }
+
         arr.splice(6, 0, '＋')
         return arr
       } else {

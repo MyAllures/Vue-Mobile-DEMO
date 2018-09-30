@@ -151,5 +151,11 @@ export default {
   },
   [types.SET_PROMOTION]: (state, promotions) => {
     state.promotions = promotions
+  },
+  [types.INIT_LATEST_RESULT_MAP]: (state, latestResultMap) => {
+    state.latestResultMap = latestResultMap
+  },
+  [types.UPDATE_LATEST_RESULT_MAP]: (state, {gameCode, latestResult}) => {
+    state.latestResultMap[gameCode] = latestResult
   }
 }
