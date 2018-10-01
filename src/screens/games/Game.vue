@@ -2,7 +2,7 @@
   <div class="game">
     <div class="data-section">
       <div class="wrapper">
-        <GameResult v-if="result" :result="result" :loading="resultLoading"/>
+        <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
           <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
@@ -112,11 +112,7 @@ export default {
       schedule: {
         id: null
       },
-      result: null,
       scheduleInterval: '',
-      resultTimer: null,
-      resultInterval: null,
-      resultLoading: false,
       closeCountDown: null,
       resultCountDown: null,
       currentPlays: [],
@@ -139,6 +135,11 @@ export default {
     }
   },
   computed: {
+    result () {
+      if (this.currentGame) {
+        return this.latestResultMap[this.currentGame.code]
+      }
+    },
     gameClosed () {
       if (this.realSchedule) {
         return true
@@ -156,7 +157,7 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'betDialog'
+      'systemConfig', 'user', 'betDialog', 'latestResultMap'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -213,79 +214,11 @@ export default {
     })
   },
   methods: {
-    pollResult () {
-      if (!this.result) {
-        return
-      }
-      if (!this.result.next_draw) {
-        return
-      }
-      let drawFromNow = this.$moment(this.result.next_draw).subtract(this.diffBetweenServerAndClient).diff(this.$moment(), 'ms')
-      let startPollingTime = drawFromNow < 8000 ? 8000 : drawFromNow
-
-      let oldIssue = this.result.issue_number
-      clearTimeout(this.resultTimer)
-      this.resultTimer = setTimeout(() => { // 從表定開獎時間之後開始輪詢
-        if (this.hasDestroy) {
-          return
-        }
-        clearInterval(this.resultInterval)
-        let pollingLimiter = null
-        /**
-         * 若以暫時期數代替真實開獎結果，可能發生該期未開，使得下期持續被關閉的情況
-         * 故以10分鐘為限，若在時限內未獲得真實開獎結果，則直接開放下期
-         */
-        if (this.realSchedule && drawFromNow < 0) {
-          const leaveTime = 10 * 60 * 1000 + drawFromNow
-          if (leaveTime < 0) { // 距離開獎時間已過十分鐘則直接開獎
-            this.realSchedule = ''
-          } else {
-            pollingLimiter = setTimeout(() => { // 剩餘時間內沒抓到開獎結果則直接開放
-              this.realSchedule = ''
-            }, leaveTime)
-          }
-        }
-        this.resultInterval = setInterval(() => {
-          fetchGameResult(this.gameId).then(result => {
-            if (this.hasDestroy) {
-              return
-            }
-            if (!result || !result[0]) {
-              clearInterval(this.resultInterval)
-            } else {
-              result = result[0]
-              if (result.zodiac) {
-                result.zodiac = result.zodiac.split(',')
-              }
-              let newIssue = result.issue_number
-              if (newIssue !== oldIssue) { // 表示抓到開獎結果
-                if (pollingLimiter) { // 成功抓取結果後限制器可關掉
-                  clearTimeout(pollingLimiter)
-                  pollingLimiter = null
-                }
-                clearInterval(this.resultInterval)
-                clearTimeout(this.resultTimer)
-                this.resultLoading = true // 開獎動畫開始
-                this.result = result
-                setTimeout(() => {
-                  this.resultLoading = false
-                  if (this.realSchedule) {
-                    this.realSchedule = '' // 恢復使用表定開獎時間
-                  }
-                }, 3000)
-                setTimeout(() => {
-                  this.$store.dispatch('fetchUser')
-                }, 2000)
-              }
-            }
-          }).catch(() => {})
-        }, 1000)
-      }, startPollingTime)
-    },
     fetchScheduleAndResult () {
       if (!this.gameId) {
         return
       }
+
       Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
@@ -305,12 +238,8 @@ export default {
             seconds: 0
           }
         }
+
         const result = results[1][0]
-        if (result.zodiac) {
-          result.zodiac = result.zodiac.split(',')
-        }
-        this.result = result
-        this.pollResult()
 
         if (this.currentGame.code === 'hkl') {
           let realScheduleIssueNumber = parseInt(result.issue_number)
@@ -324,6 +253,7 @@ export default {
           issue_number: this.schedule.issue_number,
           game_code: this.currentGame.code
         })
+
         this.startScheduleTimer()
       }).catch(() => {})
     },
@@ -460,7 +390,6 @@ export default {
     this.hasDestroy = true
     clearInterval(this.scheduleInterval)
     clearTimeout(this.resultTimer)
-    clearInterval(this.resultInterval)
 
     if (this.indicator) {
       this.indicator.destroy()
