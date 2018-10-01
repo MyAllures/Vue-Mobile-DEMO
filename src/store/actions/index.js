@@ -182,5 +182,11 @@ export default {
     return getPromotions().then(response => {
       commit(types.SET_PROMOTION, response.filter(item => item.image_mobile))
     })
+  },
+  initLatestResultMap: ({ commit }, result) => {
+    commit(types.INIT_LATEST_RESULT_MAP, result)
+  },
+  updateLatestResultMap: ({ commit }, {gameCode, latestResult}) => {
+    commit(types.UPDATE_LATEST_RESULT_MAP, {gameCode, latestResult})
   }
 }

@@ -79,7 +79,8 @@ export default new Vuex.Store({
       chat: {
         status: 0
       }
-    }
+    },
+    latestResultMap: {}
   },
   actions,
   mutations,
