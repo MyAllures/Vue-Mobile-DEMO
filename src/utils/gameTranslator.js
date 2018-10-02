@@ -209,6 +209,5 @@ export default {
   'jnd28': pcddTranslator,
   'luckdd': pcddTranslator,
   'hkl': hklTranslator,
-  'luckl': hklTranslator,
   'jsk3': jsk3Translator
 }

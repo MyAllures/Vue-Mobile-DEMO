@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import axios from 'axios'
-
 import {
   fetchUser,
   login as userLogin,
@@ -11,6 +10,7 @@ import {
   fetchCategories,
   getPromotions
 } from '../../api'
+import {HKL_GAMES} from '../../config'
 
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
@@ -72,11 +72,11 @@ export default {
   },
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
-      commit(types.SET_GAMES, {
-        games: res
-      })
       const tagTable = {}
       res.forEach(game => {
+        if (HKL_GAMES.includes(game.code)) {
+          game.type = 'hkl'
+        }
         game.tag.forEach(t => {
           let gamesForTag
           if (tagTable[t]) {
@@ -87,6 +87,9 @@ export default {
           }
           gamesForTag.push(game)
         })
+      })
+      commit(types.SET_GAMES, {
+        games: res
       })
       commit(types.TAG_TABLE, tagTable)
       fetchGamesDetail().then(gamesDetial => {
@@ -179,5 +182,11 @@ export default {
     return getPromotions().then(response => {
       commit(types.SET_PROMOTION, response.filter(item => item.image_mobile))
     })
+  },
+  initLatestResultMap: ({ commit }, result) => {
+    commit(types.INIT_LATEST_RESULT_MAP, result)
+  },
+  updateLatestResultMap: ({ commit }, {gameCode, latestResult}) => {
+    commit(types.UPDATE_LATEST_RESULT_MAP, {gameCode, latestResult})
   }
 }

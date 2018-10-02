@@ -50,6 +50,7 @@ GhostSocketObj.prototype.initWs = function (token) {
             store.dispatch('setUser', {
               balance: data.balance
             })
+
             if (data.to_display) {
               Vue.$vux.toast.show({
                 text: '余额已更新',
@@ -57,13 +58,32 @@ GhostSocketObj.prototype.initWs = function (token) {
               })
             }
             break
-
           case 'message-count-initial':
             store.dispatch('setUnread', data.count)
             break
 
           case 'message-count-delta':
             store.dispatch('addUnread', data.delta)
+            break
+          case 'unsettled-updated':
+            store.dispatch('setUser', {
+              unsettled: data.unsettled
+            })
+            break
+          case 'game-result-initial':
+            store.dispatch('initLatestResultMap', data.latest_result_map)
+
+            break
+          case 'game-result':
+            const latestResult = data.latest_result
+            const gameCode = data.latest_result.game_code
+            latestResult.loading = true
+            store.dispatch('updateLatestResultMap', {gameCode, latestResult})
+            setTimeout(() => {
+              latestResult.loading = false
+              store.dispatch('updateLatestResultMap', {gameCode, latestResult})
+            }, 3000)
+
             break
         }
 

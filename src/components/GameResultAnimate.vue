@@ -1,7 +1,7 @@
 <template>
-  <div :class="['balls-number', 'wrapper-' + gameCode]">
+  <div :class="['balls-number', 'wrapper-' + gameType]">
     <div class="balls-frame">
-      <div v-if="gameCode === 'jsk3'" class="jsk3-loading">
+      <div v-if="gameType === 'jsk3'" class="jsk3-loading">
         <div class="camera">
           <div class="space space1">
               <div class="dice dice1"></div>
@@ -43,7 +43,7 @@
           <li
             v-for="(num, index) in chunk"
             :key="index"
-            :class="`result-${gameCode} resultnum-${num}`">
+            :class="`result-${gameType} resultnum-${num}`">
             <b> {{num}} </b>
           </li>
         </ul>
@@ -52,22 +52,23 @@
   </div>
 </template>
 <script>
-const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'hkl', 'luckl', 'jsk3', 'cs60cr']
+import {HKL_GAMES} from '../config'
+const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'hkl', 'jsk3', 'cs60cr']
 const rand1to10 = ['jspk10', 'bcr', 'mlaft', 'er75ft']
 const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'csffc']
 const rand1to11 = ['gd11x5']
-const rand1to20 = ['cqlf', 'gdklsf', 'hkl', 'luckl']
+const rand1to20 = ['cqlf', 'gdklsf', 'hkl']
 const rand1to49 = ['bjkl8', 'pcdd', 'jnd28']
-const randomGeneratorFactory = (gameCode) => {
-  if (rand1to10.includes(gameCode)) {
+const randomGeneratorFactory = (gameType) => {
+  if (rand1to10.includes(gameType)) {
     return () => Math.floor(Math.random() * 10 + 1)
-  } else if (rand0to9.includes(gameCode)) {
+  } else if (rand0to9.includes(gameType)) {
     return () => Math.floor(Math.random() * 10)
-  } else if (rand1to11.includes(gameCode)) {
+  } else if (rand1to11.includes(gameType)) {
     return () => Math.floor(Math.random() * 11 + 1)
-  } else if (rand1to20.includes(gameCode)) {
+  } else if (rand1to20.includes(gameType)) {
     return () => Math.floor(Math.random() * 20 + 1)
-  } else if (rand1to49.includes(gameCode)) {
+  } else if (rand1to49.includes(gameType)) {
     return () => Math.floor(Math.random() * 80 + 1)
   } else {
     return () => Math.floor(Math.random() * 6 + 1)
@@ -84,8 +85,14 @@ export default {
     }
   },
   computed: {
+    gameType () {
+      if (HKL_GAMES.includes(this.gameCode)) {
+        return 'hkl'
+      }
+      return this.gameCode
+    },
     resultChunks () {
-      const randomGenerator = randomGeneratorFactory(this.gameCode)
+      const randomGenerator = randomGeneratorFactory(this.gameType)
       return this.resultNums.map(num => {
         if (num.type === 'text') {
           return num
@@ -100,7 +107,7 @@ export default {
       })
     },
     animate () {
-      return GameOnlyChange.includes(this.gameCode) ? 'step' : 'scroll'
+      return GameOnlyChange.includes(this.gameType) ? 'step' : 'scroll'
     }
   },
   methods: {
@@ -108,7 +115,7 @@ export default {
       if (num.type === 'text') {
         return ['text', 'view']
       }
-      return [`result-${this.gameCode}`, 'view']
+      return [`result-${this.gameType}`, 'view']
     }
   }
 }
@@ -165,9 +172,6 @@ export default {
   font-size: 12px;
 }
 .wrapper-hkl .view{
-  margin-bottom: 10px;
-}
-.wrapper-luckl .view{
   margin-bottom: 10px;
 }
 @keyframes scrollUp {
