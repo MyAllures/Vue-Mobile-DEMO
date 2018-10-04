@@ -62,6 +62,7 @@ export default new Vuex.Store({
       appDownloadUrl: ''
     },
     envelope: {},
+    urgencySwitchedGame: null,
     currentGameResult: null,
     emojis: null,
     keepAlivePage: ['Home'],

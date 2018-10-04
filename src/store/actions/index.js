@@ -188,5 +188,8 @@ export default {
   },
   updateLatestResultMap: ({ commit }, {gameCode, latestResult}) => {
     commit(types.UPDATE_LATEST_RESULT_MAP, {gameCode, latestResult})
+  },
+  urgencySwitchGame: ({commit}, info) => {
+    commit(types.SWITCH_GAME_STATE, info)
   }
 }
