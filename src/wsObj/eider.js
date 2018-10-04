@@ -83,8 +83,13 @@ GhostSocketObj.prototype.initWs = function (token) {
               latestResult.loading = false
               store.dispatch('updateLatestResultMap', {gameCode, latestResult})
             }, 3000)
-
             break
+          case 'close-time-update':
+            store.dispatch('urgencySwitchGame', {
+              gameCode: data.game_code,
+              issueNumber: data.issue_number,
+              closeLeft: data.close_left
+            })
         }
 
         if (data['ping']) {

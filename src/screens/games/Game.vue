@@ -185,6 +185,13 @@ export default {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
       }
+    },
+    '$store.state.urgencySwitchedGame': function ({gameCode, issueNumber, closeLeft}) {
+      if (this.currentGame.code === gameCode && this.schedule.issue_number === issueNumber) {
+        let closeTime = this.$moment().add(closeLeft, 's')
+        this.schedule.schedule_close = closeTime
+        this.closeCountDown = this.diffTime(closeTime)
+      }
     }
   },
   created () {
