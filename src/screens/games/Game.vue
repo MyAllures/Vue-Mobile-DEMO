@@ -274,10 +274,6 @@ export default {
       }
       if (val && !validateAmount(val)) {
         this.$nextTick(() => {
-          if (val.split('.').length === 2) {
-            this.amount = val
-            return
-          }
           this.amount = val.slice(0, -1)
         })
       }

@@ -110,7 +110,7 @@ const pattern = {
   phone: /^[1][3-9]\d{9}$/,
   bankAccount: /^[0-9]{10,}$/,
   withdrawPassword: /^[0-9]{6}$/,
-  amount: /^([0-9][0-9]*([.][0-9]{0,1})?)$/,
+  amount: /^([\d]{0,}[ ]*([.][0-9]{0,1})?)$/,
   province: /^[\u4E00-\u9FA5]{0,}$/,
   depositAmount: /^([0-9][0-9]*([.][0-9]{0,2})?)$/
 }
