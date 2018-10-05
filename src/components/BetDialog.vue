@@ -213,7 +213,13 @@ export default {
       val = val + ''
       if (val && !validateAmount(val)) {
         this.$nextTick(() => {
-          this.$set(this.betAmounts, index, val.slice(0, -1))
+          let result
+          if (val.split('.').length === 2) {
+            result = val
+            return
+          }
+          result = val.slice(0, -1)
+          this.$set(this.betAmounts, index, result)
         })
       }
     }
