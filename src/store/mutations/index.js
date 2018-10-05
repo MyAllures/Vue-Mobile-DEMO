@@ -157,5 +157,8 @@ export default {
   },
   [types.UPDATE_LATEST_RESULT_MAP]: (state, {gameCode, latestResult}) => {
     state.latestResultMap[gameCode] = latestResult
+  },
+  [types.SWITCH_GAME_STATE]: (state, info) => {
+    state.urgencySwitchedGame = info
   }
 }
