@@ -8,7 +8,7 @@
       auto
       loop>
       <swiper-item v-for="(banner,index) in banners" :key="index">
-        <div class="swiper-image" :style="{'background-image': `url('${banner.img}')`}"></div>
+        <div class="swiper-image" :style="{'background-image': banner.img?`url('${banner.img}')`:''}"></div>
         <div class="swiper-desc-mask"></div>
       </swiper-item>
     </swiper>
