@@ -216,7 +216,8 @@ export default {
         hasAgree: true,
         verification_code_0: '',
         verification_code_1: '',
-        sms_code: ''
+        sms_code: '',
+        referring_url: document.referrer
       },
       rules: {
         username: [{validator: usernameValidator}],
