@@ -5,8 +5,8 @@
         :show.sync="dialogVisible"
         :hide-on-blur="true"
         :dialog-style="{
-          width: '100%',
-          'max-width': '100%'
+          width: '95%',
+          'max-width': '95%'
         }">
         <div class="bet-content">
           <div class="title">确认注单</div>

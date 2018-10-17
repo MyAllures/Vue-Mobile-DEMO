@@ -8,29 +8,41 @@ $ssc_length: length($results_ssc);
   border-radius: 100%;
   background: radial-gradient(circle at 5px 5px, #fff, #ccc);
   height: 22px;
+  width: 22px;
   line-height: 22px;
   text-align: center;
-  margin-bottom: 1px;
-  b {
-    display: inline-block;
-    width: 22px;
-    color: #333;
-    font-weight: normal;
-    font-size: 15px;
-  }
+  color: #333;
+  font-weight: normal;
+  font-size: 15px;
 }
 
 @for $index from 1 through $ssc_length {
   .result-#{nth($results_ssc, $index)} {
     @extend %plain-ball;
+    &.play {
+      height: 35px;
+      line-height: 35px;
+      width: 35px;
+      font-size: 20px;
+      &.text-sm {
+        font-size: 16px;
+      }
+    }
   }
-  @media screen and (max-width: 361px) {
-    .result-#{nth($results_ssc, $index)} {
+  @media screen and (max-width: 320px) {
+    .result-#{nth($results_ssc, $index)}.result {
       height: 19px;
       line-height: 19px;
-      b {
-        width: 19px;
-        font-size: 14px;
+      width: 19px;
+      font-size: 14px;
+      &.play.small {
+        height: 30px;
+        line-height: 30px;
+        width: 30px;
+        font-size: 18px;
+        &.text-sm {
+          font-size: 14px;
+        }
       }
     }
   }
@@ -42,23 +54,35 @@ $racing_length: length($results_racing);
 
 @for $index from 1 through $racing_length {
   .result-#{nth($results_racing, $index)} {
-    background: url("../assets/ball-pk.png") no-repeat;
-    background-size: 20px 209px;
+    background: url("../assets/racingicon.jpg") no-repeat;
+    background-size: 100% 1000%;
     height: 20px;
     width: 20px;
-    b {
+    .num {
       display: none;
+    }
+    &.play {
+      height: 33px;
+      width: 33px;
     }
     @for $num from 1 through 10 {
       &.resultnum-#{$num} {
-        background-position: 0 (-21px * ($num - 1));
+        background-position: 0 (-20px * ($num - 1));
+        &.play {
+          background-position: 0 (-33px * ($num - 1));
+        }
       }
     }
-  }
-  @media screen and (max-width: 320px) {
-    .result-#{nth($results_racing, $index)} {
-      height: 18px;
-      width: 18px;
+    @media screen and (max-width: 320px) {
+      &.result {
+        height: 18px;
+        width: 18px;
+      }
+      @for $num from 1 through 10 {
+        &.resultnum-#{$num}.result {
+          background-position: 0 (-18px * ($num - 1));
+        }
+      }
     }
   }
 }
@@ -66,16 +90,23 @@ $racing_length: length($results_racing);
 /*each one below just has its own single ball png*/
 .result-jsk3 {
   background: url("../assets/ball_4.png") no-repeat;
-  background-size: 27px 162px;
+  background-size: 100% 600%;
   height: 27px;
   width: 27px;
-  b {
+  .num {
     display: none;
+  }
+  &.play {
+    height: 33px;
+    width: 33px;
   }
 
   @for $num from 1 through 6 {
     &.resultnum-#{$num} {
       background-position: 0 (-27px * ($num - 1));
+      &.play {
+        background-position: 0 (-33px * ($num - 1));
+      }
     }
   }
 }
@@ -84,19 +115,10 @@ $racing_length: length($results_racing);
 .result-luckl,
 .result-hkl {
   background: url("../assets/ball_hk6.png") no-repeat;
-  background-size: 28px 1372px;
+  background-size: 100% 4900%;
   height: 28px;
   width: 28px;
-  .ball-zodiac {
-    position: relative;
-    text-align: left;
-    left: 5px;
-    top: 28px;
-    font-size: 13px;
-    margin-left: 1px;
-  }
-
-  b {
+  .num {
     display: none;
   }
 
@@ -111,7 +133,6 @@ $racing_length: length($results_racing);
   .result-cshkl,
   .result-luckl,
   .result-hkl {
-    background-size: 24px 1176px;
     height: 24px;
     width: 24px;
     @for $num from 1 through 49 {
@@ -119,25 +140,6 @@ $racing_length: length($results_racing);
         background-position: 0 (-24px * ($num - 1));
       }
     }
-  }
-}
-
-$results_sum: pcdd, jnd28, luckdd;
-$results_sum_length: length($results_sum);
-@for $index from 1 through $results_sum_length {
-  .result-#{nth($results_sum, $index)} {
-    + .ball-sum {
-      margin-left: 5px;
-      .ball {
-        @extend %plain-ball;
-      }
-    }
-  }
-}
-
-@for $index from 0 through 27 {
-  .pcdd_pl-m_sc_#{$index} {
-    @extend %plain-ball;
   }
 }
 

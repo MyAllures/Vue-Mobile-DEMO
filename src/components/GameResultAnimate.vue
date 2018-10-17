@@ -43,8 +43,8 @@
           <li
             v-for="(num, index) in chunk"
             :key="index"
-            :class="`result-${gameType} resultnum-${num}`">
-            <b> {{num}} </b>
+            :class="`result result-${gameType} resultnum-${num}`">
+            <span class="num">{{num}}</span>
           </li>
         </ul>
       </div>
@@ -115,13 +115,12 @@ export default {
       if (num.type === 'text') {
         return ['text', 'view']
       }
-      return [`result-${this.gameType}`, 'view']
+      return [`result-${this.gameType} result`, 'view']
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-@import "../styles/resultsball.scss";
 .balls-number {
   flex: 2.5;
   flex-wrap: wrap;
@@ -165,6 +164,9 @@ export default {
   .step-even {
     width: 100%;
     animation: 1s changeStep step-start infinite normal;
+  }
+  &.result-bjkl8,&.result-auluck8  {
+    margin-bottom: 2px;
   }
 }
 .ball-sum {

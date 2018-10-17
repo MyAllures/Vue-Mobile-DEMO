@@ -13,8 +13,9 @@
 <script>
 import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
 import { mapGetters } from 'vuex'
-import GameInfo from './games/GameInfo'
-import ChatRoom from '../components/ChatRoom'
+import GameInfo from './GameInfo'
+import ChatRoom from '../../components/ChatRoom'
+import '../../styles/resultsball.scss'
 
 export default {
   name: 'GameHall',

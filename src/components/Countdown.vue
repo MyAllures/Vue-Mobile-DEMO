@@ -10,7 +10,7 @@
       </span>
       <span v-else class="label">已封盘</span>
     </div>
-    <div class="schedule" v-if="schedule && schedule.issue_number">
+    <div :class="['schedule', {'long':resultCountDown&&resultCountDown.days} ]" v-if="schedule && schedule.issue_number">
       <div class="title">开奖</div>
       <span v-if="!resultCountDown" class="label"></span>
       <span v-else-if="!realSchedule && !ended" class="label">
@@ -70,11 +70,6 @@ export default {
   text-align: center;
   white-space: nowrap;
 }
-@media screen and (max-width: 320px) {
-  .issue {
-    font-size: 12px;
-  }
-}
 .countdown {
   font-size: 14px;
 }
@@ -92,6 +87,18 @@ export default {
     color: #666;
     padding: 0 5px;
     border-radius: 4px;
+  }
+}
+@media screen and (max-width: 320px) {
+  .issue {
+    font-size: 12px;
+  }
+  .schedule.long {
+    .label {
+      margin-left: 0px;
+      font-size: 13px;
+      padding: 0 2px;
+    }
   }
 }
 </style>

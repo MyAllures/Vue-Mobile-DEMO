@@ -26,8 +26,8 @@ const webpackConfig = merge(baseWebpackConfig, {
         test: /\.s?[ac]ss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'postcss-loader',
           'css-loader',
+          'postcss-loader',
           'sass-loader'
         ],
       }
