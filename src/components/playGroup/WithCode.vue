@@ -7,7 +7,7 @@
         v-for="(option, index) in options"
         :key="index"
         @on-item-click="toggleActive(option)">
-        <div :class="`play result-${gameCode} resultnum-${option.num}`">
+        <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
           <span class="num">{{option.num}}</span>
         </div>
       </grid-item>
@@ -132,17 +132,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/base.less";
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 .odds {
   width: 100%;
   line-height: 40px;
   height: 40px;
   text-align: center;
   font-size: 14px;
-}
-.play {
-  margin: 0 auto;
 }
 </style>

@@ -331,8 +331,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 .tab-selector {
   width: 100%;
   overflow: scroll;

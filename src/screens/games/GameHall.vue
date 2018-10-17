@@ -16,6 +16,7 @@ import { mapGetters } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
 import '../../styles/resultsball.scss'
+import '../../styles/playgroup.scss'
 
 export default {
   name: 'GameHall',

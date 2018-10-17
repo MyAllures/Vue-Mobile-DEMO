@@ -133,9 +133,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/base.less";
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 
 .odds {
   width: 100%;

@@ -1,7 +1,7 @@
 <template>
   <div class="countdown-panel">
     <p class="issue">{{realSchedule||schedule.issue_number}}{{$t('common.result_period')}}</p>
-    <div class="schedule" v-if="schedule && schedule.issue_number">
+    <div :class="['schedule', {'long':closeCountDown&&closeCountDown.days}]" v-if="schedule && schedule.issue_number">
       <div class="title">封盘</div>
       <span v-if="!closeCountDown" class="label"></span>
       <span v-else-if="!gameClosed" class="label">
