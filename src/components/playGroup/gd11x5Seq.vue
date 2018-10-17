@@ -9,8 +9,8 @@
           v-for="(option, index) in chunkOptions"
           :key="index"
           @on-item-click="toggleActive(option)">
-          <div class="text-center">
-            <span :class="['play-name', `${gameCode}-${option.num}`, {'plain': option.active && !gameClosed}]">{{option.num}}</span>
+          <div :class="`play result-${gameCode} resultnum-${option.num}`">
+            <span class="num">{{option.num}}</span>
           </div>
         </grid-item>
       </grid>
@@ -163,5 +163,8 @@ export default {
   height: 40px;
   text-align: center;
   font-size: 14px;
+}
+.play {
+  margin: 0 auto;
 }
 </style>

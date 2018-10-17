@@ -9,7 +9,7 @@
           v-for="(num, index) in resultNums"
           :key="index"
           :class="getResultClass(num)">
-          <b> {{num.data}} </b>
+          <span class="num">{{num.data}}</span>
           <p class="ball-zodiac" v-if="resultZodiac"> {{resultZodiac[index]}} </p>
         </div>
       </div>
@@ -81,18 +81,17 @@ export default {
   methods: {
     getResultClass (num) {
       if (num.type === 'text') {
-        return ['text', 'ball']
+        return ['text', 'result']
       }
       let gameClass = `result-${this.result.game_code}`
       let resultClass = `resultnum-${num.data}`
-      return [gameClass, resultClass, 'ball']
+      return [gameClass, resultClass, 'result']
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/resultsball.scss";
 
 .result-balls {
   width: 100%;
@@ -135,15 +134,26 @@ export default {
     }
   }
 
-  .ball {
+  .result {
     margin-right: 3px;
   }
   .ball-sum {
     display: inline-block;
     font-size: 12px;
   }
-  .wrapper-hkl .ball{
+  .ball-zodiac {
+    position: relative;
+    text-align: left;
+    left: 5px;
+    top: 28px;
+    font-size: 13px;
+    margin-left: 1px;
+  }
+  .wrapper-hkl .result{
     margin-bottom: 10px;
+  }
+  .result-bjkl8,.result-auluck8  {
+    margin-bottom: 2px;
   }
 }
 </style>
