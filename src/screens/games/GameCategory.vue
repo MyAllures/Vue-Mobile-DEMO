@@ -27,27 +27,28 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <div class="dice-container" v-if="play.display_name.split(',').length && game && game.code === 'jsk3'">
-              <div>
-                <span :class="['play-name', `jsk3-${dice}` ]"
+            <template v-if="play.display_name.indexOf(',')!==-1 && game && game.code === 'jsk3'">
+              <div class="dice-container">
+                <span :class="`play result-${game.code} resultnum-${dice}`"
                   v-for="(dice, index) in play.display_name.split(',')"
                   :key="index">
-                  {{dice}}
                 </span>
               </div>
               <span class="play-odds">{{play.odds}}</span>
-            </div>
+            </template>
             <template v-else-if="zodiacMap">
               <span class="play-name">
                 <span :class="getPlayClass(play)">{{play.display_name}}</span>
                 <span class="play-odds">{{play.odds}}</span>
               </span>
               <span class="play-nums">
-                <span :class="[`hkl-${num}`, 'play-num']" v-for="num in zodiacMap[play.display_name]" :key="num"></span>
+                <span :class="`play-num result-${game.code} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[play.display_name]" :key="num"></span>
               </span>
             </template>
             <template v-else>
-              <span :class="getPlayClass(play)">{{play.display_name}}</span>
+              <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
+                <span class="num">{{play.display_name}}</span>
+              </span>
               <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
             </template>
           </div>
@@ -79,6 +80,7 @@ const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resol
 const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
 const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
 const fc3dCa2df = (resolve) => require(['../../components/playGroup/fc3dCa2df'], resolve)
+const isNum = /^\d+$/
 
 export default {
   name: 'GameCategory',
@@ -202,18 +204,27 @@ export default {
   },
   methods: {
     getPlayClass (play) {
+      let num = play.display_name
+      if (num[0] === '0' && num !== '0') {
+        num = num.slice(1)
+      }
       if (this.game) {
-        let plain = [ 'play-name', play.code ]
-        let style = [...plain, `${this.game.code}-${play.display_name}`, {'plain': this.plays[play.id] ? this.plays[play.id].active && !this.gameClosed : false}]
-        // plain is for lay over the default active style
-
-        if (!(isNaN(play.display_name))) {
+        if (num.match(isNum)) {
           if (play.group.indexOf('和') !== -1) {
-            return plain
+            return 'play-name'
           }
-          return style
+          if (this.game.code === 'fc3d') {
+            if (play.display_name.length > 2) {
+              return `play result-${this.game.code} text-sm`
+            }
+            return `play result-${this.game.code}`
+          }
+          return `play result-${this.game.code} resultnum-${num}`
         } else {
-          return plain
+          if (num.length > 2) {
+            return 'play-name small'
+          }
+          return 'play-name'
         }
       }
     },
@@ -320,8 +331,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 .tab-selector {
   width: 100%;
   overflow: scroll;
@@ -339,7 +348,9 @@ export default {
 
 .dice-container {
   display: flex;
-  width: 100%;
-  justify-content: space-between;
+  .play {
+    display: inline-block;
+    margin-right: 5px;
+  }
 }
 </style>

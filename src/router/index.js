@@ -34,7 +34,7 @@ export default new Router({
     {
       path: '/game',
       name: 'Game',
-      component: resolve => { require(['../screens/GameHall.vue'], resolve) },
+      component: resolve => { require(['../screens/games/GameHall.vue'], resolve) },
       meta: {
         requiresAuth: true,
         tabbarHidden: true
