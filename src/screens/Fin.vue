@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tab-view" v-if="tabs.length && $route.name !== 'DetailBetRecord'" ref="view">
+    <div class="tab-view" v-show="tabs.length && $route.name !== 'DetailBetRecord'" ref="view">
       <div class="tab">
         <div
           v-for="(tab,index) in tabs"
