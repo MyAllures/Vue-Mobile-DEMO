@@ -11,7 +11,7 @@
             <span class="play-odds">{{option.odds}}</span>
           </span>
           <span class="play-nums">
-            <span :class="[`hkl-${num}`, 'play-num']" v-for="num in zodiacMap&&zodiacMap[option.display_name]||tailMap[option.display_name]" :key="num"></span>
+            <span :class="`play-num result-${gameCode} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[option.display_name]||tailMap[option.display_name]" :key="num"></span>
           </span>
         </div>
       </grid-item>
@@ -153,8 +153,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 .odds {
   width: 100%;
   line-height: 40px;

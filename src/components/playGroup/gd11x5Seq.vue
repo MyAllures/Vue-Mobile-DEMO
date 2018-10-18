@@ -9,8 +9,8 @@
           v-for="(option, index) in chunkOptions"
           :key="index"
           @on-item-click="toggleActive(option)">
-          <div class="text-center">
-            <span :class="['play-name', `${gameCode}-${option.num}`, {'plain': option.active && !gameClosed}]">{{option.num}}</span>
+          <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
+            <span class="num">{{option.num}}</span>
           </div>
         </grid-item>
       </grid>
@@ -154,9 +154,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/base.less";
-@import "../../styles/vars.less";
-@import "../../styles/playgroup.less";
 .odds {
   width: 100%;
   line-height: 40px;
