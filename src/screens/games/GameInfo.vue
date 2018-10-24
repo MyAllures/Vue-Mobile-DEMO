@@ -1,18 +1,23 @@
 <template>
-  <div class="intro-container" v-if="currentGame.id">
+  <div class="intro-container">
     <div class="title vux-1px-b" :class="contentType === 'history' ? 'left' : 'text-center'" >
       <span>{{currentGame.display_name}}</span>
-      <span v-if="contentType === 'history'" class="date-picker">
-        <datetime class="date-picker-input" v-model="date" @on-change="change"></datetime>
-        <i class="solid-triangle point-down"></i>
-      </span>
+      <template v-if="contentType === 'history'">
+        <span v-if="currentGame.code === 'hkl' || currentGame.code === 'fc3d'" class="date-picker">
+          <datetime class="date-picker-input" v-model="date" @on-change="change" :format="'YYYY-MM'"></datetime>
+          <i class="solid-triangle point-down"></i>
+        </span>
+        <span v-else class="date-picker">
+          <datetime class="date-picker-input" v-model="date" @on-change="change"></datetime>
+          <i class="solid-triangle point-down"></i>
+        </span>
+      </template>
     </div>
     <component :is="showing"
       :gameCode="currentGame.code"
       :contentType="contentType"
       :currentGame="currentGame"
-      :date="date"
-      v-if="currentGame">
+      :date="date">
     </component>
   </div>
 </template>
@@ -50,12 +55,7 @@ export default {
   name: 'GameIntro',
   props: {
     currentGame: {
-      type: Object,
-      default: function () {
-        return {
-          id: ''
-        }
-      }
+      type: Object
     },
     contentType: {
       type: String,
@@ -64,7 +64,7 @@ export default {
   },
   data () {
     return {
-      date: dateFormat(new Date(), 'YYYY-MM-DD')
+      date: this.currentGame.code === 'hkl' || this.currentGame.code === 'fc3d' ? dateFormat(new Date(), 'YYYY-MM') : dateFormat(new Date(), 'YYYY-MM-DD')
     }
   },
   methods: {
