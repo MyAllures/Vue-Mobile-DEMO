@@ -39,10 +39,13 @@
         v-for="(chunk, chunkIndex) in resultChunks"
         :key="chunkIndex">
         <b v-if="chunk.type==='text'">{{chunk.data}}</b>
-        <ul v-else :class="`${animate}-${chunkIndex%2?'odd':'even'}`">
+        <ul v-else
+          :style="getAnimateStyle(chunkIndex)"
+          :class="`ul ${getAnimateClass(chunkIndex)}`">
           <li
             v-for="(num, index) in chunk"
             :key="index"
+
             :class="`result result-${gameType} resultnum-${num}`">
             <span class="num">{{num}}</span>
           </li>
@@ -53,12 +56,12 @@
 </template>
 <script>
 import {HKL_GAMES} from '../config'
-const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'hkl', 'jsk3', 'cs60cr']
+const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'jsk3', 'cs60cr']
 const rand1to10 = ['jspk10', 'bcr', 'mlaft', 'er75ft']
-const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'csffc']
+const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'csffc', 'pcdd', 'jnd28']
 const rand1to11 = ['gd11x5']
 const rand1to20 = ['cqlf', 'gdklsf', 'hkl']
-const rand1to49 = ['bjkl8', 'pcdd', 'jnd28']
+const rand1to49 = ['bjkl8', 'auluck8']
 const randomGeneratorFactory = (gameType) => {
   if (rand1to10.includes(gameType)) {
     return () => Math.floor(Math.random() * 10 + 1)
@@ -82,6 +85,9 @@ export default {
     },
     resultNums: {
       type: Array
+    },
+    lastNums: {
+      type: Array
     }
   },
   computed: {
@@ -93,7 +99,7 @@ export default {
     },
     resultChunks () {
       const randomGenerator = randomGeneratorFactory(this.gameType)
-      return this.resultNums.map(num => {
+      return this.resultNums.map((num, index) => {
         if (num.type === 'text') {
           return num
         } else {
@@ -102,12 +108,10 @@ export default {
             arr.push(randomGenerator())
           }
           arr.push(arr[0])
+          arr[0] = this.lastNums[index]
           return arr
         }
       })
-    },
-    animate () {
-      return GameOnlyChange.includes(this.gameType) ? 'step' : 'scroll'
     }
   },
   methods: {
@@ -116,6 +120,18 @@ export default {
         return ['text', 'view']
       }
       return [`result-${this.gameType} result`, 'view']
+    },
+    getAnimateClass (chunkIndex) {
+      return GameOnlyChange.includes(this.gameCode) ? `step-${chunkIndex % 2 ? 'odd' : 'even'}` : 'scroll-animating'
+    },
+    getAnimateStyle (chunkIndex) {
+      let animationDuration = ''
+      if (((chunkIndex + 1) / 1.5) > 2) { // too slow
+        animationDuration = `${((chunkIndex + 1) / 5)}s`
+      } else {
+        animationDuration = `${((chunkIndex + 1) / 1.5)}s`
+      }
+      return GameOnlyChange.includes(this.gameCode) ? `` : {animationDuration}
     }
   }
 }
@@ -139,6 +155,7 @@ export default {
   }
 }
 .view {
+  position: relative;
   margin-right: 3px;
   background: none;
   overflow: hidden;
@@ -156,6 +173,19 @@ export default {
   .scroll-even {
     width: 100%;
     animation: 1.5s scrollDown linear infinite normal;
+  }
+  .ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .scroll-animating {
+    animation-name: scroll;
+    animation-timing-function: linear;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    animation-direction: normal;
+    will-change: transform;
   }
   .step-odd {
     width: 100%;
@@ -176,6 +206,22 @@ export default {
 .wrapper-hkl .view{
   margin-bottom: 10px;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateY(-100%);
+  }
+  75% {
+    transform: translateY(-30%);
+  }
+  95% {
+    transform: translateY(2%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
 @keyframes scrollUp {
   0% {
       transform: translateY(0);

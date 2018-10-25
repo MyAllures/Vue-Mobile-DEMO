@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading">
+    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && result.loading">
       <div class="balls-frame">
         <div v-if="result.status!=='valid'">官方开奖无效</div>
         <div
@@ -14,7 +14,11 @@
         </div>
       </div>
     </div>
-    <game-result-animate v-else-if="result" :gameCode="result.game_code" :resultNums="resultNums" />
+    <game-result-animate
+      v-else-if="result"
+      :gameCode="result.game_code"
+      :lastNums="lastNums"
+      :resultNums="resultNums" />
   </div>
 </template>
 
@@ -29,6 +33,16 @@ export default {
   },
   components: {
     GameResultAnimate
+  },
+  data () {
+    return {
+      lastNums: []
+    }
+  },
+  watch: {
+    'result': function (code) {
+      this.lastNums = []
+    }
   },
   computed: {
     gameType () {
@@ -46,19 +60,26 @@ export default {
       if (this.result.game_code === 'bjkl8') {
         rawNums.pop()
       }
+
       rawNums.forEach((rawBall) => {
         if (rawBall[0] === '0' && rawBall !== '0') {
-          formattedNums.push({type: 'num', data: rawBall.slice(1)})
-          return
+          rawBall = rawBall.slice(1)
         }
         formattedNums.push({type: 'num', data: rawBall})
+
+        this.lastNums.push(rawBall)
       })
+
       if (this.gameType === 'hkl') {
         formattedNums.splice(6, 0, {type: 'text', data: '＋'})
       } else if (this.result.game_code === 'pcdd' || this.result.game_code === 'jnd28' || this.result.game_code === 'luckdd') {
         formattedNums.push({type: 'text', data: '总和'})
+
+        this.lastNums.push('')
         const sum = _.reduce(rawNums, (sum, nums) => { return sum + Number(nums) }, 0)
         formattedNums.push({type: 'num', data: sum})
+
+        this.lastNums.push(sum)
       }
       return formattedNums
     },
