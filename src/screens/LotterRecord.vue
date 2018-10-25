@@ -187,6 +187,19 @@ export default {
         return 'hkl'
       }
       return this.gameCode
+    },
+    queryTime () {
+      if (this.gameCode === 'hkl' || this.gameCode === 'fc3d') {
+        const date = this.$moment(this.date)
+        return {
+          created_at_0: date.date(1).format('YYYY-MM-DD'),
+          created_at_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
+        }
+      } else {
+        return {
+          date: this.date
+        }
+      }
     }
   },
   watch: {
@@ -212,11 +225,10 @@ export default {
       }
       this.loading = true
       let data = {
-        gameCode: this.gameCode,
-        limit: 30,
-        offset: this.pagination.offset,
-        time: this.date
+        game_code: this.gameCode,
+        offset: this.pagination.offset
       }
+      Object.assign(data, this.queryTime)
       getGameHistoryData(data).then((response) => {
         this.pagination.total = response.count
         this.codeKl = false
@@ -234,12 +246,10 @@ export default {
       this.pagination.offset += 30
 
       let data = {
-        gameCode: this.gameCode,
-        limit: 30,
-        offset: this.pagination.offset,
-        time: this.date
+        game_code: this.gameCode,
+        offset: this.pagination.offset
       }
-
+      Object.assign(data, this.queryTime)
       getGameHistoryData(data).then((response) => {
         this.pagination.total = response.count
         this.records.results.push(...response.results)

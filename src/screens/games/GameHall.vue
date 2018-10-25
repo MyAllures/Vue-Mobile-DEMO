@@ -4,7 +4,7 @@
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <popup v-model="showGameInfo" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
       <div class="game-intro">
-        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType"/>
+        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType&&currentGame"/>
         <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId) || {}
+      return this.$store.getters.gameById(this.$route.params.gameId)
     },
     ...mapGetters([
       'allGames'
