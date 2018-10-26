@@ -200,6 +200,9 @@ export default {
                   break
                 default:
                   if (res.detail && res.detail.length > 0) {
+                    res.detail.sort((a, b) => {
+                      return a.rank - b.rank
+                    })
                     res.detail.forEach(item => { item.selected = false })
                     if (res.detail.length > 1) {
                       res.folded = true
