@@ -49,7 +49,7 @@ export default {
   },
   data () {
     return {
-      height: '339px'
+      height: '80%'
     }
   },
   computed: {
@@ -64,12 +64,12 @@ export default {
     }
   },
   mounted () {
-    const height = document.body.clientHeight
-    if (height > 650) {
-      this.height = '533px'
-    } else if (height > 550) {
-      this.height = '436px'
-    }
+    // const height = document.body.clientHeight
+    // if (height > 650) {
+    //   this.height = '533px'
+    // } else if (height > 550) {
+    //   this.height = '436px'
+    // }
   },
   methods: {
     back () {
@@ -118,8 +118,8 @@ export default {
     overflow: hidden;
     color: #333;
     .icon {
-      width: 50px;
-      height: 50px;
+      width: auto;
+      height: 10vh;
       border-radius: 50%;
     }
     .name {
