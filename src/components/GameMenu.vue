@@ -118,8 +118,8 @@ export default {
     overflow: hidden;
     color: #333;
     .icon {
-      width: 50px;
-      height: 50px;
+      width: auto;
+      height: 10vh;
       border-radius: 50%;
     }
     .name {
