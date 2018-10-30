@@ -1,6 +1,7 @@
 const ranking = ['冠军', '亚军', '第三名', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名']
 const ballnum = ['第一球', '第二球', '第三球', '第四球', '第五球', '第六球', '第七球', '第八球']
 const number = ['正码一', '正码二', '正码三', '正码四', '正码五', '正码六', '特码']
+const digits = ['佰', '拾', '个']
 
 const transformerTranslator = function (title) {
   for (let i = 1; i < 11; i++) {
@@ -188,6 +189,57 @@ const jsk3Translator = function (title) {
   return ['']
 }
 
+const fc3dTranslator = function (title) {
+  for (let i = 1; i < 4; i++) {
+    if (`ball_than_size_${i}` === title) {
+      return [`${[digits[i - 1]]}大小`]
+    }
+    if (`ball_odd_even_${i}` === title) {
+      return [`${[digits[i - 1]]}单双`]
+    }
+    if (`ball_prime_composite_${i}` === title) {
+      return [`${[digits[i - 1]]}质合`]
+    }
+  }
+  switch (title) {
+    case 'balls_odd_even_1_2':
+      return ['佰拾和數']
+    case 'balls_than_size_1_2':
+      return ['佰拾和數']
+    case 'balls_prime_composite_tail_1_2':
+      return ['佰拾和數', 'tail']
+    case 'balls_than_size_tail_1_2':
+      return ['佰拾和數', 'tail']
+    case 'balls_odd_even_1_3':
+      return ['佰个和數']
+    case 'balls_than_size_1_3':
+      return ['佰个和數']
+    case 'balls_prime_composite_tail_1_3':
+      return ['佰个和數', 'tail']
+    case 'balls_than_size_tail_1_3':
+      return ['佰个和數', 'tail']
+    case 'balls_odd_even_2_3':
+      return ['拾个和數']
+    case 'balls_than_size_2_3':
+      return ['拾个和數']
+    case 'balls_prime_composite_tail_2_3':
+      return ['拾个和數', 'tail']
+    case 'balls_than_size_tail_2_3':
+      return ['拾个和數', 'tail']
+    case 'sum_of_ball_odd_even':
+      return ['佰拾个和數']
+    case 'sum_of_ball_than_size':
+      return ['佰拾个和數']
+    case 'sum_of_ball_prime_composite':
+      return ['佰拾个和數']
+    case 'sum_of_ball_tail_than_size':
+      return ['佰拾个和數', 'tail']
+    case 'sum_of_ball_tail_prime_composite':
+      return ['佰拾个和數', 'tail']
+  }
+  return ['']
+}
+
 export default {
   'jspk10': transformerTranslator,
   'bcr': transformerTranslator,
@@ -209,5 +261,6 @@ export default {
   'jnd28': pcddTranslator,
   'luckdd': pcddTranslator,
   'hkl': hklTranslator,
-  'jsk3': jsk3Translator
+  'jsk3': jsk3Translator,
+  'fc3d': fc3dTranslator
 }
