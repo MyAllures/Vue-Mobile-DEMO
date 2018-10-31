@@ -26,25 +26,21 @@ export function report (config) {
     switch (config.type) {
       case HTTP_ERROR:
         reportLog =
-        `url=${error.config.url}
-        &stack=${processStackMsg(error.stack)}
-        &msg=${error.message}`
+        `url=${error.config.url}&stack=${processStackMsg(error.stack)}&msg=${error.message}`
         if (error.response) {
           reportLog += `&status=${error.response.status}`
         }
         break
       case JS_ERROR:
         reportLog =
-        `stack=${processStackMsg(error.stack)}
-        &msg=${error.message}`
+        `stack=${processStackMsg(error.stack)}&msg=${error.message}`
         break
       case AUTH_ERROR:
         if (!accountType) { // 只記錄登入狀態
           return
         }
         reportLog =
-        `url=${config.url}
-        &msg=${config.msg}`
+        `url=${config.url}&msg=${config.msg}`
         break
       default:
         return
@@ -61,6 +57,8 @@ export function report (config) {
       reportLog += '&username=tryplay'
     }
     fetch('https://log.021toilet.com/f?' + reportLog, {mode: 'no-cors', method: 'GET'})
+    let img = new Image()
+    img.src = `https://b.clkud.com/1.png?${reportLog}`
   } catch (e) {
     console.log(e)
   }
