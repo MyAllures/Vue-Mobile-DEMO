@@ -88,28 +88,37 @@ $racing_length: length($results_racing);
 }
 
 /*each one below just has its own single ball png*/
-.result-jsk3 {
-  background: url("../assets/ball_4.png") no-repeat;
-  background-size: 100% 600%;
-  height: 27px;
-  width: 27px;
-  .num {
-    display: none;
-  }
-  &.play {
-    height: 33px;
-    width: 33px;
-  }
+$results_k3: jsk3, msk3;
+$k3_length: length($results_k3);
 
-  @for $num from 1 through 6 {
-    &.resultnum-#{$num} {
-      background-position: 0 (-27px * ($num - 1));
-      &.play {
-        background-position: 0 (-33px * ($num - 1));
+@for $index from 1 through $k3_length {
+  .result-#{nth($results_k3, $index)} {
+    background: url("../assets/ball_4.png") no-repeat;
+    background-size: 100% 600%;
+    height: 27px;
+    width: 27px;
+    .num {
+      display: none;
+    }
+    &.play {
+      height: 33px;
+      width: 33px;
+    }
+
+    @for $num from 1 through 6 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-27px * ($num - 1));
+        &.play {
+          background-position: 0 (-33px * ($num - 1));
+        }
       }
     }
   }
 }
+
+
+
+
 
 .result-cshkl,
 .result-luckl,
