@@ -27,7 +27,7 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <template v-if="play.display_name.indexOf(',')!==-1 && game && game.code === 'jsk3'">
+            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3')">
               <div class="dice-container">
                 <span :class="`play result-${game.code} resultnum-${dice}`"
                   v-for="(dice, index) in play.display_name.split(',')"
@@ -49,7 +49,7 @@
               <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
                 <span class="num">{{play.display_name}}</span>
               </span>
-              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && game.code === 'jsk3'}]">{{play.odds}}</span>
+              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3')}]">{{play.odds}}</span>
             </template>
           </div>
         </grid-item>
