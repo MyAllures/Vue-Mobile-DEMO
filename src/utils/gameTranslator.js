@@ -2,7 +2,7 @@ const ranking = ['冠军', '亚军', '第三名', '第四名', '第五名', '第
 const ballnum = ['第一球', '第二球', '第三球', '第四球', '第五球', '第六球', '第七球', '第八球']
 const number = ['正码一', '正码二', '正码三', '正码四', '正码五', '正码六', '特码']
 const digits = ['佰', '拾', '个']
-
+const diceNum = ['1', '2', '3', '4', '5', '6']
 const transformerTranslator = function (title) {
   for (let i = 1; i < 11; i++) {
     if (`${i}` === title || `ball_than_size_${i}` === title || `ball_odd_even_${i}` === title) {
@@ -189,6 +189,39 @@ const jsk3Translator = function (title) {
   return ['']
 }
 
+const msk3Translator = function (title) {
+  for (let i = 1; i < 7; i++) {
+    if (`ball_in_result_${i}` === title) {
+      return [diceNum[i - 1]]
+    }
+  }
+  switch (title) {
+    case 'sum_of_ball_tail_than_size':
+      return ['牌点']
+    case 'sum_of_ball_tail_odd_even':
+      return ['牌点']
+    case 'sum_of_ball_tail':
+      return ['牌点']
+    case 'sum_of_ball_than_size':
+      return ['和值']
+    case 'sum_of_ball_odd_even':
+      return ['和值']
+    case 'sum_of_ball':
+      return ['和值']
+    case 'balls_max_diff_than_size':
+      return ['跨度']
+    case 'balls_max_diff_odd_even':
+      return ['跨度']
+    case 'balls_max_diff':
+      return ['跨度']
+    case 'in':
+      return ['必出号码']
+    case 'not_in':
+      return ['不出号码']
+  }
+  return ['']
+}
+
 const fc3dTranslator = function (title) {
   for (let i = 1; i < 4; i++) {
     if (`ball_than_size_${i}` === title) {
@@ -262,5 +295,6 @@ export default {
   'luckdd': pcddTranslator,
   'hkl': hklTranslator,
   'jsk3': jsk3Translator,
+  'msk3': msk3Translator,
   'fc3d': fc3dTranslator
 }

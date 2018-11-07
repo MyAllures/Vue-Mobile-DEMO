@@ -14,7 +14,8 @@
         <tbody>
           <tr v-for="(item, index) in listItems" :key="index">
             <td class="play text-center">
-              {{item.title}} - {{item.type | typeFilter}}
+              <span v-if="item.type === 'in' || item.type === 'not_in'">{{item.type | typeFilter}} - {{item.title}}</span>
+              <span v-else>{{item.title}} - {{item.type | typeFilter}}</span>
             </td>
             <td class="issue">
               {{item.num}}期
@@ -142,6 +143,10 @@ export default {
           return '质'
         case 'composite':
           return '合'
+        case 'in':
+          return '必出号码'
+        case 'not_in':
+          return '不出号码'
         default:
           return val
       }

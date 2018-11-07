@@ -278,7 +278,8 @@ export default {
           }
           let translated = translator(key)
           let title = translated[0]
-          if (!title) {
+          const diceNum = ['1', '2', '3', '4', '5', '6']
+          if (!title || diceNum.includes(title)) {
             return
           }
 

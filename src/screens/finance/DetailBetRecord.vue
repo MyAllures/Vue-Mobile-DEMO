@@ -46,7 +46,7 @@
           </td>
           <td :class="['amount', {unsettled: record.profit === null}]" :style="{'line-height':'20px'}">
             <div>{{record.bet_amount | currency('￥')}}</div>
-            <div v-if="record.profit === null">{{record.remarks | statusFilter}}</div>
+            <div v-if="record.profit === null">{{record.status | statusFilter}}</div>
             <div v-else :class="statusColor(record.profit)">
               {{record.profit | currency('￥')}}
             </div>
