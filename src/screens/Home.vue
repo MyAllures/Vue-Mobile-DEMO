@@ -227,9 +227,10 @@ export default {
         actions.push({
           type: 'link',
           className: 'download',
-          url: config.appDownloadUrl,
+          url: '#',
           text: 'App 下载'
         })
+        this.$router.push(`/app`)
       } else if (this.user.logined === false) {
         actions.push({
           type: 'button',

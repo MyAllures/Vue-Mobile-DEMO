@@ -32,6 +32,16 @@ export default new Router({
       component: resolve => { require(['../screens/Home.vue'], resolve) }
     },
     {
+      path: '/app',
+      name: 'AppDownload',
+      meta: {
+        showBack: true,
+        tabbarHidden: true,
+        title: 'App 下载'
+      },
+      component: resolve => { require(['../appDownloadPage.vue'], resolve) }
+    },
+    {
       path: '/game',
       name: 'Game',
       component: resolve => { require(['../screens/games/GameHall.vue'], resolve) },
