@@ -39,7 +39,7 @@ export default new Router({
         tabbarHidden: true,
         title: 'App 下载'
       },
-      component: resolve => { require(['../appDownloadPage.vue'], resolve) }
+      component: resolve => { require(['../AppDownloadPage.vue'], resolve) }
     },
     {
       path: '/game',
