@@ -44,7 +44,7 @@
           </td>
           <td class="amount unsettled" :style="{'line-height':'20px'}">
             <div>{{record.bet_amount | currency('￥')}}</div>
-            <div v-if="record.expected_profit === null">{{record.remarks | statusFilter}}</div>
+            <div v-if="record.expected_profit === null">{{record.status | statusFilter}}</div>
             <div v-else>
               {{record.expected_profit | currency('￥')}}
             </div>
