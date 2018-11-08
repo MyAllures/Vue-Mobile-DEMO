@@ -10,14 +10,16 @@
     <title><%= htmlWebpackPlugin.options.title%></title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script>
+      window.company = <%= (htmlWebpackPlugin.options.companyId) %>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
     </script>
   </head>
   <body>
-    <div id="skeleton"><%= htmlWebpackPlugin.options.homeSkeleton%></div>
+    <div id="skeleton"><%= htmlWebpackPlugin.options.homeSkeleton %></div>
     <div id="app"></div>
+
     <%= htmlWebpackPlugin.options.launchScreen.html %>
     <%= htmlWebpackPlugin.options.launchScreen.script %>
     <!-- built files will be auto injected -->
