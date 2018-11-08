@@ -287,7 +287,7 @@ export default {
       return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game', 'GameDetail'].includes(this.$route.name)
     },
     showLinks () {
-      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && this.user.logined === false
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail', 'AppDownload'].includes(this.$route.name) && this.user.logined === false
     },
     headerLeftTitle () {
       let name = this.$route.name
