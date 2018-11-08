@@ -227,10 +227,13 @@ export default {
         actions.push({
           type: 'link',
           className: 'download',
-          url: '#',
+          url: window.company === 4 ? '#' : config.appDownloadUrl,
           text: 'App 下载'
         })
-        this.$router.push(`/app`)
+
+        if (window.company === 4) {
+          this.$router.push(`/app`)
+        }
       } else if (this.user.logined === false) {
         actions.push({
           type: 'button',

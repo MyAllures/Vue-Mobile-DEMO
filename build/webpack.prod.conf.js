@@ -18,6 +18,13 @@ const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : require('../config/prod.env')
 
+let companyMap = {
+  'hg9q_1': 1,
+  '75ue_2': 2,
+  'cg8s_3': 3,
+  '8fn3_4': 4
+}
+
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
@@ -67,6 +74,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         : config.build.index,
       template: 'index.html',
       title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyMap[process.env.company],
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
       launchScreen,
