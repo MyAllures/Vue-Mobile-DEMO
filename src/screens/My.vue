@@ -31,6 +31,7 @@
           @click.native="$router.push('/my/profile')"
           is-link>
           <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
+          <span v-if="isPrimaryInfoEmpty" class="warn-tip">未填写</span>
         </cell>
       </group>
       <group>
@@ -118,6 +119,10 @@ export default {
         return `${bankName} ****${bankNo}`
       }
       return ''
+    },
+    isPrimaryInfoEmpty () {
+      const user = this.user
+      return !user.phone && !user.email && !user.qq && (!user.wechat && user.wechat !== 0)
     }
   },
   methods: {

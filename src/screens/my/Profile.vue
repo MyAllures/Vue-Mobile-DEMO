@@ -9,49 +9,33 @@
            <p class="title">真实姓名</p>
            <p class="text">{{user.real_name}}</p>
         </div>
-        <div class="profile-field">
+        <div class="profile-field" v-if="user.phone">
            <p class="title">手机号码</p>
            <p class="text">{{user.phone}}</p>
         </div>
       </div>
-      <group label-width="'100px'">
-        <div v-if="inputErrors.length">
-          <ul class="input-errors">
-            <li class="text" v-for="(error, index) in inputErrors" :key="index">
-              {{error}}
-            </li>
-          </ul>
-        </div>
-        <x-input
-          :class="{'weui-cell_warn': !validators['email'].valid}"
-          autocapitalize="off"
-          :title="$t('profile.email')"
-          is-type="email"
-          ref="email"
-          @on-change="validate($event, 'email')"
-          v-model="member.email">
-        </x-input>
-        <x-input
-          :class="{'weui-cell_warn': !validators['wechat'].valid}"
-          autocapitalize="off"
-          :title="$t('profile.wechat')"
-          type="text"
-          ref="wechat"
-          @on-change="validate($event, 'wechat')"
-          v-model="member.wechat">
-        </x-input>
-        <x-input
-          :class="{'weui-cell_warn': !validators['qq'].valid}"
-          :title="$t('profile.qq')"
-          show-clear
-          :max="14"
-          ref="qq"
-          @on-change="validate($event, 'qq')"
-          keyboard="number"
-          type="text"
-          v-model="member.qq">
-        </x-input>
-      </group>
+      <v-form :model="member" :rules="rules" ref="form" @click.native="response.msg = ''">
+         <v-form-item v-if="!user.phone" :label="$t('misc.phone')" prop="phone">
+          <v-input
+            v-model="member.phone">
+          </v-input>
+        </v-form-item>
+        <v-form-item :label="$t('misc.email')" prop="email">
+          <v-input
+            v-model="member.email">
+          </v-input>
+        </v-form-item>
+        <v-form-item :label="$t('misc.wechat')" prop="wechat">
+          <v-input
+            v-model="member.wechat">
+          </v-input>
+        </v-form-item>
+        <v-form-item :label="$t('misc.qq')" prop="qq">
+          <v-input
+            v-model="member.qq">
+          </v-input>
+        </v-form-item>
+      </v-form>
     </div>
 
     <div class="m-b-lg">
@@ -66,65 +50,81 @@
 <script>
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
 import { changeUserInformation } from '../../api'
-import { msgFormatter, validateEmail, validateQQ } from '../../utils'
+import { msgFormatter, validateEmail, validateQQ, validatePhone } from '../../utils'
 import { mapActions, mapGetters, mapState } from 'vuex'
-const inputs = ['email', 'qq', 'wechat']
+import VForm from '@/components/Form'
+import VFormItem from '@/components/FormItem'
+import VInput from '@/components/Input'
+const inputs = ['phone', 'email', 'qq', 'wechat']
+const originUser = {}
 export default {
   name: 'profile',
   data () {
+    const user = this.$store.state.user
+    inputs.forEach(input => {
+      originUser[input] = user[input] || ''
+    })
+    const qqValidator = (rule, value, callback) => {
+      if (originUser.qq === value) {
+        callback()
+      } else if (!validateQQ(value)) {
+        callback(new Error('QQ号码格式无效'))
+      } else {
+        callback()
+      }
+    }
+    const emailValidator = (rule, value, callback) => {
+      if (originUser.email === value) {
+        callback()
+      } else if (!validateEmail(value)) {
+        callback(new Error('邮箱地址格式无效'))
+      } else {
+        callback()
+      }
+    }
+    const phoneValidator = (rule, value, callback) => {
+      if (originUser.phone === value) {
+        callback()
+      } else if (!validatePhone(value)) {
+        callback(new Error('手机号码格式无效'))
+      } else {
+        callback()
+      }
+    }
+    const wechatValidator = (rule, value, callback) => {
+      if (originUser.wechat === value) {
+        callback()
+      } else if (!value) {
+        callback(new Error('微信格式无效'))
+      } else {
+        callback()
+      }
+    }
     return {
-      validators: {
-        email: {
-          origin: '',
-          valid: true,
-          validate: (value) => {
-            if (!value) {
-              return '请输入邮箱地址'
-            } else if (!validateEmail(value)) {
-              return '邮箱地址格式无效'
-            } else {
-              return ''
-            }
-          },
-          errorMsg: ''
-        },
-        qq: {
-          origin: '',
-          valid: true,
-          validate: (value) => {
-            if (!value) {
-              return '请输入QQ号'
-            } else if (!validateQQ(value)) {
-              return 'QQ号格式错误'
-            }
-            return ''
-          },
-          errorMsg: ''
-        },
-        wechat: {
-          origin: '',
-          valid: true,
-          validate: (value) => {
-            if (!value) {
-              return '请输入微信号'
-            }
-            return ''
-          },
-          errorMsg: ''
-        }
-      },
       member: {
+        phone: '',
         email: '',
         wechat: '',
         qq: ''
       },
-      list: [{key: 'M', value: this.$t('profile.male')}, {key: 'F', value: this.$t('profile.female')}],
+      origin: {
+        phone: '',
+        email: '',
+        wechat: '',
+        qq: ''
+      },
       loading: false,
       response: {
         msg: '',
         success: true
       },
-      valid: false
+      valid: false,
+      rules: {
+        email: [{validator: emailValidator}],
+        qq: [{validator: qqValidator}],
+        wechat: [{validator: wechatValidator}],
+        phone: [{validator: phoneValidator}]
+      }
     }
   },
   computed: {
@@ -134,82 +134,59 @@ export default {
     ...mapState([
       'systemConfig'
     ]),
-    inputErrors () {
-      return inputs.filter(input => {
-        return this.validators[input].valid === false
-      }).map(input => {
-        return this.validators[input].errorMsg
-      })
-    },
-    hasChange () {
-      return inputs.filter(input => {
-        return this.validators[input].origin !== this.member[input]
-      }).length
-    },
     customerServiceUrl () {
       return this.systemConfig.customer_service_url
-    }
-  },
-  watch: {
-    'hasChange': function (hasChange) {
-      this.response.msg = ''
+    },
+    hasChange () {
+      return inputs.some((key) => this.origin[key] !== this.member[key])
     }
   },
   created () {
     this.init()
   },
   methods: {
-    init () {
-      inputs.forEach(input => {
-        this.member[input] = this.user[input] || ''
-        this.validators[input].origin = this.user[input] || ''
-      })
-    },
     ...mapActions([
       'fetchUser'
     ]),
-    validate (value, input) {
-      this.member[input] = value
-      const validator = this.validators[input]
-      if (value === validator.origin) {
-        validator.valid = true
-        validator.errorMsg = ''
-      } else {
-        const errorMsg = validator.validate(value)
-        if (errorMsg) {
-          validator.valid = false
-          validator.errorMsg = errorMsg
-        } else {
-          validator.valid = true
-          validator.errorMsg = ''
-        }
-      }
-    },
-    validateAll () {
+    init () {
       inputs.forEach(input => {
-        this.validators[input].validate()
+        this.member[input] = this.user[input] || ''
+        this.origin[input] = this.user[input] || ''
       })
-      return !this.inputErrors.length
     },
     submit () {
-      this.response.msg = ''
-      if (this.validateAll()) {
-        this.loading = true
-        changeUserInformation(this.user.id, this.member).then((response) => {
-          this.$store.dispatch('fetchUser').then(() => {
-            this.init()
-            this.$nextTick(() => {
-              this.loading = false
-              this.response.success = true
-              this.response.msg = '已修改完成'
-            })
-          })
-        }, (errorMsg) => {
-          this.loading = false
-          this.response.success = false
-          this.response.msg = msgFormatter(errorMsg)
-        })
+      if (this.loading) {
+        return
       }
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          this.loading = true
+          const sendData = {}
+          Object.keys(this.member).forEach(key => {
+            let value = this.member[key]
+            if (value !== '') {
+              sendData[key] = value
+            }
+          })
+          if (this.user.phone) {
+            delete sendData.phone
+          }
+          changeUserInformation(this.user.id, sendData).then((response) => {
+            this.$store.dispatch('fetchUser').then(() => {
+              this.init()
+              this.$nextTick(() => {
+                this.loading = false
+                this.response.success = true
+                this.response.msg = '已修改完成'
+              })
+            })
+          }).catch((errorMsg) => {
+            this.loading = false
+            this.response.success = false
+            this.response.msg = msgFormatter(errorMsg)
+          })
+        }
+      })
     }
   },
   components: {
@@ -219,7 +196,10 @@ export default {
     XButton,
     Datetime,
     Selector,
-    Spinner
+    Spinner,
+    VForm,
+    VFormItem,
+    VInput
   }
 }
 </script>
