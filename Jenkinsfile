@@ -60,6 +60,7 @@ kubectl --namespace=front-end cp dist front-end-$i:/tmp/$NODE_NAME
 kubectl --namespace=front-end exec -it front-end-$i -- "mkdir" "-p" "$DIST_PATH/$ENV_CONTAINER/$CDN_PROFILE/$STATIC_CONTAINER"
 kubectl --namespace=front-end exec -it front-end-$i -- "rsync" "-av" "--remove-source-files" "--delete" "/tmp/$NODE_NAME/mobile/static" "$DIST_PATH/$ENV_CONTAINER/$CDN_PROFILE/$STATIC_CONTAINER"
 kubectl --namespace=front-end exec -it front-end-$i -- "rsync" "-av" "--remove-source-files" "--delete" "/tmp/$NODE_NAME/index.html" "$DIST_PATH/$ENV_CONTAINER/$CDN_PROFILE/"
+kubectl --namespace=front-end exec -it front-end-$i -- "rsync" "-av" "--remove-source-files" "--delete" "/tmp/$NODE_NAME/app.html" "$DIST_PATH/$ENV_CONTAINER/$CDN_PROFILE/"
 kubectl --namespace=front-end exec -it front-end-$i -- "rm" "-rf" "/tmp/$NODE_NAME"
 done
           '''
