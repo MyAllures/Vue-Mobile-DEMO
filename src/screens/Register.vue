@@ -49,7 +49,7 @@
           v-model="user.real_name">
         </v-input>
       </v-form-item>
-      <v-form-item required :label="$t('misc.phone')" prop="phone">
+      <v-form-item v-if="smsValidationEnabled" required :label="$t('misc.phone')" prop="phone">
         <v-input
           v-model="user.phone">
         </v-input>
@@ -66,12 +66,6 @@
           action-type ="button"
           :disabled="!user.phone||SMSLoading||countdown!=='stop'"
           @click.native="sendSMSCode">{{countdown!=='stop'?`${countdown}s`:SMSText}}</x-button>
-        </v-input>
-      </v-form-item>
-      <v-form-item required label="QQ" prop="qq">
-        <v-input
-          autocomplete="off"
-          v-model="user.qq">
         </v-input>
       </v-form-item>
       <v-form-item required :label="$t('misc.withdraw_password')" prop="withdraw_password">
@@ -211,7 +205,6 @@ export default {
         confirmation_password: '',
         real_name: '',
         phone: '',
-        qq: '',
         withdraw_password: '',
         hasAgree: true,
         verification_code_0: '',
@@ -244,8 +237,9 @@ export default {
       return this.systemConfig.smsValidationEnabled
     },
     requiredField () {
-      const fields = ['username', 'password', 'confirmation_password', 'real_name', 'phone', 'qq', 'withdraw_password', 'hasAgree']
+      const fields = ['username', 'password', 'confirmation_password', 'real_name', 'withdraw_password', 'hasAgree']
       if (this.smsValidationEnabled) {
+        fields.push('phone')
         fields.push('sms_code')
       } else {
         fields.push('verification_code_1')

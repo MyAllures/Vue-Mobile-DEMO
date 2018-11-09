@@ -1,0 +1,51 @@
+<html><head>
+    <meta charset="utf-8">
+    <title>慧马娱乐城</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="https://storage.googleapis.com/lutra/index.css">
+</head>
+<body>
+    <div id="container" class="wrapper">
+        <div><img width="120" height="auto" src="https://storage.googleapis.com/lutra/static/256.png"></div>
+        <div class="subject">慧马娱乐城</div>
+        <a href="https://storage.googleapis.com/lutra/hm7899.apk" download="">
+            <img width="200" height="auto" src="https://storage.googleapis.com/lutra/static/android.png">
+        </a>
+        <a href="itms-services://?action=download-manifest&amp;url=https://storage.googleapis.com/lutra/hm7899.plist">
+            <img width="200" height="auto" src="https://storage.googleapis.com/lutra/static/ios.png">
+        </a>
+        <a onclick="modalToggle(1)">
+            <img width="200" height="auto" src="https://storage.googleapis.com/lutra/static/ios_guide.png">
+        </a>
+    </div>
+    <div id="modal" class="wrapper display-none">
+        <div id="guide-modal" class="">
+            <div class="close-outer">
+            <div class="close" onclick="modalToggle(0)">
+                <img width="50%" height="auto" src="https://storage.googleapis.com/lutra/static/close.png">
+            </div>
+        </div>
+        <div class="guide-modal-inner">
+            <img width="100%" height="auto" src="https://storage.googleapis.com/lutra/static/step0.png">
+            <img width="100%" height="auto" src="https://storage.googleapis.com/lutra/static/step1.png">
+            <img width="100%" height="auto" src="https://storage.googleapis.com/lutra/static/step2.png">
+            <img width="100%" height="auto" src="https://storage.googleapis.com/lutra/static/step3.png">
+            <img width="100%" height="auto" src="https://storage.googleapis.com/lutra/static/step4.png">
+        </div>
+    </div>
+        <script>
+            function modalToggle(isVisible) {
+                if (isVisible) {
+                    document.getElementById("modal").className = 'wrapper';
+                    document.getElementById("guide-modal").className = 'animated bounceIn';
+                    document.getElementById("container").className = 'wrapper display-none';
+                } else {
+                    document.getElementById("modal").className = 'wrapper display-none';
+                    document.getElementById("guide-modal").className = '';
+                    document.getElementById("container").className = 'wrapper';
+                }
+            }
+        </script>
+
+
+</div></body></html>
