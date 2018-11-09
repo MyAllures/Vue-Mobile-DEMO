@@ -46,7 +46,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   plugins: [
     new webpack.LoaderOptionsPlugin({ options: {} }),
     new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
+    'process.env': require('../config/dev.env')
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
@@ -73,6 +73,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
+      },
+      {
+        from: path.resolve(__dirname, '../static/app.html'),
+        to: config.build.assetsSubDirectory
       }
     ])
   ]
