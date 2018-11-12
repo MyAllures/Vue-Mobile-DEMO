@@ -19,11 +19,25 @@ const env = process.env.NODE_ENV === 'testing'
   : require('../config/prod.env')
 
 let companyMap = {
-  'hg9q_1': 1,
-  '75ue_2': 2,
-  'cg8s_3': 3,
-  '8fn3_4': 4
-}
+    'hg9q_1': {
+      id: 1,
+      name: 'cc722'
+    },
+    '75ue_2': {
+     id: 2,
+     name: 'fh801'
+   },
+    'cg8s_3': {
+     id: 3,
+     name: 'a59'
+   },
+    '8fn3_4': {
+     id: 4,
+     name: 'hm7899'
+   }
+  }
+let companyInfo = companyMap[process.env.company] || {id: 0, name: 'staging'}
+
 
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
@@ -74,11 +88,56 @@ const webpackConfig = merge(baseWebpackConfig, {
         : config.build.index,
       template: 'index.html',
       title: env.SITE_TITLE.replace(/\"/g, ''),
-      companyId: companyMap[process.env.company],
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
       launchScreen,
       inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'app.html',
+      template: 'app.html',
+      title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+     staticRoot: '/mobile/static/app/',
+      host: process.env.HOST || '',
+      homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: './mobile/static/app.html',
+      template: 'app.html',
+      title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+     staticRoot: '/mobile/static/app/',
+      host: process.env.HOST || '',
+      homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
+      inject: false,
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -99,10 +158,6 @@ const webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
-      },
-      {
-        from: path.resolve(__dirname, '../static/app.html'),
-        to: './'
       }
     ]),
     new AddAssetHtmlPlugin([{
