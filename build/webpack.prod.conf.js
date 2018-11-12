@@ -110,7 +110,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       title: env.SITE_TITLE.replace(/\"/g, ''),
       companyId: companyInfo.id,
       companyName: companyInfo.name,
-      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
      staticRoot: '/mobile/static/app/',
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
@@ -126,13 +126,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
+    // $HOST/mobile/static/app.html is temporary, if the nginx static file is ready , can delete this
     new HtmlWebpackPlugin({
       filename: './mobile/static/app.html',
       template: 'app.html',
       title: env.SITE_TITLE.replace(/\"/g, ''),
       companyId: companyInfo.id,
       companyName: companyInfo.name,
-      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
      staticRoot: '/mobile/static/app/',
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
