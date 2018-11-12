@@ -90,7 +90,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       companyId: companyInfo.id,
       companyName: companyInfo.name,
       homeSkeleton: skeletons.homeSkeleton,
-      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
       staticRoot: '/mobile/static/app/',
       launchScreen,
       inject: false
@@ -103,7 +103,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       companyId: companyInfo.id,
       companyName: companyInfo.name,
       homeSkeleton: skeletons.homeSkeleton,
-      appHost: 'https://storage.googleapis.com/lutra/', // app storage url
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
       staticRoot: '/mobile/static/app/',
       launchScreen,
       inject: false

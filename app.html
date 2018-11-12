@@ -11,7 +11,7 @@
 
 <body>
     <div id="container" class="wrapper">
-        <div><img width="120" height="auto" src="<%=htmlWebpackPlugin.options.appHost%>static/<%=htmlWebpackPlugin.options.companyName%>_logo_256.png"></div>
+        <div><img width="120" height="auto" src="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>_logo_256.png"></div>
         <div class="subject"><%= htmlWebpackPlugin.options.title%></div>
         <a href="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.apk" download="">
           <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>android.png">
