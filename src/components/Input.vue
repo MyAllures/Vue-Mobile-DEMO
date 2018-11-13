@@ -143,7 +143,7 @@ export default {
       isOnComposition: false,
       valueBeforeComposition: null,
       selectedOption: [],
-      optionToDisplay: '',
+      optionToDisplay: '请选择',
       optionsVisible: false
     }
   },
@@ -155,7 +155,7 @@ export default {
       handler: function (option) {
         this.$emit('selectOption', option)
         let current = this.options.find(item => {
-          return item.value === (option[0].value || option[0])
+          return item.value === option[0]
         })
         this.optionToDisplay = current.name
       },
