@@ -121,6 +121,23 @@ export function fetchReturnRecord (option) {
   return axios.get(url)
 }
 
+export function fetchPersonalReport (option) {
+  let url = `${urls.personal_report}?`
+  Object.keys(option).forEach(key => {
+    if (key === 'startdate') {
+      url += `&created_at_0=${option[key]}`
+      return
+    }
+    if (key === 'enddate') {
+      url += `&created_at_1=${option[key]}`
+      return
+    }
+
+    url += `&${key}=${option[key]}`
+  })
+  return axios.get(url)
+}
+
 export function fetchDateBetRecords (option) {
   return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
 }
