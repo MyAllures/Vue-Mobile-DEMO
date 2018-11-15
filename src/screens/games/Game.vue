@@ -226,7 +226,7 @@ export default {
         return
       }
 
-      Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
+      Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
         }
