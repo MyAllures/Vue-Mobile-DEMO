@@ -26,6 +26,9 @@ const tabs = [{
   label: '投注纪录',
   name: 'BetRecord'
 }, {
+  label: '个人报表',
+  name: 'PersonalReport'
+}, {
   label: '充值纪录',
   name: 'PaymentRecord'
 }, {

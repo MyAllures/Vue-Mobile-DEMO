@@ -48,8 +48,8 @@ export function fetchPlaygroup (categoryId) {
   return axios.get(`${urls.playgroup}?&category=${categoryId}`)
 }
 
-export function fetchSchedule (gameId) {
-  return axios.get(`${urls.schedule}?&game=${gameId}`)
+export function fetchSchedule (gameId, gameCode) {
+  return axios.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}`)
 }
 
 export function placeBet (data) {
@@ -117,6 +117,23 @@ export function fetchReturnRecord (option) {
         url += `&${key}=${option[key]}`
       }
     }
+  })
+  return axios.get(url)
+}
+
+export function fetchPersonalReport (option) {
+  let url = `${urls.personal_report}?`
+  Object.keys(option).forEach(key => {
+    if (key === 'startdate') {
+      url += `&created_at_0=${option[key]}`
+      return
+    }
+    if (key === 'enddate') {
+      url += `&created_at_1=${option[key]}`
+      return
+    }
+
+    url += `&${key}=${option[key]}`
   })
   return axios.get(url)
 }
