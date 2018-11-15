@@ -145,6 +145,16 @@ export default new Router({
             next()
           },
           component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
+        },
+        {
+          path: 'personal_report',
+          name: 'PersonalReport',
+          meta: {
+            title: '个人报表',
+            gaTitle: '个人报表',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/PersonalReport.vue'], resolve) }
         }
       ]
     },

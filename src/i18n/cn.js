@@ -66,7 +66,11 @@ export default {
     play: '玩法',
     amount: '注额',
     game: '游戏',
-    accumulation: '金额累计'
+    accumulation: '金额累计',
+    bet_number: '注数',
+    bet_amount: '投注金额',
+    return_amount: '反水',
+    profit: '盈亏'
   },
   my: {
     select: '请选择',
