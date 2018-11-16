@@ -181,13 +181,6 @@ const hklTranslator = function (title) {
   }
   return ['']
 }
-const jsk3Translator = function (title) {
-  switch (title) {
-    case 'sum_of_ball_than_size':
-      return ['总和']
-  }
-  return ['']
-}
 
 const msk3Translator = function (title) {
   for (let i = 1; i < 7; i++) {
@@ -294,7 +287,7 @@ export default {
   'jnd28': pcddTranslator,
   'luckdd': pcddTranslator,
   'hkl': hklTranslator,
-  'jsk3': jsk3Translator,
+  'jsk3': msk3Translator,
   'msk3': msk3Translator,
   'fc3d': fc3dTranslator
 }
