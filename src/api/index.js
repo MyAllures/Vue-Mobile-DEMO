@@ -98,7 +98,7 @@ export function fetchCaptcha () {
 }
 
 export function fetchBetHistory (option) {
-  let url = `${urls.betrecord}?opt_expand=play&limit=${option.limit}`
+  let url = `${urls.betrecord}?opt_expand=play`
   Object.keys(option).forEach(key => {
     if (option[key]) {
       url += `&${key}=${option[key]}`
