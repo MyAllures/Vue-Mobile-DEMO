@@ -10,7 +10,7 @@ metadata:
   annotations:
     branch-name: ${env.BRANCH_NAME}
   labels:
-    some-label: some-label-value
+    role: worker
 spec:
   imagePullSecrets:
     - name: ciunnotech
