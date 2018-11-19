@@ -1,4 +1,5 @@
 // this is for branch (test|master|\S+production)
+env.PROJECT_NAME='bison'
 pipeline {
   agent {
     kubernetes {
