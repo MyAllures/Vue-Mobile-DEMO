@@ -21,8 +21,6 @@ spec:
   containers:
     - name: worker
       image: unnotechlottery/jenkins-general-worker
-      command:
-        - cat
       tty: true
 """
         }

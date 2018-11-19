@@ -20,16 +20,12 @@ spec:
   containers:
   - name: worker
     image: unnotechlottery/jenkins-general-worker
-    command:
-    - cat
     tty: true
     envFrom:
     - configMapRef:
         name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
   - name: nodejs
     image: node:10-alpine
-    command:
-    - cat
     envFrom:
     - configMapRef:
         name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
