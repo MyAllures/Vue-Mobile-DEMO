@@ -1,4 +1,5 @@
 // this is for branch (test|master|\S+production)
+env.PROJECT_NAME='bison'
 pipeline {
   agent {
     kubernetes {
@@ -72,6 +73,5 @@ done
     RANDOM_DIR=UUID.randomUUID().toString()
     STATIC_CONTAINER="mobile"
     DIST_PATH="/usr/src/app/dist"
-    PROJECT_NAME = 'bison'
   }
 }
