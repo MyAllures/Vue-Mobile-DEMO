@@ -2,15 +2,15 @@
 pipeline {
   agent {
     kubernetes {
-      label 'bison-builder'
+      label "${env.PROJECT_NAME}-builder"
       yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    branch-name: """+env.BRANCH_NAME+"""
+    branch-name: ${env.BRANCH_NAME}
   labels:
-    some-label: some-label-value
+    role: worker
 spec:
   imagePullSecrets:
     - name: ciunnotech
@@ -23,14 +23,14 @@ spec:
     tty: true
     envFrom:
     - configMapRef:
-        name: """+env.BRANCH_NAME+"""-bison
+        name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
   - name: nodejs
     image: node:10-alpine
     command:
     - cat
     envFrom:
     - configMapRef:
-        name: """+env.BRANCH_NAME+"""-bison
+        name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
     tty: true
 """
     }
@@ -72,5 +72,6 @@ done
     RANDOM_DIR=UUID.randomUUID().toString()
     STATIC_CONTAINER="mobile"
     DIST_PATH="/usr/src/app/dist"
+    PROJECT_NAME = 'bison'
   }
 }
