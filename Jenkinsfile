@@ -73,6 +73,5 @@ done
     RANDOM_DIR=UUID.randomUUID().toString()
     STATIC_CONTAINER="mobile"
     DIST_PATH="/usr/src/app/dist"
-    PROJECT_NAME = 'bison'
   }
 }
