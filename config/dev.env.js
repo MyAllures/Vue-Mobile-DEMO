@@ -7,4 +7,5 @@ module.exports = merge(prodEnv, {
   chatHost: '"ws://b583747.eastasia.cloudapp.azure.com:8003"',
   chatApi: '"http://b583747.eastasia.cloudapp.azure.com:8003"',
   eiderHost: '"ws://b583747.eastasia.cloudapp.azure.com:8005"',
+  company: '"staging"'
 })
