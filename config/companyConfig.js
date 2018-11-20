@@ -19,19 +19,17 @@ var productionConfig = {
    name: 'hm7899',
    seoWebsite: ''
  },
+  'h9339': {
+    id: 0,
+    name: 'h9339',
+    seoWebsite: 'https://cp031.com/'
+  },
   'staging': {
     id: 0,
     name: 'staging',
     seoWebsite: 'https://cp031.com/'
   }
 }
-if(process.env.NODE_ENV === 'production'){
-  module.exports = productionConfig[process.env.company]||{}
-} else {
-  module.exports = {
-    id: 0,
-    name: 'staging',
-    seoWebsite: 'http://35.244.173.224/'
-  }
-}
+
+module.exports = productionConfig[process.env.company]||{}
 
