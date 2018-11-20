@@ -149,4 +149,8 @@ export default {
     font-size: 13px;
   }
 }
+
+.weui-grids.vux-grid-no-lr-borders {
+  margin-right: 0;
+}
 </style>

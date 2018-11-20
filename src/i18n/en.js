@@ -65,7 +65,11 @@ export default {
     play: 'Play',
     amount: 'Amount',
     game: 'Game',
-    accumulation: 'Accumulation'
+    accumulation: 'Accumulation',
+    bet_number: 'Bet Number',
+    bet_amount: 'Amount',
+    return_amount: 'Return Amount',
+    profit: 'Profit'
   },
   my: {
     select: 'Select',
