@@ -7,5 +7,5 @@ module.exports = {
   SITE_TITLE: '"' + process.env.SITE_TITLE + '"',
   HTTPS: '"' + process.env.HTTPS + '"',
   eiderHost: '"' + process.env.eiderHost + '"',
-  company: process.env.company||''
+  company: '"' + process.env.company + '"'
 }
