@@ -94,7 +94,6 @@ import { XTable, XButton, Toast, Loading, Divider, TransferDom, Datetime, PopupP
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
-const today = Vue.moment().format('YYYY-MM-DD')
 
 const dateFormatChecker = (format, dateString) => {
   // Params for a formatted String
@@ -170,8 +169,12 @@ export default {
   created () {
     let query = this.$route.query
     if (!dateFormatChecker('YYYY-MM-DD', query.startdate) || !dateFormatChecker('YYYY-MM-DD', query.enddate)) {
-      this.startdate = today
-      this.enddate = today
+      const today = Vue.moment()
+      const yesterday = today.add(-1, 'days').format('YYYY-MM-DD')
+      const weekPast = today.add(-6, 'days').format('YYYY-MM-DD')
+
+      this.startdate = weekPast
+      this.enddate = yesterday
       this.$router.replace({query: this.conditions})
     } else {
       this.initPersonalReport(this.conditions)
