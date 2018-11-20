@@ -251,9 +251,10 @@
   .link {
     display: block;
     width: 100%;
-    &a{
-      color: #333;
-    }
+
+  }
+  a.link {
+    color: #333;
   }
 }
 </style>
