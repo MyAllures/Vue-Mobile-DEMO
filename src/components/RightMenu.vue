@@ -250,8 +250,10 @@
   bottom: 0;
   .link {
     display: block;
-    color: #333;
     width: 100%;
+    &a{
+      color: #333;
+    }
   }
 }
 </style>
