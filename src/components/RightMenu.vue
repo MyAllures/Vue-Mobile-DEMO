@@ -33,6 +33,11 @@
     </div>
     <group class="links" >
       <cell-box
+        v-if="seoWebsite"
+        :border-intent="false">
+        <a target="_blank" class="link text-center" :href="seoWebsite">人工计划 <span class="red">NEW</span></a>
+      </cell-box>
+      <cell-box
         v-if="showLinks"
         @click.native="showGameInfo(link)"
         :border-intent="false"
@@ -65,6 +70,7 @@
 <script>
   import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
+  import companyInfo from '../../config/companyConfig'
   export default {
     props: {
       value: {
@@ -116,6 +122,18 @@
       ]),
       systemConfig () {
         return this.$store.state.systemConfig
+      },
+      currentGame () {
+        return this.$store.getters.gameById(this.$route.params.gameId)
+      },
+      seoWebsite () {
+        if (companyInfo.seoWebsite && this.currentGame) {
+          const code = this.currentGame.code
+          if (code === 'bcr' || code === 'cqssc') {
+            return `${companyInfo.seoWebsite}game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
+          }
+        }
+        return ''
       }
     },
     methods: {
@@ -233,6 +251,9 @@
   .link {
     display: block;
     width: 100%;
+    &a{
+      color: #333;
+    }
   }
 }
 </style>
