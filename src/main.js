@@ -269,7 +269,8 @@ gethomePage().then(
         stickerGroups: response.sticker_groups || [],
         envelopeSettings: pref.red_envelope_settings || {},
         smsValidationEnabled: pref.sms_validation_enabled === 'true',
-        appDownloadUrl: pref.app_download_url
+        appDownloadUrl: pref.app_download_url,
+        planSiteUrl: pref.plan_site_url
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
