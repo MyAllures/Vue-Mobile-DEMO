@@ -70,7 +70,7 @@
 <script>
   import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
-  import companyInfo from '../../config/companyConfig'
+
   export default {
     props: {
       value: {
@@ -127,10 +127,10 @@
         return this.$store.getters.gameById(this.$route.params.gameId)
       },
       seoWebsite () {
-        if (companyInfo.seoWebsite && this.currentGame) {
+        if (this.systemConfig.planSiteUrl && this.currentGame) {
           const code = this.currentGame.code
           if (code === 'bcr' || code === 'cqssc') {
-            return `${companyInfo.seoWebsite}game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
+            return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
           }
         }
         return ''
