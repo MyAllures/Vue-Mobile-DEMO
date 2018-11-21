@@ -128,7 +128,6 @@
       "<rootDir>/src/**/*.{js,vue}"
     ],
     "coverageReporters": [
-      "lcov",
       "text-summary"
     ],
     "moduleNameMapper": {
