@@ -45,7 +45,7 @@
             </v-input>
           </v-form-item>
           <template v-if="isPrimaryInfoEmpty">
-            <div class="info-tip">请至少填写一项联络资讯，用于取款申请核对</div>
+            <div class="info-tip">须填写手机号码，用于取款申请核对</div>
             <v-form-item :label="$t('misc.phone')" prop="phone">
               <v-input
                 v-model="member.phone">
@@ -125,7 +125,7 @@ export default {
       }
     }
     const phoneValidator = (rule, value, callback) => {
-      if (value && !validatePhone(value)) {
+      if (!validatePhone(value)) {
         callback(new Error('手机号码格式无效'))
       } else {
         callback()
@@ -195,7 +195,7 @@ export default {
           bank.city !== '' &&
           bank.province !== '' &&
           bank.account !== '' &&
-          (member.qq !== '' || member.phone !== '' || member.wechat !== '')
+          member.phone !== ''
       }
     },
     isPrimaryInfoEmpty () {

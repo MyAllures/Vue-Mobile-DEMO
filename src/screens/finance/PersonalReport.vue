@@ -22,7 +22,7 @@
             </div>
             <div class="item quarter">
               <div class="item-title">{{$t('fin.return_amount')}}</div>
-              <div class="item-content">{{totalData.return_amount}}</div>
+              <div class="item-content">{{totalData.return_amount| currency('￥')}}</div>
             </div>
             <div class="item quarter">
               <div class="item-title">{{$t('fin.profit')}}</div>
@@ -62,7 +62,7 @@
             <span class="amount text-left">{{record.bet_amount| currency('￥')}}</span>
           </td>
           <td>
-            <span>{{record.return_amount}}</span>
+            <span>{{record.return_amount| currency('￥')}}</span>
           </td>
           <td>
             <span :class="{'red': record.profit > 0 , 'green': record.profit < 0}">{{ record.profit| currency('￥') }}</span>
