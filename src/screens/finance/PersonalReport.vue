@@ -169,12 +169,9 @@ export default {
   created () {
     let query = this.$route.query
     if (!dateFormatChecker('YYYY-MM-DD', query.startdate) || !dateFormatChecker('YYYY-MM-DD', query.enddate)) {
-      const today = Vue.moment()
-      const yesterday = today.add(-1, 'days').format('YYYY-MM-DD')
-      const weekPast = today.add(-6, 'days').format('YYYY-MM-DD')
-
-      this.startdate = weekPast
-      this.enddate = yesterday
+      const today = this.$moment()
+      this.enddate = today.format('YYYY-MM-DD')
+      this.startdate = today.add(-7, 'days').format('YYYY-MM-DD')
       this.$router.replace({query: this.conditions})
     } else {
       this.initPersonalReport(this.conditions)
