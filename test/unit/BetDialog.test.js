@@ -38,38 +38,43 @@ describe('BetDialog.vue', () => {
   beforeEach(() => {
     store = new Vuex.Store({
       state: {
-        betDialog: {
-          'visible': false,
-          'bets': [
-            {
-              'game_schedule': 502585,
-              'display_name': '冠、亚军和 - 冠亚大',
-              'bet_amount': 10,
-              'odds': 2.19,
-              'play': 520,
-              'bet_options': {},
-              'opts_combos_count': 1,
-              'optionDisplayNames': ''
-            }, {
-              'game_schedule': 502585,
-              'display_name': '冠、亚军和 - 冠亚单',
-              'bet_amount': 10,
-              'odds': 1.78,
-              'play': 522,
-              'bet_options': {},
-              'opts_combos_count': 1,
-              'optionDisplayNames': ''
-            }, {
-              'game_schedule': 502585,
-              'display_name': '冠军 - 大',
-              'bet_amount': 10,
-              'odds': 1.995,
-              'play': 641,
-              'bet_options': {},
-              'opts_combos_count': 1,
-              'optionDisplayNames': ''
-            }],
-          'isSuccess': false
+        user: {
+          balance: 100
+        },
+        dialog: {
+          bet: {
+            'visible': false,
+            'bets': [
+              {
+                'game_schedule': 502585,
+                'display_name': '冠、亚军和 - 冠亚大',
+                'bet_amount': 10,
+                'odds': 2.19,
+                'play': 520,
+                'bet_options': {},
+                'opts_combos_count': 1,
+                'optionDisplayNames': ''
+              }, {
+                'game_schedule': 502585,
+                'display_name': '冠、亚军和 - 冠亚单',
+                'bet_amount': 10,
+                'odds': 1.78,
+                'play': 522,
+                'bet_options': {},
+                'opts_combos_count': 1,
+                'optionDisplayNames': ''
+              }, {
+                'game_schedule': 502585,
+                'display_name': '冠军 - 大',
+                'bet_amount': 10,
+                'odds': 1.995,
+                'play': 641,
+                'bet_options': {},
+                'opts_combos_count': 1,
+                'optionDisplayNames': ''
+              }],
+            'isSuccess': false
+          }
         },
         systemConfig: {
           chatroomEnabled: false
@@ -93,7 +98,7 @@ describe('BetDialog.vue', () => {
         }
       }
     })
-    store.state.betDialog.visible = true
+    store.state.dialog.bet.visible = true
   })
   it('計算共幾組', () => {
     expect(wrapper.vm.totalCount).toEqual(3)

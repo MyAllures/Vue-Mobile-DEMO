@@ -81,7 +81,14 @@ export default {
   },
   methods: {
     openDialog () {
-      this.$store.dispatch('openBetDialog', this.formatBetInfo(this.betInfo.bets))
+      this.$store.dispatch('updateDialog', {
+        name: 'bet',
+        status: {
+          visible: true,
+          bets: this.formatBetInfo(this.betInfo.bets),
+          isSuccess: false
+        }
+      })
     },
     formatBetInfo (betInfo) {
       return betInfo.map(bet => {
