@@ -2,8 +2,8 @@
   <div v-if="$store.state.user.account_type" class="container">
     <div class="filter-area">
       <div class="icon"></div>
-      <datetime class="filter" clear-text="起日" v-model="startdate"></datetime>
-      <datetime class="filter" clear-text="迄日" :start-date="enddateBegin" v-model="enddate"></datetime>
+      <datetime class="filter" v-model="startdate"></datetime>
+      <datetime class="filter" :start-date="enddateBegin" v-model="enddate"></datetime>
     </div>
     <div class="info">
       <div class="stamp-wrapper">
@@ -16,7 +16,7 @@
               <div class="item-title">{{$t('fin.bet_number')}}</div>
               <div class="item-content">{{totalData.bet_count}}</div>
             </div>
-            <div class="item quarter">
+            <div class="item quarter bet-amount">
               <div class="item-title">{{$t('fin.bet_amount')}}</div>
               <div class="item-content">{{totalData.bet_amount| currency('￥')}}</div>
             </div>
@@ -94,7 +94,6 @@ import { XTable, XButton, Toast, Loading, Divider, TransferDom, Datetime, PopupP
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
-
 const dateFormatChecker = (format, dateString) => {
   // Params for a formatted String
   // Returns a Boolean whether this string is in the format that momentjs valid
