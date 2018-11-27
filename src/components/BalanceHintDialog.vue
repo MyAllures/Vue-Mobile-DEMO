@@ -23,7 +23,7 @@
           </div>
           <flexbox class="buttons">
             <flexbox-item>
-              <x-button @click.native="dialogVisible = false;$router.push({path: '/my/deposit'})" type="primary">去充值</x-button>
+              <x-button @click.native="goToPay" type="primary">去充值</x-button>
             </flexbox-item>
             <flexbox-item>
               <x-button type="default" @click.native="dialogVisible = false">继续投注</x-button>
@@ -69,6 +69,17 @@ export default {
           state: Object.assign({}, this.dialog, {visible: false})
         })
       }
+    }
+  },
+  methods: {
+    goToPay () {
+      this.dialogVisible = false
+      this.sendGaEvent({
+        label: '餘額不足',
+        category: '遊戲大廳充值',
+        action: '充值提示'
+      })
+      this.$router.push({path: '/my/deposit'})
     }
   }
 }
