@@ -190,15 +190,17 @@ export default {
       return this.gameCode
     },
     queryTime () {
+      const date = this.$moment(this.date)
       if (this.gameCode === 'hkl' || this.gameCode === 'fc3d') {
-        const date = this.$moment(this.date)
         return {
-          created_at_0: date.date(1).format('YYYY-MM-DD'),
-          created_at_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
+          schedule_result_0: date.date(1).format('YYYY-MM-DD'),
+          schedule_result_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
         }
       } else {
+        const dateFormat = date.format('YYYY-MM-DD')
         return {
-          date: this.date
+          schedule_result_0: dateFormat,
+          schedule_result_1: dateFormat
         }
       }
     }

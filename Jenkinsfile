@@ -1,9 +1,10 @@
 // this is for branch (test|master|\S+production)
-env.PROJECT_NAME='bison'
+env.PROJECT_NAME = 'bison'
 pipeline {
   agent {
     kubernetes {
       label "${env.PROJECT_NAME}-builder-${env.BRANCH_NAME}"
+      defaultContainer 'worker'
       yaml """
 apiVersion: v1
 kind: Pod
@@ -19,16 +20,12 @@ spec:
   containers:
   - name: worker
     image: unnotechlottery/jenkins-general-worker
-    command:
-    - cat
     tty: true
     envFrom:
     - configMapRef:
         name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
   - name: nodejs
     image: node:10-alpine
-    command:
-    - cat
     envFrom:
     - configMapRef:
         name: ${env.BRANCH_NAME}-${env.PROJECT_NAME}
@@ -70,8 +67,8 @@ done
     }
   }
   environment {
-    RANDOM_DIR=UUID.randomUUID().toString()
-    STATIC_CONTAINER="mobile"
-    DIST_PATH="/usr/src/app/dist"
+    RANDOM_DIR = UUID.randomUUID().toString()
+    STATIC_CONTAINER = "mobile"
+    DIST_PATH = "/usr/src/app/dist"
   }
 }
