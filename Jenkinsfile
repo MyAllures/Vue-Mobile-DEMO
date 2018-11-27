@@ -3,7 +3,7 @@ env.PROJECT_NAME = 'bison'
 pipeline {
   agent {
     kubernetes {
-      label "${env.PROJECT_NAME}-builder"
+      label "${env.PROJECT_NAME}-builder-${env.BRANCH_NAME}"
       defaultContainer 'worker'
       yaml """
 apiVersion: v1
