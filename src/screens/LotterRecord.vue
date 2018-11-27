@@ -82,6 +82,7 @@ const gameTable = {
   'luckdd': pcddCompareList,
   'jsk3': jsk3CompareList,
   'msk3': jsk3CompareList,
+  'bjk3': jsk3CompareList,
   'gd11x5': gd11x5CompareList,
   'hkl': hklCompareList,
   'fc3d': fc3dCompareList

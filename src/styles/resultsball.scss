@@ -88,7 +88,7 @@ $racing_length: length($results_racing);
 }
 
 /*each one below just has its own single ball png*/
-$results_k3: jsk3, msk3;
+$results_k3: jsk3, msk3, bjk3;
 $k3_length: length($results_k3);
 
 @for $index from 1 through $k3_length {

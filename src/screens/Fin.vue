@@ -114,7 +114,7 @@ export default {
       flex: 0 0 auto;
       height: 44px;
       line-height: 44px;
-      width: 100/3.5vw;
+      width: 100/4.2vw;
       color: rgba(255, 255, 255, 0.8);
       &.selected{
         .tab-item-text {

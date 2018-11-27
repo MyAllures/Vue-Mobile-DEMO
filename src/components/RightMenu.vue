@@ -1,5 +1,6 @@
 <template>
   <popup :value="value"
+    v-fix-scroll
     position="right"
     @on-hide="closeRightMenu"
     class="popup"
@@ -70,7 +71,7 @@
 <script>
   import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
-
+  import FixScroll from '../directive/fixscroll'
   export default {
     props: {
       value: {
@@ -106,7 +107,8 @@
       }
     },
     directives: {
-      TransferDom
+      TransferDom,
+      FixScroll
     },
     components: {
       Popup,
@@ -234,13 +236,15 @@
   color: #166FD8;
 }
 .buttons {
-  margin: 10px 10px 0;
+  margin: 10px;
   /deep/ .weui-btn {
     font-size: 15px;
   }
   @media screen and (max-width: 320px) {
-    /deep/ .weui-btn + .weui-btn{
-      margin-top: 8px;
+    margin: 5px 10px;
+    /deep/ .weui-btn{
+      margin-top: 5px;
+      font-size: 13px;
     }
   }
 }
@@ -249,6 +253,9 @@
   width: 100%;
   bottom: 0;
   .link {
+    @media screen and (max-width: 320px) {
+      font-size: 14px;
+    }
     display: block;
     width: 100%;
 
