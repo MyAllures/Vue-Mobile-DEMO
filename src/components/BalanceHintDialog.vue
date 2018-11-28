@@ -26,7 +26,7 @@
               <x-button @click.native="goToPay" type="primary">去充值</x-button>
             </flexbox-item>
             <flexbox-item>
-              <x-button type="default" @click.native="dialogVisible = false">继续投注</x-button>
+              <x-button type="default" @click.native="dialogVisible = false">返回修改</x-button>
             </flexbox-item>
           </flexbox>
         </div>
