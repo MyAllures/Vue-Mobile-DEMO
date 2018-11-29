@@ -39,7 +39,7 @@
           </div>
           <flexbox v-else class="buttons">
             <flexbox-item>
-              <x-button :disabled="!betDialog.bets.length" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+              <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
             </flexbox-item>
             <flexbox-item>
               <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
@@ -77,8 +77,11 @@ export default {
   },
   computed: {
     ...mapState([
-      'systemConfig', 'user', 'betDialog'
+      'systemConfig', 'user'
     ]),
+    betDialog () {
+      return this.$store.state.dialog.bet
+    },
     gameId () {
       return this.$route.params.gameId
     },
@@ -138,7 +141,13 @@ export default {
     },
     'dialogVisible': function (dialogVisible) {
       if (dialogVisible === false && this.betDialog.visible !== dialogVisible) {
-        this.$store.dispatch('closeBetDialog')
+        this.$store.dispatch('updateDialog', {
+          name: 'bet',
+          state: {
+            visible: false,
+            bets: []
+          }
+        })
       }
     }
   },
@@ -175,7 +184,14 @@ export default {
               text: '成功下单',
               type: 'success'
             })
-            this.$store.dispatch('closeBetDialog', true)
+            this.$store.dispatch('updateDialog', {
+              name: 'bet',
+              state: {
+                visible: false,
+                bets: [],
+                isSuccess: true
+              }
+            })
             this.dialogVisible = false
             this.loading = false
             this.$store.dispatch('fetchUser')
