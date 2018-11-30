@@ -302,7 +302,7 @@ export default {
         category: '首页游戏选择',
         action: '点击'
       })
-      localStorage.setItem('lastGame', game.id)
+      this.$store.dispatch('saveLastGame', game.id)
       this.$router.push(`/game/${game.id}`)
     },
     switchTab (i) {
