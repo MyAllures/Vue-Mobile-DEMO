@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import * as types from './mutation-types'
+import {saveLastGameData} from '../../utils'
 
 export default {
   [types.SET_USER]: (state, user) => {
@@ -151,5 +152,13 @@ export default {
   },
   [types.SWITCH_GAME_STATE]: (state, info) => {
     state.urgencySwitchedGame = info
+  },
+  [types.SAVE_LAST_GAME]: (state, id) => {
+    state.lastGameData.lastGame = id
+    saveLastGameData(state.lastGameData)
+  },
+  [types.SAVE_LAST_CATEGORY]: (state, {gameId, categoryId}) => {
+    state.lastGameData.lastCategory[gameId] = categoryId
+    saveLastGameData(state.lastGameData)
   }
 }

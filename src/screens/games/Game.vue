@@ -274,7 +274,7 @@ export default {
       }).catch(() => {})
     },
     chooseCategory () {
-      const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
+      const categoryId = this.$store.state.lastGameData.lastCategory[this.gameId] || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
     },
     inputAmount (val) {
@@ -292,9 +292,7 @@ export default {
         return
       }
       const gameId = this.$route.params.gameId
-
-      localStorage.setItem(gameId + '-lastCategory', categoryId)
-
+      this.$store.dispatch('saveLastCategory', {gameId, categoryId})
       this.$router.push({
         path: `/game/${gameId}/${categoryId}`
       })

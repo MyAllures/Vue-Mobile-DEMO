@@ -96,7 +96,7 @@ export default {
       }
     },
     chooseGame () {
-      const gameId = localStorage.getItem('lastGame') || this.allGames[0].id
+      const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
       this.$router.replace('/game/' + gameId)
     }
   }
