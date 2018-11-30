@@ -38,7 +38,6 @@
         :key="$route.params.categoryId"
         :game="currentGame"
         :gameClosed="gameClosed"
-        :amount="amountForProp"
         :playReset="playReset"
         @updatePlays="updatePlays"
         @resetPlays="playReset = !playReset"
@@ -162,9 +161,6 @@ export default {
     gameId () {
       return this.$route.params.gameId
     },
-    amountForProp () {
-      return this.amount
-    },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
     },
@@ -280,11 +276,15 @@ export default {
     inputAmount (val) {
       if (!val) {
         this.amount = ''
-      }
-      if (val && !validateAmount(val)) {
+        localStorage.setItem('amount', '')
+      } else if (!validateAmount(val)) {
         this.$nextTick(() => {
-          this.amount = val.slice(0, -1)
+          let newVal = val.slice(0, -1)
+          this.amount = newVal
+          localStorage.setItem('amount', newVal)
         })
+      } else {
+        localStorage.setItem('amount', val)
       }
     },
     switchCategory (categoryId) {
@@ -374,10 +374,6 @@ export default {
     },
     formatBetInfo (originPlays) {
       return originPlays.map(play => {
-        if (play.amount <= 0) {
-          return
-        }
-
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
@@ -396,7 +392,7 @@ export default {
         return {
           game_schedule: this.schedule.id,
           display_name: play.hideName ? play.group : `${play.group} - ${play.display_name}`,
-          bet_amount: play.amount,
+          bet_amount: this.amount,
           odds: play.odds,
           play: play.id,
           bet_options: betOptions,
