@@ -95,10 +95,6 @@ export default {
     game: {
       type: Object
     },
-    amount: {
-      type: String,
-      default: 1
-    },
     playReset: {
       type: Boolean,
       default: false
@@ -134,16 +130,6 @@ export default {
     }
   },
   computed: {
-    playsForSubmit () {
-      return _.filter(this.activePlays, play => play.active).map(play => {
-        return {
-          game_schedule: this.scheduleId,
-          bet_amount: parseFloat(play.bet_amount),
-          play: play.id,
-          bet_options: play.bet_options
-        }
-      })
-    },
     activePlays () {
       return _.filter(this.plays, play => play.active)
     },
@@ -171,14 +157,6 @@ export default {
     }
   },
   watch: {
-    // update amount of active plays
-    'amount': function (amount) {
-      _.each(this.plays, play => {
-        if (play.active) {
-          play.amount = amount
-        }
-      })
-    },
     'activePlays': {
       handler: function (activePlays) {
         this.$emit('updatePlays', activePlays)
@@ -188,7 +166,6 @@ export default {
     'playReset': function () {
       _.each(this.plays, play => {
         if (play.active) {
-          this.$set(play, 'amount', '')
           this.$set(play, 'active', false)
         }
       })
@@ -251,7 +228,6 @@ export default {
     },
     updateCustomPlay (play, playOptions) {
       this.$set(play, 'active', true)
-      this.$set(play, 'amount', this.amount)
       this.$set(play, 'isCustom', true)
       this.$set(play, 'options', playOptions.options)
       this.$set(play, 'combinations', playOptions.combinations)
@@ -309,11 +285,6 @@ export default {
         return
       }
       this.$set(play, 'active', !play.active)
-      if (play.active) {
-        play.amount = parseFloat(this.amount)
-      } else {
-        play.amount = ''
-      }
     },
     switchTab (key) {
       this.groups = this.tabs[key]
