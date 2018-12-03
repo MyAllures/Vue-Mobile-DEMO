@@ -126,29 +126,6 @@ const webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
-    // $HOST/mobile/static/app.html is temporary, if the nginx static file is ready , can delete this
-    new HtmlWebpackPlugin({
-      filename: './mobile/static/app.html',
-      template: 'app.html',
-      title: env.SITE_TITLE.replace(/\"/g, ''),
-      companyId: companyInfo.id,
-      companyName: companyInfo.name,
-      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
-     staticRoot: '/mobile/static/app/',
-      host: process.env.HOST || '',
-      homeSkeleton: skeletons.homeSkeleton,
-      launchScreen,
-      inject: false,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-        // more options:
-        // https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
-    }),
     // keep module.id stable when vender modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // enable scope hoisting
