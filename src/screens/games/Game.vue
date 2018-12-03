@@ -341,6 +341,9 @@ export default {
         return
       }
       const bets = this.formatBetInfo(this.validPlays)
+      if (!bets.length) {
+        return
+      }
       let totalAmount
       let expectation
       let amount = parseFloat(this.amount)
