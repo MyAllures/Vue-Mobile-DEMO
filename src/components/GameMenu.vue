@@ -88,7 +88,7 @@ export default {
           category: '游戏选单',
           action: '选单'
         })
-        localStorage.setItem('lastGame', gameId)
+        this.$store.dispatch('saveLastGame', gameId)
         this.$router.push({path: `/game/${gameId}/`})
       }
       this.handleClose()
