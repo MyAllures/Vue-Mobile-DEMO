@@ -109,10 +109,4 @@ describe('BetDialog.vue', () => {
     wrapper.vm.$set(wrapper.vm.betAmounts, 2, 13)
     expect(wrapper.vm.totalAmount).toEqual(36)
   })
-  it('格式化金額', async () => {
-    wrapper.vm.betAmounts[0] = '11.32'
-    wrapper.vm.formatEachAmount(11.32, 0)
-    await wrapper.vm.$nextTick()
-    expect(wrapper.vm.betAmounts[0]).toEqual('11.3')
-  })
 })
