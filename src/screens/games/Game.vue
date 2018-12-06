@@ -157,7 +157,7 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'betDialog', 'latestResultMap'
+      'systemConfig', 'user', 'latestResultMap'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -173,6 +173,9 @@ export default {
         return []
       }
       return this.$store.state.categories[this.gameId] || []
+    },
+    betDialog () {
+      return this.$store.state.dialog.bet
     }
   },
   watch: {
@@ -216,7 +219,13 @@ export default {
     }, () => {
       if (this.betDialog.visible) {
         this.$set(this, 'playReset', !this.playReset)
-        this.$store.dispatch('closeBetDialog')
+        this.$store.dispatch('updateDialog', {
+          name: 'bet',
+          state: {
+            visible: false,
+            bets: []
+          }
+        })
       }
     })
   },
@@ -226,7 +235,7 @@ export default {
         return
       }
 
-      Promise.all([fetchSchedule(this.gameId), fetchGameResult(this.gameId)]).then(results => {
+      Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
         }
@@ -333,7 +342,37 @@ export default {
       if (!this.amount) {
         return
       }
-      this.$store.dispatch('openBetDialog', this.formatBetInfo(this.validPlays))
+      const bets = this.formatBetInfo(this.validPlays)
+      let totalAmount
+      let expectation
+      let amount = parseFloat(this.amount)
+      let optsCombosCount = bets[0].opts_combos_count
+      if (optsCombosCount && optsCombosCount > 1) {
+        totalAmount = amount * optsCombosCount
+        expectation = amount * optsCombosCount * bets[0].odds - totalAmount
+      } else {
+        totalAmount = amount * bets.length
+        expectation = bets.reduce((sum, bet) => sum + amount * bet.odds, 0) - totalAmount
+      }
+      if (totalAmount > this.user.balance) {
+        this.$store.dispatch('updateDialog', {
+          name: 'balance',
+          state: {
+            visible: true,
+            total: totalAmount,
+            expectation: expectation
+          }
+        })
+      } else {
+        this.$store.dispatch('updateDialog', {
+          name: 'bet',
+          state: {
+            visible: true,
+            bets: bets,
+            isSuccess: false
+          }
+        })
+      }
     },
     formatBetInfo (originPlays) {
       return originPlays.map(play => {

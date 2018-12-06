@@ -38,10 +38,17 @@ export default new Vuex.Store({
     },
     winNotification: [],
     winNotificationVisible: false,
-    betDialog: {
-      visible: false,
-      bets: [],
-      isSuccess: false
+    dialog: {
+      bet: {
+        visible: false,
+        bets: [],
+        isSuccess: false
+      },
+      balance: {
+        visible: false,
+        total: 0,
+        expectation: 0
+      }
     },
     categories: {},
     systemConfig: {
@@ -59,7 +66,8 @@ export default new Vuex.Store({
       envelopeSettings: {},
       stickerGroups: [],
       smsValidationEnabled: false,
-      appDownloadUrl: ''
+      appDownloadUrl: '',
+      planSiteUrl: ''
     },
     envelope: {},
     urgencySwitchedGame: null,

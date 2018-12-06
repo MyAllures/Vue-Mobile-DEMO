@@ -1,18 +1,8 @@
 <template>
   <section class="rule-details">
     <ul>
-      <li>「江苏快3」由中国福利彩票发行管理中心组织销售、江苏省福利彩票发行中心承销。
-      </li>
-      <li>开奖时间：每日早上8点30分至晚上10点10分；每日共开奖82期、每 10 分钟开奖 1 次。</li>
-      <li>每期开出3个号码、每个号码范围01~06 。</li>
-      <li>如开奖时间异动以中国福利彩票管理中心公告为准。</li>
+      <li>该游戏的投注时间、开奖时间和开奖号码与“北京快3”完全同步，北京时间（GMT+8）每天白天从上午09:10开到晚上23:50，每10分钟开一次奖每天开奖89期。</li>
     </ul>
-    <p>官方网站：
-      <a href="http://www.jslottery.com" target="_blank">http://www.jslottery.com/</a>
-    </p>
-    <p>即时开奖：
-      <a href="http://www.shishicai.cn/jsk3/touzhu/" target="_blank">http://www.shishicai.cn/jsk3/touzhu/</a>
-    </p>
     <h3>
       <span class="warn">和值</span>
     </h3>

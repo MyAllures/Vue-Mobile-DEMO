@@ -18,6 +18,27 @@ const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : require('../config/prod.env')
 
+let companyMap = {
+    'hg9q_1': {
+      id: 1,
+      name: 'cc722'
+    },
+    '75ue_2': {
+     id: 2,
+     name: 'fh801'
+   },
+    'cg8s_3': {
+     id: 3,
+     name: 'a59'
+   },
+    '8fn3_4': {
+     id: 4,
+     name: 'hm7899'
+   }
+  }
+let companyInfo = companyMap[process.env.company] || {id: 0, name: 'staging'}
+
+
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
@@ -67,10 +88,57 @@ const webpackConfig = merge(baseWebpackConfig, {
         : config.build.index,
       template: 'index.html',
       title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
       host: process.env.HOST || '',
       homeSkeleton: skeletons.homeSkeleton,
       launchScreen,
       inject: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'app.html',
+      template: 'app.html',
+      title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
+     staticRoot: '/mobile/static/app/',
+      host: process.env.HOST || '',
+      homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+        // more options:
+        // https://github.com/kangax/html-minifier#options-quick-reference
+      },
+      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+      chunksSortMode: 'dependency'
+    }),
+    // $HOST/mobile/static/app.html is temporary, if the nginx static file is ready , can delete this
+    new HtmlWebpackPlugin({
+      filename: './mobile/static/app.html',
+      template: 'app.html',
+      title: env.SITE_TITLE.replace(/\"/g, ''),
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
+     staticRoot: '/mobile/static/app/',
+      host: process.env.HOST || '',
+      homeSkeleton: skeletons.homeSkeleton,
+      launchScreen,
+      inject: false,
       minify: {
         removeComments: true,
         collapseWhitespace: true,

@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>
+        <%= htmlWebpackPlugin.options.title%>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.staticRoot%>app_index.css">
+</head>
+
+<body>
+    <div id="container" class="wrapper">
+        <div><img width="120" height="auto" src="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>_logo_256.png"></div>
+        <div class="subject"><%= htmlWebpackPlugin.options.title%></div>
+        <a href="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.apk" download="">
+          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>android.png">
+      </a>
+        <a href="itms-services://?action=download-manifest&amp;url=<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.plist">
+          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>ios.png">
+      </a>
+        <a onclick="modalToggle(1)">
+          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>ios_guide.png">
+      </a>
+    </div>
+    <div id="modal" class="wrapper display-none">
+        <div id="guide-modal" class="">
+            <div class="close-outer">
+                <div class="close" onclick="modalToggle(0)">
+                    <img width="50%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>close.png">
+                </div>
+            </div>
+            <div class="guide-modal-inner">
+                <img width="100%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>step0.png">
+                <img width="100%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>step1.png">
+                <img width="100%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>step2.png">
+                <img width="100%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>step3.png">
+                <img width="100%" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>step4.png">
+            </div>
+        </div>
+        <script>
+            function modalToggle(isVisible) {
+                if (isVisible) {
+                    document.getElementById("modal").className = 'wrapper';
+                    document.getElementById("guide-modal").className = 'animated bounceIn';
+                    document.getElementById("container").className = 'wrapper display-none';
+                } else {
+                    document.getElementById("modal").className = 'wrapper display-none';
+                    document.getElementById("guide-modal").className = '';
+                    document.getElementById("container").className = 'wrapper';
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

@@ -16,6 +16,27 @@ const launchScreen = require('./launch')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+let companyMap = {
+  'hg9q_1': {
+    id: 1,
+    name: 'cc722'
+  },
+  '75ue_2': {
+   id: 2,
+   name: 'fh801'
+ },
+  'cg8s_3': {
+   id: 3,
+   name: 'a59'
+ },
+  '8fn3_4': {
+   id: 4,
+   name: 'hm7899'
+ }
+}
+let companyInfo = companyMap[process.env.company] || {id: 0, name: 'staging'}
+
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   mode: 'development',
   module: {
@@ -46,7 +67,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   plugins: [
     new webpack.LoaderOptionsPlugin({ options: {} }),
     new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
+    'process.env': require('../config/dev.env')
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
@@ -56,9 +77,36 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       host: process.env.HOST || '',
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
       homeSkeleton: skeletons.homeSkeleton,
       launchScreen,
       inject: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'app.html',
+      template: 'app.html',
+      host: process.env.HOST || '',
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      homeSkeleton: skeletons.homeSkeleton,
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
+      staticRoot: '/mobile/static/app/',
+      launchScreen,
+      inject: false
+    }),
+    // $HOST/mobile/static/app.html is temporary, if the nginx static file is ready , can delete this
+    new HtmlWebpackPlugin({
+      filename: './mobile/static/app.html',
+      template: 'app.html',
+      host: process.env.HOST || '',
+      companyId: companyInfo.id,
+      companyName: companyInfo.name,
+      homeSkeleton: skeletons.homeSkeleton,
+      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
+      staticRoot: '/mobile/static/app/',
+      launchScreen,
+      inject: false
     }),
     new AddAssetHtmlPlugin([{
       filepath: require.resolve('../lib/base1.dll.js'),

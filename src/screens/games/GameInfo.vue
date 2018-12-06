@@ -28,6 +28,8 @@ import { Datetime, dateFormat } from 'vux'
 const cqlf = (resolve) => require(['@/screens/games/rules/cqlf'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
+const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
+const bjk3 = (resolve) => require(['@/screens/games/rules/bjk3'], resolve)
 const mlaft = (resolve) => require(['@/screens/games/rules/mlaft'], resolve)
 const gdklsf = (resolve) => require(['@/screens/games/rules/gdklsf'], resolve)
 const bcr = (resolve) => require(['@/screens/games/rules/bcr'], resolve)
@@ -91,6 +93,8 @@ export default {
     cqlf,
     gd11x5,
     jsk3,
+    msk3,
+    bjk3,
     mlaft,
     gdklsf,
     bcr,

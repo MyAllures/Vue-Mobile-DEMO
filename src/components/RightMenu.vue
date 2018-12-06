@@ -1,5 +1,6 @@
 <template>
   <popup :value="value"
+    v-fix-scroll
     position="right"
     @on-hide="closeRightMenu"
     class="popup"
@@ -33,6 +34,11 @@
     </div>
     <group class="links" >
       <cell-box
+        v-if="seoWebsite"
+        :border-intent="false">
+        <a target="_blank" class="link text-center" :href="seoWebsite">人工计划 <span class="red">NEW</span></a>
+      </cell-box>
+      <cell-box
         v-if="showLinks"
         @click.native="showGameInfo(link)"
         :border-intent="false"
@@ -65,6 +71,7 @@
 <script>
   import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
+  import FixScroll from '../directive/fixscroll'
   export default {
     props: {
       value: {
@@ -100,7 +107,8 @@
       }
     },
     directives: {
-      TransferDom
+      TransferDom,
+      FixScroll
     },
     components: {
       Popup,
@@ -116,6 +124,18 @@
       ]),
       systemConfig () {
         return this.$store.state.systemConfig
+      },
+      currentGame () {
+        return this.$store.getters.gameById(this.$route.params.gameId)
+      },
+      seoWebsite () {
+        if (this.systemConfig.planSiteUrl && this.currentGame) {
+          const code = this.currentGame.code
+          if (code === 'bcr' || code === 'cqssc') {
+            return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
+          }
+        }
+        return ''
       }
     },
     methods: {
@@ -216,13 +236,15 @@
   color: #166FD8;
 }
 .buttons {
-  margin: 10px 10px 0;
+  margin: 10px;
   /deep/ .weui-btn {
     font-size: 15px;
   }
   @media screen and (max-width: 320px) {
-    /deep/ .weui-btn + .weui-btn{
-      margin-top: 8px;
+    margin: 5px 10px;
+    /deep/ .weui-btn{
+      margin-top: 5px;
+      font-size: 13px;
     }
   }
 }
@@ -231,8 +253,15 @@
   width: 100%;
   bottom: 0;
   .link {
+    @media screen and (max-width: 320px) {
+      font-size: 14px;
+    }
     display: block;
     width: 100%;
+
+  }
+  a.link {
+    color: #333;
   }
 }
 </style>

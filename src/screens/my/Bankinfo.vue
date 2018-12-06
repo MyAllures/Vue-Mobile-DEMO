@@ -18,35 +18,52 @@
     </div>
     <div v-if="!user.bank" class="stretch-layout wrapper">
       <div class="form m-t">
-        <v-form :model="member.bank" :rules="rules" ref="form" @click.native="errorMsg = ''">
-          <v-form-item required :label="$t('profile.select_bank')" prop="bank">
-            <v-input :type="'select'"
+        <v-form :model="member" :rules="rules" ref="form" @click.native="errorMsg = ''">
+          <v-form-item required :label="$t('profile.select_bank')" prop="bank.bank">
+            <v-input v-if="banks.length>0" :type="'select'"
               :options="banks"
               @selectOption="selectOption">
             </v-input>
           </v-form-item>
-          <v-form-item required :label="$t('profile.bank_province')" prop="province">
+          <v-form-item required :label="$t('profile.bank_province')" prop="bank.province">
             <v-input
               autocapitalize="off"
               v-model="member.bank.province">
             </v-input>
           </v-form-item>
-          <v-form-item required :label="$t('profile.bank_city')" prop="city">
+          <v-form-item required :label="$t('profile.bank_city')" prop="bank.city">
             <v-input
               autocapitalize="off"
               v-model="member.bank.city">
             </v-input>
           </v-form-item>
-          <v-form-item required :label="$t('profile.bank_account')" prop="account">
+          <v-form-item required :label="$t('profile.bank_account')" prop="bank.account">
             <v-input
               autocapitalize="off"
               v-model="member.bank.account"
               :filter="/^[0]|[^0-9]/g">
             </v-input>
           </v-form-item>
+          <template v-if="isPrimaryInfoEmpty">
+            <div class="info-tip">须填写手机号码，用于取款申请核对</div>
+            <v-form-item :label="$t('misc.phone')" prop="phone">
+              <v-input
+                v-model="member.phone">
+              </v-input>
+            </v-form-item>
+            <v-form-item :label="$t('misc.wechat')" prop="wechat">
+              <v-input
+                v-model="member.wechat">
+              </v-input>
+            </v-form-item>
+            <v-form-item :label="$t('misc.qq')" prop="qq">
+              <v-input
+                v-model="member.qq">
+              </v-input>
+            </v-form-item>
+          </template>
         </v-form>
       </div>
-
       <div class="text-center m-b-lg">
         <p class="tip">提交後不可自行更改，如需更改请联系客服</p>
         <div class="text-danger text-center" v-show="errorMsg">{{errorMsg}}</div>
@@ -93,13 +110,27 @@
 import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapGetters } from 'vuex'
-import { validateBankAccount, validateProvince, msgFormatter } from '../../utils'
+import { validateBankAccount, validateProvince, msgFormatter, validateQQ, validatePhone } from '../../utils'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
 export default {
   name: 'bankinfo',
   data () {
+    const qqValidator = (rule, value, callback) => {
+      if (value && !validateQQ(value)) {
+        callback(new Error('QQ号码格式无效'))
+      } else {
+        callback()
+      }
+    }
+    const phoneValidator = (rule, value, callback) => {
+      if (!validatePhone(value)) {
+        callback(new Error('手机号码格式无效'))
+      } else {
+        callback()
+      }
+    }
     const bankAccountValidator = (rule, value, callback) => {
       if (!validateBankAccount(value)) {
         callback(new Error('该帐号格式无效'))
@@ -128,14 +159,19 @@ export default {
           city: '',
           province: '',
           account: ''
-        }
+        },
+        qq: '',
+        phone: '',
+        wechat: ''
       },
       inputErrors: [],
       valid: false,
       rules: {
-        'account': [{validator: bankAccountValidator}],
-        'province': [{validator: provinceValidator}],
-        'city': [{validator: provinceValidator}]
+        'bank.account': [{validator: bankAccountValidator}],
+        'bank.province': [{validator: provinceValidator}],
+        'bank.city': [{validator: provinceValidator}],
+        qq: [{validator: qqValidator}],
+        phone: [{validator: phoneValidator}]
       }
     }
   },
@@ -147,10 +183,24 @@ export default {
       return this.$store.state.systemConfig
     },
     inputCompleted () {
-      return this.member.bank.bank !== '' &&
-          this.member.bank.city !== '' &&
-          this.member.bank.province !== '' &&
-          this.member.bank.account !== ''
+      const bank = this.member.bank
+      const member = this.member
+      if (!this.isPrimaryInfoEmpty) {
+        return bank.bank !== '' &&
+          bank.city !== '' &&
+          bank.province !== '' &&
+          bank.account !== ''
+      } else {
+        return bank.bank !== '' &&
+          bank.city !== '' &&
+          bank.province !== '' &&
+          bank.account !== '' &&
+          member.phone !== ''
+      }
+    },
+    isPrimaryInfoEmpty () {
+      const user = this.user
+      return !user.phone && !user.qq && (!user.wechat && user.wechat !== 0)
     }
   },
   created () {
@@ -162,7 +212,7 @@ export default {
   },
   methods: {
     selectOption (option) {
-      this.member.bank.bank = option[0].value || option[0]
+      this.member.bank.bank = option[0]
     },
     inputAmount (val) {
       let formatted = !val ? '' : val.replace(/[^0-9]/g, '')
@@ -178,7 +228,6 @@ export default {
             value: item.key + ''
           })
         })
-        this.member.bank.bank = this.banks[0].value
       })
     },
     submit () {
@@ -189,7 +238,14 @@ export default {
             content: _this.$t('profile.bankinfo_confirm'),
             onConfirm () {
               _this.loading = true
-              addUserBank(_this.user, _this.member).then((response) => {
+              const sendData = {}
+              Object.keys(_this.member).forEach(key => {
+                let value = _this.member[key]
+                if (value !== undefined && value !== '') {
+                  sendData[key] = value
+                }
+              })
+              addUserBank(_this.user, sendData).then((response) => {
                 _this.loading = false
                 _this.$store.dispatch('fetchUser')
                 setTimeout(() => {
@@ -289,5 +345,21 @@ export default {
 
 .container {
   height: calc(~"100%" - 45px);
+}
+.info-tip {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 21px 0 8px 22px;
+  color: #666;
+  background: #f0f0f0;
+  font-size: 14px;
+  &::before {
+    position: absolute;
+    left: 14px;
+    font-size: 16px;
+    content: '*';
+    color: #d0021b;
+  }
 }
 </style>

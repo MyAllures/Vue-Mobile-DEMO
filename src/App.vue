@@ -100,6 +100,7 @@
       </div>
     </div>
     <bet-dialog />
+    <balance-hint-dialog />
     <transition name="fade">
       <div v-show="showCalender">
         <Calender ref="calendar" @closeCalender="closeCalender"/>
@@ -132,6 +133,7 @@ import TryplayPopup from './components/TryplayPopup'
 import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
+import BalanceHintDialog from './components/BalanceHintDialog'
 import Calender from './components/Calender'
 import WinNotification from './components/WinNotification'
 import DetailWinNotification from './components/DetailWinNotification'
@@ -153,6 +155,7 @@ export default {
     TryplayPopup,
     GameMenu,
     BetDialog,
+    BalanceHintDialog,
     Calender,
     WinNotification,
     DetailWinNotification
@@ -287,7 +290,7 @@ export default {
       return ['RoadBeads', 'Leaderboards', 'GameIntro', 'Game', 'GameDetail'].includes(this.$route.name)
     },
     showLinks () {
-      return !['Login', 'Register', 'Promotions', 'PromotionDetail'].includes(this.$route.name) && this.user.logined === false
+      return !['Login', 'Register', 'Promotions', 'PromotionDetail', 'AppDownload'].includes(this.$route.name) && this.user.logined === false
     },
     headerLeftTitle () {
       let name = this.$route.name

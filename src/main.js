@@ -49,6 +49,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
 let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
+  axios.defaults.headers.common['x-r'] = params.r
 }
 
 Vue.use(require('vue-moment'))
@@ -269,7 +270,8 @@ gethomePage().then(
         stickerGroups: response.sticker_groups || [],
         envelopeSettings: pref.red_envelope_settings || {},
         smsValidationEnabled: pref.sms_validation_enabled === 'true',
-        appDownloadUrl: pref.app_download_url
+        appDownloadUrl: pref.app_download_url,
+        planSiteUrl: pref.plan_site_url
       })
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')

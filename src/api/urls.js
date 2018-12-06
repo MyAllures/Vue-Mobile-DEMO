@@ -37,6 +37,7 @@ export default {
   betrecord_byday: apiv2 + '/betrecord_dates/',
   transaction_record: apiv2 + '/transaction/',
   return_amount: apiv2 + '/return_amount/',
+  personal_report: apiv2 + '/personal_report/',
   result: '/result/',
   bank: apiv2 + '/bank/',
   withdraw: apiv2 + '/withdraw/',
