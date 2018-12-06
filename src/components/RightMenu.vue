@@ -204,7 +204,6 @@
 </script>
 
 <style lang="less" scoped>
-@import "../styles/vars.less";
 .popup {
   background-color: #fff;
 }

@@ -4,7 +4,7 @@
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
-          <rowSkeleton highlight="#1568CA" :seperatePoints="[30,40]"></rowSkeleton>
+          <rowSkeleton :color="theme" highlight="rgba(255,255,255,.1)" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
       </div>
       <div class="wrapper">
@@ -17,7 +17,7 @@
           :closeCountDown="closeCountDown"
           :resultCountDown="resultCountDown"/>
           <div class="p" v-else-if="!gameClosed">
-            <rowSkeleton highlight="#1568CA" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+            <rowSkeleton :color="theme" highlight="rgba(255,255,255,.1)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
           </div>
       </div>
     </div>
@@ -69,7 +69,10 @@
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
         </flexbox-item>
       </flexbox>
-      <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">已封盘</div>
+      <div v-if="(gameClosed&&closeCountDown)" class="gameclosed-mask">
+        <div class="mask color"></div>
+        <span class="text">已封盘</span>
+      </div>
     </div>
   </div>
 </template>
@@ -157,7 +160,7 @@ export default {
       return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'latestResultMap'
+      'systemConfig', 'user', 'latestResultMap', 'theme'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -446,25 +449,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../styles/vars.less";
-
 .game {
   display: flex;
   overflow-x: hidden;
   flex-direction: column;
   height: 100%;
-
-  .data-section {
-    display: flex;
-    flex-wrap: wrap;
-    background: linear-gradient(to bottom, #166fd8, #1053A1);
-    min-height: 80px;
-    align-items: center
-  }
-
   .wrapper {
     width: 100%;
   }
+}
+.data-section {
+  display: flex;
+  flex-wrap: wrap;
+  background: linear-gradient(to right, lighten(@azul, 20%), @azul);
+  min-height: 80px;
+  align-items: center
 }
 
 .active {
@@ -567,11 +566,25 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 64, 138, 0.7);
-  color: #fff;
+  height: 55px;
+  line-height: 55px;
+  .mask {
+    width: 100%;
+    height: 100%;
+    background-color: @azul;
+    opacity: .7;
+  }
+  .text {
+    position: absolute;
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
 }
 
 .bet-content {

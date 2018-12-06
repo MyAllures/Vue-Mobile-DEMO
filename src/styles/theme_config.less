@@ -1,0 +1,140 @@
+.theme (@main: @azul, @gradient) {
+  .vux-header {
+    background-color: @main;
+    background-image: @gradient;
+  }
+  .vux-header-right .actions .link .login {
+    color: @main;
+  }
+
+  .weui-btn_primary {
+    background-color: @main;
+    background-image: @gradient;
+    &:active {
+      background-color: @main;
+      background-image: linear-gradient(to right, @main, darken(@main, 15%));
+    }
+    &:not(.weui-btn_disabled):active {
+      background-color: @main;
+      background-image: linear-gradient(to right, @main, darken(@main, 15%));
+    }
+    &.weui-btn_disabled {
+      background-color: #dddddd;
+    }
+    &.weui-btn_loading {
+      background-color: @main;
+      background-image: @gradient;
+    }
+  }
+
+
+  .vux-tab .vux-tab-item.vux-tab-selected {
+    color: @main;
+    border-bottom: 3px solid @main;
+  }
+
+  .weui-dialog__btn_primary {
+    color: @main;
+  }
+
+  .read-agreement .link {
+    color: @main;
+  }
+
+  .weui-icon-success {
+    color: @main;
+  }
+  .vux-check-icon > .weui-icon-success:before, .vux-check-icon > .weui-icon-success-circle:before {
+    color: @main;
+  }
+
+  .game-group .game-item .game-label-text {
+    background-color: lighten(@main, 30%);
+    color: darken(@main, 30%);
+  }
+
+  .game-label .game-label-text {
+    background-color: lighten(@main, 30%);
+    color: darken(@main, 30%);
+  }
+
+
+  .game .data-section {
+    background-image: @gradient;;
+  }
+
+  .category-menu-item.active {
+    background-image: @gradient;;
+  }
+
+  .weui-grid.play.active {
+    background: @main;
+  }
+
+  .gameclosed-mask .mask.color{
+    background-color: @main;
+  }
+
+  .dp-header .dp-item {
+    color: @main;
+    &.dp-right {
+      color: @main;
+    }
+  }
+
+  .fin-tabs .tab-view {
+    background-image: @gradient;;
+    .tab-item.selected .tab-item-text {
+      color: @main;
+    }
+  }
+
+  .vux-slider > .vux-indicator > a > .vux-icon-dot.active, .vux-slider .vux-indicator-right > a > .vux-icon-dot.active {
+    background-color: @main;
+  }
+
+  .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__icon > i, .weui-tabbar__item.weui-bar__item_on .weui-tabbar__label {
+    color: @main;
+  }
+
+  .vux-cell-bd.vux-cell-primary .register {
+    color: @main;
+  }
+
+  .balance-info .button {
+    background-image: @gradient
+  }
+}
+
+.theme0 { // processing
+  @main: #eee;
+  @gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  .theme(@main, @gradient);
+}
+
+.theme1 {// default
+}
+
+.theme2 {
+  @main: #1976d2;
+  @gradient:  linear-gradient(to right, #57c4e9, #3c81d2);
+  .theme(@main, @gradient);
+}
+
+.theme3 {
+  @main: #dd603a;
+  @gradient: linear-gradient(to right, #fabb6d, #d74d38);
+  .theme(@main, @gradient);
+}
+
+.theme4 {
+  @main: #53b8df;
+  @gradient: linear-gradient(to right, #6ad9bb, #4fb2e4);
+  .theme(@main, @gradient);
+}
+
+.theme5 {
+  @main: #6a42a6;
+  @gradient: linear-gradient(to left, #915bdd, #4f94e4);
+  .theme(@main, @gradient);
+}

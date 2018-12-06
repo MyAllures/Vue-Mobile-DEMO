@@ -104,7 +104,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .popup {
   background-color: #fff;
   top: 45px;
@@ -138,16 +137,17 @@ export default {
   width: 100%;
   height: 30px;
   padding-bottom: 3px;
-  .game-label-text {
-    display: inline-block;
-    height: 20px;
-    line-height: 20px;
-    padding: 2px 5px;
-    border-radius: 10px;
-    background-color: #d0e2f7;
-    color: #113f7c;
-    font-size: 13px;
-  }
+}
+
+.game-label-text {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  background-color: #d0e2f7;
+  color: #113f7c;
+  font-size: 13px;
 }
 
 .weui-grids.vux-grid-no-lr-borders {

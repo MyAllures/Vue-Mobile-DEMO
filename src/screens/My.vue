@@ -146,8 +146,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '../styles/vars.less';
-
 .visitor {
   .img {
     width: 60px;

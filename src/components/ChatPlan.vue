@@ -117,7 +117,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .container {
   background: #fff;
   max-width: 264px;

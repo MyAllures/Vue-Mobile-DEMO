@@ -3,7 +3,7 @@
     'height': height,
     'background-image': backgroundImage,
     'width': width
-  }" :class="{highlight: highlight}">
+  }" :class="{highlight}">
   </div>
 </template>
 

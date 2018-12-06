@@ -14,9 +14,9 @@
       <div :class="['statistics', {'full-width': statistics.length === 0}]">
         <div :class="['historydata-selector', {'full-width': statistics.length === 0}]" >
           <tab v-if="currentHistoryTag.length"
-            bar-active-color="#156fd8"
+            bar-active-color="theme"
             :animate="false"
-            active-color="#156fd8" >
+            active-color="theme" >
             <tab-item v-for="(item, index) in  currentHistoryTag"
               @on-item-click="changeActiveHistoryTag(item)"
               :key="index"
@@ -232,6 +232,9 @@ export default {
     }
   },
   computed: {
+    theme () {
+      return this.$store.state.theme
+    },
     currentTab () {
       return this.statisticsMap[this.activeName]
     },
@@ -412,8 +415,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
-
 @headHeight: 46px;
 @gameSelectorHeight: 45px;
 @topHeight: @headHeight + @gameSelectorHeight;

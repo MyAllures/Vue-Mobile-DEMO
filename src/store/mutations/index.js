@@ -1,5 +1,12 @@
 import Vue from 'vue'
 import * as types from './mutation-types'
+const themeMap = {
+  1: '#156fd8',
+  2: '#1976d2',
+  3: '#dd603a',
+  4: '#53b8df',
+  5: '#6a42a6'
+}
 
 export default {
   [types.SET_USER]: (state, user) => {
@@ -151,5 +158,8 @@ export default {
   },
   [types.SWITCH_GAME_STATE]: (state, info) => {
     state.urgencySwitchedGame = info
+  },
+  [types.SET_THEME]: (state, themeId) => {
+    state.theme = themeMap[themeId]
   }
 }

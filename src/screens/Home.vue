@@ -4,9 +4,7 @@
       class="banner-slider"
       :aspect-ratio=".5"
       dots-position="center"
-      dots-class="banner"
-      auto
-      loop>
+      dots-class="banner">
       <swiper-item v-for="(banner,index) in banners" :key="index">
         <div class="swiper-image" :style="{'background-image': banner.img?`url('${banner.img}')`:''}"></div>
         <div class="swiper-desc-mask"></div>
@@ -31,9 +29,9 @@
     </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
       <tab :style="{width: tags.length > 3 ? `${tags.length * 100 / 3.5}vw` : ''}"
-          bar-active-color="#156fd8"
+          :bar-active-color="theme"
           :animate="false"
-          active-color="#156fd8"
+          :active-color="theme"
           :line-width="2">
         <tab-item
           v-for="(tag,index) in tags"
@@ -182,7 +180,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable', 'promotions'
+      'user', 'systemConfig', 'tagTable', 'promotions', 'theme'
     ]),
     allGames () {
       const games = this.$store.state.games
@@ -313,7 +311,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '../styles/vars.less';
 .icon-placeholder {
   opacity: 0;
 }
@@ -471,8 +468,8 @@ export default {
       height: 1px;
       width: 100%;
       bottom: 0;
-      border-bottom: 1px solid #D9D9D9;
-      color: #D9D9D9;
+      border-bottom: 1px solid @grayscale3;
+      color: @grayscale3;
       transform-origin: 100% 0;
       transform: scaleY(0.5);
     }
@@ -520,6 +517,7 @@ export default {
     }
   }
 }
+
 .game-loading {
   text-align: center;
   background: #fff;
@@ -546,41 +544,41 @@ export default {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  background: #fff;
+  background: @white;
   margin-bottom: 20px;
   .game-item {
     position: relative;
     box-sizing: border-box;
     width: calc(~"100%" / 3);
     padding-bottom: 10px;
-    color: #333;
+    color: @grayscale6;
     text-align: center;
     font-size: 16px;
-    .game-label {
-      box-sizing: border-box;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      width: 100%;
-      height: 30px;
-      .game-label-text {
-        display: inline-block;
-        height: 20px;
-        line-height: 20px;
-        padding: 2px 5px;
-        border-radius: 10px;
-        background-color: #d0e2f7;
-        color: #113f7c;
-        font-size: 13px;
-      }
-    }
-    .game-icon {
-      box-sizing: border-box;
-      display: block;
-      width: 100%;
-      min-height: 10vh;
-      padding: 5px 20% 8px 20%;
-    }
+  }
+  .game-label {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+    height: 30px;
+  }
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background-color: lighten(@azul, 30%);
+    color: darken(@azul, 30%);
+    font-size: 13px;
+  }
+  .game-icon {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 10vh;
+    padding: 5px 20% 8px 20%;
   }
 }
 
@@ -597,9 +595,9 @@ export default {
     align-items: center;
     width: 50%;
     height: 100%;
-    background: #fff;
+    background: @white;
     font-size: 16px;
-    color: #333;
+    color: @grayscale6;
     &::before {
       content: " ";
       position: absolute;
@@ -607,8 +605,8 @@ export default {
       top: 0;
       width: 1px;
       bottom: 0;
-      border-right: 1px solid #D9D9D9;
-      color: #D9D9D9;
+      border-right: 1px solid @grayscale3;
+      color: @grayscale3;
       transform-origin: 100% 0;
       transform: scaleX(0.5);
     }
@@ -642,8 +640,9 @@ export default {
   width: 100px;
   margin: 0 auto;
   text-align: center;
-  .pc-link-btn {
-    color: #166fd8;
-  }
+}
+
+.pc-link-btn {
+  color: @azul;
 }
 </style>
