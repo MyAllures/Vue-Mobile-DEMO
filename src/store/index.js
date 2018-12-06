@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
+import { getLastGameData } from '../utils'
 
 Vue.use(Vuex)
 
@@ -89,7 +90,8 @@ export default new Vuex.Store({
         status: 0
       }
     },
-    latestResultMap: {}
+    latestResultMap: {},
+    lastGameData: getLastGameData()
   },
   actions,
   mutations,

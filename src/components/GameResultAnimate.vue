@@ -126,10 +126,12 @@ export default {
     },
     getAnimateStyle (chunkIndex) {
       let animationDuration = ''
-      if (((chunkIndex + 1) / 1.5) > 2) { // too slow
-        animationDuration = `${((chunkIndex + 1) / 5)}s`
+      const GAMES_HAS_SUM = ['pcdd', 'jnd28', 'luckdd']
+      const getDuration = (speed = 1.5) => (chunkIndex + 1) / speed
+      if (GAMES_HAS_SUM.includes(this.gameCode)) {
+        animationDuration = `${(getDuration())}s`
       } else {
-        animationDuration = `${((chunkIndex + 1) / 1.5)}s`
+        animationDuration = `${getDuration((Math.random() * 5) + 3)}s`
       }
       return GameOnlyChange.includes(this.gameCode) ? `` : {animationDuration}
     }

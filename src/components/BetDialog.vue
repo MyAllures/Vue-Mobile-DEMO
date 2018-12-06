@@ -15,14 +15,10 @@
               class="bet-item"
               v-for="(bet, index) in betDialog.bets"
               :key="index">
-              <x-input
-                :title="`【${bet.display_name}】 @${bet.odds} X `"
-                @on-change="formatEachAmount($event, index)"
-                v-model="betAmounts[index]"
-                label-width="100%"
-                :show-clear="false"
-                @on-focus="focusInput">
-              </x-input>
+              <label class="amount-input-wrapper">
+                {{`【${bet.display_name}】 @${bet.odds} X `}}
+                <AmountInput class="amount-input" v-model="betAmounts[index]" @on-focus="focusInput"/>
+              </label>
               <p v-if="bet.optionDisplayNames" class="options"> {{`已选号码：${bet.optionDisplayNames}`}} </p>
             </li>
           </ul>
@@ -53,14 +49,15 @@
 <script>
 import { placeBet } from '../api'
 import { mapState } from 'vuex'
-import { msgFormatter, validateAmount } from '../utils'
+import { msgFormatter } from '../utils'
 import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, InlineLoading} from 'vux'
 import FixScroll from '../directive/fixscroll'
+import AmountInput from './AmountInput'
 const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
 export default {
   name: 'BetDialog',
   components: {
-    Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, InlineLoading
+    Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, InlineLoading, AmountInput
   },
   directives: {
     TransferDom,
@@ -220,18 +217,6 @@ export default {
           }
           this.loading = false
         })
-    },
-    formatEachAmount (val, index) {
-      if (!val) {
-        this.amount = ''
-        this.$set(this.betAmounts, index, '')
-      }
-      val = val + ''
-      if (val && !validateAmount(val)) {
-        this.$nextTick(() => {
-          this.$set(this.betAmounts, index, val.slice(0, -1))
-        })
-      }
     }
   },
   beforeDestroy () {
@@ -269,6 +254,21 @@ export default {
       .bet-item-text {
         height: 25px;
         line-height: 25px;
+      }
+      .amount-input-wrapper {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 5px;
+        .amount-input {
+          width: 60px;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding-left: 5px;
+          height: 25px;
+        }
       }
     }
   }

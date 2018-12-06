@@ -38,7 +38,6 @@
         :key="$route.params.categoryId"
         :game="currentGame"
         :gameClosed="gameClosed"
-        :amount="amountForProp"
         :playReset="playReset"
         @updatePlays="updatePlays"
         @resetPlays="playReset = !playReset"
@@ -53,14 +52,9 @@
           <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
         </flexbox-item>
         <flexbox-item>
-          <x-input
-            class="weui-vcode"
-            placeholder="金额"
-            v-model="amount"
-            @on-change="inputAmount"
-            label-width="100px"
-            :show-clear="false">
-          </x-input>
+          <div class="amount-input-wrapper">
+            <AmountInput class="amount-input" placeholder="金额" v-model="amount"/>
+          </div>
         </flexbox-item>
         <flexbox-item>
           <x-button type="primary" :disabled="!amount" @click.native="openDialog">{{$t('action.submit')}}</x-button>
@@ -78,10 +72,11 @@
 import _ from 'lodash'
 import { mapState } from 'vuex'
 import { fetchSchedule, fetchGameResult } from '../../api'
-import { Indicator, validateAmount } from '../../utils'
+import { Indicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
+import AmountInput from '../../components/AmountInput'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
 
 export default {
@@ -101,7 +96,8 @@ export default {
     InlineLoading,
     CellBox,
     CheckIcon,
-    rowSkeleton
+    rowSkeleton,
+    AmountInput
   },
   directives: {
     TransferDom
@@ -162,9 +158,6 @@ export default {
     gameId () {
       return this.$route.params.gameId
     },
-    amountForProp () {
-      return this.amount
-    },
     hasPlanCheck () {
       return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
     },
@@ -195,6 +188,9 @@ export default {
         this.schedule.schedule_close = closeTime
         this.closeCountDown = this.diffTime(closeTime)
       }
+    },
+    'amount': function (amount) {
+      localStorage.setItem('amount', amount)
     }
   },
   created () {
@@ -274,27 +270,15 @@ export default {
       }).catch(() => {})
     },
     chooseCategory () {
-      const categoryId = localStorage.getItem(this.gameId + '-lastCategory') || this.categories[0].id
+      const categoryId = this.$store.state.lastGameData.lastCategory[this.gameId] || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
-    },
-    inputAmount (val) {
-      if (!val) {
-        this.amount = ''
-      }
-      if (val && !validateAmount(val)) {
-        this.$nextTick(() => {
-          this.amount = val.slice(0, -1)
-        })
-      }
     },
     switchCategory (categoryId) {
       if (!categoryId) {
         return
       }
       const gameId = this.$route.params.gameId
-
-      localStorage.setItem(gameId + '-lastCategory', categoryId)
-
+      this.$store.dispatch('saveLastCategory', {gameId, categoryId})
       this.$router.push({
         path: `/game/${gameId}/${categoryId}`
       })
@@ -379,10 +363,6 @@ export default {
     },
     formatBetInfo (originPlays) {
       return originPlays.map(play => {
-        if (play.amount <= 0) {
-          return
-        }
-
         let betOptions
         let optionDisplayNames = []
         if (play.activedOptions) {
@@ -401,7 +381,7 @@ export default {
         return {
           game_schedule: this.schedule.id,
           display_name: play.hideName ? play.group : `${play.group} - ${play.display_name}`,
-          bet_amount: play.amount,
+          bet_amount: this.amount,
           odds: play.odds,
           play: play.id,
           bet_options: betOptions,
@@ -546,21 +526,17 @@ export default {
     overflow: visible;
     width: 90%;
   }
-  /deep/ .vux-x-input {
-    color: #333;
+  .amount-input-wrapper {
+    box-sizing: border-box;
+    height: 40px;
     padding: 0 5px;
-    .weui-cell__bd.weui-cell__primary {
+    .amount-input {
       background: #fff;
       border: 1px solid #f0f0f0;
       border-radius: 5px;
       height: 40px;
-      box-sizing: border-box;
-      input {
-        color: #333;
-        height: 100%;
-        box-sizing: border-box;
-        padding-left: 5px;
-      }
+      line-height: 40px;
+      color: #333;
     }
   }
 }

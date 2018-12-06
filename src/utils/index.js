@@ -204,3 +204,50 @@ export function getPropByPath (obj, path, strict) {
     v: tempObj ? tempObj[keyArr[i]] : null
   }
 };
+
+export function saveLastGameData (lastGameData) {
+  let lastGameDataStr = localStorage.getItem('lastGameData')
+  let lastGameDataObj
+  if (lastGameDataStr) {
+    lastGameDataObj = JSON.parse(lastGameDataStr)
+  }
+  if (lastGameDataObj) {
+    lastGameDataObj.mobile = lastGameData
+  } else {
+    lastGameDataObj = {mobile: lastGameData}
+  }
+  localStorage.setItem('lastGameData', JSON.stringify(lastGameDataObj))
+}
+
+export function getLastGameData () {
+  let lastGameDataStr = localStorage.getItem('lastGameData')
+  let lastGameData
+  if (lastGameDataStr) {
+    lastGameData = JSON.parse(lastGameDataStr).mobile
+  }
+  if (lastGameData) {
+    lastGameData = {
+      lastGame: lastGameData.lastGame || '',
+      lastCategory: lastGameData.lastCategory || {}
+    }
+  } else {
+    let lastGame = localStorage.getItem('lastGame') || ''
+    localStorage.removeItem('lastGame')
+
+    let lastCategory = {}
+    Object.keys(localStorage).forEach(key => {
+      if (key.endsWith('-lastCategory')) {
+        let gameId = key.split('-')[0]
+        let categoryId = localStorage.getItem(key)
+        localStorage.removeItem(key)
+        lastCategory[gameId] = categoryId
+      }
+    })
+    lastGameData = {
+      lastGame,
+      lastCategory
+    }
+    saveLastGameData(lastGameData)
+  }
+  return lastGameData
+}

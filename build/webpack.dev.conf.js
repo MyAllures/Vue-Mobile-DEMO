@@ -95,19 +95,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       launchScreen,
       inject: false
     }),
-    // $HOST/mobile/static/app.html is temporary, if the nginx static file is ready , can delete this
-    new HtmlWebpackPlugin({
-      filename: './mobile/static/app.html',
-      template: 'app.html',
-      host: process.env.HOST || '',
-      companyId: companyInfo.id,
-      companyName: companyInfo.name,
-      homeSkeleton: skeletons.homeSkeleton,
-      appHost: `https://storage.googleapis.com/lutra/${companyInfo.name}/`, // app storage url
-      staticRoot: '/mobile/static/app/',
-      launchScreen,
-      inject: false
-    }),
     new AddAssetHtmlPlugin([{
       filepath: require.resolve('../lib/base1.dll.js'),
       includeSourcemap: false
