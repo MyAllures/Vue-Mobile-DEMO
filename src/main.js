@@ -49,6 +49,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
 let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
+  axios.defaults.headers.common['x-r'] = params.r
 }
 
 Vue.use(require('vue-moment'))
