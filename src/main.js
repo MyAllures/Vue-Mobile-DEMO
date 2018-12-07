@@ -273,6 +273,11 @@ gethomePage().then(
         appDownloadUrl: pref.app_download_url,
         planSiteUrl: pref.plan_site_url
       })
+
+    const themeId = response.theme || 3
+    store.dispatch('setTheme', themeId)
+    document.body.classList.add(`theme${themeId}`)
+
     if (pref.ga_tracking_id) {
       const ga = document.createElement('script')
       ga.type = 'text/javascript'

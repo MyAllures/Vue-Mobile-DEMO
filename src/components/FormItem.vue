@@ -164,7 +164,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .v-form-item {
   display: flex;
   align-items: center;

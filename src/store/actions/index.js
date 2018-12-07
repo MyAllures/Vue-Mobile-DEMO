@@ -188,5 +188,14 @@ export default {
   },
   urgencySwitchGame: ({commit}, info) => {
     commit(types.SWITCH_GAME_STATE, info)
+  },
+  saveLastGame: ({commit}, id) => {
+    commit(types.SAVE_LAST_GAME, id)
+  },
+  saveLastCategory: ({commit}, data) => {
+    commit(types.SAVE_LAST_CATEGORY, data)
+  },
+  setTheme: ({commit}, id) => {
+    commit(types.SET_THEME, id)
   }
 }

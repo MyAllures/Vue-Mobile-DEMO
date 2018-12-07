@@ -200,7 +200,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 .filter-area {
   position: sticky;
   top: 0;

@@ -1,7 +1,5 @@
-@import './vars.less';
-
 html, body {
-  background: #f0f0f0;
+  background: @grayscale1;
   height: 100%;
   width: 100%;
 }
@@ -9,17 +7,18 @@ html, body {
 body .vux-header {
   .vux-header-left, .vux-header-right {
     a, button, .left-arrow:before {
-      color: #fff;
+      color: @white;
     }
   }
   .vux-header-back {
-    font-size: 16px;
+    font-size: @font-large;
     vertical-align: middle;
   }
 }
 
+
 .vux-x-icon {
-  fill: #166fd8;
+  fill: @azul;
   display: inherit;
 }
 
@@ -70,6 +69,7 @@ body .vux-header {
 .p-sm {
   padding: 5px;
 }
+
 .text-sm {
   font-size: 0.9em;
 }
@@ -89,7 +89,7 @@ body .vux-header {
   height: 6px;
   width: 6px;
   border-width: 2px 2px 0 0;
-  border-color: #C8C8CD;
+  border-color: @grayscale3;
   border-style: solid;
   transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
   position: absolute;
@@ -110,7 +110,15 @@ body .vux-header {
 }
 
 .grey {
-  color: #666;
+  color: @grayscale5;
+}
+
+.text-danger {
+  color: @red
+}
+
+.text-success {
+  color: @green
 }
 
 .fl {
@@ -134,15 +142,8 @@ body .vux-header {
   padding-bottom: 10px;
   .text {
     list-style: circle inside;
-    color: #ff9800;
+    color: @orange;
   }
-}
-
-.text-danger {
-  color: @red
-}
-.text-success {
-  color: @green
 }
 
 .vux-input-icon.weui-icon.weui_icon_warn.weui-icon-warn {
@@ -152,7 +153,7 @@ body .vux-header {
 .vux-header{
   .vux-header-right{
     a.vux-header-more {
-      font-size: 16px;
+      font-size: @font-large;
       font-weight: bold;
       &::after {
         display: inline-block;
@@ -166,7 +167,7 @@ body .vux-header {
 .emoji.vux-indicator.vux-indicator-center {
   bottom: 5px;
   .vux-icon-dot.active {
-    background: #9b9b9b;
+    background: @grayscale4;
   }
 }
 
@@ -191,7 +192,7 @@ body .vux-header {
     right: 15px;
     height: 20px;
     width: 2px;
-    background-color: #fff;
+    background-color: @white;
   }
   &::before {
     transform: rotate(45deg);
@@ -204,9 +205,9 @@ body .vux-header {
 
 .record-table.vux-table {
   margin-top: 10px;
-  background-color: #fff;
+  background-color: @white;
   text-align: left;
-  color: #333;
+  color: @grayscale6;
   font-size: 13px;
   &::after {
     display: none;
@@ -216,8 +217,8 @@ body .vux-header {
     padding: 10px 0 10px 12px;
   }
   .record-thead {
-    background-color: #f0f0f0;
-    color: #666;
+    background-color: @grayscale1;
+    color: @grayscale5;
     font-size: 13px;
     th {
       padding: 10px 0 10px 12px;
@@ -231,7 +232,7 @@ body .vux-header {
   }
   .no-data {
     td {
-      background: #f0f0f0;
+      background: @grayscale1;
       text-align: center;
       &::before {
         display: none;
@@ -243,9 +244,9 @@ body .vux-header {
 .bet-items {
   height: 150px;
   overflow-y: auto;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
+  border-top: 1px solid @grayscale1;
+  border-bottom: 1px solid @grayscale1;
+  color: @grayscale6;
   padding: 10px 0;
   .bet-item {
     text-align: left;
@@ -257,7 +258,7 @@ body .vux-header {
       .weui-input{
         width: 60px;
         box-sizing: border-box;
-        border: 1px solid #ccc;
+        border: 1px solid @grayscale2;
         border-radius: 5px;
         padding-left: 5px;
       }
@@ -283,7 +284,7 @@ body .vux-header {
   height: 36px;
   padding: 8px 16px;
   margin-right: 4px;
-  color: #666;
+  color: @grayscale5;
   font-size: 14px;
   .dot {
     position: relative;
@@ -299,8 +300,8 @@ body .vux-header {
       display: inline-block;
       width: 8px;
       height: 8px;
-      background-color: #166fd8;
-      box-shadow: 0 1px 6px 0 rgba(26, 114, 218, 0.25);
+      background-color: @azul;
+      box-shadow: 0 1px 6px 0 rgba(22, 111, 216, 0.1);
       border-radius: 50%;
     }
     &::after {
@@ -381,13 +382,13 @@ body .vux-header {
     .item-title {
       height: 18px;
       line-height: 18px;
-      color: #999;
+      color: @grayscale4;
       font-size: 13px;
       word-break: keep-all;
     }
     .item-content {
-      font-size: 16px;
-      color: #333;
+      font-size: @font-large;
+      color: @grayscale6;
       &.bigger {
         font-size: 22px;
       }
@@ -410,7 +411,7 @@ body .vux-header {
 
 // inline service link
 .service-link {
-  color: #166fd8;
+  color: @azul;
   text-decoration: underline;
 }
 
@@ -429,12 +430,12 @@ body .vux-header {
   &.point-top {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid #fff;
+    border-bottom: 5px solid @white;
   }
   &.point-down {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 5px solid #fff;
+    border-top: 5px solid @white;
   }
 }
 
@@ -450,7 +451,7 @@ body .vux-header {
   .weui-cell__ft {
     width: 100px;
     text-align: left;
-    color: #666;
+    color: @grayscale5;
     padding: 0;
     &::after {
       display: none;

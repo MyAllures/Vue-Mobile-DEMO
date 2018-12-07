@@ -273,7 +273,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .chat-body {
   position: relative;
   flex: 1 1 auto;
