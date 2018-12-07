@@ -1,4 +1,4 @@
-.theme (@main: @azul, @gradient) {
+.theme (@main: @azul, @gradient, @playColor) {
   .vux-header {
     background-color: @main;
     background-image: @gradient;
@@ -46,7 +46,8 @@
   .weui-icon-success {
     color: @main;
   }
-  .vux-check-icon > .weui-icon-success:before, .vux-check-icon > .weui-icon-success-circle:before {
+  .vux-check-icon > .weui-icon-success:before,
+  .vux-check-icon > .weui-icon-success-circle:before {
     color: @main;
   }
 
@@ -66,11 +67,11 @@
   }
 
   .category-menu-item.active {
-    background-image: @gradient;;
+    background-color: @playColor;;
   }
 
   .weui-grid.play.active {
-    background: @main;
+    background-color: @playColor;
   }
 
   .gameclosed-mask .mask.color{
@@ -111,7 +112,8 @@
 .theme0 { // processing
   @main: #eee;
   @gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-  .theme(@main, @gradient);
+  @playColor: @azul;
+  .theme(@main, @gradient, @playColor);
 }
 
 .theme1 {// default
@@ -120,23 +122,27 @@
 .theme2 {
   @main: #1976d2;
   @gradient:  linear-gradient(to right, #57c4e9, #3c81d2);
-  .theme(@main, @gradient);
+  @playColor: #4caae0;
+  .theme(@main, @gradient, @playColor);
 }
 
 .theme3 {
   @main: #dd603a;
   @gradient: linear-gradient(to right, #fabb6d, #d74d38);
-  .theme(@main, @gradient);
+  @playColor: #f1a060;
+  .theme(@main, @gradient, @playColor);
 }
 
 .theme4 {
   @main: #53b8df;
   @gradient: linear-gradient(to right, #6ad9bb, #4fb2e4);
-  .theme(@main, @gradient);
+  @playColor: #4caae0;
+  .theme(@main, @gradient, @playColor);
 }
 
 .theme5 {
   @main: #6a42a6;
   @gradient: linear-gradient(to left, #915bdd, #4f94e4);
-  .theme(@main, @gradient);
+  @playColor: #7b6edf;
+  .theme(@main, @gradient, @playColor);
 }
