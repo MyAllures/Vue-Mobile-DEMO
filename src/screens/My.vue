@@ -214,7 +214,7 @@ export default {
   height: 36px;
   font-size: 14px;
   color: #fff;
-  background-color: #166fd8;
+  background-color: @azul;
   border-radius: 4px;
 }
 

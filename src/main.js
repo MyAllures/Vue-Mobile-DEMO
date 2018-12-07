@@ -274,7 +274,7 @@ gethomePage().then(
         planSiteUrl: pref.plan_site_url
       })
 
-    const themeId = response.theme || 3
+    const themeId = response.theme || 1
     store.dispatch('setTheme', themeId)
     document.body.classList.add(`theme${themeId}`)
 
