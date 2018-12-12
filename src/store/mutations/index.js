@@ -123,20 +123,20 @@ export default {
     let obj = result[0] || result
     state.currentGameResult = obj
   },
-  [types.SHOW_WINNOTIFICATION]: (state) => {
-    state.winNotificationVisible = true
+  [types.SHOW_NOTIFICATION]: (state) => {
+    state.notificationVisible = true
   },
-  [types.HIDE_WINNOTIFICATION]: (state) => {
-    state.winNotificationVisible = false
+  [types.HIDE_NOTIFICATION]: (state) => {
+    state.notificationVisible = false
   },
-  [types.ADD_WINNOTIFICATION]: (state, notification) => {
-    state.winNotification.push(notification)
+  [types.ADD_NOTIFICATION]: (state, notification) => {
+    state.notifications.push(notification)
   },
-  [types.REMOVE_WINNOTIFICATION]: (state, index) => {
-    state.winNotification.shift()
+  [types.REMOVE_NOTIFICATION]: (state, index) => {
+    state.notifications.shift()
   },
-  [types.CLEAR_WINNOTIFICATION]: (state, index) => {
-    state.winNotification = []
+  [types.CLEAR_NOTIFICATION]: (state, index) => {
+    state.notifications = []
   },
   [types.TAG_TABLE]: (state, table) => {
     state.tagTable = table

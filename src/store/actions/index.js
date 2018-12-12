@@ -92,11 +92,19 @@ export default {
         games: res
       })
       commit(types.TAG_TABLE, tagTable)
-      fetchGamesDetail().then(gamesDetial => {
-        gamesDetial.forEach(({id, categories}) => {
+      fetchGamesDetail().then(gamesDetail => {
+        gamesDetail.forEach(({id, categories, playpositions}) => {
+          if (playpositions) {
+            categories.push({
+              code: 'playpositions',
+              id: 'playpositions',
+              name: '追号',
+              playpositions
+            })
+          }
           commit(types.SET_CATEGORIES, {
             gameId: id,
-            categories: categories
+            categories
           })
         })
       })
@@ -111,10 +119,12 @@ export default {
   },
   fetchCategories: ({ commit, state }, gameId) => {
     return fetchCategories(gameId).then(res => {
-      commit(types.SET_CATEGORIES, {
-        gameId: gameId,
-        categories: res
-      })
+      if (!state.categories[gameId]) {
+        commit(types.SET_CATEGORIES, {
+          gameId: gameId,
+          categories: res
+        })
+      }
       return res
     })
   },
@@ -169,11 +179,11 @@ export default {
   setCurrentGameResult: ({ commit }, result) => {
     commit(types.SET_CURRENTGAME_RESULT, result)
   },
-  removeWinNotification: ({ commit }) => {
-    commit(types.REMOVE_WINNOTIFICATION)
+  removeNotification: ({ commit }) => {
+    commit(types.REMOVE_NOTIFICATION)
   },
-  addWinNotification: ({ commit }, notification) => {
-    commit(types.ADD_WINNOTIFICATION, notification)
+  addNotification: ({ commit }, notification) => {
+    commit(types.ADD_NOTIFICATION, notification)
   },
   fetchPromotions: ({commit}) => {
     return getPromotions().then(response => {

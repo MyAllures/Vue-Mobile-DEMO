@@ -48,6 +48,14 @@ export default new Router({
           },
           children: [
             {
+              path: 'playpositions',
+              name: 'PlayPositions',
+              component: resolve => { require(['../screens/games/TrackBet.vue'], resolve) },
+              meta: {
+                tabbarHidden: true
+              }
+            },
+            {
               path: ':categoryId',
               name: 'GameDetail',
               component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
@@ -155,6 +163,16 @@ export default new Router({
             requiresAuth: true
           },
           component: resolve => { require(['../screens/finance/PersonalReport.vue'], resolve) }
+        },
+        {
+          path: 'bettrack_record',
+          name: 'BetTrackRecord',
+          meta: {
+            title: '追号纪录',
+            gaTitle: '追号纪录',
+            requiresAuth: true
+          },
+          component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
         }
       ]
     },
