@@ -107,8 +107,11 @@ export default {
   [types.ADD_MESSAGE]: (state, message) => {
     state.messages.push(message)
   },
-  [types.SET_ANNOUNCE]: (state, announce) => {
-    state.announce = announce
+  [types.SET_ANNOUNCE]: (state, {page, announce}) => {
+    state.announce[page] = announce
+  },
+  [types.SET_BANNERS]: (state, banners) => {
+    state.banners = banners
   },
   [types.UPDATE_GAME_INFO]: (state, info) => {
     state.gameInfo = {...state.gameInfo, ...info}

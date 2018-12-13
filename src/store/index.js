@@ -83,7 +83,11 @@ export default new Vuex.Store({
     roomId: undefined,
     roomInfo: null,
     messages: [],
-    announce: [],
+    announce: {
+      chatroom: [],
+      homepage: []
+    },
+    banners: [],
     customTitle: '',
     personal_setting: {
       chat: {
