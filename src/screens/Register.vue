@@ -356,7 +356,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .actions {
   margin-top: 1em;
   padding: 0 30px;
@@ -375,14 +374,14 @@ export default {
   top: 0;
   right: 0;
   height: 1px;
-  border-top: 1px solid #D9D9D9;
-  color: #D9D9D9;
+  border-top: 1px solid @grayscale3;
+  color: @grayscale3;
   transform-origin: 0 0;
   transform: scaleY(0.5);
   left: 15px;
 }
 .weui-cell_select /deep/ .weui-select {
-  border: 1px solid #ddd;
+  border: 1px solid @grayscale2;
   padding-right: 0;
 }
 .weui-cell_select /deep/ .weui-cell__bd:after {
@@ -395,15 +394,17 @@ export default {
 }
 
 .read-agreement {
-  color: #333;
+  color: @grayscale6;
   padding-left: 1em;
-  .link {
-    color: #4a90e2;
-    vertical-align: middle;
-  }
 }
+
+.link {
+  color: @azul;
+  vertical-align: middle;
+}
+
 .agreement {
-  color: #4a4a4a;
+  color: @grayscale6;
   padding: 1em;
 }
 
@@ -433,8 +434,6 @@ export default {
     text-align:center;
   }
 }
-
-
 
 .sms-btn {
   height: 32px;
