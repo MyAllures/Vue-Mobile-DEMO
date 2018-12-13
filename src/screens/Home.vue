@@ -140,7 +140,6 @@ import {
   TabItem
 } from 'vux'
 import { mapState } from 'vuex'
-import { fetchBanner, fetchAnnouncements } from '../api'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
@@ -148,8 +147,6 @@ export default {
   name: 'Home',
   data () {
     return {
-      banners: [],
-      announcements: [],
       showDialog: false,
       game_count: 15,
       showpromoPopup: false,
@@ -180,8 +177,11 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable', 'promotions', 'theme'
+      'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce'
     ]),
+    announcements () {
+      return this.announce.homepage
+    },
     allGames () {
       const games = this.$store.state.games
       if (games.length === 0) {
@@ -248,40 +248,6 @@ export default {
         }
       }
     }
-  },
-  created () {
-    fetchBanner()
-      .then(res => {
-        const banners = res.map((banner, index) => {
-          return {
-            url: 'javascript:',
-            img: index === 0 ? banner.image : ''
-          }
-        })
-        this.banners = banners
-        setTimeout(() => {
-          res.forEach((banner, index) => {
-            this.banners[index].img = banner.image
-          })
-        }, 1000)
-      }).catch(() => {})
-    fetchAnnouncements().then(
-      result => {
-        const datas = []
-        result.forEach((item) => {
-          if (item.platform !== 1) {
-            datas.push(item)
-          }
-        })
-
-        if (datas.length > 0) {
-          datas.sort((a, b) => {
-            return a.rank - b.rank
-          })
-        }
-        this.announcements = datas.map(data => data.announcement)
-      }
-    )
   },
   methods: {
     openPClink () {
