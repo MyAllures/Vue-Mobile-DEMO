@@ -10,8 +10,8 @@ exports.skeleton =
   }
 </style>
 <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;">
-  <div style="z-index: 1; position: fixed; top: 0;left: 0; right: 0; height: 50px; width: 100%; background-color: #166fd8;"></div>
-  <div style="position: fixed; width: 100%; height: 100%; background-color: #f0f0f0; margin-top: 50px">
+  <div style="z-index: 1; position: fixed; top: 0;left: 0; right: 0; height: 46px; width: 100%; background-color: #eee;"></div>
+  <div style="position: fixed; width: 100%; height: 100%; background-color: #f0f0f0; margin-top: 46px">
     <div style="height: 50vw;background-color: #ddd;"></div>
     <div style="width: 100%; height: 44px; background-color: #fff; border-bottom: 1px solid #ddd;"></div>
     <div style="width: 100%; height: 100%; background-color: #fff;"></div>

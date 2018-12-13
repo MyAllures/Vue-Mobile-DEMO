@@ -130,7 +130,7 @@ export default {
 .input-errors {
   font-size: 14px;
   margin-left: 10px;
-  color: #ff9800;
+  color: @orange;
   li {
     list-style: circle inside;
   }
