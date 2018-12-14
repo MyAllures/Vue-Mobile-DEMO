@@ -14,6 +14,7 @@ const loadingImg = require('../assets/loading.gif')
 
 export default new Vuex.Store({
   state: {
+    theme: 0,
     user: {
       logined: 'pending',
       unread: 0
@@ -83,7 +84,11 @@ export default new Vuex.Store({
     roomId: undefined,
     roomInfo: null,
     messages: [],
-    announce: [],
+    announce: {
+      chatroom: [],
+      homepage: []
+    },
+    banners: [],
     customTitle: '',
     personal_setting: {
       chat: {

@@ -163,7 +163,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
 .login-area {
   margin-top: 25px;
 }

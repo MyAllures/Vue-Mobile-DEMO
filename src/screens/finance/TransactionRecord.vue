@@ -192,7 +192,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 .record-table {
   td {
     font-size: 14px;
