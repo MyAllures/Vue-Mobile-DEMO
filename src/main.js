@@ -261,9 +261,7 @@ const setChatRoomSetting = (username) => {
 const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').then(() => {
-
-  }).catch(() => {})
+  store.dispatch('fetchUser').then(() => {}).catch(() => { initData() })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
