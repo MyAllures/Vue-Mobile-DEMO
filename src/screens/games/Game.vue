@@ -29,27 +29,36 @@
           v-for="(category, index) in categories"
           @click.native="switchCategory(category.id)"
           :key="index">
-          {{category.name}}
+          <template v-if="category.id === 'playpositions'">
+            <span class="playposition-badge">{{category.name}}</span>
+          </template>
+          <template v-else>{{category.name}}</template>
         </cell-box>
       </group>
       <div class="main">
         <router-view
-        :activeCategory="activeCategory"
-        :key="$route.params.categoryId"
-        :game="currentGame"
-        :gameClosed="gameClosed"
-        :playReset="playReset"
-        @updatePlays="updatePlays"
-        @resetPlays="playReset = !playReset"
-        />
+          :activeCategory="activeCategory"
+          :schedules="schedules"
+          :key="$route.params.categoryId"
+          :game="currentGame"
+          :gameClosed="gameClosed"
+          :playReset="playReset"
+          @updatePlays="updatePlays"
+          @updateBetTrackData="updateBetTrackData"
+          @resetPlays="playReset = !playReset"/>
       </div>
     </div>
-
     <div class="bet-input">
       <flexbox :gutter="0">
         <flexbox-item>
           <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-          <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
+          <template>
+            <div v-if="activeCategory === 'playpositions'" class="playCount">
+              {{bettrackData.forDisplay.type}}
+              <span class="count">{{bettrackData.forDisplay.play_code_pattern}}</span>
+            </div>
+            <div v-else class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
+          </template>
         </flexbox-item>
         <flexbox-item>
           <div class="amount-input-wrapper">
@@ -63,7 +72,7 @@
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
         </flexbox-item>
       </flexbox>
-      <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">已封盘</div>
+      <div v-if="gameClosed && closeCountDown && activeCategory !== 'playpositions'" class="gameclosed-mask">已封盘</div>
     </div>
   </div>
 </template>
@@ -71,7 +80,7 @@
 <script>
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import { fetchSchedule, fetchGameResult } from '../../api'
+import { fetchSchedule, fetchGameResult, fetchBetTrackSchedules } from '../../api'
 import { Indicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
@@ -105,6 +114,7 @@ export default {
   data () {
     return {
       realSchedule: null,
+      schedules: [],
       schedule: {
         id: null
       },
@@ -121,7 +131,10 @@ export default {
       isBusy: false,
       indicator: null,
       diffBetweenServerAndClient: 0,
-      hasDestroy: false
+      hasDestroy: false,
+      bettrackData: {
+        forDisplay: {}
+      }
     }
   },
   filters: {
@@ -150,7 +163,11 @@ export default {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
     activeCategory () {
-      return this.$route.params.categoryId
+      if (this.$route.name === 'PlayPositions') {
+        return 'playpositions'
+      } else {
+        return this.$route.params.categoryId
+      }
     },
     ...mapState([
       'systemConfig', 'user', 'latestResultMap'
@@ -172,6 +189,11 @@ export default {
     }
   },
   watch: {
+    'gameClosed': function (closed) {
+      if (closed) {
+        this.fetchBetTrackSchedules(4)
+      }
+    },
     '$route': function (to, from) {
       if (to.path === `/game/${this.gameId}`) {
         this.chooseCategory()
@@ -195,6 +217,7 @@ export default {
   },
   created () {
     this.fetchScheduleAndResult()
+
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
@@ -226,22 +249,36 @@ export default {
     })
   },
   methods: {
+    updateBetTrackData (bettrackData) {
+      this.bettrackData = bettrackData
+    },
+    fetchBetTrackSchedules (type) {
+      fetchBetTrackSchedules(this.gameId, this.currentGame.code, type, this.schedule.id).then((res) => {
+        this.schedules = _.takeRight(res, 3)
+      })
+    },
     fetchScheduleAndResult () {
       if (!this.gameId) {
         return
       }
 
-      Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
+      return Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
         }
         const schedule = results[0][0]
+
         if (schedule) {
           this.schedule = schedule
           let serverTime = this.$moment(this.schedule.schedule_result)
           this.schedule.schedule_result = this.$moment().add(schedule.result_left, 's')
           this.diffBetweenServerAndClient = serverTime.diff(this.schedule.schedule_result)
           this.schedule.schedule_close = this.$moment().add(schedule.close_left, 's')
+          if (this.schedule.status === 'close') {
+            this.fetchBetTrackSchedules(4)
+          } else {
+            this.fetchBetTrackSchedules(3)
+          }
         } else {
           this.closeCountDown = {
             days: 0,
@@ -270,7 +307,7 @@ export default {
       }).catch(() => {})
     },
     chooseCategory () {
-      const categoryId = this.$store.state.lastGameData.lastCategory[this.gameId] || this.categories[0].id
+      let categoryId = this.$store.state.lastGameData.lastCategory[this.gameId] || this.categories[0].id
       this.$router.replace(`/game/${this.gameId}/${categoryId}`)
     },
     switchCategory (categoryId) {
@@ -324,6 +361,20 @@ export default {
     },
     openDialog () {
       if (!this.amount) {
+        return
+      }
+      if (this.activeCategory === 'playpositions') {
+        if (this.bettrackData.type && this.bettrackData.play_code_pattern) {
+          this.bettrackData.bet_amount = parseFloat(this.amount)
+          this.$store.dispatch('updateDialog', {
+            name: 'bettrack',
+            state: {
+              visible: true,
+              data: this.bettrackData,
+              isSuccess: false
+            }
+          })
+        }
         return
       }
       const bets = this.formatBetInfo(this.validPlays)
@@ -616,5 +667,19 @@ export default {
   padding-left: 10px;
   padding-top: 10px;
   padding-bottom: 5px;
+}
+
+.playposition-badge {
+  position: relative;
+  &:after {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 15px;
+    vertical-align: middle;
+    margin-left: 10px;
+    background-image: url('../../assets/badge_new.svg');
+    background-repeat: no-repeat;
+  }
 }
 </style>

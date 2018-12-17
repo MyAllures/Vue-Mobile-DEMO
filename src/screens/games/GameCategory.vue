@@ -255,6 +255,10 @@ export default {
       const tabKeys = []
 
       let groupName = currentCategory.name
+      if (currentCategory.id === 'playpositions') {
+        return
+      }
+
       currentCategory.tabs.forEach(tab => {
         const tabName = tab.name || 'no-alias'
         tabKeys.push(tabName)
