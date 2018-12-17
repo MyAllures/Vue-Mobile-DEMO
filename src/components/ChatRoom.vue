@@ -96,8 +96,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
-
 .chat-box {
   position: relative;
   width: 100%;

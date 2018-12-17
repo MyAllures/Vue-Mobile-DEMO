@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fin-tabs">
     <div class="tab-view" v-show="tabs.length && $route.name !== 'DetailBetRecord'" ref="view">
       <div class="tab">
         <div
@@ -93,13 +93,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/vars.less';
-
 .tab-view {
   box-sizing: border-box;
   width: 100%;
   height: 44px;
-  background: #166fd8;
+  background: @azul;
   text-align: center;
   overflow-x: scroll;
   font-size: 14px;
@@ -110,19 +108,19 @@ export default {
     display: flex;
     flex-wrap: nowrap;
     height: 44px;
-    .tab-item {
-      flex: 0 0 auto;
-      height: 44px;
-      line-height: 44px;
-      width: 100/4.2vw;
-      color: rgba(255, 255, 255, 0.8);
-      &.selected{
-        .tab-item-text {
-          background: #fff;
-          border-radius: 14px;
-          padding: 7px 8px;
-          color: #166fd8;
-        }
+  }
+  .tab-item {
+    flex: 0 0 auto;
+    height: 44px;
+    line-height: 44px;
+    width: 100/4.2vw;
+    color: rgba(255, 255, 255, 0.8);
+    &.selected{
+      .tab-item-text {
+        background: #fff;
+        border-radius: 14px;
+        padding: 7px 8px;
+        color: @azul;
       }
     }
   }

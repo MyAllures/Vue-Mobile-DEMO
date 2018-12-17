@@ -39,7 +39,7 @@ function WebSocketObj (token, roomId) {
         } else if (!data.error_type) {
           if (data.latest_message) {
             if (data.bulletin) {
-              store.dispatch('setAnnounce', data.bulletin)
+              store.dispatch('setAnnounce', {page: 'chatroom', announce: data.bulletin})
             }
             store.dispatch('initMessage', data.latest_message.reverse())
             return
@@ -135,7 +135,7 @@ WebSocketObj.prototype.leaveRoom = function () {
   }))
   store.commit('SET_ROOM_ID', undefined)
   store.dispatch('initMessage', [])
-  store.dispatch('setAnnounce', [])
+  store.dispatch('setAnnounce', {page: 'chatroom', announce: []})
 }
 
 WebSocketObj.prototype.send = function (data) {

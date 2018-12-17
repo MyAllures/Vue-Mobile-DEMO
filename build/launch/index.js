@@ -35,7 +35,7 @@ const style = `
     height: 0.5em;
     transform-origin: 50% 1.5em;
     margin-left: -0.25em;
-    background-color: #166fd8;
+    background-color: #eee;
     border-radius: 50%;
     animation: orbit 2s linear infinite;
   }

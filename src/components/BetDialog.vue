@@ -227,8 +227,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import "../styles/vars.less";
-
 .bet-content {
   width: 100%;
   text-align: left;

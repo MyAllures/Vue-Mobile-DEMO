@@ -124,7 +124,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 @import '~vux/src/styles/1px.less';
 .title {
   font-size: 16px;

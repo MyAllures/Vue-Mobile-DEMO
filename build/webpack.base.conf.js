@@ -122,9 +122,10 @@ const originalConfig = {
 
 const vuxLoader = require('vux-loader')
 const webpackConfig = originalConfig
+
 const lessTheme = {
   name: 'less-theme',
-  path: path.resolve(__dirname, '../src/styles/theme.less')
+  path: path.resolve(__dirname, '../src/styles/vux_theme.less')
 }
 
 module.exports = vuxLoader.merge(webpackConfig, {

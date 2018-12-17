@@ -49,16 +49,21 @@ exports.cssLoaders = function (options) {
     }
 
   }
-
+  const globalStyle = {
+    loader: 'sass-resources-loader',
+    options: {
+      resources: [
+        path.resolve(__dirname, '../src/styles/vars.less')
+      ]
+    }
+  }
   // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {
     css: generateLoaders(),
     postcss: generateLoaders(),
-    less: generateLoaders('less'),
+    less: generateLoaders('less').concat(globalStyle),
     sass: generateLoaders('sass', { indentedSyntax: true }),
-    scss: generateLoaders('sass'),
-    stylus: generateLoaders('stylus'),
-    styl: generateLoaders('stylus')
+    scss: generateLoaders('sass')
   }
 }
 

@@ -324,7 +324,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-@import '../../styles/vars.less';
 .payment-types {
 
   /deep/ .weui-cells {
