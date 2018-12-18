@@ -21,6 +21,66 @@ import color from './styles'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 
+function initData () {
+  store.dispatch('fetchGames')
+  store.dispatch('fetchAnnouncements')
+  store.dispatch('fetchBanner')
+
+  gethomePage().then(
+    response => {
+      let pref = response.global_preferences || {}
+      const chatroomEnabled = pref.chatroom_enabled === 'true'
+      store.dispatch('setSystemConfig',
+        {
+          process: 'fulfilled',
+          homePageLogo: response.icon,
+          customerServiceUrl: pref.customer_service_url,
+          agentDashboardUrl: pref.agent_dashboard_url,
+          global_preferences: pref,
+          agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
+          isAllowNewPaymentWindow: pref.is_allow_new_payment_window,
+          contactEmail: pref.contact_email,
+          contactPhoneNumber: pref.contact_phone_number,
+          openAccountConsultingQQ: pref.open_account_consulting_qq,
+          chatroomEnabled: chatroomEnabled,
+          siteName: response.name,
+          gaTrackingId: pref.ga_tracking_id,
+          regPresentAmount: response.reg_present_amount,
+          needBankinfo: response.need_bankinfo,
+          stickerGroups: response.sticker_groups || [],
+          envelopeSettings: pref.red_envelope_settings || {},
+          smsValidationEnabled: pref.sms_validation_enabled === 'true',
+          appDownloadUrl: pref.app_download_url,
+          planSiteUrl: pref.plan_site_url
+        })
+
+      const themeId = response.theme || 1
+      store.dispatch('setTheme', themeId)
+      document.body.classList.add(`theme${themeId}`)
+
+      if (pref.ga_tracking_id) {
+        let gaScript = document.getElementById('ga-script')
+        if (!gaScript) {
+          const ga = document.createElement('script')
+          ga.type = 'text/javascript'
+          ga.async = true
+          ga.id = 'ga-script'
+          ga.src = `https://www.googletagmanager.com/gtag/js?id=${pref.ga_tracking_id}`
+          const s = document.getElementsByTagName('script')[0]
+          s.parentNode.insertBefore(ga, s)
+        }
+      }
+      // if (pref.script_content) {
+      //   const dynamicScript = document.createElement('script')
+      //   dynamicScript.type = 'text/javascript'
+      //   dynamicScript.async = true
+      //   dynamicScript.text = `try{${pref.script_content}}catch(e){console.log(e)}`
+      //   const s = document.getElementsByTagName('script')[0]
+      //   s.parentNode.insertBefore(dynamicScript, s)
+      // }
+    }
+  )
+}
 // 移动端触发active
 document.addEventListener('touchstart', function () {}, true)
 window.onerror = function (errorMessage, scriptURI, lineNo, columnNo, error) {
@@ -49,6 +109,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
 let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
+  axios.defaults.headers.common['x-r'] = params.r
 }
 
 Vue.use(require('vue-moment'))
@@ -200,12 +261,11 @@ const setChatRoomSetting = (username) => {
 const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').then(() => {
-
-  }).catch(() => {})
+  store.dispatch('fetchUser').then(() => {}).catch(() => { initData() })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
+    initData()
   })
 }
 
@@ -240,56 +300,11 @@ store.watch((state) => {
   }
   if (logined) {
     setHeartBeatInterval()
+    initData()
   } else {
     clearInterval(heartBeatInterval)
   }
 })
-
-gethomePage().then(
-  response => {
-    let pref = response.global_preferences || {}
-    const chatroomEnabled = pref.chatroom_enabled === 'true'
-    store.dispatch('setSystemConfig',
-      {
-        process: 'fulfilled',
-        homePageLogo: response.icon,
-        customerServiceUrl: pref.customer_service_url,
-        agentDashboardUrl: pref.agent_dashboard_url,
-        global_preferences: pref,
-        agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
-        isAllowNewPaymentWindow: pref.is_allow_new_payment_window,
-        contactEmail: pref.contact_email,
-        contactPhoneNumber: pref.contact_phone_number,
-        openAccountConsultingQQ: pref.open_account_consulting_qq,
-        chatroomEnabled: chatroomEnabled,
-        siteName: response.name,
-        gaTrackingId: pref.ga_tracking_id,
-        regPresentAmount: response.reg_present_amount,
-        needBankinfo: response.need_bankinfo,
-        stickerGroups: response.sticker_groups || [],
-        envelopeSettings: pref.red_envelope_settings || {},
-        smsValidationEnabled: pref.sms_validation_enabled === 'true',
-        appDownloadUrl: pref.app_download_url,
-        planSiteUrl: pref.plan_site_url
-      })
-    if (pref.ga_tracking_id) {
-      const ga = document.createElement('script')
-      ga.type = 'text/javascript'
-      ga.async = true
-      ga.src = `https://www.googletagmanager.com/gtag/js?id=${pref.ga_tracking_id}`
-      const s = document.getElementsByTagName('script')[0]
-      s.parentNode.insertBefore(ga, s)
-    }
-    // if (pref.script_content) {
-    //   const dynamicScript = document.createElement('script')
-    //   dynamicScript.type = 'text/javascript'
-    //   dynamicScript.async = true
-    //   dynamicScript.text = `try{${pref.script_content}}catch(e){console.log(e)}`
-    //   const s = document.getElementsByTagName('script')[0]
-    //   s.parentNode.insertBefore(dynamicScript, s)
-    // }
-  }
-)
 
 /* eslint-disable no-new */
 new Vue({

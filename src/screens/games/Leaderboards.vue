@@ -159,8 +159,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
-
 .leaderbaord-container {
   height: 100%;
   overflow-y: hidden;

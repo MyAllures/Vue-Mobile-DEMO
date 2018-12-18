@@ -1,6 +1,13 @@
 import Vue from 'vue'
 import * as types from './mutation-types'
 import {saveLastGameData} from '../../utils'
+const themeMap = {
+  1: '#156fd8',
+  2: '#1976d2',
+  3: '#dd603a',
+  4: '#53b8df',
+  5: '#6a42a6'
+}
 
 export default {
   [types.SET_USER]: (state, user) => {
@@ -101,8 +108,11 @@ export default {
   [types.ADD_MESSAGE]: (state, message) => {
     state.messages.push(message)
   },
-  [types.SET_ANNOUNCE]: (state, announce) => {
-    state.announce = announce
+  [types.SET_ANNOUNCE]: (state, {page, announce}) => {
+    state.announce[page] = announce
+  },
+  [types.SET_BANNERS]: (state, banners) => {
+    state.banners = banners
   },
   [types.UPDATE_GAME_INFO]: (state, info) => {
     state.gameInfo = {...state.gameInfo, ...info}
@@ -160,5 +170,8 @@ export default {
   [types.SAVE_LAST_CATEGORY]: (state, {gameId, categoryId}) => {
     state.lastGameData.lastCategory[gameId] = categoryId
     saveLastGameData(state.lastGameData)
+  },
+  [types.SET_THEME]: (state, themeId) => {
+    state.theme = themeMap[themeId]
   }
 }

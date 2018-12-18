@@ -23,6 +23,7 @@
     "js-combinatorics": "^0.5.3",
     "lodash": "^4.17.4",
     "lrz": "^4.9.40",
+    "sass-resources-loader": "^2.0.0",
     "vue": "^2.5.2",
     "vue-cookie": "^1.1.4",
     "vue-i18n": "^7.7.0",
