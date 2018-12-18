@@ -26,7 +26,7 @@
       </div>
       <p class="preview m-t-sm">
         <span v-for="(s, i) in selectedSchedules" :key="i">
-          {{s.issue_number + '期 '}}
+          {{s + '期 '}}
         </span>
       </p>
     </div>
@@ -47,6 +47,8 @@
 
 <script>
 import {indexOf, find, take, map} from 'lodash'
+import {loadLastTrack, saveLastTrack} from '../../utils'
+
 const trackOptions = {
   bcr: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
   jspk10: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -58,6 +60,7 @@ const trackOptions = {
   jsssc: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
   tjssc: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 }
+
 export default {
   props: {
     game: {
@@ -68,23 +71,16 @@ export default {
     }
   },
   data () {
-    let existingData = localStorage.getItem(`bettrack-${this.game.code}`)
+    const existingData = loadLastTrack(this.game.id)
     let initialData = {
-      game_schedule: 0,
       type: 0,
-      bet_amount: 0,
       track_numbers: [],
       play_code_pattern: '',
-      forDisplay: {
-        type: '',
-        play_code_pattern: '',
-        selectedSchedules: []
-      }
+      forDisplay: {}
     }
     let betTrackData
-    let item = JSON.parse(existingData)
-    if (item) {
-      betTrackData = {...item}
+    if (existingData) {
+      betTrackData = {...existingData}
     } else {
       betTrackData = initialData
     }
@@ -122,9 +118,7 @@ export default {
     },
     init () {
       const initedData = {
-        game_schedule: Number(this.validSchedules[0].id),
         type: this.types[0].value,
-        bet_amount: 0,
         track_numbers: [],
         play_code_pattern: this.playpositions.data[0].play_code_pattern,
         forDisplay: {
@@ -146,19 +140,14 @@ export default {
       return currentCategory ? currentCategory.playpositions : []
     },
     selectedSchedules () {
-      let selectedSchedules = take(this.validSchedules, this.betTrackData.type)
-      this.betTrackData.forDisplay.selectedSchedules = selectedSchedules
-      return selectedSchedules
-    },
-    validSchedules () {
-      return map(this.schedules, (s) => { return {issue_number: s.issue_number, id: s.id} })
+      return take(map(this.schedules, s => s.issue_number), this.betTrackData.type)
     },
     betTrackDialog () {
       return this.$store.state.dialog.bettrack
     }
   },
   updated () {
-    localStorage.setItem(`bettrack-${this.game.code}`, JSON.stringify(this.betTrackData) || this.initialData)
+    saveLastTrack(this.game.id, this.betTrackData)
     this.$emit('updateBetTrackData', this.betTrackData)
   },
   watch: {
@@ -167,11 +156,13 @@ export default {
         this.init()
       }
     },
-    'validSchedules': {
-      handler: function (schedules) {
-        if (schedules.length) {
-          this.betTrackData.game_schedule = Number(this.validSchedules[0].id)
-        }
+    'selectedSchedules': function (selectedSchedules) {
+      this.betTrackData.forDisplay.selectedSchedules = selectedSchedules
+    },
+    'playpositions': function (playpositions) {
+      if (playpositions && playpositions.length) {
+        this.betTrackData.play_code_pattern = playpositions.data[0].play_code_pattern
+        this.betTrackData.forDisplay.play_code_pattern = playpositions.data[0].display_name
       }
     }
   }

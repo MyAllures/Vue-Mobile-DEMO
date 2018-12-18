@@ -34,7 +34,7 @@
           </td>
           <td>
             <p>{{record.game.display_name}}</p>
-            <span :class="['item', {win: num === record.winning_schedule}]" v-for="(num, index) in record.issue_numbers" :key="index">{{num}}</span>
+            <span :class="['item', {win: num === record.winning_schedule}]" v-for="(num, index) in record.issue_numbers" :key="index">{{num.slice(-3)}}</span>
           </td>
           <td>
             <p>{{record.play_position }}</p>
@@ -45,8 +45,8 @@
             <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
           </td>
           <td>
-            <p>{{record.bet_amount}}</p>
-            {{record.profit || '-'}}
+            <p>￥{{record.bet_amount}}</p>
+            <p :class="record.profit > 0 ? 'red' : 'green'">{{(record.profit || '-') | currency('￥')}}</p>
           </td>
         </tr>
       </tbody>
