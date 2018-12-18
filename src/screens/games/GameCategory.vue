@@ -2,9 +2,9 @@
   <div>
     <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
-          bar-active-color="#156fd8"
+          bar-active-color="theme"
           :animate="false"
-          active-color="#156fd8" >
+          active-color="theme" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
           :key="index"
@@ -140,6 +140,9 @@ export default {
     },
     categories () {
       return this.$store.state.categories[this.$route.params.gameId] || []
+    },
+    theme () {
+      return this.$store.state.theme
     },
     currentCategory () {
       const categories = this.$store.state.categories[this.$route.params.gameId]

@@ -131,7 +131,7 @@
       seoWebsite () {
         if (this.systemConfig.planSiteUrl && this.currentGame) {
           const code = this.currentGame.code
-          if (code === 'bcr' || code === 'cqssc') {
+          if (code === 'bcr' || code === 'cqssc' || code === 'jsssc' || code === 'jspk10') {
             return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
           }
         }
@@ -204,7 +204,6 @@
 </script>
 
 <style lang="less" scoped>
-@import "../styles/vars.less";
 .popup {
   background-color: #fff;
 }

@@ -161,8 +161,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../styles/vars.less';
-
 .container {
   height: 100%;
 }

@@ -8,10 +8,12 @@ import {
   fetchGames,
   fetchGamesDetail,
   fetchCategories,
-  getPromotions
+  getPromotions,
+  fetchBanner,
+  fetchAnnouncements
 } from '../../api'
 import {HKL_GAMES} from '../../config'
-
+import {take} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -28,6 +30,12 @@ const login = function ({ commit, state, dispatch }, { user }) {
       })
       axios.defaults.withCredentials = true
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      if (res.agent) {
+        commit(types.SET_USER, {
+          ...user,
+          agent: res.agent
+        })
+      }
     }
     return dispatch('fetchUser')
   }, error => {
@@ -50,6 +58,39 @@ export default {
   },
   resetUser: ({commit}) => {
     commit(types.RESET_USER)
+  },
+  fetchBanner: ({commit, state}) => {
+    fetchBanner().then(res => {
+      const banners = res.map((banner, index) => {
+        return {
+          url: 'javascript:',
+          img: banner.image
+        }
+      })
+      commit(types.SET_BANNERS, take(banners, 1))
+
+      setTimeout(() => {
+        commit(types.SET_BANNERS, banners)
+      }, 1000)
+    }).catch(() => {})
+  },
+  fetchAnnouncements: ({commit, state}) => {
+    fetchAnnouncements().then(result => {
+      const datas = []
+      result.forEach((item) => {
+        if (item.platform !== 1) {
+          datas.push(item)
+        }
+      })
+
+      if (datas.length > 0) {
+        datas.sort((a, b) => {
+          return a.rank - b.rank
+        })
+      }
+      commit(types.SET_ANNOUNCE, {page: 'homepage', announce: datas.map(data => data.announcement)})
+    }
+    )
   },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
@@ -164,8 +205,11 @@ export default {
   updatePersonalSetting: ({ commit }, type) => {
     commit(types.UPDATE_PERSONAL_SETTING, type)
   },
-  setAnnounce: ({ commit }, announce) => {
-    commit(types.SET_ANNOUNCE, announce)
+  setAnnounce: ({ commit }, data) => {
+    commit(types.SET_ANNOUNCE, data)
+  },
+  setBanners: ({ commit }, banners) => {
+    commit(types.SET_BANNERS, banners)
   },
   updateGameInfo: ({commit}, info) => {
     commit(types.UPDATE_GAME_INFO, info)
@@ -204,5 +248,8 @@ export default {
   },
   saveLastCategory: ({commit}, data) => {
     commit(types.SAVE_LAST_CATEGORY, data)
+  },
+  setTheme: ({commit}, id) => {
+    commit(types.SET_THEME, id)
   }
 }
