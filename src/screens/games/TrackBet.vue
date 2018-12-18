@@ -71,19 +71,6 @@ export default {
     }
   },
   data () {
-    const existingData = loadLastTrack(this.game.id)
-    let initialData = {
-      type: 0,
-      track_numbers: [],
-      play_code_pattern: '',
-      forDisplay: {}
-    }
-    let betTrackData
-    if (existingData) {
-      betTrackData = {...existingData}
-    } else {
-      betTrackData = initialData
-    }
     return {
       types: [
         {
@@ -100,8 +87,14 @@ export default {
         }
       ],
       trackOptions,
-      initialData,
-      betTrackData
+      betTrackData: {
+        type: 1,
+        track_numbers: [],
+        play_code_pattern: '',
+        forDisplay: {
+          type: '单期'
+        }
+      }
     }
   },
   methods: {
@@ -137,7 +130,7 @@ export default {
         return undefined
       }
       let currentCategory = find(categories, item => (item.id + '') === 'playpositions')
-      return currentCategory ? currentCategory.playpositions : []
+      return currentCategory ? currentCategory.playpositions : {}
     },
     selectedSchedules () {
       return take(map(this.schedules, s => s.issue_number), this.betTrackData.type)
@@ -159,11 +152,21 @@ export default {
     'selectedSchedules': function (selectedSchedules) {
       this.betTrackData.forDisplay.selectedSchedules = selectedSchedules
     },
-    'playpositions': function (playpositions) {
-      if (playpositions && playpositions.length) {
-        this.betTrackData.play_code_pattern = playpositions.data[0].play_code_pattern
-        this.betTrackData.forDisplay.play_code_pattern = playpositions.data[0].display_name
-      }
+    'playpositions': {
+      handler: function (playpositions) {
+        if (playpositions && playpositions.max_opts) {
+          const existingData = loadLastTrack(this.game.id)
+          if (existingData) {
+            this.betTrackData = existingData
+          } else {
+            this.betTrackData.play_code_pattern = playpositions.data[0].play_code_pattern
+            this.betTrackData.forDisplay.play_code_pattern = playpositions.data[0].display_name
+            this.betTrackData.type = this.types[0].value
+            this.betTrackData.forDisplay.type = this.types[0].text
+          }
+        }
+      },
+      immediate: true
     }
   }
 }

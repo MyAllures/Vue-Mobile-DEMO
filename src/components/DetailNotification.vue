@@ -134,7 +134,7 @@ export default {
               if (s.status === 'win') {
                 statusHTML = '赢'
                 statusClass = 'red'
-              } else if (s.status === 'death') {
+              } else if (s.status === 'death' || status === 'lose') {
                 statusHTML = '挂'
                 statusClass = 'grey'
               } else if (s.status === 'stop') {

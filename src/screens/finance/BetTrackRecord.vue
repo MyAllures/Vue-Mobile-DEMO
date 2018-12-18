@@ -121,7 +121,7 @@ export default {
         return '取消'
       } else if (value === 'ongoing') {
         return '进行中'
-      } else if (value === 'death') {
+      } else if (value === 'death' || value === 'lose') {
         return '挂'
       } else {
         return '-'

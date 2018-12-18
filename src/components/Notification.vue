@@ -75,7 +75,7 @@ export default {
               let winningSchedule = filter(r.game_schedules, (s) => s.status === 'win')
               return `${r.game_name} ${winningSchedule[0].issue_number} 中奖了，已停止追号！`
             }
-            if (status === 'death') {
+            if (status === 'death' || status === 'lose') {
               return `${r.game_name}追号结束了，再试一把吧！`
             }
             if (status === 'cancelled') {
