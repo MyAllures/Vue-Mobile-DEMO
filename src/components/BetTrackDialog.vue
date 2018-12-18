@@ -31,7 +31,7 @@
                 <span class="value">{{dialog.data.forDisplay.type}}</span>
                 <p class="issues">
                   <span class="grey" v-for="(s, i) in dialog.data.forDisplay.selectedSchedules" :key="i">
-                    {{s.issue_number+ '期'}}
+                    {{s + '期'}}
                   </span>
                 </p>
               </div>
@@ -60,6 +60,7 @@ import {betTrack} from '../api'
 import FixScroll from '../directive/fixscroll'
 import { msgFormatter } from '../utils'
 import {pick} from 'lodash'
+import { mapState } from 'vuex'
 
 export default {
   name: 'BetTrackDialog',
@@ -79,21 +80,18 @@ export default {
     doBetTrack () {
       let submitData = pick(this.dialog.data, ['game_schedule', 'type', 'bet_amount', 'track_numbers', 'play_code_pattern'])
       betTrack(submitData).then((res) => {
+        this.sendGaEvent({
+          label: this.gameInfo.display_name,
+          category: '遊戲追號',
+          action: '投注'
+        })
         this.$store.dispatch('updateDialog', {
           name: 'bettrack',
           state: {
             visible: false,
             data: {
-              game_schedule: 0,
-              type: 0,
-              bet_amount: 0,
               track_numbers: [],
-              play_code_pattern: '',
-              forDisplay: {
-                type: '',
-                play_code_pattern: '',
-                selectedSchedules: []
-              }
+              forDisplay: {}
             },
             isSuccess: true
           }
@@ -126,6 +124,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['gameInfo']),
     dialog () {
       return this.$store.state.dialog.bettrack
     }
