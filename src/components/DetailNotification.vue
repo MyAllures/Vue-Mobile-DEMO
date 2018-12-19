@@ -16,7 +16,7 @@
         <div class="body">
           <div class="total-sum" v-if="total.value">
             <span>{{total.text}}</span>
-            <span class="amount" :class="total.value > 0 ? 'red': 'green'">{{total.value | currency('￥')}}</span>
+            <span class="amount" :class="getAmountColor(total.value)">{{total.value | currency('￥')}}</span>
           </div>
           <div class="listitem-wrapper" v-for="(item, index) in list" :key="index">
             <div class="li-head">
@@ -73,6 +73,13 @@ export default {
     }
   },
   methods: {
+    getAmountColor (amount) {
+      if (amount > 0) {
+        return 'red'
+      } else if (amount < 0) {
+        return 'green'
+      }
+    },
     handleClose () {
       this.$emit('closeDetailNotification')
       this.dialogVisible = false
@@ -124,7 +131,7 @@ export default {
                 class: ''
               },
               right: {
-                class: r.profit > 0 ? 'red' : 'green',
+                class: this.getAmountColor(r.profit),
                 main: r.profit ? this.$options.filters.currency(r.profit, '￥') : ''
               }
             },
@@ -189,7 +196,7 @@ export default {
               },
               right: {
                 main: this.$options.filters.currency(profit, '￥'),
-                class: profit > 0 ? 'red' : 'green'
+                class: this.getAmountColor(profit)
               }
             }
           })
