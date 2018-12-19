@@ -99,6 +99,10 @@ export default {
     },
     schedules: {
       type: Array
+    },
+    playReset: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -157,12 +161,13 @@ export default {
   },
   computed: {
     playpositions () {
+      let placeholder = Array.from(new Array(this.trackOptions[this.game.code].positionNum)).map(() => { return {} })
       const categories = this.$store.state.categories[this.$route.params.gameId]
       if (!categories || categories.length === 0) {
-        return undefined
+        return {data: placeholder}
       }
       let currentCategory = find(categories, item => (item.id + '') === 'playpositions')
-      return currentCategory ? currentCategory.playpositions : {data: Array.from(new Array(this.trackOptions[this.game.code].positionNum)).map(() => { return {} })}
+      return currentCategory ? currentCategory.playpositions : {data: placeholder}
     },
     selectedSchedules () {
       return take(map(this.schedules, s => s.issue_number), this.betTrackData.type)
@@ -191,6 +196,9 @@ export default {
         }
       },
       deep: true
+    },
+    'playReset': function () {
+      this.init()
     },
     'scheduleChanging': function () {
       if (this.scheduleChanging) {
