@@ -43,6 +43,7 @@
           :activeCategory="activeCategory"
           @updateBetTrackData="updateBetTrackData"/>
         <router-view
+          v-else
           :key="$route.params.categoryId"
           :game="currentGame"
           :gameClosed="gameClosed"
@@ -72,7 +73,7 @@
           <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
+          <x-button type="default" @click.native="playReset = !playReset;bettrackData = {track_numbers: [],forDisplay: {}}">{{$t('action.reset')}}</x-button>
         </flexbox-item>
       </flexbox>
       <div v-if="(gameClosed&&closeCountDown&& activeCategory !== 'playpositions')" class="gameclosed-mask">
@@ -152,8 +153,8 @@ export default {
   },
   computed: {
     submitBtnDisabled () {
-      if (this.activeCategory !== 'playpositions') {
-        return (this.bettrackData.track_numbers.length || !this.amount)
+      if (this.activeCategory === 'playpositions') {
+        return (!this.bettrackData.track_numbers.length || !this.amount)
       } else {
         return !this.amount
       }
