@@ -124,13 +124,20 @@ export default {
         this.loading = false
       })
     },
-    statusColor (value) {
-      if (value === 1) {
-        return 'green'
-      } else if (value === 3) {
-        return 'normal'
-      } else {
-        return 'red'
+    statusColor (val) {
+      switch (val) {
+        case 1:
+          return 'green'
+        case 3:
+          return 'yellow'
+        case 2:
+        case 4:
+        case 5:
+          return 'red'
+        case 6:
+          return 'blue'
+        default:
+          return 'blue'
       }
     },
     translateStatus (val) {
@@ -145,8 +152,10 @@ export default {
           return this.$t('misc.cancelled')
         case 5:
           return this.$t('misc.denied')
+        case 6:
+          return this.$t('misc.payment_pending')
         default:
-          return this.$t('misc.ongoing')
+          return this.$t('misc.payment_pending')
       }
     }
   },
