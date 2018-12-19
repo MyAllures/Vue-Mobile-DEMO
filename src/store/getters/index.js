@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import {find} from 'lodash'
 
 export default {
   user: (state, getters) => {
@@ -8,6 +8,6 @@ export default {
     return state.games
   },
   gameById: (state, getters) => id => {
-    return _.find(state.games, game => (game.id + '') === id)
+    return find(state.games, game => (game.id + '') === id)
   }
 }

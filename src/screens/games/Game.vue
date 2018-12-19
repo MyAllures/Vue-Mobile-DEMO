@@ -36,15 +36,18 @@
         </cell-box>
       </group>
       <div class="main">
-        <router-view
-          :activeCategory="activeCategory"
+        <router-view v-if="(activeCategory === 'playpositions') && schedule.id && currentGame"
           :schedules="schedules"
+          :game="currentGame"
+          :playReset="playReset"
+          :activeCategory="activeCategory"
+          @updateBetTrackData="updateBetTrackData"/>
+        <router-view
           :key="$route.params.categoryId"
           :game="currentGame"
           :gameClosed="gameClosed"
           :playReset="playReset"
           @updatePlays="updatePlays"
-          @updateBetTrackData="updateBetTrackData"
           @resetPlays="playReset = !playReset"/>
       </div>
     </div>
@@ -66,7 +69,7 @@
           </div>
         </flexbox-item>
         <flexbox-item>
-          <x-button type="primary" :disabled="!amount" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+          <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
         </flexbox-item>
         <flexbox-item>
           <x-button type="default" @click.native="playReset = !playReset">{{$t('action.reset')}}</x-button>
@@ -136,6 +139,7 @@ export default {
       diffBetweenServerAndClient: 0,
       hasDestroy: false,
       bettrackData: {
+        track_numbers: [],
         forDisplay: {}
       }
     }
@@ -147,6 +151,13 @@ export default {
     }
   },
   computed: {
+    submitBtnDisabled () {
+      if (this.activeCategory !== 'playpositions') {
+        return (this.bettrackData.track_numbers.length || !this.amount)
+      } else {
+        return !this.amount
+      }
+    },
     result () {
       if (this.currentGame) {
         return this.latestResultMap[this.currentGame.code]
@@ -192,6 +203,14 @@ export default {
     }
   },
   watch: {
+    'currentGame': {
+      handler: function (currentGame) {
+        if (currentGame) {
+          this.fetchScheduleAndResult()
+        }
+      },
+      immediate: true
+    },
     'gameClosed': function (closed) {
       if (closed) {
         this.fetchBetTrackSchedules(4)
@@ -219,8 +238,6 @@ export default {
     }
   },
   created () {
-    this.fetchScheduleAndResult()
-
     if (!this.$route.params.categoryId) {
       if (this.categories.length > 0) {
         this.chooseCategory()
@@ -264,7 +281,6 @@ export default {
       if (!this.gameId) {
         return
       }
-
       return Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
         if (this.hasDestroy) {
           return
