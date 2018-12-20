@@ -26,10 +26,8 @@
       </div>
       <div class="preview m-t-sm">
         <transition name="slide-fade">
-          <p v-show="!scheduleChanging">
-            <span v-for="(s, i) in selectedSchedules" :key="i">
-              {{s + '期 '}}
-            </span>
+          <p v-show="!scheduleChanging && selectedSchedules.length">
+            <span class="schedule-text" v-for="(s, i) in selectedSchedules" :key="i">{{s}}</span>{{betTrackData.forDisplay.type}}
           </p>
         </transition>
       </div>
@@ -191,7 +189,7 @@ export default {
     },
     'schedules': {
       handler: function (newSchedules, oldSchedules) {
-        if (oldSchedules[0] && newSchedules[0] && (oldSchedules[0].id !== newSchedules[0].id)) {
+        if (oldSchedules && newSchedules && oldSchedules[0] && newSchedules[0] && (oldSchedules[0].id !== newSchedules[0].id)) {
           this.scheduleChanging = true
         }
       },
@@ -288,6 +286,14 @@ export default {
   }
 }
 
+.schedule-text {
+  &:not(:last-child) {
+    &:after {
+      content: ', '
+    }
+  }
+}
+
 .type {
   width: 30%;
   height: 36px;
@@ -305,7 +311,7 @@ export default {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: calc(~"33% - "5px);
+  width: calc(~"(100% - 10px) / 3");
   height: 15vw;
   margin-top: 2px;
   &:active {
