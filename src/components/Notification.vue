@@ -73,7 +73,7 @@ export default {
             status = r.status
             if (status === 'win') {
               let winningSchedule = filter(r.game_schedules, (s) => s.status === 'win')
-              return `${r.game_name} ${winningSchedule[0].issue_number} 中奖了，已停止追号！`
+              return `${r.game_name} ${winningSchedule[0].issue_number} 中奖了，已停止追号`
             }
             if (status === 'death' || status === 'lose') {
               return `${r.game_name}追号结束了，再试一把吧！`
@@ -114,7 +114,7 @@ export default {
 
 .text-area {
   box-sizing: border-box;
-  height: 32px;
+  min-height: 32px;
   padding: 5px 10px;
   border-radius: 15px;
   background-color: rgba(0, 0, 0, 0.6);

@@ -21,9 +21,9 @@
         <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
           <th>{{$t('fin.game')}}</th>
-          <th>位置/號碼</th>
-          <th>結果</th>
-          <th>單注/輸贏</th>
+          <th>位置/号码</th>
+          <th>结果</th>
+          <th>单注/输赢</th>
         </tr>
       </thead>
       <tbody v-if="records.length">
@@ -357,6 +357,7 @@ export default {
   }
   &:not(:last-child):after {
     content: ', ';
+    color: #999;
   }
 }
 </style>

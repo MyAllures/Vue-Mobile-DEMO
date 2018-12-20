@@ -44,6 +44,7 @@
           @updateBetTrackData="updateBetTrackData"/>
         <router-view
           v-else
+          :activeCategory="activeCategory"
           :key="$route.params.categoryId"
           :game="currentGame"
           :gameClosed="gameClosed"

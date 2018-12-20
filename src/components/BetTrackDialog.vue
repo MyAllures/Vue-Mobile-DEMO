@@ -14,34 +14,34 @@
           </div>
           <div>
             <div class="info-wrapper">
-              <div>
+              <div class="row">
                 <span class="name">位置 :</span>
                 <span class="value">{{dialog.data.forDisplay.play_code_pattern}}</span>
               </div>
-              <div>
+              <div class="row">
                 <span class="name">号码 :</span>
                 <span class="value">{{dialog.data.track_numbers.join(',')}}</span>
               </div>
-              <div>
+              <div class="row">
                 <span class="name">单注 :</span>
                 <span class="value">￥{{dialog.data.bet_amount}}</span>
               </div>
-              <div>
+              <div class="row">
                 <span class="name">期数 :</span>
-                <span class="value">{{dialog.data.forDisplay.type}}</span>
-                <p class="issues">
-                  <span class="grey" v-for="(s, i) in dialog.data.forDisplay.selectedSchedules" :key="i">
-                    {{s + '期'}}
-                  </span>
-                </p>
+                <span class="value">
+                  <span class="schedule-text" v-for="(s, i) in dialog.data.forDisplay.selectedSchedules" :key="i">{{s}}</span>{{dialog.data.forDisplay.type}}
+                </span>
               </div>
             </div>
             <div class="summary">
-              <p>共 <span class="red">{{dialog.data.track_numbers.length}}</span> 组 中奖后即停止追号</p>
-              <p>单期总金额： <span class="red">￥{{dialog.data.track_numbers.length * dialog.data.bet_amount}}</span></p>
+              <p>一期<span class="red"> {{dialog.data.track_numbers.length}} </span>注 总金额：<span class="red">￥{{dialog.data.track_numbers.length * dialog.data.bet_amount}}</span></p>
+              <p>如有一期中奖即停止追号</p>
           </div>
           </div>
-          <flexbox class="buttons" justify="space-around">
+          <div v-if="loading"  class="loading">
+            <inline-loading></inline-loading>加载中
+          </div>
+          <flexbox v-else class="buttons" justify="space-around">
             <flexbox-item :span="5">
               <x-button type="primary" @click.native="doBetTrack">确定</x-button>
             </flexbox-item>
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import {Flexbox, FlexboxItem, XDialog, XButton, TransferDom} from 'vux'
+import {Flexbox, FlexboxItem, XDialog, XButton, TransferDom, InlineLoading} from 'vux'
 import {betTrack} from '../api'
 import FixScroll from '../directive/fixscroll'
 import { msgFormatter } from '../utils'
@@ -65,7 +65,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'BetTrackDialog',
   components: {
-    Flexbox, FlexboxItem, XDialog, XButton
+    Flexbox, FlexboxItem, XDialog, XButton, InlineLoading
   },
   directives: {
     TransferDom,
@@ -73,11 +73,13 @@ export default {
   },
   data () {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
   },
   methods: {
     doBetTrack () {
+      this.loading = true
       let submitData = pick(this.dialog.data, ['game_schedule', 'type', 'bet_amount', 'track_numbers', 'play_code_pattern'])
       betTrack(submitData).then((res) => {
         this.sendGaEvent({
@@ -168,6 +170,7 @@ export default {
 }
 
 .buttons {
+  height: 50px;
   margin-bottom: 15px;
 }
 
@@ -178,15 +181,18 @@ export default {
 }
 
 .summary {
-  font-weight: 500;
   color: #333;
   margin-bottom: 15px;
   text-align: center;
 }
 
+.row {
+  display: flex;
+}
+
 .name {
   display: inline-block;
-  width: 45px;
+  width: 50px;
   color: #999;
   line-height: 2;
 }
@@ -196,7 +202,23 @@ export default {
   line-height: 2;
 }
 
-.issues {
-  padding-left: 45px;
+.schedule-text {
+  &:not(:last-child) {
+    &:after {
+      content: ', '
+    }
+  }
+}
+.loading {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 15px;
+  .weui-loading {
+    height: 30px;
+    width: 30px;
+  }
 }
 </style>
