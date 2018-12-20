@@ -160,6 +160,7 @@ export default {
   computed: {
     playpositions () {
       let placeholder = Array.from(new Array(this.trackOptions[this.game.code].positionNum)).map(() => { return {} })
+
       const categories = this.$store.state.categories[this.$route.params.gameId]
       if (!categories || categories.length === 0) {
         return {data: placeholder}

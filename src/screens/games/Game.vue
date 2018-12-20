@@ -36,14 +36,8 @@
         </cell-box>
       </group>
       <div class="main">
-        <router-view v-if="(activeCategory === 'playpositions') && schedule.id && currentGame"
-          :schedules="schedules"
-          :game="currentGame"
-          :playReset="playReset"
-          :activeCategory="activeCategory"
-          @updateBetTrackData="updateBetTrackData"/>
         <router-view
-          v-else
+          v-if="activeCategory !== 'playpositions'"
           :activeCategory="activeCategory"
           :key="$route.params.categoryId"
           :game="currentGame"
@@ -51,6 +45,12 @@
           :playReset="playReset"
           @updatePlays="updatePlays"
           @resetPlays="playReset = !playReset"/>
+        <router-view v-else-if="schedule.id && currentGame"
+          :schedules="schedules"
+          :game="currentGame"
+          :playReset="playReset"
+          :activeCategory="activeCategory"
+          @updateBetTrackData="updateBetTrackData"/>
       </div>
     </div>
     <div class="bet-input">
