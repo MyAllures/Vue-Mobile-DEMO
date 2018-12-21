@@ -235,33 +235,28 @@ export default {
   .calender-dayhide {
     color: #dde;
   }
-
   .calender-chosenday {
-    background-color: #166fd8;
     border-radius: 50%;
     color: #fff;
   }
-  .calender-hasbet {
-    flex-direction: column;
+}
 
-    .date-number {
-      line-height: 25px;
-    }
-
-    &::after {
-      content: '';
-      position: static;
-      display: inline-block;
-      top: 32px;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background-color: #166fd8;
-    }
-
-    &.calender-chosenday::after {
-      background-color: #fff;
-    }
+.calender-hasbet {
+  flex-direction: column;
+  .date-number {
+    line-height: 25px;
+  }
+  &::after {
+    content: '';
+    position: static;
+    display: inline-block;
+    top: 32px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+  &.calender-chosenday::after {
+    background-color: #fff;
   }
 }
 </style>

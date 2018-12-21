@@ -89,6 +89,22 @@
     }
   }
 
+  .info-panel {
+    background:  @gradient;
+    background-color: @main;
+    .info-panel-item {
+      background: none;
+    }
+  }
+
+  .calender-contentitem .calender-chosenday {
+    background-color: @main;
+  }
+
+  .calender-contentitem .calender-hasbet::after {
+    background-color: @main;
+  }
+
   .fin-tabs .tab-view {
     background-image: @gradient;;
     .tab-item.selected .tab-item-text {
@@ -121,6 +137,12 @@
 }
 
 .theme1 {// default
+  .calender-contentitem .calender-chosenday {
+    background-color: #166fd8;
+  }
+  .calender-hasbet::after {
+    background-color: #166fd8;
+  }
 }
 
 .theme2 {
