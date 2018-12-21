@@ -147,7 +147,8 @@ export default {
               } else if (s.status === 'stop') {
                 statusHTML = '停止追号'
               } else if (s.status === 'cancelled') {
-                statusHTML = `取消<i class="cancelled-icon" data-msg="${r.reason}">!</i>`
+                let cancelledIcon = `<i class="cancelled-icon" data-msg="${r.reason}">!</i>`
+                statusHTML = r.reason ? ('取消' + cancelledIcon) : '取消'
               } else {
                 statusHTML = '-'
               }
