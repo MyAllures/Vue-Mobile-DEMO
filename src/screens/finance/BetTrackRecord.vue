@@ -45,13 +45,11 @@
             <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
           </td>
           <td>
-            <template v-if="record.profit !== null">
-              <p>{{record.bet_amount| currency('￥')}}</p>
-              <p :class="record.profit > 0 ? 'red' : 'green'">{{(record.profit || '-') | currency('￥')}}</p>
-            </template>
-            <template v-else>
-              <p class="text-center">-</p>
-            </template>
+            <p>{{record.bet_amount| currency('￥')}}</p>
+            <p :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
+              <template v-if="record.profit">{{record.profit | currency('￥')}}</template>
+              <template v-else>-</template>
+            </p>
           </td>
         </tr>
       </tbody>
