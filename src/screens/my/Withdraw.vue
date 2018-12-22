@@ -147,7 +147,7 @@
             this.loading = true
             postWithdraw(this.withdraw)
               .then(response => {
-                window.gtag('event', '取款', {'event_category': '取款'})
+                this.sendGaEvent({label: '我的帳號', category: '申請取款', action: '提交'})
                 this.loading = false
                 this.show = true
                 this.$refs.form.resetFields()

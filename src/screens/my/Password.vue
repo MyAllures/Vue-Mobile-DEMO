@@ -85,6 +85,7 @@ export default {
           this.errorMsg = ''
           this.loading = true
           changePassword(this.password).then((response) => {
+            this.sendGaEvent({label: '我的帳號', category: '修改密碼', action: '提交'})
             this.changed = true
             this.$refs.form.resetFields()
             setTimeout(() => {
