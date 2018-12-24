@@ -139,7 +139,7 @@ export default {
               let statusHTML = ''
               let statusClass = ''
               if (s.status === 'win') {
-                statusHTML = '赢'
+                statusHTML = '中'
                 statusClass = 'red'
               } else if (s.status === 'death' || s.status === 'lose') {
                 statusHTML = '挂'
