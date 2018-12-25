@@ -290,7 +290,7 @@ export default {
     text-align: center;
     .font-style(16px, #333, normal, inherit);
     .amount {
-      .font-style(inherit, #d0021b, 600, inherit);
+      font-weight: 600;
     }
   }
 
