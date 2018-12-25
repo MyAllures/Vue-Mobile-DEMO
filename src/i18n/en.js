@@ -35,6 +35,7 @@ export default {
     failed: 'Failed',
     ongoing: 'Ongoing',
     cancelled: 'Canceled',
+    payment_pending: 'Processing',
     denied: 'Denied',
     next_step: 'Next Step',
     submit: 'Submit',

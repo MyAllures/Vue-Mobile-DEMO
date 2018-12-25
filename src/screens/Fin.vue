@@ -124,6 +124,7 @@ export default {
         border-radius: 14px;
         padding: 7px 8px;
         color: @azul;
+        word-break: keep-all;
       }
     }
   }

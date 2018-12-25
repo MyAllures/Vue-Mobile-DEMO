@@ -3,9 +3,9 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  HOST: '"http://35.244.216.28"',
+  HOST: '"http://staging-api.h9339.com"',
   chatHost: '"ws://b583747.eastasia.cloudapp.azure.com:8003"',
   chatApi: '"http://b583747.eastasia.cloudapp.azure.com:8003"',
-  eiderHost: '"ws://35.244.231.245"',
+  eiderHost: '"ws://staging-eider.h9339.com"',
   company: '"staging"'
 })
