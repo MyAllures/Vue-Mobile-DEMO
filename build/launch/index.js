@@ -68,7 +68,7 @@ const script = `
     window.addEventListener('load', hideSkeleton);
   } else {
     skeletonDOM.style.display = 'none';
-    window.addEventListener('DOMContentLoaded', hideLaunchScreen);
+    window.addEventListener('load', hideLaunchScreen);
   }
 </script>
 `

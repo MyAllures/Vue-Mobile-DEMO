@@ -16,8 +16,7 @@ import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
-import icon from './utils/icon'
-import color from './styles'
+import sign from './utils/sign'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 
@@ -128,12 +127,11 @@ const i18n = new VueI18n({
   messages: locales
 })
 
-// axios config
 axios.interceptors.request.use((config) => {
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
-    config.headers.common['x-sign'] = icon[color.white](t, icon.sz)
-    config.headers.common['x-date'] = icon[color.red.split('5')[0]](t, icon.sz)
+    config.headers.common['x-sign'] = sign.ink(t)
+    config.headers.common['x-date'] = sign.blot(t)
   }
   return config
 }, function (error) {
