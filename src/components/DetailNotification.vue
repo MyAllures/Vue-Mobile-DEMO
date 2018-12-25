@@ -321,6 +321,7 @@ export default {
     max-height: 290px;
     padding-left: 10px;
     letter-spacing: 0.5px;
+    overflow: visible;
     .font-style(12px,  #666, inherit, inherit);
     .result {
       display: inline-flex;

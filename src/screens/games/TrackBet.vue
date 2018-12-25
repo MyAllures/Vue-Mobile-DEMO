@@ -35,7 +35,7 @@
     <div class="numbers m-b-lg">
       <p class="title m-b">追号号码</p>
       <div class="wrapper">
-        <div :class="['num-box', 'option',
+        <div :class="['num-box', 'option', 'm-t',
           {active: betTrackData.track_numbers.includes(num)}]"
            v-for="(num, index) in trackOptions[game.code].tracks" :key="index" @click="handleOptionClick(num)">
           <div class="number" :class="[`result-${game.code}`, `resultnum-${num}`, 'result']">
@@ -296,7 +296,7 @@ export default {
 }
 
 .type {
-  width: 30%;
+  width: calc(~"(100% - 26px) / 3");
   height: 36px;
   line-height: 36px;
 }
@@ -312,9 +312,8 @@ export default {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: calc(~"(100% - 10px) / 3");
+  width: calc(~"(100% - 26px) / 3");
   height: 15vw;
-  margin-top: 2px;
   &:active {
     background-color: #eee;
     border: 1px solid #eee;
