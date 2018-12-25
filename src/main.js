@@ -56,7 +56,6 @@ function initData () {
       const themeId = response.theme || 1
       store.dispatch('setTheme', themeId)
       document.body.classList.add(`theme${themeId}`)
-
       if (pref.ga_tracking_id) {
         let gaScript = document.getElementById('ga-script')
         if (!gaScript) {

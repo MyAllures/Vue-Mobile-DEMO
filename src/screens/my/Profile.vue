@@ -172,6 +172,7 @@ export default {
             delete sendData.phone
           }
           changeUserInformation(this.user.id, sendData).then((response) => {
+            this.sendGaEvent({label: '我的帳號', category: '修改基本資料', action: '提交'})
             this.$store.dispatch('fetchUser').then(() => {
               this.init()
               this.$nextTick(() => {
