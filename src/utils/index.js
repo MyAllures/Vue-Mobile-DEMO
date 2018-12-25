@@ -191,6 +191,38 @@ export function getPropByPath (obj, path, strict) {
   }
 };
 
+export function saveLastTrack (gameId, setting) {
+  let lastTrackStr = localStorage.getItem('lastTrack')
+  let lastTrackObj
+  if (lastTrackStr) {
+    lastTrackObj = JSON.parse(lastTrackStr)
+  }
+  if (lastTrackObj) {
+    if (lastTrackObj.mobile) {
+      lastTrackObj.mobile[gameId] = setting
+    } else {
+      lastTrackObj.mobile = {[gameId]: setting}
+    }
+  } else {
+    lastTrackObj = {mobile: {[gameId]: setting}}
+  }
+  localStorage.setItem('lastTrack', JSON.stringify(lastTrackObj))
+}
+
+export function loadLastTrack (gameId) {
+  let lastTrack = localStorage.getItem('lastTrack')
+  if (lastTrack) {
+    lastTrack = JSON.parse(lastTrack)
+    if (lastTrack.mobile) {
+      lastTrack = lastTrack.mobile
+      if (lastTrack[gameId]) {
+        return lastTrack[gameId]
+      }
+    }
+  }
+  return null
+}
+
 export function saveLastGameData (lastGameData) {
   let lastGameDataStr = localStorage.getItem('lastGameData')
   let lastGameDataObj

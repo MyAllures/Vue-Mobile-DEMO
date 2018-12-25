@@ -38,8 +38,8 @@ export default new Vuex.Store({
       },
       issue_number: ''
     },
-    winNotification: [],
-    winNotificationVisible: false,
+    notifications: [],
+    notificationVisible: false,
     dialog: {
       bet: {
         visible: false,
@@ -50,6 +50,14 @@ export default new Vuex.Store({
         visible: false,
         total: 0,
         expectation: 0
+      },
+      bettrack: {
+        visible: false,
+        data: {
+          track_numbers: [],
+          forDisplay: {}
+        },
+        isSuccess: false
       }
     },
     categories: {},
