@@ -45,7 +45,7 @@ export default {
 
       this.timer = setTimeout(() => {
         this.close()
-      }, 5000)
+      }, 6000)
     }
   },
   computed: {
