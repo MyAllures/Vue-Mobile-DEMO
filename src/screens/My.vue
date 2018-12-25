@@ -16,9 +16,9 @@
             <p class="balance-text">余额</p>
             <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
           </div>
-          <div class="button" @click="$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
+          <div class="button" @click="sendGaEvent({label: '我的帳號',category: '充值',action: '充值'});$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
         </cell>
-        <cell @click.native="$router.push('/my/message')"
+        <cell @click.native="sendGaEvent({label: '我的帳號',category: '站內消息',action: '檢視'});$router.push('/my/message')"
           :title="'站内消息'"
           is-link>
           <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
@@ -28,7 +28,7 @@
       <group>
         <cell
           :title="$t('profile.basic_info')"
-          @click.native="$router.push('/my/profile')"
+          @click.native="sendGaEvent({label: '我的帳號',category: '基本資料',action: '檢視'});$router.push('/my/profile')"
           is-link>
           <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
           <span v-if="isPrimaryInfoEmpty" class="warn-tip">未填写</span>
@@ -61,7 +61,7 @@
           is-link>
           <img class="svg-icon" src="../assets/my/reset_wpassword.svg" slot="icon" alt="reset-wpwd">
         </cell>
-        <cell v-if="customerServiceUrl" @click.native="window.open(customerServiceUrl)" :title="'联系客服'" is-link>
+        <cell v-if="customerServiceUrl" @click.native="sendGaEvent({label: '我的帳號',category: '聯繫客服',action: '點擊'});window.open(customerServiceUrl)" :title="'联系客服'" is-link>
           <img class="svg-icon" src="../assets/my/customer_service.svg" slot="icon" alt="service">
         </cell>
       </group>
