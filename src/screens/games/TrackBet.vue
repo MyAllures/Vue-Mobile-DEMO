@@ -229,8 +229,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@azul: #166fd8;
-
 .tracker-area {
   font-size: 14px;
   padding-top: 10px;
