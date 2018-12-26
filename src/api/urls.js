@@ -21,6 +21,7 @@ export default {
   verification: apiv2 + '/verification_code/',
   logout: host + '/logout/',
   games: apiv2 + '/game/',
+  bettrack: apiv2 + '/bettrackrecord/',
   category: apiv2 + '/game/category/',
   playgroup: apiv2 + '/game/playgroup/',
   schedule: apiv2 + '/game/schedule/',

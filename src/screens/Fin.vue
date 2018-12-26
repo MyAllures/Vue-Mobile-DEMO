@@ -35,6 +35,9 @@ const tabs = [{
   label: '取款纪录',
   name: 'WithdrawRecord'
 }, {
+  label: '追号纪录',
+  name: 'BetTrackRecord'
+}, {
   label: '优惠和红包',
   name: 'PromotionRecord'
 }, {
@@ -121,6 +124,7 @@ export default {
         border-radius: 14px;
         padding: 7px 8px;
         color: @azul;
+        word-break: keep-all;
       }
     }
   }

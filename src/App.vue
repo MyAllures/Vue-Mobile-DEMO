@@ -106,21 +106,21 @@
     </div>
     <bet-dialog />
     <balance-hint-dialog />
+    <bet-track-dialog/>
     <transition name="fade">
       <div v-show="showCalender">
         <Calender ref="calendar" @closeCalender="closeCalender"/>
       </div>
     </transition>
-
     <div v-if="isInfirstLevelPage">
       <transition name="fade">
-        <div v-show="winNotificationVisible">
-          <WinNotification :notification="winNotification[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
+        <div v-show="notificationVisible">
+          <Notification :notification="notifications[0]" @getCurrentNotificationDetail="getCurrentNotificationDetail"/>
         </div>
       </transition>
       <transition name="fade">
         <div v-if="currentNotificationDetail">
-          <DetailWinNotification :notification="currentNotificationDetail" @closeDetailNotification="closeDetailNotification"/>
+          <DetailNotification :notification="currentNotificationDetail" @closeDetailNotification="closeDetailNotification"/>
         </div>
       </transition>
     </div>
@@ -139,9 +139,10 @@ import freetrial from './mixins/freetrial.js'
 import GameMenu from './components/GameMenu.vue'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
+import BetTrackDialog from './components/BetTrackDialog'
 import Calender from './components/Calender'
-import WinNotification from './components/WinNotification'
-import DetailWinNotification from './components/DetailWinNotification'
+import Notification from './components/Notification'
+import DetailNotification from './components/DetailNotification'
 import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
 
@@ -161,9 +162,10 @@ export default {
     GameMenu,
     BetDialog,
     BalanceHintDialog,
+    BetTrackDialog,
     Calender,
-    WinNotification,
-    DetailWinNotification
+    Notification,
+    DetailNotification
   },
   directives: {
     TransferDom
@@ -282,7 +284,7 @@ export default {
       'user'
     ]),
     ...mapState([
-      'theme', 'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'winNotificationVisible', 'winNotification'
+      'theme', 'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'notificationVisible', 'notifications'
     ]),
     isInfirstLevelPage () {
       return !!(this.firseLevelPages.find((page) => this.$route.path.indexOf(page.link)))
@@ -352,7 +354,7 @@ export default {
       if (name === 'Home') {
         return this.showGameMenu ? '' : this.systemConfig.siteName
       } else {
-        if (name === 'GameDetail' || name === 'Game') {
+        if (name === 'GameDetail' || name === 'PlayPositions' || name === 'Game') {
           return '首页'
         }
       }

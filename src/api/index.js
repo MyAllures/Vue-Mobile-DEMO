@@ -37,7 +37,7 @@ export function fetchGames () {
 }
 
 export function fetchGamesDetail () {
-  return axios.get(`${urls.games}?platform=1&extras=categories`)
+  return axios.get(`${urls.games}?platform=1&extras=categories,playpositions`)
 }
 
 export function fetchCategories (gameId) {
@@ -50,6 +50,26 @@ export function fetchPlaygroup (categoryId) {
 
 export function fetchSchedule (gameId, gameCode) {
   return axios.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}`)
+}
+
+export function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId) {
+  return axios.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}&track_type=${trackType}&schedule_id=${scheduleId}`)
+}
+
+export function fetchBetTrackRecord (option) {
+  let url = `${urls.bettrack}?`
+  Object.keys(option).forEach(key => {
+    if (key === 'date') {
+      url += `&bet_date=${option[key]}`
+      return
+    }
+    url += `&${key}=${option[key]}`
+  })
+  return axios.get(url)
+}
+
+export function betTrack (data) {
+  return axios.post(`${urls.bettrack}`, data)
 }
 
 export function placeBet (data) {

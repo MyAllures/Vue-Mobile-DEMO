@@ -28,7 +28,8 @@
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
-            {{record.created_at|moment('HH:mm:ss')}}
+            <p :class="{'half-height':record.is_bettrackrecord}">{{record.created_at|moment('HH:mm:ss')}}</p>
+            <p v-if="record.is_bettrackrecord" class="bettrack-hint half-height">追号</p>
           </td>
           <td>
             <span class="game">{{record.game.display_name}}</span>
@@ -38,7 +39,7 @@
           </td>
           <td class="play">
             <p>{{record.play.playgroup}}@{{record.play.display_name}}</p>
-            <p class="play-options" v-if="record.bet_options.options">{{`共${record.bet_options.opts_combos_count}组 # ${record.bet_options.options.join(',')}`}}</p>
+            <p class="play-options" v-if="record.bet_options && record.bet_options.options">{{`共${record.bet_options.opts_combos_count}组 # ${record.bet_options.options.join(',')}`}}</p>
             <div class="odds">
               <span>{{record.odds}}</span>
               <span>{{record.play.return_rate && record.return_amount ? ` 返${Math.floor(record.play.return_rate*10000)/100}%`: ''}}</span>
@@ -185,24 +186,23 @@ export default {
 .info-panel {
   width: 100%;
   display: flex;
-  .info-panel-item {
-    width: 50%;
-    text-align: center;
-    background: #166fd8;
-    padding: 10px 0;
-    .title {
-      width: 100%;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-    }
-    .amount {
-      width: 100%;
-      color: #fff;
-      font-size: 18px;
-    }
+}
+.info-panel-item {
+  width: 50%;
+  text-align: center;
+  background-color: @azul;
+  padding: 10px 0;
+  .title {
+    width: 100%;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+  }
+  .amount {
+    width: 100%;
+    color: #fff;
+    font-size: 18px;
   }
 }
-
 .record-table {
   .issue, .odds,.play-options, .amount{
     font-size: 12px;
@@ -226,7 +226,16 @@ export default {
   display: block;
   line-height: 1.5;
 }
+
 .issue {
+  color: #999;
+}
+
+.half-height {
+  line-height: 1.5;
+}
+
+.bettrack-hint {
   color: #999;
 }
 </style>

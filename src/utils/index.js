@@ -1,6 +1,5 @@
 import isEmail from 'validator/lib/isEmail'
 import Vue from 'vue'
-const CryptoJS = require('crypto-js')
 
 export class Indicator {
   constructor (onActivate, onInactivate) {
@@ -154,29 +153,16 @@ export function validateAmount (value) {
   return pattern.amount.test(value)
 }
 
-export function _getwidth (date, o) {
-  let raw = _getpaths(date, o).split(date.getUTCDay()).reverse().join('')
-  return CryptoJS.MD5(raw).toString()
-}
-
-export function _getpaths (date, o) {
-  let a = Vue.moment.parseZone(date.toGMTString()).utc().format()
-  return a.substr(o.s, o.e)
-}
-
-export function _getheight (height) {
-  let str = String(height)
-  let obj = {
-    s: parseInt(str[1]),
-    e: parseInt(str.substr(2))
+export const signOnRequest = {
+  crypto: require('crypto-js'),
+  mingle: (date) => {
+    let raw = signOnRequest.cut(date).split(date.getUTCDay()).reverse().join('')
+    return signOnRequest.crypto.MD5(raw).toString()
+  },
+  cut: (date) => {
+    let a = Vue.moment.parseZone(date.toGMTString()).utc().format()
+    return a.substr(0, 16)
   }
-  return obj
-}
-
-export default {
-  _getwidth,
-  _getpaths,
-  _getheight
 }
 
 export function getPropByPath (obj, path, strict) {
@@ -204,6 +190,38 @@ export function getPropByPath (obj, path, strict) {
     v: tempObj ? tempObj[keyArr[i]] : null
   }
 };
+
+export function saveLastTrack (gameId, setting) {
+  let lastTrackStr = localStorage.getItem('lastTrack')
+  let lastTrackObj
+  if (lastTrackStr) {
+    lastTrackObj = JSON.parse(lastTrackStr)
+  }
+  if (lastTrackObj) {
+    if (lastTrackObj.mobile) {
+      lastTrackObj.mobile[gameId] = setting
+    } else {
+      lastTrackObj.mobile = {[gameId]: setting}
+    }
+  } else {
+    lastTrackObj = {mobile: {[gameId]: setting}}
+  }
+  localStorage.setItem('lastTrack', JSON.stringify(lastTrackObj))
+}
+
+export function loadLastTrack (gameId) {
+  let lastTrack = localStorage.getItem('lastTrack')
+  if (lastTrack) {
+    lastTrack = JSON.parse(lastTrack)
+    if (lastTrack.mobile) {
+      lastTrack = lastTrack.mobile
+      if (lastTrack[gameId]) {
+        return lastTrack[gameId]
+      }
+    }
+  }
+  return null
+}
 
 export function saveLastGameData (lastGameData) {
   let lastGameDataStr = localStorage.getItem('lastGameData')

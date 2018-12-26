@@ -89,6 +89,22 @@
     }
   }
 
+  .info-panel {
+    background:  @gradient;
+    background-color: @main;
+    .info-panel-item {
+      background: none;
+    }
+  }
+
+  .calender-contentitem .calender-chosenday {
+    background-color: @main;
+  }
+
+  .calender-contentitem .calender-hasbet::after {
+    background-color: @main;
+  }
+
   .fin-tabs .tab-view {
     background-image: @gradient;;
     .tab-item.selected .tab-item-text {
@@ -111,6 +127,11 @@
   .balance-info .button {
     background-image: @gradient
   }
+
+  .tracker-area .option.active {
+    background-color: @playColor;
+    border: 1px solid @playColor;
+  }
 }
 
 .theme0 { // processing
@@ -121,6 +142,15 @@
 }
 
 .theme1 {// default
+  .game .data-section {
+    background-image: linear-gradient(to bottom, #166fd8, #1568ca);
+  }
+  .calender-contentitem .calender-chosenday {
+    background-color: #166fd8;
+  }
+  .calender-hasbet::after {
+    background-color: #166fd8;
+  }
 }
 
 .theme2 {

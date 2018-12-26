@@ -29,6 +29,13 @@ body .vux-header {
   margin: 10px;
 }
 
+.m-r {
+  margin-right: 10px;
+}
+.m-t-sm {
+  margin-top: 5px;
+}
+
 .m-t {
   margin-top: 10px;
 }
@@ -451,6 +458,14 @@ body .vux-header {
   transition: opacity .5s;
 }
 .fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.slide-fade-enter-active, .slide-fade-leave-active {
+  transition: all .5s ease;
+}
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(10px);
   opacity: 0;
 }
 

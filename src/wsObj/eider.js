@@ -31,18 +31,30 @@ GhostSocketObj.prototype.initWs = function (token) {
     if (typeof response.data === 'string') {
       try {
         data = JSON.parse(response.data)
-        let winNotificationVisible = store.state.winNotificationVisible
+        let notificationVisible = store.state.notificationVisible
 
         switch (data.type) {
           case 'win-notification':
-            store.dispatch('addWinNotification', data)
+            store.dispatch('addNotification', data)
+            break
+
+          case 'bet-track-record':
+            store.dispatch('addNotification', data)
             break
 
           case 'win-notification-batch':
-            store.dispatch('addWinNotification', data)
+            store.dispatch('addNotification', data)
 
-            if (!winNotificationVisible) {
-              store.commit('SHOW_WINNOTIFICATION')
+            if (!notificationVisible) {
+              store.commit('SHOW_NOTIFICATION')
+            }
+            break
+
+          case 'bet-track-record-batch':
+            store.dispatch('addNotification', data)
+
+            if (!notificationVisible) {
+              store.commit('SHOW_NOTIFICATION')
             }
             break
 
@@ -110,7 +122,7 @@ GhostSocketObj.prototype.initWs = function (token) {
 }
 
 GhostSocketObj.prototype.closeConnect = function () {
-  store.commit('CLEAR_WINNOTIFICATION')
+  store.commit('CLEAR_NOTIFICATION')
   if (this.ws) {
     if (this.ws.readyState === 1) { // 若連線已建立才返回訊息
       this.ws.send(JSON.stringify({
