@@ -59,15 +59,10 @@ export function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId)
 export function fetchBetTrackRecord (option) {
   let url = `${urls.bettrack}?`
   Object.keys(option).forEach(key => {
-    if (key === 'startdate') {
-      url += `&created_at_0=${option[key]}`
+    if (key === 'date') {
+      url += `&bet_date=${option[key]}`
       return
     }
-    if (key === 'enddate') {
-      url += `&created_at_1=${option[key]}`
-      return
-    }
-
     url += `&${key}=${option[key]}`
   })
   return axios.get(url)
