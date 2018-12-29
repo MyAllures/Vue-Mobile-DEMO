@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="types m-b-lg">
-      <p class="title">追号类型</p>
+      <p class="title">追号期数</p>
       <div class="wrapper">
         <div :class="['type',
           'option', 'm-t',
