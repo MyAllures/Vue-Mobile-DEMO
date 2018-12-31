@@ -309,14 +309,14 @@ export default {
           }
         }
 
-        const result = results[1][0]
+        // // const result = results[1][0]
 
-        if (this.currentGame.code === 'hkl') {
-          let realScheduleIssueNumber = parseInt(result.issue_number)
-          if (parseInt(schedule.issue_number) - 1 > realScheduleIssueNumber) { // 差超過一期，表示可能尚未抓到開獎結果
-            this.realSchedule = `${realScheduleIssueNumber + 1}`
-          }
-        }
+        // if (this.currentGame.code === 'hkl') {
+        //   let realScheduleIssueNumber = parseInt(result.issue_number)
+        //   if (parseInt(schedule.issue_number) - 1 > realScheduleIssueNumber) { // 差超過一期，表示可能尚未抓到開獎結果
+        //     this.realSchedule = `${realScheduleIssueNumber + 1}`
+        //   }
+        // }
 
         this.$store.dispatch('updateGameInfo', {
           display_name: this.currentGame.display_name,
