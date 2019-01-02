@@ -275,9 +275,11 @@ export default {
       this.bettrackData = bettrackData
     },
     fetchBetTrackSchedules (type) {
-      fetchBetTrackSchedules(this.gameId, this.currentGame.code, type, this.schedule.id).then((res) => {
-        this.schedules = _.takeRight(res, 3)
-      })
+      if (this.schedule.id) {
+        fetchBetTrackSchedules(this.gameId, this.currentGame.code, type, this.schedule.id).then((res) => {
+          this.schedules = _.takeRight(res, 3)
+        })
+      }
     },
     fetchScheduleAndResult () {
       if (!this.gameId) {
