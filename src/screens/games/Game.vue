@@ -311,14 +311,17 @@ export default {
           }
         }
 
-        // // const result = results[1][0]
-
-        // if (this.currentGame.code === 'hkl') {
-        //   let realScheduleIssueNumber = parseInt(result.issue_number)
-        //   if (parseInt(schedule.issue_number) - 1 > realScheduleIssueNumber) { // 差超過一期，表示可能尚未抓到開獎結果
-        //     this.realSchedule = `${realScheduleIssueNumber + 1}`
-        //   }
-        // }
+        const result = results[1][0]
+        if (this.currentGame.code === 'hkl') {
+          let realScheduleIssueNumber = parseInt(result.issue_number)
+          // 六合彩至多149期，所以149期下一期跳001期為合理
+          if (!schedule.issue_number.endsWith('001') || !result.issue_number.endsWith('149')) {
+            let estimateScheduleIssueNumber = parseInt(schedule.issue_number)
+            if (estimateScheduleIssueNumber - 1 > realScheduleIssueNumber) { // 差超過一期，表示可能尚未抓到開獎結果
+              this.realSchedule = `${realScheduleIssueNumber + 1}`
+            }
+          }
+        }
 
         this.$store.dispatch('updateGameInfo', {
           display_name: this.currentGame.display_name,
