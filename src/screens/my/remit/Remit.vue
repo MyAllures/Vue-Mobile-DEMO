@@ -12,13 +12,6 @@
           v-model="remit.remit_info.depositor">
         </v-input>
       </v-form-item>
-      <v-form-item required :label="$t('my.deposited_at')" prop="remit_info.deposited_at">
-        <v-datetime
-          :endDate="endDate"
-          v-model="remit.remit_info.deposited_at"
-          format="YYYY-MM-DD HH:mm">
-        </v-datetime>
-      </v-form-item>
       <v-form-item required :label="$t('my.amount')" prop="amount">
         <v-input
           autocapitalize="off"
@@ -65,7 +58,6 @@
   import VForm from '@/components/Form'
   import VFormItem from '@/components/FormItem'
   import VInput from '@/components/Input'
-  import VDatetime from '@/components/Datetime'
   export default {
     props: {
       payee: {
@@ -86,8 +78,7 @@
       FlexboxItem,
       VForm,
       VFormItem,
-      VInput,
-      VDatetime
+      VInput
     },
     data () {
       const amountValidator = (rule, value, callback) => {
@@ -108,8 +99,7 @@
         remit: {
           remit_info: {
             remit_payee: '',
-            depositor: '',
-            deposited_at: ''
+            depositor: ''
           },
           memo: '',
           amount: ''
@@ -120,23 +110,6 @@
         errorMsg: '',
         responseLoading: true,
         inputErrors: [],
-        datetimeValidator: {
-          firstError: '',
-          validate: () => {
-            let validator = this.datetimeValidator
-            if (!this.remit.remit_info.deposited_at) {
-              validator.firstError = validator.msg
-            } else {
-              validator.firstError = ''
-            }
-            this.validateErrors()
-          },
-          reset: () => {
-            this.remit.remit_info.deposited_at = ''
-            this.datetimeValidator.firstError = ''
-          },
-          msg: '必须输入存款日期'
-        },
         rules: {
           amount: [{validator: amountValidator}]
         }
@@ -152,7 +125,7 @@
         return lowerHint + comma + upperHint
       },
       inputCompleted () {
-        return this.remit.remit_info.depositor !== '' && this.remit.remit_info.deposited_at !== '' && this.remit.amount !== ''
+        return this.remit.remit_info.depositor !== '' && this.remit.amount !== ''
       }
     },
     created () {
