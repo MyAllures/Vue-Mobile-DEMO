@@ -5,8 +5,8 @@
       <span class="dot"></span>
       请填入存款讯息
     </div>
-    <v-form :model="remit" :rules="rules" ref="form" @click.native="errorMsg = ''">
-      <v-form-item required :label="$t('my.depositor')" prop="remit_info.depositor">
+    <v-form class="wide" :model="remit" :rules="rules" ref="form" @click.native="errorMsg = ''">
+      <v-form-item v-if="payee.remit_type.need_depositor" required :label="$t('my.depositor')" prop="remit_info.depositor">
         <v-input
           autocapitalize="off"
           v-model="remit.remit_info.depositor">
@@ -17,6 +17,14 @@
           autocapitalize="off"
           v-model="remit.amount"
           @input="inputAmount">
+        </v-input>
+      </v-form-item>
+      <v-form-item v-if="payee.remit_type.need_last_six_digits" required label="转帐单号后 6 位数字" prop="remit_info.last_six_digits">
+        <v-input
+          :max="6"
+          autocapitalize="off"
+          v-model="remit.remit_info.last_six_digits"
+          :filter="/[^0-9]/g">
         </v-input>
       </v-form-item>
       <v-form-item :label="$t('my.memo')" prop="memo">
@@ -54,7 +62,7 @@
     FlexboxItem
   } from 'vux'
   import { postRemit } from '@/api'
-  import { msgFormatter, validateDepositAmount } from '@/utils'
+  import { msgFormatter, validateDepositAmount, validateLastSixDigits } from '@/utils'
   import VForm from '@/components/Form'
   import VFormItem from '@/components/FormItem'
   import VInput from '@/components/Input'
@@ -94,12 +102,21 @@
           callback()
         }
       }
+
+      const accountLastDigitsValidator = (rule, value, callback) => {
+        if (!validateLastSixDigits(value)) {
+          callback(new Error('请输入 6 位数字'))
+        } else {
+          callback()
+        }
+      }
       return {
         loading: false,
         remit: {
           remit_info: {
             remit_payee: '',
-            depositor: ''
+            depositor: '',
+            last_six_digits: ''
           },
           memo: '',
           amount: ''
@@ -111,7 +128,8 @@
         responseLoading: true,
         inputErrors: [],
         rules: {
-          amount: [{validator: amountValidator}]
+          amount: [{validator: amountValidator}],
+          'remit_info.last_six_digits': [{validator: accountLastDigitsValidator}]
         }
       }
     },
@@ -145,11 +163,14 @@
       submit () {
         this.$refs.form.validate((valid) => {
           if (valid) {
+            if (!this.remit.remit_info.last_six_digits) {
+              delete this.remit.remit_info.last_six_digits
+            }
             this.errorMsg = ''
             this.loading = true
             postRemit(this.remit).then(response => {
               let remitType = ''
-              switch (this.payee.remit_type) {
+              switch (this.payee.remit_type.id) {
                 case 1:
                   remitType = '銀行'
                   break
@@ -253,4 +274,12 @@
   .vux-datetime {
     margin: 10px;
   }
+  .weui-cells {
+    &.wide {
+      .weui-cell /deep/ .weui-label {
+        width: 130px;
+      }
+    }
+  }
+
 </style>

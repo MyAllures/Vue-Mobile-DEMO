@@ -316,7 +316,6 @@ export default {
   height: 40px;
   line-height: 40px;
   color: #fff;
-  background-color: #166fd8;
   border-radius: 4px;
 }
 
