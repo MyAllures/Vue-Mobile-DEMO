@@ -185,7 +185,12 @@ export default {
         resArr.forEach(responses => {
           if (responses && !responses.toString().startsWith('Error')) {
             responses.forEach((res, index) => {
-              switch (res.remit_type) {
+              if (!res.remit_type) {
+                res.remit_type = { // make consistent
+                  id: undefined
+                }
+              }
+              switch (res.remit_type.id) {
                 case 1:
                   res.display_name = res.bank.name
                   bankRemit.push(res)
@@ -203,7 +208,9 @@ export default {
                     res.detail.sort((a, b) => {
                       return a.rank - b.rank
                     })
-                    res.detail.forEach(item => { item.selected = false })
+                    res.detail.forEach(item => {
+                      item.selected = false
+                    })
                     if (res.detail.length > 1) {
                       res.folded = true
                     }
@@ -243,25 +250,27 @@ export default {
       if (this.currentPay.amount) {
         this.validateAmount(this.currentPay.amount)
       }
-      switch (payee.remit_type) {
-        case 1:
-          this.$router.push({path: '/my/deposit/remit/bank'})
-          break
-        case 2:
-          this.$router.push({path: '/my/deposit/remit/wechat'})
-          break
-        case 3:
-          this.$router.push({path: '/my/deposit/remit/alipay'})
-          break
-        default:
-          this.showDialog = true
-          this.currentPay = Object.assign({}, this.currentPay,
-            {
-              'type_id': payee.payment_type,
-              'payee_id': payee.payee_id,
-              'gateway_id': payee.gateway_id,
-              'token': this.$cookie.get('access_token')
-            })
+      if (payee.remit_type && payee.remit_type.id) {
+        switch (payee.remit_type.id) {
+          case 1:
+            this.$router.push({path: '/my/deposit/remit/bank'})
+            break
+          case 2:
+            this.$router.push({path: '/my/deposit/remit/wechat'})
+            break
+          case 3:
+            this.$router.push({path: '/my/deposit/remit/alipay'})
+            break
+        }
+      } else {
+        this.showDialog = true
+        this.currentPay = Object.assign({}, this.currentPay,
+          {
+            'type_id': payee.payment_type,
+            'payee_id': payee.payee_id,
+            'gateway_id': payee.gateway_id,
+            'token': this.$cookie.get('access_token')
+          })
       }
     },
     formatPayees (payees) {

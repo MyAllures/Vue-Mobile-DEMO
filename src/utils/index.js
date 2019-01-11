@@ -111,7 +111,8 @@ const pattern = {
   withdrawPassword: /^[0-9]{6}$/,
   amount: /^([\d]{0,}[ ]*([.][0-9]{0,1})?)$/,
   province: /^[\u4E00-\u9FA5]{0,}$/,
-  depositAmount: /^([0-9][0-9]*([.][0-9]{0,2})?)$/
+  depositAmount: /^([0-9][0-9]*([.][0-9]{0,2})?)$/,
+  lastSixDigits: /^[0-9]{6}$/
 }
 
 export function validateUserName (value) {
@@ -151,6 +152,10 @@ export function validateDepositAmount (value) {
 
 export function validateAmount (value) {
   return pattern.amount.test(value)
+}
+
+export function validateLastSixDigits (value) {
+  return pattern.lastSixDigits.test(value)
 }
 
 export const signOnRequest = {
