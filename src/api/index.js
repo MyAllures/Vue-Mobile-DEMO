@@ -83,7 +83,7 @@ export function getPromotions () {
 }
 
 export function getRemitPayees () {
-  return axios.get(urls.remitpayee + '?opt_expand=1')
+  return axios.get(urls.remitpayee + '?opt_expand=1&embed=remit_type')
 }
 
 export function postRemit (remit) {
