@@ -3,7 +3,7 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  HOST: '"http://staging-api.h9339.com"',
+  HOST: '"https://api.h9339.com"',
   chatHost: '"ws://b583747.eastasia.cloudapp.azure.com:8003"',
   chatApi: '"http://b583747.eastasia.cloudapp.azure.com:8003"',
   eiderHost: '"wss://ws.h9339.com:8445"',
