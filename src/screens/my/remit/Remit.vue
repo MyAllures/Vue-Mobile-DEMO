@@ -277,7 +277,7 @@
   .weui-cells {
     &.wide {
       .weui-cell /deep/ .weui-label {
-        width: 135px;
+        width: 68px;
       }
     }
   }
