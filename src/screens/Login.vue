@@ -63,7 +63,7 @@ import VInput from '@/components/Input'
 
 const inputs = ['username', 'password']
 export default {
-  name: 'Home',
+  name: 'Login',
   data () {
     return {
       user: {
