@@ -45,7 +45,7 @@ const tabs = [{
   name: 'ReturnRecord'
 }]
 export default {
-  name: 'Home',
+  name: 'Fin',
   components: {
     Tab,
     TabItem,

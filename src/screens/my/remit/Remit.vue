@@ -19,7 +19,7 @@
           @input="inputAmount">
         </v-input>
       </v-form-item>
-      <v-form-item v-if="payee.remit_type.need_last_six_digits" required label="转帐单号后 6 位数字" prop="remit_info.last_six_digits">
+      <v-form-item v-if="payee.remit_type.need_last_six_digits" required label="转帐单号后6位数字" prop="remit_info.last_six_digits">
         <v-input
           :max="6"
           autocapitalize="off"
@@ -277,7 +277,7 @@
   .weui-cells {
     &.wide {
       .weui-cell /deep/ .weui-label {
-        width: 130px;
+        width: 68px;
       }
     }
   }
