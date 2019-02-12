@@ -6,56 +6,32 @@
     class="popup"
     :popup-style="{zIndex: 504}"
     v-transfer-dom
-    width="180px">
-    <group class="head">
-      <cell title="账号" :border-intent="false" :link="'/my'" @click.native="toMy">
-        <div class="username">{{user.account_type === 0 ? '游客' : user.username}}</div>
-      </cell>
-      <cell :title="$t('my.balance')" :border-intent="false">
-        <div class="balance">{{user.balance | currency('￥')}}</div>
-      </cell>
-      <cell
-        :class="{'weui-cell_access': !!user.unsettled}"
-        :title="$t('game.nopay')"
-        :border-intent="false"
-        @click.native="toUnsettle">
-        <div :class="{'has_unsettle': !!user.unsettled}">{{user.unsettled || 0 | currency('￥')}}</div>
-      </cell>
-    </group>
-    <div class="buttons" v-if="$store.state.user.account_type">
-      <x-button type="primary" @click.native="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</x-button>
-      <x-button type="primary" @click.native="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</x-button>
+    width="220px">
+    <div class="userinfo">
+      <div class="username field-layout" @click="toMy">
+        <div class="text">{{user.account_type === 0 ? '游客' : user.username}}</div>
+        <div class="arrow-right"></div>
+      </div>
+      <div class="balance field-layout">
+        <div class="field-content">
+          <div class="title">{{$t('my.balance')}}</div>
+          <div class="content">{{user.balance | currency('￥')}}</div>
+        </div>
+      </div>
+      <div :class="['field-layout', {unsettled: user.unsettled}]" @click="toUnsettle">
+        <div class="field-content">
+          <div class="title">{{$t('game.nopay')}}</div>
+          <div class="content">{{user.unsettled || 0 | currency('￥')}}</div>
+        </div>
+        <div v-if="user.unsettled" class="arrow-right"></div>
+      </div>
     </div>
-    <div class="buttons" v-else>
-      <x-button type="primary" @click.native="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</x-button>
-      <x-button type="primary" @click.native="handleRouteChange('/register', $t('misc.register_now'))">{{$t('misc.register_now')}}</x-button>
-      <x-button type="primary" @click.native="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</x-button>
+    <div class="action-area">
+      <div class="item" @click="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
+      <div class="item" @click="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</div>
+      <div class="item" @click="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
     </div>
-    <group class="links" >
-      <cell-box
-        v-if="seoWebsite"
-        :border-intent="false">
-        <a target="_blank" class="link text-center" :href="seoWebsite">人工计划 <span class="red">NEW</span></a>
-      </cell-box>
-      <cell-box
-        v-if="showLinks"
-        @click.native="showGameInfo(link)"
-        :border-intent="false"
-        v-for="(link, index) in links"
-        :key="index">
-        <span class="link text-center" >
-          {{link.display_name}}
-        </span>
-      </cell-box>
-      <cell-box
-        :border-intent="false"
-        @click.native="logoutDialogShow = true">
-        <span class="link text-center red" >
-          {{$t('misc.logout')}}
-        </span>
-      </cell-box>
-    </group>
+    <div class="logout" @click="logoutDialogShow = true">{{$t('misc.logout')}}</div>
     <div v-transfer-dom>
       <confirm
         v-model="logoutDialogShow"
@@ -69,7 +45,7 @@
 </template>
 
 <script>
-  import { TransferDom, Popup, Group, CellBox, Cell, XButton, Confirm } from 'vux'
+  import { TransferDom, Popup, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
   import FixScroll from '../directive/fixscroll'
   export default {
@@ -112,10 +88,6 @@
     },
     components: {
       Popup,
-      Group,
-      CellBox,
-      Cell,
-      XButton,
       Confirm
     },
     computed: {
@@ -142,6 +114,7 @@
     methods: {
       toMy () {
         if (this.$route.path !== '/my') {
+          this.$router.push({path: '/my'})
           this.sendGaEvent({
             label: '右側菜單',
             category: '我的',
@@ -188,15 +161,6 @@
           this.$router.push('/')
         }).catch(() => {})
       },
-      showGameInfo (link) {
-        this.sendGaEvent({
-          label: '右側菜單',
-          category: link.display_name,
-          action: '点击'
-        })
-        this.closeRightMenu()
-        this.$root.bus.$emit('showGameInfo', link.type)
-      },
       closeRightMenu () {
         this.$emit('closeRightMenu')
       }
@@ -206,62 +170,93 @@
 
 <style lang="less" scoped>
 .popup {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: #fff;
-}
-.head /deep/ .weui-cells{
-  margin-top: -1px;
-  font-size: 15px;
-}
-.weui-cell {
-  padding: 10px 20px;
-  margin-top: 0;
-}
-@media screen and (max-width: 320px) {
-  .weui-cell {
-    padding: 8px 20px;
-    margin-top: 0;
-  }
-}
-.username {
-  white-space: nowrap;
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.balance {
-  padding-left: 10px;
-  color: @red;
-}
-.has_unsettle {
-  color: #166FD8;
-}
-.buttons {
-  margin: 10px;
-  /deep/ .weui-btn {
-    font-size: 15px;
-  }
-  @media screen and (max-width: 320px) {
-    margin: 5px 10px;
-    /deep/ .weui-btn{
-      margin-top: 5px;
-      font-size: 13px;
+  .userinfo {
+    border-bottom: 1px solid #eee;
+    .field-layout {
+      display: flex;
+      justify-content: space-between;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 20px;
+      .arrow-right {
+        position: relative;
+        display: inline-block;
+        width: 16px;
+      }
+      .field-content {
+        display: flex;
+        font-size: 16px;
+        .title {
+          width: 70px;
+          color: #333;
+        }
+        .content {
+          color: #999;
+        }
+      }
+    }
+    .username {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 64px;
+      color: #fff;
+      background-color: @azul;
+      .text {
+        font-size: 20px;
+        color: #fff;
+      }
+      .arrow-right {
+        height: 40px;
+        &::after{
+          border-color: #fff;
+        }
+      }
+    }
+    .balance {
+      .field-content {
+        .content {
+          color: @red;
+        }
+      }
+    }
+    .unsettled {
+      .field-content {
+        .content {
+          color: @azul;
+        }
+      }
+      .arrow-right {
+        &::after{
+          border-color: @azul;
+        }
+      }
     }
   }
-}
-.links {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  .link {
-    @media screen and (max-width: 320px) {
-      font-size: 14px;
+  .action-area {
+    flex: 1 1 auto;
+    background: #f5f5f5;
+    .item {
+      height: 44px;
+      line-height: 44px;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      text-align: center;
+      font-size: 18px;
+      color: #333;
     }
-    display: block;
-    width: 100%;
-
   }
-  a.link {
-    color: #333;
+  .logout {
+    height: 55px;
+    line-height: 55px;
+    background: #666666;
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
   }
 }
 </style>
