@@ -187,7 +187,10 @@ export default {
     scrollIntoView (time = 0) {
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
         setTimeout(() => {
-          (this.$refs.input || this.$refs.textarea).scrollIntoViewIfNeeded(true)
+          let dom = this.$refs.input || this.$refs.textarea
+          if (dom) {
+            dom.scrollIntoViewIfNeeded(true)
+          }
         }, time)
       }
     },
@@ -243,7 +246,10 @@ export default {
       this.dispatch('VFormItem', 'form.focus')
       this.focused = true
       setTimeout(() => {
-        (this.$refs.input || this.$refs.textarea).scrollIntoViewIfNeeded(false)
+        let dom = this.$refs.input || this.$refs.textarea
+        if (dom) {
+          dom.scrollIntoViewIfNeeded(false)
+        }
       }, 1000)
     },
     handleBlur ($event) {

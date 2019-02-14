@@ -57,11 +57,38 @@
         @click="showRightMenu = true; closeGameMenu(); closeCalender()">
         {{ user.balance|currency('￥')}}
       </span>
-      <div v-if="isShowChatroomIcon"
-        class="chatbubble"
-        slot="right"
-        @click="openChatRoom">
-        <x-icon type="chatbubble-working" size="30"></x-icon>
+      <div
+        v-click-outside="onClickOutSideHelper"
+        v-else-if="isGameHall&&!this.showChatRoom"
+        class="helper"
+        slot="right">
+        <div class="helper-trigger" @click="toggleHelper">
+          <div class="icon"></div>
+          助手
+        </div>
+        <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
+          <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
+            <a target="_blank" class="badage" :href="seoWebsite">
+              人工计划
+            </a>
+          </li>
+          <li class="helper-link" @click="showGameInfo('roadbeads')">
+            路珠
+          </li>
+          <li class="helper-link" @click="showGameInfo('leaderboard')">
+            长龙排行榜
+          </li>
+          <li class="helper-link" @click="showGameInfo('history')">
+            历史开奖
+          </li>
+          <li class="helper-link" @click="showGameInfo('intro')">
+            游戏介绍
+          </li>
+          <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
+            聊天室
+          </li>
+          <li></li>
+        </ul>
       </div>
 
     </x-header>
@@ -145,6 +172,7 @@ import Notification from './components/Notification'
 import DetailNotification from './components/DetailNotification'
 import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
+import vClickOutside from 'v-click-outside'
 
 export default {
   name: 'app',
@@ -168,7 +196,8 @@ export default {
     DetailNotification
   },
   directives: {
-    TransferDom
+    TransferDom,
+    clickOutside: vClickOutside.directive
   },
   data () {
     const firseLevelPages = [{
@@ -267,7 +296,6 @@ export default {
       logo: '',
       userLoading: true,
       error: '',
-      showGameInfo: false,
       showCalender: false,
       headerZindex: 100,
       refreshTokenInterval: null,
@@ -275,7 +303,8 @@ export default {
       refreshTokenTimer: null,
       noBackRoute: !window.history.state,
       indicator: null,
-      tabbarHidden: true
+      tabbarHidden: true,
+      isHelperVisible: false
     }
   },
   mixins: [freetrial],
@@ -384,6 +413,16 @@ export default {
     roomName () {
       if (this.roomInfo && this.roomId) {
         return this.roomInfo[this.roomId].name
+      }
+      return ''
+    },
+    seoWebsite () {
+      if (this.systemConfig.planSiteUrl && this.currentGame) {
+        const code = this.currentGame.code
+        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'jspk10', 'mlaft', 'cs60cr']
+        if (gamesHasPlan.includes(code)) {
+          return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
+        }
       }
       return ''
     }
@@ -512,8 +551,34 @@ export default {
       }
     },
     openChatRoom () {
+      this.sendHelperGa('chatroom')
       this.showChatRoom = true
+    },
+    toggleHelper () {
+      this.isHelperVisible = !this.isHelperVisible
       this.closeGameMenu()
+    },
+    onClickOutSideHelper () {
+      this.isHelperVisible = false
+    },
+    showGameInfo (type) {
+      this.sendHelperGa(type)
+      this.$root.bus.$emit('showGameInfo', type)
+    },
+    sendHelperGa (type) {
+      let mapping = {
+        plan: '人工计划',
+        roadbeads: '路珠',
+        leaderboard: '长龙排行榜',
+        history: '历史开奖',
+        intro: '游戏介绍',
+        chatroom: '聊天室'
+      }
+      this.sendGaEvent({
+        label: mapping[type],
+        category: '遊戲助手',
+        action: '点击'
+      })
     }
   },
   created () {
@@ -525,10 +590,6 @@ export default {
 
     this.$root.bus.$on('showFeatureGuide', () => {
       this.showFeatureGuide = true
-    })
-
-    this.$root.bus.$on('showGameInfo', (type) => {
-      this.showGameInfo = !!type
     })
 
     this.$router.afterEach((to) => {
@@ -695,13 +756,85 @@ export default {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -50%);
   }
-  .chatbubble {
+  .helper {
+    float: right;
     position: relative;
     height: 100%;
-    width: 46px;
-    float: right;
+    width: 50px;
+    color: #fff;
+    font-size: 15px;
+    .helper-trigger {
+      height: 100%;
+      width: 50px;
+      display: flex;
+      align-items: center;
+      .icon {
+        height: 16px;
+        width: 16px;
+        background: url('./assets/helper.svg') no-repeat;
+        background-size: contain;
+      }
+    }
+    .helper-link-group {
+      position: absolute;
+      top: 40px;
+      right: -18px;
+      width: 140px;
+      border-radius: 4px;
+      background-color: #ffffff;
+      font-size: 14px;
+      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12);
+      list-style: none;
+      &::before {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(0, 0, 0, 0);
+        border-bottom-color: #fff;
+        border-width: 6px 5px;
+        margin-left: 14px;
+      }
+      .helper-link {
+        box-sizing: border-box;
+        width: 140px;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        text-align: center;
+        a {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          line-height: 40px;
+          margin: 0;
+          color: #333;
+          text-align: center;
+        }
+        .badage {
+          position: relative;
+          &:after {
+            position: absolute;
+            top: 14px;
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 12px;
+            margin-left: 5px;
+            background-image: url('./assets/badge_new.svg');
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+        }
+      }
+    }
   }
   a.vux-header-more{
     box-sizing: border-box;
