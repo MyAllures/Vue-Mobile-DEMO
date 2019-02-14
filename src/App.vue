@@ -67,7 +67,7 @@
           助手
         </div>
         <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
-          <li class="helper-link" @click="sendHelperGa('plan')">
+          <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
             <a target="_blank" class="badage" :href="seoWebsite">
               人工计划
             </a>
