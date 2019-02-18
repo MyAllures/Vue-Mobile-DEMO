@@ -1,7 +1,12 @@
 /*game latest result balls*/
 
+$gamesmap: (
+  sscgames: tjssc xjssc cqssc jsssc csffc pcdd bjkl8 auluck8 gd11x5 gdklsf fc3d jnd28 cqlf luckdd cs10fc cs5fc,
+  racinggames: jspk10 bcr mlaft er75ft cs60cr cs600cr,
+  k3games: jsk3 msk3 bjk3,
+);
 /*specific: ssc type games, common: ball_2.png*/
-$results_ssc: tjssc, xjssc, cqssc, jsssc, csffc, pcdd, bjkl8, auluck8, gd11x5, gdklsf, fc3d, jnd28, cqlf, luckdd;
+$results_ssc: map-get($gamesmap, sscgames);
 $ssc_length: length($results_ssc);
 
 %plain-ball {
@@ -49,7 +54,7 @@ $ssc_length: length($results_ssc);
 }
 
 /*specific: racing games, common: ball-pk.png*/
-$results_racing: jspk10, bcr, mlaft, er75ft, cs60cr;
+$results_racing: map-get($gamesmap, racinggames);
 $racing_length: length($results_racing);
 
 @for $index from 1 through $racing_length {
@@ -88,7 +93,7 @@ $racing_length: length($results_racing);
 }
 
 /*each one below just has its own single ball png*/
-$results_k3: jsk3, msk3, bjk3;
+$results_k3: map-get($gamesmap, k3games);
 $k3_length: length($results_k3);
 
 @for $index from 1 through $k3_length {
@@ -116,11 +121,8 @@ $k3_length: length($results_k3);
   }
 }
 
-
-
-
-
 .result-cshkl,
+.result-cs600hkl,
 .result-luckl,
 .result-hkl {
   background: url("../assets/ball_hk6.png") no-repeat;
@@ -141,6 +143,7 @@ $k3_length: length($results_k3);
 @media screen and (max-width: 320px) {
   .result-cshkl,
   .result-luckl,
+  .result-cs600hkl,
   .result-hkl {
     height: 24px;
     width: 24px;
