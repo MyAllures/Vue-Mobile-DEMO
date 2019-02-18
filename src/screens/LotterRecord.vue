@@ -70,7 +70,10 @@ const gameTable = {
   'bcr': TransformerCompareList,
   'mlaft': TransformerCompareList,
   'er75ft': TransformerCompareList,
+  'cs600cr': TransformerCompareList,
   'cqssc': sscCompareList,
+  'cs10fc': sscCompareList,
+  'cs5fc': sscCompareList,
   'jsssc': sscCompareList,
   'xjssc': sscCompareList,
   'tjssc': sscCompareList,
@@ -85,6 +88,7 @@ const gameTable = {
   'bjk3': jsk3CompareList,
   'gd11x5': gd11x5CompareList,
   'hkl': hklCompareList,
+  'cs600hkl': hklCompareList,
   'fc3d': fc3dCompareList
 }
 export default {
