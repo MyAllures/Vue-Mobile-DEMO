@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>十分彩是自主研发十分钟开奖一次的时时彩游戏，趣味更多。</p>
+    <p>{{gameName}}是自主研发十分钟开奖一次的时时彩游戏，趣味更多。</p>
     <h3>
       <span class="warn">1.第一球~第五球</span>
     </h3>
@@ -83,3 +83,8 @@
   </section>
 </template>
 
+<script>
+export default {
+  props: ['gameName']
+}
+</script>

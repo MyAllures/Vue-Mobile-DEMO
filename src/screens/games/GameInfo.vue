@@ -15,6 +15,7 @@
     </div>
     <component :is="showing"
       :gameCode="currentGame.code"
+      :gameName="currentGame.display_name"
       :contentType="contentType"
       :currentGame="currentGame"
       :date="date">
