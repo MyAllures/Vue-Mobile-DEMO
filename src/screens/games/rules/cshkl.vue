@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>极速六合彩是自主研发的极速彩系列之一，以六合彩游戏玩法为依据，60秒即时开奖，全天候开奖不间断。</p>
+    <p>{{gameName}}是自主研发的极速彩系列之一，以六合彩游戏玩法为依据，60秒即时开奖，全天候开奖不间断。</p>
     <h3>
       <span class="warn">1.特码</span>
     </h3>
@@ -291,3 +291,9 @@
 
   </section>
 </template>
+
+<script>
+export default {
+  props: ['gameName']
+}
+</script>
