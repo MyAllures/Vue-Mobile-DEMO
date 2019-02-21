@@ -1,31 +1,30 @@
 <template>
-  <div v-transfer-dom>
-    <popup :value="isShow"
-      v-fix-scroll
-      :show-mask="true"
-      position="top"
-      :height="height"
-      @on-show="lockBackScroll"
-      @on-hide="handleClose"
-      :popup-style="{zIndex: 502}"
-      class="popup">
-      <div class="popup-content">
-        <grid :cols="3" :show-lr-borders="false">
-          <grid-item
-            class="grid-item text-center"
-            v-for="(game, index) in allGames"
-            :key="index"
-            @click.native="switchGame(game)">
-            <div class="game-label">
-              <span v-if="game.label" class="game-label-text">{{game.label}}</span>
-            </div>
-            <img class="icon" v-lazy="game.icon" width="36" height="36"/>
-            <p class="name">{{game.display_name || ''}}</p>
-          </grid-item>
-        </grid>
-      </div>
-    </popup>
-  </div>
+  <popup :value="value"
+    v-fix-scroll
+    :show-mask="false"
+    position="top"
+    :height="height"
+    @on-show="lockBackScroll"
+    @on-hide="handleClose"
+    class="popup"
+    :style="{zIndex: 101}">
+    <div class="popup-content">
+      <grid :cols="3" :show-lr-borders="false">
+        <grid-item
+          class="grid-item text-center"
+          v-for="(game, index) in allGames"
+          :key="index"
+          @click.native="switchGame(game)">
+          <div class="game-label">
+            <span v-if="game.label" class="game-label-text">{{game.label}}</span>
+          </div>
+          <img class="icon" v-lazy="game.icon" width="36" height="36"/>
+          <p class="name">{{game.display_name || ''}}</p>
+        </grid-item>
+      </grid>
+    </div>
+    <div :class="['mask', {active: value}]" v-transfer-dom @click="handleClose"></div>
+  </popup>
 </template>
 
 <script>
@@ -36,7 +35,7 @@ const body = document.getElementsByTagName('body')[0]
 
 export default {
   props: {
-    isShow: {
+    value: {
       type: Boolean
     }
   },
@@ -72,12 +71,8 @@ export default {
     // }
   },
   methods: {
-    back () {
-      this.$router.go(-1)
-      this.$emit('closeSideBar')
-    },
     handleClose () {
-      this.$emit('closeSideBar')
+      this.$emit('input', false)
       this.enableBackScroll()
     },
     switchGame (game) {
@@ -152,5 +147,22 @@ export default {
 
 .weui-grids.vux-grid-no-lr-borders {
   margin-right: 0;
+}
+.mask {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 400ms;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  &.active {
+    opacity: 1;
+    z-index: 100;
+  }
 }
 </style>

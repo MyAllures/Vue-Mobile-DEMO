@@ -186,6 +186,9 @@ const toLogin = function (router) {
 
 // router config
 router.beforeEach((to, from, next) => {
+  if (!from || to.name !== from.name) {
+    store.dispatch('page/updatePageSetting', to.meta || {})
+  }
   // fisrMacthed might be the top-level parent route of others
   const firstMatched = to.matched.length ? to.matched[0] : null
   if ((firstMatched || to).meta.requiresAuth) {

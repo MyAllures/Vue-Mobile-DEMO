@@ -1,5 +1,29 @@
 <template>
   <div class="container">
+    <top-bar>
+      <div v-if="!isGameMenuVisible" class="main-title left">{{ systemConfig.siteName }}</div>
+      <div v-else class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
+        游戏选单
+        <i :class="['solid-triangle', isGameMenuVisible ? 'point-top' : 'point-down' ]"></i>
+      </div>
+      <template slot="right" v-if="!isGameMenuVisible">
+        <div class="right-ctrl">
+          <template v-if="!user.logined">
+            <a class="link" @click="tryDemo">试玩</a>
+            <div class="divide"></div>
+            <router-link class="link" to="/register">注册</router-link>
+            <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
+          </template>
+          <template v-else>
+            <div
+              class="balance fr"
+              @click="$store.dispatch('showRightMenu')">
+              {{ user.balance|currency('￥')}}
+            </div>
+          </template>
+        </div>
+      </template>
+    </top-bar>
     <swiper
       class="banner-slider"
       :aspect-ratio=".5"
@@ -55,7 +79,7 @@
         <img class="game-icon" v-lazy="game.icon" />
         <div>{{ game.display_name }}</div>
       </div>
-      <div v-if="currentTag==='热门游戏'" class="game-item" @click="$root.bus.$emit('showGameMenu')">
+      <div v-if="currentTag==='热门游戏'" class="game-item" @click="isGameMenuVisible = true">
         <div class="game-label"></div>
         <img class="game-icon" v-lazy="require('../assets/all_games.png')" />
         <div>所有游戏</div>
@@ -117,6 +141,7 @@
       </swiper>
     </x-dialog>
     <tryplay-popup />
+    <game-menu v-model="isGameMenuVisible" />
   </div>
 </template>
 
@@ -143,6 +168,8 @@ import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
+import GameMenu from '@/components/GameMenu.vue'
+import TopBar from '@/components/TopBar'
 export default {
   name: 'Home',
   data () {
@@ -151,10 +178,12 @@ export default {
       game_count: 15,
       showpromoPopup: false,
       today: this.$moment(),
-      currentTag: ''
+      currentTag: '',
+      isGameMenuVisible: false
     }
   },
   components: {
+    TopBar,
     Swiper,
     SwiperItem,
     XDialog,
@@ -172,7 +201,8 @@ export default {
     XButton,
     Marquee,
     Tab,
-    TabItem
+    TabItem,
+    GameMenu
   },
   mixins: [freetrial],
   computed: {
@@ -387,22 +417,6 @@ export default {
 .game-title {
   display: flex;
   justify-content: space-between;
-}
-.more {
-  float: right;
-  line-height: 36px;
-  padding: 0 10px 0 0;
-  text-align: right;
-  margin-right: 10px;
-  position: relative;
-  color: #666;
-  &:visited, &:active {
-    color: #666;
-  }
-  .arrow-right:after {
-    margin-left: 5px;
-    border-color: #666;
-  }
 }
 .title {
   display: inline-block;

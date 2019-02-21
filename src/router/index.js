@@ -12,7 +12,7 @@ export default new Router({
       meta: {
         tabbarHidden: true,
         title: '登录',
-        showBack: true
+        leftCtrl: 'back'
       },
       component: resolve => { require(['../screens/Login.vue'], resolve) }
     },
@@ -20,7 +20,7 @@ export default new Router({
       path: '/register',
       name: 'Register',
       meta: {
-        showBack: true,
+        leftCtrl: 'back',
         tabbarHidden: true,
         title: '注册'
       },
@@ -29,6 +29,9 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
+      meta: {
+        rightCtrl: 'info'
+      },
       component: resolve => { require(['../screens/Home.vue'], resolve) }
     },
     {
@@ -74,7 +77,7 @@ export default new Router({
       meta: {
         title: '未结明细',
         tabbarHidden: true,
-        showBack: true
+        leftCtrl: 'back'
       }
     },
     {
@@ -134,7 +137,7 @@ export default new Router({
             gaTitle: '投注记录',
             requiresAuth: true,
             tabbarHidden: true,
-            showBack: true
+            leftCtrl: 'back'
           },
           component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
         },
@@ -202,7 +205,7 @@ export default new Router({
       meta: {
         title: '申請取款',
         gaTitle: '取款申请提交',
-        showBack: true
+        leftCtrl: 'back'
       }
     },
     {
@@ -229,7 +232,7 @@ export default new Router({
               name: 'Bank',
               meta: {
                 title: '银行转帐',
-                showBack: true,
+                leftCtrl: 'back',
                 tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/Bank.vue'], resolve) }
@@ -239,7 +242,7 @@ export default new Router({
               name: 'Wechat',
               meta: {
                 title: '微信转帐',
-                showBack: true,
+                leftCtrl: 'back',
                 tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
@@ -249,7 +252,7 @@ export default new Router({
               name: 'Alipay',
               meta: {
                 title: '支付宝转帐',
-                showBack: true,
+                leftCtrl: 'back',
                 tabbarHidden: true
               },
               component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
@@ -263,7 +266,7 @@ export default new Router({
       name: 'changepassword',
       meta: {
         title: '修改密码',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -275,7 +278,7 @@ export default new Router({
       meta: {
         title: '基本資料',
         gaTitle: '基本资料',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -286,7 +289,7 @@ export default new Router({
       name: 'bankinfo',
       meta: {
         title: '银行资讯',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -297,7 +300,7 @@ export default new Router({
       name: 'withdraw',
       meta: {
         title: '申请取款',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -308,7 +311,7 @@ export default new Router({
       name: 'wpassword',
       meta: {
         title: '修改取款密码',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -319,7 +322,7 @@ export default new Router({
       name: 'message',
       meta: {
         title: '会员消息',
-        showBack: true,
+        leftCtrl: 'back',
         requiresAuth: true,
         tabbarHidden: true
       },
@@ -339,7 +342,7 @@ export default new Router({
       name: 'Promotions',
       meta: {
         title: '优惠活动',
-        showBack: true
+        leftCtrl: 'back'
       },
       component: resolve => { require(['../screens/Promotions.vue'], resolve) },
       children: [
@@ -348,7 +351,7 @@ export default new Router({
           name: 'PromotionDetail',
           meta: {
             title: '活动详情',
-            showBack: true
+            leftCtrl: 'back'
           },
           component: resolve => { require(['../screens/PromoDetail.vue'], resolve) }
         }
