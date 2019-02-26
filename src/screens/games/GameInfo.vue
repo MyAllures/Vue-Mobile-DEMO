@@ -15,6 +15,7 @@
     </div>
     <component :is="showing"
       :gameCode="currentGame.code"
+      :gameName="currentGame.display_name"
       :contentType="contentType"
       :currentGame="currentGame"
       :date="date">
@@ -26,6 +27,10 @@
 import { Datetime, dateFormat } from 'vux'
 
 const cqlf = (resolve) => require(['@/screens/games/rules/cqlf'], resolve)
+const cs10fc = (resolve) => require(['@/screens/games/rules/cs10fc'], resolve)
+const cs5fc = (resolve) => require(['@/screens/games/rules/cs5fc'], resolve)
+const cs600cr = (resolve) => require(['@/screens/games/rules/cs600cr'], resolve)
+const cs600hkl = (resolve) => require(['@/screens/games/rules/cs600hkl'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
 const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
@@ -90,6 +95,10 @@ export default {
     }
   },
   components: {
+    cs10fc,
+    cs5fc,
+    cs600cr,
+    cs600hkl,
     cqlf,
     gd11x5,
     jsk3,
