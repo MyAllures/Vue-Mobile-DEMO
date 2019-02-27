@@ -1,7 +1,7 @@
 <template>
-  <div class="intro-container">
+  <div :class="['intro-container', contentType]">
     <div class="title vux-1px-b" :class="contentType === 'history' ? 'left' : 'text-center'" >
-      <span>{{currentGame.display_name}}</span>
+      <span v-if="contentType!=='roadbeads'">{{currentGame.display_name}}</span>
       <template v-if="contentType === 'history'">
         <span v-if="currentGame.code === 'hkl' || currentGame.code === 'fc3d'" class="date-picker">
           <datetime class="date-picker-input" v-model="date" @on-change="change" :format="'YYYY-MM'"></datetime>
@@ -149,8 +149,11 @@ export default {
 
 .intro-container {
   background-color: #fff;
-  height: calc(~"100% - "60px);
+  // height: calc(~"100% - "60px);
   padding: 0 0 60px;
+  &.roadbeads {
+    background-color: #f5f5f5;
+  }
 }
 
 .rule-details {

@@ -1,13 +1,18 @@
 <template>
   <div class="container">
     <div class="wrapper" v-if="contentType === 'roadbeads' && gameCode">
-      <road-beads :loading="loading"
-        :firstFetch="firstFetch"
-        v-if="!noRoadBeadGames.includes(gameType)"
-        :gameCode="gameCode"
-        :resultStatistic="resultStatistic">
-      </road-beads>
-      <p v-else class="no-data text-center">暂无路珠统计</p>
+      <p v-if="noRoadBeadGames.includes(gameType)" class="no-data text-center">暂无路珠统计</p>
+      <template v-else>
+        <div v-if="!resultStatistic" class="text-center p-t-lg">
+          <InlineLoading></InlineLoading>
+        </div>
+        <road-beads
+          v-else
+          :gameCode="gameCode"
+          :type="contentType"
+          :resultStatistic="resultStatistic">
+        </road-beads>
+      </template>
     </div>
     <div class="wrapper" v-if="contentType === 'leaderboard' && gameCode">
       <leaderboards v-if="!noLeaderBoardGames.includes(gameType)"
@@ -26,6 +31,7 @@ import Leaderboards from './Leaderboards'
 import { fetchStatistic } from '../../api'
 import gameTranslator from '../../utils/gameTranslator'
 import _ from 'lodash'
+import { InlineLoading } from 'vux'
 import {HKL_GAMES} from '../../config'
 const noRoadBeadGames = ['fc3d', 'hkl']
 const noLeaderBoardGames = []
@@ -43,7 +49,7 @@ export default {
   data () {
     return {
       games: [],
-      resultStatistic: {},
+      resultStatistic: null,
       leaderboardData: [],
       loading: false,
       noRoadBeadGames,
@@ -59,7 +65,8 @@ export default {
       fetchStatistic(code).then(result => {
         this.resultStatistic = {
           resultSingleStatistic: result.result_single_statistic,
-          historyStatistic: result.result_category_statistic
+          daRoadStatistic: result.result_category_statistic,
+          jupanRoadStatistic: result.result_category_statistic_jupanroad
         }
         this.loading = false
       })
@@ -106,13 +113,13 @@ export default {
       this.interval = setInterval(() => {
         this.fetchStatistic()
         this.firstFetch = false
-      }, 10000)
+      }, 60000)
     },
     pollLeaderboard () {
       this.interval = setInterval(() => {
         this.fetchLeaderboard()
         this.firstFetch = false
-      }, 10000)
+      }, 60000)
     },
     initFetch () {
       clearInterval(this.interval)
@@ -155,7 +162,7 @@ export default {
     clearInterval(this.interval)
   },
   components: {
-    RoadBeads, Leaderboards
+    RoadBeads, Leaderboards, InlineLoading
   }
 }
 </script>
