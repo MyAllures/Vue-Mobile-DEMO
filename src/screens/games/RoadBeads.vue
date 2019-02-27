@@ -303,6 +303,7 @@ export default {
     chooseMainName (item) {
       const picker = this.$createPicker({
         data: [this.mainOptions],
+        selectedIndex: [this.mainOptions.findIndex(o => o.value === this.mainName)],
         onSelect: (v) => {
           this.mainName = v[0]
         },
@@ -314,6 +315,7 @@ export default {
     chooseSubName () {
       const picker = this.$createPicker({
         data: [this.subOptions],
+        selectedIndex: [this.subOptions.findIndex(o => o.value === this.subName)],
         onSelect: (v) => {
           this.subName = v[0]
         },
