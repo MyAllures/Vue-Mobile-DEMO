@@ -73,7 +73,7 @@
 
 <script>
 import gameTranslator from '../../utils/gameTranslator'
-import { settings, hasNotSubOption, hasJupanRoad } from '../../utils/roadBeadSetting'
+import { settings, hasNotSubOption, hasJupanRoad, isSeriesSSC } from '../../utils/roadBeadSetting'
 import _ from 'lodash'
 
 const nameSort = (a, b) => {
@@ -115,6 +115,7 @@ export default {
     return {
       hasNotSubOption: hasNotSubOption(this.gameCode),
       hasJupanRoad: hasJupanRoad(this.gameCode),
+      isSeriesSSC: isSeriesSSC(this.gameCode),
       daRoadUsing: false,
       jupanRoadUsing: false,
       mainOptions: null,
@@ -303,6 +304,7 @@ export default {
     chooseMainName (item) {
       const picker = this.$createPicker({
         data: [this.mainOptions],
+        selectedIndex: [this.mainOptions.findIndex(o => o.value === this.mainName)],
         onSelect: (v) => {
           this.mainName = v[0]
         },
@@ -314,6 +316,7 @@ export default {
     chooseSubName () {
       const picker = this.$createPicker({
         data: [this.subOptions],
+        selectedIndex: [this.subOptions.findIndex(o => o.value === this.subName)],
         onSelect: (v) => {
           this.subName = v[0]
         },
@@ -329,7 +332,7 @@ export default {
       let dragonTigerSpecial
 
       // if game in ssc series the dragon_tiger would become dragon_tiger_equal
-      if (this.gameCode.includes('ssc') || this.gameCode === 'csffc') {
+      if (this.isSeriesSSC) {
         dragonTigerSpecial = '龙虎和'
       } else {
         dragonTigerSpecial = '龙虎'

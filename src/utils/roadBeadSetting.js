@@ -43,3 +43,8 @@ const hasJupanRoadGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600c
 export const hasJupanRoad = (code) => {
   return hasJupanRoadGames.includes(code)
 }
+
+const seriesSSC = ['jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
+export const isSeriesSSC = (code) => {
+  return seriesSSC.includes(code)
+}
