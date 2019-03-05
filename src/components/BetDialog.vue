@@ -191,7 +191,6 @@ export default {
             })
             this.dialogVisible = false
             this.loading = false
-            this.$store.dispatch('fetchUser')
           } else {
             this.$vux.toast.show({
               text: msgFormatter(res.msg),
