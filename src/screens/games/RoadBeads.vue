@@ -39,14 +39,22 @@
     <div class="trend-diagram-wrapper" ref="daRoad" @touchstart="daRoadUsing = true" @touchend="daRoadUsing = false">
       <table class="trend-diagram daRoad">
         <tbody>
-          <tr v-if="mainName!=='五行'">
+          <tr v-if="mainName==='总和色波'">
             <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
-              <div :class="['circle', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
+              <template v-for="(k,i) in daRoadList[index]">
+                <div v-if="['red','blue','green'].includes(k)" :class="['circle', k]" :key="i"></div>
+                <div v-else class="font" :key="i">{{k}}</div>
+              </template>
+            </td>
+          </tr>
+          <tr v-else-if="mainName==='五行'">
+            <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
+              <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
             </td>
           </tr>
           <tr v-else>
             <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
-              <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
+              <div :class="['circle', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
             </td>
           </tr>
         </tbody>
@@ -368,6 +376,10 @@ export default {
           type = '色波'
         }
 
+        if (resultSingle['outOfDefinition']) {
+          delete resultSingle['outOfDefinition']
+        }
+
         if (this.hasNotSubOption) {
           let mainKey
           if (title === '总和') {
@@ -549,6 +561,7 @@ export default {
             line-height: 20px;
             text-align: center;
             border-radius: 50%;
+            margin: 3px auto;
           }
         }
       }
