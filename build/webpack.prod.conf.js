@@ -51,6 +51,20 @@ const webpackConfig = merge(baseWebpackConfig, {
           'postcss-loader',
           'sass-loader'
         ],
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'stylus-loader',
+            options: {
+              'resolve url': true
+            }
+          }
+        ],
       }
     ],
   },

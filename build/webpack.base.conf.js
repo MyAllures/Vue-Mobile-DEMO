@@ -7,6 +7,8 @@ const webpack = require('webpack')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 const favicon = process.env.company==='75ue_2' ? process.env.company : 'default'
+const PostCompilePlugin = require('webpack-post-compile-plugin')
+const TransformModulesPlugin = require('webpack-transform-modules-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -39,7 +41,7 @@ const originalConfig = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src'),
+      '@': resolve('src')
     }
   },
   module: {
@@ -82,6 +84,8 @@ const originalConfig = {
     ]
   },
   plugins: [
+    new PostCompilePlugin(),
+    new TransformModulesPlugin(),
     new webpack.DllReferencePlugin({
       context: __dirname,
       manifest: require('../lib/base1-manifest.json')
