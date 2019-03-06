@@ -49,17 +49,8 @@
 
 <script>
   import {
-    Tab,
-    TabItem,
-    Group,
-    XInput,
-    XTextarea,
     XButton,
-    XImg,
-    Datetime,
-    Spinner,
-    Flexbox,
-    FlexboxItem
+    Spinner
   } from 'vux'
   import { postRemit } from '@/api'
   import { msgFormatter, validateDepositAmount, validateLastSixDigits } from '@/utils'
@@ -73,17 +64,8 @@
       }
     },
     components: {
-      Group,
-      XInput,
       XButton,
-      Datetime,
       Spinner,
-      XTextarea,
-      Tab,
-      TabItem,
-      XImg,
-      Flexbox,
-      FlexboxItem,
       VForm,
       VFormItem,
       VInput
@@ -121,7 +103,6 @@
           memo: '',
           amount: ''
         },
-        endDate: this.$moment(new Date()).format('YYYY-MM-DD'),
         limit: this.$store.state.user.level.remit_limit,
         isPayeeAvailable: true,
         errorMsg: '',
@@ -269,10 +250,6 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px 30px 40px 30px;
-  }
-
-  .vux-datetime {
-    margin: 10px;
   }
   .weui-cells {
     &.wide {

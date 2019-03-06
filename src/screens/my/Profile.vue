@@ -48,7 +48,7 @@
   </div>
 </template>
 <script>
-import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner } from 'vux'
+import { XButton, Spinner } from 'vux'
 import { changeUserInformation } from '../../api'
 import { msgFormatter, validateEmail, validateQQ, validatePhone } from '../../utils'
 import { mapActions, mapGetters, mapState } from 'vuex'
@@ -191,12 +191,7 @@ export default {
     }
   },
   components: {
-    Group,
-    Cell,
-    XInput,
     XButton,
-    Datetime,
-    Selector,
     Spinner,
     VForm,
     VFormItem,
