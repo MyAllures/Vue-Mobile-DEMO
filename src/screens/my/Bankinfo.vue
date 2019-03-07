@@ -107,7 +107,7 @@
   </div>
 </template>
 <script>
-import { Cell, Group, XInput, XButton, Datetime, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
+import { Cell, Group, XInput, XButton, Selector, Spinner, XAddress, Alert, Icon } from 'vux'
 import { fetchBank, addUserBank } from '../../api'
 import { mapGetters } from 'vuex'
 import { validateBankAccount, validateProvince, msgFormatter, validateQQ, validatePhone } from '../../utils'
@@ -274,7 +274,6 @@ export default {
     Cell,
     XInput,
     XButton,
-    Datetime,
     Selector,
     Spinner,
     XAddress,

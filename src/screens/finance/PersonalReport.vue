@@ -2,8 +2,8 @@
   <div v-if="$store.state.user.account_type" class="container">
     <div class="filter-area">
       <div class="icon"></div>
-      <datetime class="filter" v-model="startdate"></datetime>
-      <datetime class="filter" :start-date="enddateBegin" v-model="enddate"></datetime>
+      <date-selector class="filter" v-model="startdate"></date-selector>
+      <date-selector class="filter" :min-date="enddateBegin" v-model="enddate"></date-selector>
     </div>
     <div class="info">
       <div class="stamp-wrapper">
@@ -90,7 +90,8 @@
 
 <script>
 import { fetchPersonalReport } from '../../api'
-import { XTable, XButton, Toast, Loading, Divider, TransferDom, Datetime, PopupPicker } from 'vux'
+import { XTable, XButton, Toast, Loading } from 'vux'
+import DateSelector from '@/components/DateSelector'
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -111,13 +112,10 @@ export default {
     Toast,
     Loading,
     XButton,
-    Divider,
-    Datetime,
-    PopupPicker
+    DateSelector
   },
   directives: {
-    infiniteScroll,
-    TransferDom
+    infiniteScroll
   },
   data () {
     return {
@@ -157,7 +155,7 @@ export default {
     },
     'startdate': {
       handler: function (startdate) {
-        this.enddateBegin = startdate
+        this.enddateBegin = new Date(startdate)
         if (Vue.moment(startdate).isAfter(this.enddate)) {
           this.enddate = startdate
         }
@@ -247,7 +245,7 @@ export default {
     line-height: 30px;
     border-left: 1px solid #eee;
     padding: 0 16px;
-    color: #666;
+    color: #999;
     .text {
       height: 100%;
       width: 100px;

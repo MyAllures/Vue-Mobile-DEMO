@@ -24,17 +24,39 @@
                 <p class="main">{{item.liHead.left.main}}</p>
                 <p class="sub">{{item.liHead.left.sub}}</p>
               </div>
-              <p class="right" :class="item.liHead.right.class">
+              <p v-if="type==='bettrack'" class="right" :class="item.liHead.right.class">
                 {{item.liHead.right.main}}
               </p>
+              <p v-else class="total-profit">
+                盈利：{{item.liHead.right.main}}
+              </p>
             </div>
-            <ul class="li-body">
+            <ul v-if="type==='bettrack'" class="li-body">
               <li class="result" v-for="(obj, i) in item.liBody" :key="i">
                 <span>{{obj.left.main}}</span>
                 <span v-html="obj.right.main" :class="obj.right.class"></span>
-                <p class="full-width p-l" v-if="obj.left.sub">bet.comb_desc</p>
+                <p class="full-width p-l" v-if="obj.left.sub">{{obj.left.sub}}</p>
               </li>
             </ul>
+            <table v-else class="notification-table">
+              <thead>
+                <tr>
+                  <th class="head-col col">玩法</th>
+                  <th class="head-col col">下注金额</th>
+                  <th class="head-col col">盈利</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr  v-for="(obj, i) in item.liBody" :key="i">
+                  <td class="col">
+                    {{obj.playName}}
+                    <p class="desc" v-if="obj.desc">{{obj.desc}}</p>
+                  </td>
+                  <td class="col">{{obj.betAmount}}</td>
+                  <td class="col">{{obj.profit}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <div class="footer">
@@ -121,6 +143,7 @@ export default {
       }
     },
     list () {
+      const currencyFilter = this.$options.filters.currency
       if (this.type === 'bettrack') {
         return map(this.formatted.bet_track_records, (r) => {
           return {
@@ -132,7 +155,7 @@ export default {
               },
               right: {
                 class: this.getAmountColor(r.profit),
-                main: r.profit ? this.$options.filters.currency(r.profit, '￥') : ''
+                main: r.profit ? currencyFilter(r.profit, '￥') : ''
               }
             },
             liBody: map(r.game_schedules, (s) => {
@@ -182,7 +205,7 @@ export default {
               class: ''
             },
             right: {
-              main: this.$options.filters.currency(n.total_profit, '￥'),
+              main: currencyFilter(n.total_profit, '￥'),
               sub: '',
               class: ''
             }
@@ -191,14 +214,10 @@ export default {
           item.liBody = map(n.win_bets, (b, i) => {
             let profit = (b.profit || b.total_profit)
             return {
-              left: {
-                main: `${i + 1}. ${b.playgroup_name} @ ${b.play_name}`,
-                sub: `${b.comb_desc || ''}`
-              },
-              right: {
-                main: this.$options.filters.currency(profit, '￥'),
-                class: this.getAmountColor(profit)
-              }
+              playName: `${i + 1}. ${b.playgroup_name} @ ${b.play_name}`,
+              desc: b.comb_desc,
+              betAmount: currencyFilter(b.bet_amount, '￥'),
+              profit: currencyFilter(profit, '￥')
             }
           })
 
@@ -302,7 +321,6 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px dashed #ddd;
     text-align: left;
     .main {
       .font-style(16px, #026bb3, 500, inherit);
@@ -311,6 +329,10 @@ export default {
       .font-style(14px, #026bb3, inherit, .5px);
     }
     .right {
+      font-size: 14px;
+    }
+    .total-profit {
+      color: @red;
       font-size: 14px;
     }
   }
@@ -322,6 +344,7 @@ export default {
     padding-left: 10px;
     letter-spacing: 0.5px;
     overflow: visible;
+    border-top: 2px dashed #ddd;
     .font-style(12px,  #666, inherit, inherit);
     .result {
       display: inline-flex;
@@ -334,6 +357,23 @@ export default {
     .full-width {
       width: 100%;
       text-align: left;
+    }
+  }
+  .notification-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+    .head-col {
+      color: #999;
+      border-bottom: 1px dashed #ddd;
+    }
+    .col {
+      padding: 5px 0;
+    }
+    .desc {
+      width: 100%;
+      text-align: right;
     }
   }
 }

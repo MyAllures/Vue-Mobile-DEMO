@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { XHeader, Flexbox, FlexboxItem, XAddress, Datetime, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, Box, InlineLoading } from 'vux'
+import { XHeader, Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, InlineLoading } from 'vux'
 import LotteryRecordNum from '@/components/LotteryRecordNum.vue'
 import { getGameHistoryData } from '../api'
 import {HKL_GAMES} from '../config'
@@ -270,14 +270,12 @@ export default {
     XAddress,
     Flexbox,
     FlexboxItem,
-    Datetime,
     PopupRadio,
     dateFormat,
     TabItem,
     Group,
     XInput,
     XButton,
-    Box,
     InlineLoading,
     LotteryRecordNum
   }

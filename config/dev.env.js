@@ -7,6 +7,6 @@ module.exports = merge(prodEnv, {
   HOST: '"/api"',
   chatHost: '"ws://staging-raven.h9339.com"',
   chatApi: '"https://staging-raven.h9339.com"',
-  eiderHost: '"wss://eider.h9339.com"',
+  eiderHost: '"wss://staging-eider.h9339.com"',
   company: '"staging"'
 })
