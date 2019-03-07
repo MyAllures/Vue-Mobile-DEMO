@@ -17,7 +17,8 @@
       @on-click-back="$router.push({name: 'Home'})"
       :left-options="{
         showBack: $route.meta.showBack || false,
-        preventGoBack: (($route.name === 'Login') && noBackRoute)
+        backText:(($route.name === 'Login'||$route.name === 'Register') && noBackRoute)?'首页':'返回',
+        preventGoBack: (($route.name === 'Login'||$route.name === 'Register') && noBackRoute)
       }">
 
       <div @click="titleCondition.onClick">

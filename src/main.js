@@ -3,6 +3,7 @@
 import "babel-polyfill"
 import Vue from 'vue'
 import axios from 'axios'
+import './plugins/cube-ui'
 import App from './App'
 import router from './router'
 import VueI18n from 'vue-i18n'
