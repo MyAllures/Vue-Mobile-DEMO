@@ -89,6 +89,7 @@ const gameTable = {
   'gd11x5': gd11x5CompareList,
   'hkl': hklCompareList,
   'cs600hkl': hklCompareList,
+  'csjndhkl': hklCompareList,
   'fc3d': fc3dCompareList
 }
 export default {
