@@ -1,7 +1,7 @@
 <template>
   <div :class="['intro-container', contentType]">
-    <div class="title" :class="contentType === 'history' ? 'left' : 'text-center'" >
-      <span v-if="contentType!=='roadbeads'">{{currentGame.display_name}}</span>
+    <div class="title vux-1px-b" :class="contentType === 'history' ? 'left' : 'text-center'" >
+      <span v-if="contentType!=='roadbeads' && contentType!=='trend'">{{currentGame.display_name}}</span>
       <template v-if="contentType === 'history'">
         <div v-if="currentGame.code === 'hkl' || currentGame.code === 'fc3d'" class="date-picker">
           <date-selector class="date-picker-input" :z-index="600" v-model="date" :max-date="new Date()" :column-count="2"></date-selector>
@@ -57,6 +57,7 @@ const fc3d = (resolve) => require(['@/screens/games/rules/fc3d'], resolve)
 const cs60cr = (resolve) => require(['@/screens/games/rules/cs60cr'], resolve)
 const GameStatistic = (resolve) => require(['@/screens/games/GameStatistic'], resolve)
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
+const TrendDiagram = (resolve) => require(['@/screens/trendDiagram'], resolve)
 
 export default {
   name: 'GameIntro',
@@ -117,6 +118,8 @@ export default {
           return GameStatistic
         case 'leaderboard':
           return GameStatistic
+        case 'trend':
+          return TrendDiagram
         case 'history':
           return LotterRecord
         case 'intro':
@@ -151,6 +154,10 @@ export default {
   padding: 0 0 60px;
   &.roadbeads {
     background-color: #f5f5f5;
+  }
+  &.trend {
+    box-sizing: border-box;
+    height: 100%;
   }
 }
 
