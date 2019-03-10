@@ -48,18 +48,21 @@
           </tbody>
         </table>
         <canvas class="canvas" ref="line"></canvas>
-        <div class="foot" v-if="!loading">
-          <x-button
-            v-if="records.length<total_count"
-            type="default"
-            action-type="button"
-            class="add-more"
-            @click.native="addMore">
-            <inline-loading v-if="addMoreLoading"></inline-loading>
-            <span v-else>{{$t('misc.load_more')}}</span>
-          </x-button>
-          <div class="no-more" v-else>{{$t('misc.no_data_yet')}}</div>
-        </div>
+        <template  v-if="!loading">
+          <div class="foot" v-if="records.length<total_count">
+            <x-button
+              type="default"
+              action-type="button"
+              class="add-more"
+              @click.native="addMore">
+              <inline-loading v-if="addMoreLoading"></inline-loading>
+              <span v-else>{{$t('misc.load_more')}}</span>
+            </x-button>
+          </div>
+          <div class="foot" v-else-if="total_count===0">
+            <div class="no-more" >{{$t('misc.no_data_yet')}}</div>
+          </div>
+        </template>
       </div>
     </div>
   </div>

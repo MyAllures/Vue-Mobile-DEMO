@@ -57,7 +57,7 @@ const fc3d = (resolve) => require(['@/screens/games/rules/fc3d'], resolve)
 const cs60cr = (resolve) => require(['@/screens/games/rules/cs60cr'], resolve)
 const GameStatistic = (resolve) => require(['@/screens/games/GameStatistic'], resolve)
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
-const TrendDiagram = (resolve) => require(['@/screens/trendDiagram'], resolve)
+const TrendDiagram = (resolve) => require(['@/screens/TrendDiagram'], resolve)
 
 export default {
   name: 'GameIntro',
