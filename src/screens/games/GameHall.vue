@@ -79,6 +79,13 @@ import TopBar from '@/components/TopBar'
 import GameMenu from '@/components/GameMenu.vue'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import vClickOutside from 'v-click-outside'
+function to (scrollTop) {
+  document.body.scrollTop = document.documentElement.scrollTop = scrollTop
+}
+function getScrollTop () {
+  return document.body.scrollTop || document.documentElement.scrollTop
+}
+let scrollTop
 
 export default {
   name: 'GameHall',
@@ -167,6 +174,23 @@ export default {
           category: '聊天室',
           action: '点击'
         })
+      }
+    },
+    'isGameInfoVisible': function (visible) {
+      if (visible) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
       }
     }
   },
