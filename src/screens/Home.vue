@@ -129,16 +129,23 @@
     </div>
     <x-dialog
       v-model="showDialog"
-      :hide-on-blur="true">
-      <swiper
-        height="250px"
-        dots-position="center">
-        <swiper-item
-          :key="'swiper-anmt' + index"
-          v-for="(a, index) in announcements">
-          <p class="m-t swiper-announcement">{{a}}</p>
-        </swiper-item>
-      </swiper>
+      :dialog-style="{
+        width: '90vw',
+        'max-width': '90vw',
+      }">
+      <div class="announcement-dialog">
+        <div class="close-btn" @click="showDialog = false"></div>
+        <div class="announcement-dialog-title">网站公告</div>
+        <swiper
+          height="300px"
+          dots-position="center">
+          <swiper-item
+            :key="'swiper-anmt' + index"
+            v-for="(a, index) in announcements">
+            <p class="m-t swiper-announcement">{{a}}</p>
+          </swiper-item>
+        </swiper>
+      </div>
     </x-dialog>
     <tryplay-popup />
     <game-menu v-model="isGameMenuVisible" />
@@ -170,6 +177,13 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+function to (scrollTop) {
+  document.body.scrollTop = document.documentElement.scrollTop = scrollTop
+}
+function getScrollTop () {
+  return document.body.scrollTop || document.documentElement.scrollTop
+}
+let scrollTop
 export default {
   name: 'Home',
   data () {
@@ -277,7 +291,30 @@ export default {
           this.switchTab(0)
         }
       }
+    },
+    'showDialog': function (showDialog) {
+      if (showDialog) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
+      }
     }
+  },
+  created () {
+    const unwatch = this.$watch('announcements', function () {
+      this.showDialog = true
+      unwatch()
+    })
   },
   methods: {
     openPClink () {
@@ -311,7 +348,7 @@ export default {
   opacity: 0;
 }
 .container /deep/ .vux-swiper {
-  min-height: 45w;
+  min-height: 55w;
 }
 .swiper-image {
   width: 100%;
@@ -359,6 +396,21 @@ export default {
   }
 }
 
+.announcement-dialog {
+  .announcement-dialog-title {
+    height: 46px;
+    line-height: 46px;
+    font-size: 18px;
+  }
+  .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    &::before,&::after{
+      background-color: #999;
+    }
+  }
+}
 .swiper-announcement {
   padding: 10px;
   display: inline-block;
