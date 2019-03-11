@@ -28,7 +28,7 @@
         </thead>
         <tbody>
           <tr>
-            <td class="first-col col">总次数</td>
+            <td class="first-col col">今日总次数</td>
             <td class="col" v-for="(num, index) in selectedSetting.cumulationNames" :key="index">{{cumulation[index]||0}}</td>
           </tr>
         </tbody>
