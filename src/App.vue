@@ -225,7 +225,7 @@ export default {
       userLoading: true,
       error: '',
       showCalender: false,
-      headerZindex: 100,
+      headerZindex: 200,
       refreshTokenInterval: null,
       currentNotificationDetail: null,
       refreshTokenTimer: null,
