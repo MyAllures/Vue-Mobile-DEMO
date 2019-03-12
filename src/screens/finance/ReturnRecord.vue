@@ -2,7 +2,7 @@
   <div v-if="$store.state.user.account_type" class="container">
     <div class="filter-area">
       <div class="icon"></div>
-      <datetime class="filter" v-model="date"></datetime>
+      <date-selector class="filter" v-model="date"></date-selector>
       <popup-picker
         class="filter"
         :data="gameOptions"
@@ -65,7 +65,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { fetchReturnRecord } from '../../api'
-import { XTable, XButton, Box, Toast, Loading, Divider, TransferDom, Datetime, PopupPicker } from 'vux'
+import { XTable, XButton, Toast, Loading, PopupPicker } from 'vux'
+import DateSelector from '@/components/DateSelector'
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
@@ -92,17 +93,14 @@ export default {
   components: {
     XTable,
     DateFormat,
-    Box,
     Toast,
     Loading,
     XButton,
-    Divider,
-    Datetime,
-    PopupPicker
+    PopupPicker,
+    DateSelector
   },
   directives: {
-    infiniteScroll,
-    TransferDom
+    infiniteScroll
   },
   filters: {
     profitFilter (val) {
@@ -232,7 +230,7 @@ export default {
     line-height: 30px;
     border-left: 1px solid #eee;
     padding: 0 16px;
-    color: #666;
+    color: #999;
     .text {
       height: 100%;
       width: 100px;

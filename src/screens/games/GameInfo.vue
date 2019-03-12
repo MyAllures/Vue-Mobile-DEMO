@@ -1,16 +1,16 @@
 <template>
   <div :class="['intro-container', contentType]">
-    <div class="title vux-1px-b" :class="contentType === 'history' ? 'left' : 'text-center'" >
+    <div class="title" :class="contentType === 'history' ? 'left' : 'text-center'" >
       <span v-if="contentType!=='roadbeads'">{{currentGame.display_name}}</span>
       <template v-if="contentType === 'history'">
-        <span v-if="currentGame.code === 'hkl' || currentGame.code === 'fc3d'" class="date-picker">
-          <datetime class="date-picker-input" v-model="date" @on-change="change" :format="'YYYY-MM'"></datetime>
+        <div v-if="currentGame.code === 'hkl' || currentGame.code === 'fc3d'" class="date-picker">
+          <date-selector class="date-picker-input" :z-index="600" v-model="date" :max-date="new Date()" :column-count="2"></date-selector>
           <i class="solid-triangle point-down"></i>
-        </span>
-        <span v-else class="date-picker">
-          <datetime class="date-picker-input" v-model="date" @on-change="change"></datetime>
+        </div>
+        <div v-else class="date-picker">
+          <date-selector class="date-picker-input" :z-index="600" :max-date="new Date()" v-model="date"></date-selector>
           <i class="solid-triangle point-down"></i>
-        </span>
+        </div>
       </template>
     </div>
     <component :is="showing"
@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import { Datetime, dateFormat } from 'vux'
-
+import DateSelector from '@/components/DateSelector'
 const cqlf = (resolve) => require(['@/screens/games/rules/cqlf'], resolve)
 const cs10fc = (resolve) => require(['@/screens/games/rules/cs10fc'], resolve)
 const cs5fc = (resolve) => require(['@/screens/games/rules/cs5fc'], resolve)
 const cs600cr = (resolve) => require(['@/screens/games/rules/cs600cr'], resolve)
 const cs600hkl = (resolve) => require(['@/screens/games/rules/cs600hkl'], resolve)
+const csjndhkl = (resolve) => require(['@/screens/games/rules/csjndhkl'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
 const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
@@ -60,40 +60,6 @@ const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 
 export default {
   name: 'GameIntro',
-  props: {
-    currentGame: {
-      type: Object
-    },
-    contentType: {
-      type: String,
-      required: true
-    }
-  },
-  data () {
-    return {
-      date: this.currentGame.code === 'hkl' || this.currentGame.code === 'fc3d' ? dateFormat(new Date(), 'YYYY-MM') : dateFormat(new Date(), 'YYYY-MM-DD')
-    }
-  },
-  methods: {
-    change (date) {
-      this.date = date
-    }
-  },
-  computed: {
-    showing () {
-      let type = this.contentType
-      switch (type) {
-        case 'roadbeads':
-          return GameStatistic
-        case 'leaderboard':
-          return GameStatistic
-        case 'history':
-          return LotterRecord
-        case 'intro':
-          return this.currentGame.code
-      }
-    }
-  },
   components: {
     cs10fc,
     cs5fc,
@@ -115,6 +81,7 @@ export default {
     hkl,
     luckl,
     cshkl,
+    csjndhkl,
     xjssc,
     tjssc,
     csffc,
@@ -126,8 +93,36 @@ export default {
     cs60cr,
     GameStatistic,
     LotterRecord,
-    Datetime,
-    dateFormat
+    DateSelector
+  },
+  props: {
+    currentGame: {
+      type: Object
+    },
+    contentType: {
+      type: String,
+      required: true
+    }
+  },
+  data () {
+    return {
+      date: this.currentGame.code === 'hkl' || this.currentGame.code === 'fc3d' ? this.$moment().format('YYYY-MM') : this.$moment().format('YYYY-MM-DD')
+    }
+  },
+  computed: {
+    showing () {
+      let type = this.contentType
+      switch (type) {
+        case 'roadbeads':
+          return GameStatistic
+        case 'leaderboard':
+          return GameStatistic
+        case 'history':
+          return LotterRecord
+        case 'intro':
+          return this.currentGame.code
+      }
+    }
   }
 }
 </script>
@@ -135,14 +130,17 @@ export default {
 <style lang="less" scoped>
 @import '~vux/src/styles/1px.less';
 .title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
-  line-height: 40px;
   position: sticky;
+  line-height: 40px;
   background-color: #f5f5f5;
   top: 0;
   z-index: 2;
   &.left {
-    text-align: left;
+    justify-content: flex-start;
     padding-left: 10px;
   }
 }
@@ -182,32 +180,23 @@ export default {
 }
 
 .date-picker {
-  position: absolute;
-  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   width: 135px;
   height: 40px;
+  margin-left: auto;
+  padding-right: 5px;
   &-input {
     padding: 0 5px 0 0;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    text-align: right;
+    color: #999;
   }
   .solid-triangle {
-    position: absolute;
     border-top: 5px solid #999;
-    top: 18px;
-    right: 5px;
   }
 }
-
-.date-picker /deep/ .vux-cell-value {
-  font-size: 14px;
-}
-
-.date-picker /deep/ .weui-cell {
-  height: 40px;
-  line-height: 40px;
-}
-
-.date-picker /deep/ .weui-cell_access .weui-cell__ft:after {
-  transform: matrix(0, 0, 0, 0, 0, 0);
-}
-
 </style>
