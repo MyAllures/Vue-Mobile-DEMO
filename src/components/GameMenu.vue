@@ -9,28 +9,75 @@
     class="popup"
     :style="{zIndex: 101}">
     <div class="popup-content">
-      <grid :cols="3" :show-lr-borders="false">
-        <grid-item
-          class="grid-item text-center"
-          v-for="(game, index) in allGames"
-          :key="index"
-          @click.native="switchGame(game)">
-          <div class="game-label">
-            <span v-if="game.label" class="game-label-text">{{game.label}}</span>
+      <tab 
+        :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
+        :bar-active-color="theme"
+        :animate="false"
+        default-color="#666"
+        :active-color="theme"
+        :line-width="2"
+      >
+        <tab-item v-for="(tag,index) in gameGroups" :key="index"
+          @on-item-click="switchTab"
+          :selected="tag.groupName === activeGroupName"
+        >
+          <span class="group-name">{{tag.groupName}}</span>
+        </tab-item>
+      </tab>
+
+      <div class="main-background">
+        <div class="category recommendatory-bgc" v-if="recommendatoryGames && recommendatoryGames.length">
+          <div class="category-title">相同玩法開獎更快</div>
+          <div class="classic-game">
+            <div class="images-container">
+              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
+                @click="switchGame(gamePlay[gameCode])"
+                v-for="(gameCode,index) in recommendatoryGames" :key="index" 
+              >
+                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                <p class="name">{{gamePlay[gameCode].name}}</p>
+                <div class="game-label">
+                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <img class="icon" v-lazy="game.icon" width="36" height="36"/>
-          <p class="name">{{game.display_name || ''}}</p>
-        </grid-item>
-      </grid>
+        </div>
+
+        <div class="category" v-if="classicGames && classicGames.length">
+          <div class="category-title">經典遊戲</div>
+          <div class="recommendatory-game">
+            <div class="images-container">
+              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
+                @click="switchGame(gamePlay[gameCode])"
+                v-for="(gameCode,index) in classicGames" :key="index" 
+              >
+                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                <p class="name">{{gamePlay[gameCode].name}}</p>
+                <div class="game-label">
+                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div :class="['mask', {active: value}]" v-transfer-dom @click="handleClose"></div>
+    <game-menu-icon 
+      @click.native.prevent="handleClose"
+      class="menu-center" 
+      type="less" :theme="theme"
+    />
   </popup>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { TransferDom, Popup, Grid, GridItem } from 'vux'
+import { mapGetters, mapState } from 'vuex'
+import { TransferDom, Popup, Grid, GridItem, Tab, TabItem } from 'vux'
 import FixScroll from '../directive/fixscroll'
+import { findIndex } from 'lodash'
+import GameMenuIcon from '@/components/GameMenuIcon'
 const body = document.getElementsByTagName('body')[0]
 
 export default {
@@ -44,31 +91,63 @@ export default {
     FixScroll
   },
   components: {
-    Popup, Grid, GridItem
+    Popup, Grid, GridItem, Tab, TabItem, GameMenuIcon
   },
   data () {
     return {
-      height: '80%'
+      height: '55%',
+      imageContainerWidth: (window.innerWidth - 20) / 4,
+      currentGameObj: {},
+      activeGroupName: ''
     }
   },
   computed: {
     ...mapGetters([
-      'allGames'
+      'allGames', 'gameById'
+    ]),
+    ...mapState([
+      'theme'
     ]),
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
     },
     isGamePage () {
       return this.$route.name === 'GameDetail'
+    },
+    gameGroups () {
+      const obj = this.allGames.length && this.setGameGroups(this.allGames).gameGroups
+      return Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank < l.rank)
+    },
+    gamePlay () {
+      return this.setGameGroups(this.allGames).gamePlay
+    },
+    classicGames () {
+      return this.currentGameObj.classic
+    },
+    recommendatoryGames () {
+      return this.currentGameObj.recommendatory
     }
   },
-  mounted () {
-    // const height = document.body.clientHeight
-    // if (height > 650) {
-    //   this.height = '533px'
-    // } else if (height > 550) {
-    //   this.height = '436px'
-    // }
+  watch: {
+    value (val) {
+      if (val && !this.$route.params.gameId) {
+        this.switchTab(0)
+      }
+    },
+    gameGroups (value = []) {
+      if (value.length && this.$route.params.gameId) {
+        this.initTab()
+      }
+    },
+    currentGameObj: {
+      deep: true,
+      handler: function ({groupName}) {
+        groupName && (this.activeGroupName = groupName)
+      }
+    },
+    '$route.params.gameId': function (gameId) {
+      gameId && this.initTab()
+    }
   },
   methods: {
     handleClose () {
@@ -79,7 +158,7 @@ export default {
       const gameId = game.id + ''
       if (this.$route.params.gameId !== gameId) {
         this.sendGaEvent({
-          label: game.display_name,
+          label: game.name,
           category: '游戏选单',
           action: '选单'
         })
@@ -93,6 +172,46 @@ export default {
     },
     enableBackScroll () {
       body.style['overflow-y'] = ''
+    },
+    switchTab (i) {
+      this.currentGameObj = []
+      setTimeout(() => {
+        this.currentGameObj = this.gameGroups[i]
+      }, 10)
+    },
+    initTab () {
+      const game = this.$store.getters.gameById(this.$route.params.gameId)
+      if (game) {
+        const groupName = game.group_tag.name
+        this.switchTab(findIndex(this.gameGroups, {groupName}) || 0)
+      }
+    },
+    setGameGroups (gameTypes) {
+      return gameTypes.reduce((merged, g, index) => ({
+        ...merged,
+        gamePlay: {
+          ...merged.gamePlay,
+          [g.code]: {
+            id: g.id,
+            index,
+            categories: g.categories,
+            playpositions: g.playpositions,
+            isPrompt: g.is_prompt,
+            icon: g.icon,
+            name: g.display_name,
+            gameGroup: g.group_tag && g.group_tag.name,
+            period: g.period_descroption
+          }
+        },
+        gameGroups: {
+          ...merged.gameGroups,
+          [g.group_tag.name]: {
+            recommendatory: g.group_tag.recommendatory,
+            classic: g.group_tag.classic,
+            rank: g.group_tag.rank
+          }
+        }
+      }), {})
     }
   }
 }
@@ -100,12 +219,23 @@ export default {
 
 <style lang="less" scoped>
 .popup {
-  background-color: #fff;
+  // background-color: #fff;
   top: 45px;
+}
+
+.vux-popup-dialog {
+  background-color: rgba(255, 255, 255, 0);;
 }
 
 .popup-content {
   width: 100%;
+
+  .grid-item {
+    .name {
+      font-size: 13px;
+      color: #333;
+    }
+  }
 
   .grid-item.weui-grid {
     padding: 0 0 5px 0;
@@ -116,11 +246,63 @@ export default {
       height: 10vh;
       border-radius: 50%;
     }
-    .name {
-      font-size: 14px;
-      line-height: 14px;
-      white-space: pre;
-    }
+  }
+}
+
+.main-background {
+  background-color: white;
+}
+
+.category {
+  padding: 10px;
+  height: calc((100%) / 2);
+  .category-title {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.recommendatory-bgc {
+  background-color: rgba(245, 166, 35, 0.1);
+}
+
+.images-container {
+  display: inline-flex;
+}
+
+.classic-game {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background-color: #d0e2f7;
+    color: #113f7c;
+    font-size: 11px;
+  }
+}
+
+.recommendatory-game {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    color: #999;
+    font-size: 11px;
   }
 }
 
@@ -134,20 +316,10 @@ export default {
   padding-bottom: 3px;
 }
 
-.game-label-text {
-  display: inline-block;
-  height: 20px;
-  line-height: 20px;
-  padding: 2px 5px;
-  border-radius: 10px;
-  background-color: #d0e2f7;
-  color: #113f7c;
-  font-size: 13px;
-}
-
 .weui-grids.vux-grid-no-lr-borders {
   margin-right: 0;
 }
+
 .mask {
   display: block;
   position: fixed;
@@ -164,5 +336,14 @@ export default {
     opacity: 1;
     z-index: 100;
   }
+}
+
+.menu-center {
+  display: block;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: -5px;
+  position: relative;
 }
 </style>

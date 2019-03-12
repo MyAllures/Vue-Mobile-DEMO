@@ -61,7 +61,7 @@ export default {
   flex:0 0 auto;
   display: flex;
   align-items: center;
-  color: #f0f0f0;
+  color: #999;
   font-size: 14px;
 }
 .issue {
@@ -78,6 +78,7 @@ export default {
   flex: 1.25;
   .title {
     display: inline-block;
+    color: #333;
   }
   .label {
     display: inline-block;

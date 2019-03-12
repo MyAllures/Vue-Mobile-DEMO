@@ -11,7 +11,6 @@
       </template>
       <div class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
         {{ currentGame && currentGame.display_name }}
-        <i :class="['solid-triangle', isGameMenuVisible ? 'point-top' : 'point-down' ]"></i>
       </div>
       <template slot="right">
         <div class="right-ctrl">
@@ -66,6 +65,11 @@
       </div>
     </popup>
     <game-menu v-model="isGameMenuVisible" />
+    <game-menu-icon 
+      @click.native="isGameMenuVisible = !isGameMenuVisible"
+      class="menu-center" 
+      type="more" :theme="theme"
+    />
   </div>
 </template>
 <script>
@@ -79,6 +83,7 @@ import TopBar from '@/components/TopBar'
 import GameMenu from '@/components/GameMenu.vue'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import vClickOutside from 'v-click-outside'
+import GameMenuIcon from '@/components/GameMenuIcon'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -101,7 +106,8 @@ export default {
     GameInfo,
     XButton,
     TopBar,
-    GameMenu
+    GameMenu,
+    GameMenuIcon
   },
   directives: {
     TransferDom,
@@ -394,5 +400,15 @@ export default {
     transform: rotate(90deg);
     content: "\2026";
   }
+}
+
+.menu-center {
+  display: block;
+  margin: 0 auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  top: 39px;
 }
 </style>
