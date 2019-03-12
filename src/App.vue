@@ -21,11 +21,7 @@
         preventGoBack: (($route.name === 'Login'||$route.name === 'Register') && noBackRoute)
       }">
 
-      <div @click="titleCondition.onClick">
-        {{titleCondition.text}}
-        <i v-if="titleCondition.showDropdown && titleCondition.text"
-          :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
-      </div>
+      <div @click="titleCondition.onClick">{{titleCondition.text}}</div>
 
       <div v-if="!showChatRoom && !$route.meta.showBack && headerLeftTitle"
         slot="overwrite-left"
@@ -120,7 +116,7 @@
       @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu()" />
+    <game-menu v-model="showGameMenu" @closeSideBar="closeGameMenu()" />
     <div v-transfer-dom>
       <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
@@ -298,7 +294,7 @@ export default {
       userLoading: true,
       error: '',
       showCalender: false,
-      headerZindex: 100,
+      headerZindex: 200,
       refreshTokenInterval: null,
       currentNotificationDetail: null,
       refreshTokenTimer: null,
@@ -345,7 +341,7 @@ export default {
           if (this.showGameMenu) {
             this.closeGameMenu()
           } else {
-            this.headerZindex = 503
+            // this.headerZindex = 503
             this.showGameMenu = true
           }
         }
@@ -356,7 +352,7 @@ export default {
           if (this.showGameMenu) {
             this.closeGameMenu()
           } else {
-            this.headerZindex = 503
+            // this.headerZindex = 503
             this.showGameMenu = true
           }
         }

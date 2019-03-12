@@ -1,42 +1,118 @@
 <template>
-  <div v-transfer-dom>
-    <popup :value="isShow"
-      v-fix-scroll
-      :show-mask="true"
-      position="top"
-      :height="height"
-      @on-show="lockBackScroll"
-      @on-hide="handleClose"
-      :popup-style="{zIndex: 502}"
-      class="popup">
-      <div class="popup-content">
-        <grid :cols="3" :show-lr-borders="false">
-          <grid-item
-            class="grid-item text-center"
-            v-for="(game, index) in allGames"
-            :key="index"
-            @click.native="switchGame(game)">
-            <div class="game-label">
-              <span v-if="game.label" class="game-label-text">{{game.label}}</span>
-            </div>
-            <img class="icon" v-lazy="game.icon" width="36" height="36"/>
-            <p class="name">{{game.display_name || ''}}</p>
-          </grid-item>
-        </grid>
+  <popup :value="value"
+    :show-mask="false"
+    position="top"
+    :height="height"
+    @on-show="lockBackScroll"
+    @on-hide="handleClose"
+    class="popup"
+    :style="{zIndex: 101}">
+    <div class="popup-content">
+      <div class="tab-selector">
+        <tab
+          :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
+          :bar-active-color="theme"
+          :animate="false"
+          default-color="#666"
+          :active-color="theme"
+          :line-width="2"
+        >
+          <tab-item v-for="(tag,index) in gameGroups" :key="index"
+            @on-item-click="switchTab"
+            :style="{flex: gameGroups.length > 3?0:1}"
+            :selected="tag.groupName === activeGroupName"
+          >
+            <span :class="['group-name', {'ellipsis': gameGroups.length > 3}]">{{tag.groupName}}</span>
+          </tab-item>
+        </tab>
       </div>
-    </popup>
-  </div>
+      <div class="main-background">
+        <div class="category recommendatory-bgc" v-if="recommendatoryGames && recommendatoryGames.length">
+          <div class="category-title">相同玩法开奖更快</div>
+          <div class="classic-game">
+            <div class="images-container">
+              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
+                @click="switchGame(gamePlay[gameCode])"
+                v-for="(gameCode,index) in recommendatoryGames" :key="index"
+                v-if="gamePlay[gameCode]"
+              >
+                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                <p class="name">{{gamePlay[gameCode].name}}</p>
+                <div class="game-label">
+                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="category" v-if="classicGames && classicGames.length">
+          <div class="category-title">经典游戏</div>
+          <div class="recommendatory-game">
+            <div class="images-container">
+              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
+                @click="switchGame(gamePlay[gameCode])"
+                v-for="(gameCode,index) in classicGames" :key="index"
+                v-if="gamePlay[gameCode]"
+              >
+                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                <p class="name">{{gamePlay[gameCode].name}}</p>
+                <div class="game-label">
+                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div :class="['mask', {active: value}]" v-transfer-dom @click="handleClose"></div>
+    <game-menu-icon
+      @click.native.prevent="handleClose"
+      class="menu-center"
+      type="less" :theme="theme"
+    />
+  </popup>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { TransferDom, Popup, Grid, GridItem } from 'vux'
+import { mapGetters, mapState } from 'vuex'
+import { TransferDom, Popup, Grid, GridItem, Tab, TabItem } from 'vux'
 import FixScroll from '../directive/fixscroll'
+import { findIndex } from 'lodash'
+import GameMenuIcon from '@/components/GameMenuIcon'
 const body = document.getElementsByTagName('body')[0]
-
+function setGameGroups (gameTypes) {
+  return gameTypes.reduce((merged, g, index) => ({
+    ...merged,
+    gamePlay: {
+      ...merged.gamePlay,
+      [g.code]: {
+        id: g.id,
+        index,
+        categories: g.categories,
+        playpositions: g.playpositions,
+        isPrompt: g.is_prompt,
+        icon: g.icon,
+        name: g.display_name,
+        gameGroup: g.group_tag && g.group_tag.name,
+        period: g.period_descroption
+      }
+    },
+    gameGroups: {
+      ...merged.gameGroups,
+      [g.group_tag.name]: {
+        recommendatory: g.group_tag.recommendatory,
+        classic: g.group_tag.classic,
+        rank: g.group_tag.rank
+      }
+    }
+  }), {})
+}
 export default {
   props: {
-    isShow: {
+    value: {
       type: Boolean
     }
   },
@@ -45,46 +121,73 @@ export default {
     FixScroll
   },
   components: {
-    Popup, Grid, GridItem
+    Popup, Grid, GridItem, Tab, TabItem, GameMenuIcon
   },
   data () {
+    const obj = setGameGroups(this.$store.state.games).gameGroups
+    const gameGroups = Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank - l.rank)
     return {
-      height: '80%'
+      height: 'auto',
+      imageContainerWidth: (window.innerWidth - 20) / 4,
+      currentGameObj: {},
+      activeGroupName: '',
+      gameGroups
     }
   },
   computed: {
     ...mapGetters([
-      'allGames'
+      'allGames', 'gameById'
+    ]),
+    ...mapState([
+      'theme'
     ]),
     logoSrc () {
       return this.$store.state.systemConfig.homePageLogo
     },
     isGamePage () {
       return this.$route.name === 'GameDetail'
+    },
+    gamePlay () {
+      return setGameGroups(this.allGames).gamePlay
+    },
+    classicGames () {
+      return this.currentGameObj.classic
+    },
+    recommendatoryGames () {
+      return this.currentGameObj.recommendatory
     }
   },
-  mounted () {
-    // const height = document.body.clientHeight
-    // if (height > 650) {
-    //   this.height = '533px'
-    // } else if (height > 550) {
-    //   this.height = '436px'
-    // }
+  watch: {
+    value (val) {
+      if (val && !this.$route.params.gameId) {
+        this.switchTab(0)
+      }
+    },
+    currentGameObj: {
+      deep: true,
+      handler: function ({groupName = ''}) {
+        this.activeGroupName = groupName
+      }
+    },
+    '$route.params.gameId': function (gameId) {
+      gameId && this.initTab()
+    }
+  },
+  created () {
+    if (this.$route.params.gameId) {
+      this.initTab()
+    }
   },
   methods: {
-    back () {
-      this.$router.go(-1)
-      this.$emit('closeSideBar')
-    },
     handleClose () {
-      this.$emit('closeSideBar')
+      this.$emit('input', false)
       this.enableBackScroll()
     },
     switchGame (game) {
       const gameId = game.id + ''
       if (this.$route.params.gameId !== gameId) {
         this.sendGaEvent({
-          label: game.display_name,
+          label: game.name,
           category: '游戏选单',
           action: '选单'
         })
@@ -98,6 +201,19 @@ export default {
     },
     enableBackScroll () {
       body.style['overflow-y'] = ''
+    },
+    switchTab (i) {
+      this.currentGameObj = []
+      setTimeout(() => {
+        this.currentGameObj = this.gameGroups[i]
+      }, 10)
+    },
+    initTab () {
+      const game = this.$store.getters.gameById(this.$route.params.gameId)
+      if (game) {
+        const groupName = game.group_tag.name
+        this.switchTab(findIndex(this.gameGroups, {groupName}) || 0)
+      }
     }
   }
 }
@@ -105,12 +221,36 @@ export default {
 
 <style lang="less" scoped>
 .popup {
-  background-color: #fff;
   top: 45px;
+}
+
+.tab-selector {
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  width: 100%;
+  overflow-x: auto;
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 60px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.vux-popup-dialog {
+  background-color: rgba(255, 255, 255, 0);;
 }
 
 .popup-content {
   width: 100%;
+
+  .grid-item {
+    .name {
+      font-size: 13px;
+      color: #333;
+    }
+  }
 
   .grid-item.weui-grid {
     padding: 0 0 5px 0;
@@ -121,11 +261,63 @@ export default {
       height: 10vh;
       border-radius: 50%;
     }
-    .name {
-      font-size: 14px;
-      line-height: 14px;
-      white-space: pre;
-    }
+  }
+}
+
+.main-background {
+  background-color: white;
+}
+
+.category {
+  padding: 10px;
+  height: calc((100%) / 2);
+  .category-title {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.recommendatory-bgc {
+  background-color: rgba(245, 166, 35, 0.1);
+}
+
+.images-container {
+  display: inline-flex;
+}
+
+.classic-game {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background-color: #d0e2f7;
+    color: #113f7c;
+    font-size: 11px;
+  }
+}
+
+.recommendatory-game {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  .game-label-text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 2px 5px;
+    color: #999;
+    font-size: 11px;
   }
 }
 
@@ -139,18 +331,34 @@ export default {
   padding-bottom: 3px;
 }
 
-.game-label-text {
-  display: inline-block;
-  height: 20px;
-  line-height: 20px;
-  padding: 2px 5px;
-  border-radius: 10px;
-  background-color: #d0e2f7;
-  color: #113f7c;
-  font-size: 13px;
-}
-
 .weui-grids.vux-grid-no-lr-borders {
   margin-right: 0;
+}
+
+.mask {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 400ms;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  &.active {
+    opacity: 1;
+    z-index: 100;
+  }
+}
+
+.menu-center {
+  display: block;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: -5px;
+  position: relative;
 }
 </style>

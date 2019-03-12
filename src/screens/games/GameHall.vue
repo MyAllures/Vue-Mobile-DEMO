@@ -8,6 +8,23 @@
         <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
+    <template v-if="allGames&&allGames.length">
+      <game-menu v-model="isGameMenuVisible" />
+      <div>
+        <div 
+          v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
+          @click="isGameMenuVisible = !isGameMenuVisible"
+          class="notify-msg menu-center" :style="{'background-color': theme}"
+        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
+        </div>
+        <game-menu-icon 
+          class="menu-center" 
+          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
+          @click.native="isGameMenuVisible = !isGameMenuVisible"
+          type="more" :theme="theme"
+        />
+      </div>
+    </template> 
   </div>
 </template>
 <script>
@@ -15,6 +32,8 @@ import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
 import { mapGetters } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
+import GameMenu from '@/components/GameMenu.vue'
+import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 
@@ -32,7 +51,9 @@ export default {
     TabItem,
     ChatRoom,
     GameInfo,
-    XButton
+    XButton,
+    GameMenu,
+    GameMenuIcon
   },
   directives: {
     TransferDom
@@ -42,7 +63,8 @@ export default {
       showGameInfo: false,
       sidebarShow: false,
       showRightMenu: false,
-      contentType: ''
+      contentType: '',
+      isGameMenuVisible: false
     }
   },
   computed: {
@@ -129,5 +151,15 @@ export default {
     background-color: #f5f5f5;
   }
   height: 100%;
+}
+
+.menu-center {
+  display: block;
+  margin: 0 auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  top: 39px;
 }
 </style>

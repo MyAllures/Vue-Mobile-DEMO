@@ -28,7 +28,7 @@
       <x-button type="primary" mini>立即注册</x-button>
     </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
-      <tab :style="{width: tags.length > 3 ? `${tags.length * 100 / 3.5}vw` : ''}"
+      <tab :style="{width: tags.length > 4 ? `${tags.length * 100 / 3.5}vw` : ''}"
           :bar-active-color="theme"
           :animate="false"
           :active-color="theme"
@@ -36,10 +36,10 @@
         <tab-item
           v-for="(tag,index) in tags"
           :key="index"
-          :style="{flex: tags.length > 3?0:1}"
+          :style="{flex: tags.length > 4?0:1}"
           @on-item-click="switchTab"
           :selected="tag === currentTag">
-          <span :class="{'ellipsis': tags.length > 3}">{{tag}}</span>
+          <span :class="{'ellipsis': tags.length > 4}">{{tag}}</span>
         </tab-item>
       </tab>
     </div>
