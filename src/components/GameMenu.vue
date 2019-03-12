@@ -1,6 +1,5 @@
 <template>
   <popup :value="value"
-    v-fix-scroll
     :show-mask="false"
     position="top"
     :height="height"
@@ -9,30 +8,32 @@
     class="popup"
     :style="{zIndex: 101}">
     <div class="popup-content">
-      <tab 
-        :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
-        :bar-active-color="theme"
-        :animate="false"
-        default-color="#666"
-        :active-color="theme"
-        :line-width="2"
-      >
-        <tab-item v-for="(tag,index) in gameGroups" :key="index"
-          @on-item-click="switchTab"
-          :selected="tag.groupName === activeGroupName"
+      <div class="tab-selector">
+        <tab
+          :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
+          :bar-active-color="theme"
+          :animate="false"
+          default-color="#666"
+          :active-color="theme"
+          :line-width="2"
         >
-          <span class="group-name">{{tag.groupName}}</span>
-        </tab-item>
-      </tab>
-
+          <tab-item v-for="(tag,index) in gameGroups" :key="index"
+            @on-item-click="switchTab"
+            :style="{flex: gameGroups.length > 3?0:1}"
+            :selected="tag.groupName === activeGroupName"
+          >
+            <span :class="['group-name', {'ellipsis': gameGroups.length > 3}]">{{tag.groupName}}</span>
+          </tab-item>
+        </tab>
+      </div>
       <div class="main-background">
         <div class="category recommendatory-bgc" v-if="recommendatoryGames && recommendatoryGames.length">
-          <div class="category-title">相同玩法開獎更快</div>
+          <div class="category-title">相同玩法开奖更快</div>
           <div class="classic-game">
             <div class="images-container">
               <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
                 @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in recommendatoryGames" :key="index" 
+                v-for="(gameCode,index) in recommendatoryGames" :key="index"
               >
                 <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
                 <p class="name">{{gamePlay[gameCode].name}}</p>
@@ -45,12 +46,12 @@
         </div>
 
         <div class="category" v-if="classicGames && classicGames.length">
-          <div class="category-title">經典遊戲</div>
+          <div class="category-title">经典游戏</div>
           <div class="recommendatory-game">
             <div class="images-container">
               <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
                 @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in classicGames" :key="index" 
+                v-for="(gameCode,index) in classicGames" :key="index"
               >
                 <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
                 <p class="name">{{gamePlay[gameCode].name}}</p>
@@ -61,12 +62,13 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
     <div :class="['mask', {active: value}]" v-transfer-dom @click="handleClose"></div>
-    <game-menu-icon 
+    <game-menu-icon
       @click.native.prevent="handleClose"
-      class="menu-center" 
+      class="menu-center"
       type="less" :theme="theme"
     />
   </popup>
@@ -79,7 +81,33 @@ import FixScroll from '../directive/fixscroll'
 import { findIndex } from 'lodash'
 import GameMenuIcon from '@/components/GameMenuIcon'
 const body = document.getElementsByTagName('body')[0]
-
+function setGameGroups (gameTypes) {
+  return gameTypes.reduce((merged, g, index) => ({
+    ...merged,
+    gamePlay: {
+      ...merged.gamePlay,
+      [g.code]: {
+        id: g.id,
+        index,
+        categories: g.categories,
+        playpositions: g.playpositions,
+        isPrompt: g.is_prompt,
+        icon: g.icon,
+        name: g.display_name,
+        gameGroup: g.group_tag && g.group_tag.name,
+        period: g.period_descroption
+      }
+    },
+    gameGroups: {
+      ...merged.gameGroups,
+      [g.group_tag.name]: {
+        recommendatory: g.group_tag.recommendatory,
+        classic: g.group_tag.classic,
+        rank: g.group_tag.rank
+      }
+    }
+  }), {})
+}
 export default {
   props: {
     value: {
@@ -94,11 +122,14 @@ export default {
     Popup, Grid, GridItem, Tab, TabItem, GameMenuIcon
   },
   data () {
+    const obj = setGameGroups(this.$store.state.games).gameGroups
+    const gameGroups = Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank > l.rank)
     return {
-      height: '55%',
+      height: 'auto',
       imageContainerWidth: (window.innerWidth - 20) / 4,
       currentGameObj: {},
-      activeGroupName: ''
+      activeGroupName: '',
+      gameGroups
     }
   },
   computed: {
@@ -114,12 +145,8 @@ export default {
     isGamePage () {
       return this.$route.name === 'GameDetail'
     },
-    gameGroups () {
-      const obj = this.allGames.length && this.setGameGroups(this.allGames).gameGroups
-      return Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank < l.rank)
-    },
     gamePlay () {
-      return this.setGameGroups(this.allGames).gamePlay
+      return setGameGroups(this.allGames).gamePlay
     },
     classicGames () {
       return this.currentGameObj.classic
@@ -134,19 +161,19 @@ export default {
         this.switchTab(0)
       }
     },
-    gameGroups (value = []) {
-      if (value.length && this.$route.params.gameId) {
-        this.initTab()
-      }
-    },
     currentGameObj: {
       deep: true,
-      handler: function ({groupName}) {
-        groupName && (this.activeGroupName = groupName)
+      handler: function ({groupName = ''}) {
+        this.activeGroupName = groupName
       }
     },
     '$route.params.gameId': function (gameId) {
       gameId && this.initTab()
+    }
+  },
+  created () {
+    if (this.$route.params.gameId) {
+      this.initTab()
     }
   },
   methods: {
@@ -185,33 +212,6 @@ export default {
         const groupName = game.group_tag.name
         this.switchTab(findIndex(this.gameGroups, {groupName}) || 0)
       }
-    },
-    setGameGroups (gameTypes) {
-      return gameTypes.reduce((merged, g, index) => ({
-        ...merged,
-        gamePlay: {
-          ...merged.gamePlay,
-          [g.code]: {
-            id: g.id,
-            index,
-            categories: g.categories,
-            playpositions: g.playpositions,
-            isPrompt: g.is_prompt,
-            icon: g.icon,
-            name: g.display_name,
-            gameGroup: g.group_tag && g.group_tag.name,
-            period: g.period_descroption
-          }
-        },
-        gameGroups: {
-          ...merged.gameGroups,
-          [g.group_tag.name]: {
-            recommendatory: g.group_tag.recommendatory,
-            classic: g.group_tag.classic,
-            rank: g.group_tag.rank
-          }
-        }
-      }), {})
     }
   }
 }
@@ -219,8 +219,21 @@ export default {
 
 <style lang="less" scoped>
 .popup {
-  // background-color: #fff;
   top: 45px;
+}
+
+.tab-selector {
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  width: 100%;
+  overflow-x: auto;
+  .ellipsis {
+    white-space: nowrap;
+    display: block;
+    width: 60px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 .vux-popup-dialog {

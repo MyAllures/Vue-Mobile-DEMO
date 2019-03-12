@@ -6,7 +6,7 @@
           class="left-ctrl back"
           @click="toHome">
           <span class="left-arrow"></span>
-          首页
+          首页 
         </div>
       </template>
       <div class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
@@ -64,12 +64,23 @@
         <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
-    <game-menu v-model="isGameMenuVisible" />
-    <game-menu-icon 
-      @click.native="isGameMenuVisible = !isGameMenuVisible"
-      class="menu-center" 
-      type="more" :theme="theme"
-    />
+    <template v-if="allGames&&allGames.length">
+      <game-menu v-model="isGameMenuVisible" />
+      <div>
+        <div 
+          v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
+          @click="isGameMenuVisible = !isGameMenuVisible"
+          class="notify-msg menu-center" :style="{'background-color': theme}"
+        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
+        </div>
+        <game-menu-icon 
+          class="menu-center" 
+          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
+          @click.native="isGameMenuVisible = !isGameMenuVisible"
+          type="more" :theme="theme"
+        />
+      </div>
+    </template>    
   </div>
 </template>
 <script>
@@ -120,7 +131,8 @@ export default {
       contentType: '',
       isGameInfoVisible: false,
       isGameMenuVisible: false,
-      isHelperVisible: false
+      isHelperVisible: false,
+      showNotifiyMsg: true
     }
   },
   computed: {
@@ -131,13 +143,26 @@ export default {
       return hasTrendDiagram(this.currentGame.code)
     },
     currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId)
+      const game = this.$store.getters.gameById(this.$route.params.gameId)
+      if (game) {
+        const checkDate = window.localStorage.getItem(game.display_name)
+        if (checkDate) {
+          if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+            this.showNotifiyMsg = true
+          } else {
+            this.showNotifiyMsg = false
+          }
+        } else {
+          this.showNotifiyMsg = true
+        }
+      }
+      return game
     },
     ...mapGetters([
       'allGames'
     ]),
     ...mapState([
-      'roomInfo', 'roomId', 'systemConfig'
+      'roomInfo', 'roomId', 'systemConfig', 'theme'
     ]),
     chatroomEnabled () {
       return this.systemConfig.chatroomEnabled
@@ -279,6 +304,10 @@ export default {
         category: '遊戲助手',
         action: '点击'
       })
+    },
+    hideNotifyMsg (gameName) {
+      window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
+      this.showNotifiyMsg = false
     }
   }
 
@@ -410,5 +439,19 @@ export default {
   right: 0;
   z-index: 100;
   top: 39px;
+}
+
+.notify-msg {
+  height: 25px;
+  font-size: 13px;
+  color: white;
+  text-align: center;
+  top: 45px;
+}
+.close-box {
+  position: absolute;
+  right: 13px;
+  top: -1px;
+  font-size: 14px;
 }
 </style>
