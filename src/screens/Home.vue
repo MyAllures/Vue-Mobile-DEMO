@@ -124,6 +124,7 @@
       </div>
     </x-dialog>
     <tryplay-popup />
+    <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
   </div>
 </template>
 
@@ -191,22 +192,10 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce'
+      'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce', 'games'
     ]),
     announcements () {
       return this.announce.homepage
-    },
-    allGames () {
-      const games = this.$store.state.games
-      if (games.length === 0) {
-        return Array.from(Array(this.game_count), x => {
-          return {
-            icon: '',
-            display_name: ''
-          }
-        })
-      }
-      return games
     },
     tags () {
       if (this.tagTable) {

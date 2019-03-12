@@ -29,7 +29,7 @@
 </template>
 <script>
 import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
 import GameMenu from '@/components/GameMenu.vue'
@@ -69,10 +69,26 @@ export default {
   },
   computed: {
     currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId)
+      const game = this.$store.getters.gameById(this.$route.params.gameId)
+      if (game) {
+        const checkDate = window.localStorage.getItem(game.display_name)
+        if (checkDate) {
+          if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+            this.showNotifiyMsg = true
+          } else {
+            this.showNotifiyMsg = false
+          }
+        } else {
+          this.showNotifiyMsg = true
+        }
+      }
+      return game
     },
     ...mapGetters([
       'allGames'
+    ]),
+    ...mapState([
+      'theme'
     ]),
     chatroomEnabled () {
       return this.$store.state.systemConfig.chatroomEnabled
@@ -120,6 +136,10 @@ export default {
     chooseGame () {
       const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
       this.$router.replace('/game/' + gameId)
+    },
+    hideNotifyMsg (gameName) {
+      window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
+      this.showNotifiyMsg = false
     }
   }
 
@@ -161,5 +181,19 @@ export default {
   right: 0;
   z-index: 100;
   top: 39px;
+}
+
+.notify-msg {
+  height: 25px;
+  font-size: 13px;
+  color: white;
+  text-align: center;
+  top: 45px;
+}
+.close-box {
+  position: absolute;
+  right: 13px;
+  top: -1px;
+  font-size: 14px;
 }
 </style>
