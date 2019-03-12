@@ -48,7 +48,6 @@
                 <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
                   聊天室
                 </li>
-                <li></li>
               </ul>
             </div>
             <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
@@ -58,12 +57,7 @@
     </top-bar>
     <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="isGameInfoVisible" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
-      <div :class="['game-intro', contentType]">
-        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType&&currentGame"/>
-        <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
-      </div>
-    </popup>
+    <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <game-menu v-model="isGameMenuVisible" />
     <game-menu-icon 
       @click.native="isGameMenuVisible = !isGameMenuVisible"
@@ -193,6 +187,8 @@ export default {
         // 把脱离文档流的body拉上去，否则页面会回到顶部
         document.body.style.top = -scrollTop + 'px'
       } else {
+        this.contentType = ''
+
         // body又回到了文档流中
         document.body.classList.remove('dialog-open')
 
@@ -213,15 +209,6 @@ export default {
     }
   },
   methods: {
-    handlePopupClose () {
-      this.isGameInfoVisible = false
-      this.contentType = ''
-    },
-    handleSideBarShow () {
-      this.$store.dispatch('fetchUser').then(res => {
-        this.showRightMenu = true
-      })
-    },
     changeRoute (to, from) {
       this.showChatRoom = false
       if (to.path === '/game') {
