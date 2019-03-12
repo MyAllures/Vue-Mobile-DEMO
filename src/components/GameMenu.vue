@@ -34,6 +34,7 @@
               <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
                 @click="switchGame(gamePlay[gameCode])"
                 v-for="(gameCode,index) in recommendatoryGames" :key="index"
+                v-if="gamePlay[gameCode]"
               >
                 <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
                 <p class="name">{{gamePlay[gameCode].name}}</p>
@@ -52,6 +53,7 @@
               <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
                 @click="switchGame(gamePlay[gameCode])"
                 v-for="(gameCode,index) in classicGames" :key="index"
+                v-if="gamePlay[gameCode]"
               >
                 <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
                 <p class="name">{{gamePlay[gameCode].name}}</p>
@@ -123,7 +125,7 @@ export default {
   },
   data () {
     const obj = setGameGroups(this.$store.state.games).gameGroups
-    const gameGroups = Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank > l.rank)
+    const gameGroups = Object.keys(obj).map(key => ({ ...obj[key], groupName: key })).sort((f, l) => f.rank - l.rank)
     return {
       height: 'auto',
       imageContainerWidth: (window.innerWidth - 20) / 4,
