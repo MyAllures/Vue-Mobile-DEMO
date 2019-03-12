@@ -1,5 +1,28 @@
 <template>
   <div class="container">
+    <top-bar>
+      <div v-if="!isGameMenuVisible" class="main-title left">{{ systemConfig.siteName }}</div>
+      <div v-else class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
+        游戏选单
+      </div>
+      <template slot="right" v-if="!isGameMenuVisible">
+        <div class="right-ctrl">
+          <template v-if="!user.logined">
+            <a class="link" @click="tryDemo">试玩</a>
+            <div class="divide"></div>
+            <router-link class="link" to="/register">注册</router-link>
+            <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
+          </template>
+          <template v-else>
+            <div
+              class="balance fr"
+              @click="$store.dispatch('showRightMenu')">
+              {{ user.balance|currency('￥')}}
+            </div>
+          </template>
+        </div>
+      </template>
+    </top-bar>
     <swiper
       class="banner-slider"
       :aspect-ratio=".5"
@@ -28,7 +51,7 @@
       <x-button type="primary" mini>立即注册</x-button>
     </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
-      <tab :style="{width: tags.length > 3 ? `${tags.length * 100 / 3.5}vw` : ''}"
+      <tab :style="{width: tags.length > 4 ? `${tags.length * 100 / 3.5}vw` : ''}"
           :bar-active-color="theme"
           :animate="false"
           :active-color="theme"
@@ -36,10 +59,10 @@
         <tab-item
           v-for="(tag,index) in tags"
           :key="index"
-          :style="{flex: tags.length > 3?0:1}"
+          :style="{flex: tags.length > 4?0:1}"
           @on-item-click="switchTab"
           :selected="tag === currentTag">
-          <span :class="{'ellipsis': tags.length > 3}">{{tag}}</span>
+          <span :class="{'ellipsis': tags.length > 4}">{{tag}}</span>
         </tab-item>
       </tab>
     </div>
@@ -55,7 +78,7 @@
         <img class="game-icon" v-lazy="game.icon" />
         <div>{{ game.display_name }}</div>
       </div>
-      <div v-if="currentTag==='热门游戏'" class="game-item" @click="$root.bus.$emit('showGameMenu')">
+      <div v-if="currentTag==='热门游戏'" class="game-item" @click="isGameMenuVisible = true">
         <div class="game-label"></div>
         <img class="game-icon" v-lazy="require('../assets/all_games.png')" />
         <div>所有游戏</div>
@@ -124,6 +147,7 @@
       </div>
     </x-dialog>
     <tryplay-popup />
+    <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
   </div>
 </template>
 
@@ -150,6 +174,8 @@ import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
+import GameMenu from '@/components/GameMenu.vue'
+import TopBar from '@/components/TopBar'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -165,10 +191,12 @@ export default {
       game_count: 15,
       showpromoPopup: false,
       today: this.$moment(),
-      currentTag: ''
+      currentTag: '',
+      isGameMenuVisible: false
     }
   },
   components: {
+    TopBar,
     Swiper,
     SwiperItem,
     XDialog,
@@ -186,27 +214,16 @@ export default {
     XButton,
     Marquee,
     Tab,
-    TabItem
+    TabItem,
+    GameMenu
   },
   mixins: [freetrial],
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce'
+      'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce', 'games'
     ]),
     announcements () {
       return this.announce.homepage
-    },
-    allGames () {
-      const games = this.$store.state.games
-      if (games.length === 0) {
-        return Array.from(Array(this.game_count), x => {
-          return {
-            icon: '',
-            display_name: ''
-          }
-        })
-      }
-      return games
     },
     tags () {
       if (this.tagTable) {
@@ -439,22 +456,6 @@ export default {
 .game-title {
   display: flex;
   justify-content: space-between;
-}
-.more {
-  float: right;
-  line-height: 36px;
-  padding: 0 10px 0 0;
-  text-align: right;
-  margin-right: 10px;
-  position: relative;
-  color: #666;
-  &:visited, &:active {
-    color: #666;
-  }
-  .arrow-right:after {
-    margin-left: 5px;
-    border-color: #666;
-  }
 }
 .title {
   display: inline-block;

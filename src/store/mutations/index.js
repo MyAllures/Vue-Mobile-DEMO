@@ -173,5 +173,11 @@ export default {
   },
   [types.SET_THEME]: (state, themeId) => {
     state.theme = themeMap[themeId]
+  },
+  [types.SHOW_RIGHT_MENU]: (state) => {
+    state.isRightMenuVisible = true
+  },
+  [types.HIDE_RIGHT_MENU]: (state) => {
+    state.isRightMenuVisible = false
   }
 }

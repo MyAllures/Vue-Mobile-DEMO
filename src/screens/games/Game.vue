@@ -1,10 +1,10 @@
 <template>
   <div class="game">
-    <div class="data-section">
+    <div class="data-section" :style="{'padding-top': '30px'}">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
-          <rowSkeleton :color="theme" highlight="rgba(255,255,255,.1)" :seperatePoints="[30,40]"></rowSkeleton>
+          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
       </div>
       <div class="wrapper">
@@ -17,10 +17,11 @@
           :closeCountDown="closeCountDown"
           :resultCountDown="resultCountDown"/>
           <div class="p" v-else-if="!gameClosed">
-            <rowSkeleton :color="theme" highlight="rgba(255,255,255,.1)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+            <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
           </div>
       </div>
     </div>
+    <div class="border-shadow"></div>
     <div class="bet-area">
       <group class="aside">
         <cell-box
@@ -521,9 +522,8 @@ export default {
 .data-section {
   display: flex;
   flex-wrap: wrap;
-  background: @azul;
   min-height: 80px;
-  align-items: center
+  align-items: center;
 }
 
 .active {
@@ -720,5 +720,9 @@ export default {
     background-image: url('../../assets/badge_new.svg');
     background-repeat: no-repeat;
   }
+}
+.border-shadow {
+  height: 4px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%);
 }
 </style>

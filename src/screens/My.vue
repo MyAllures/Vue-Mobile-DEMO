@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="myinfo-container">
     <div class="text-center m-t-lg visitor" v-if="!user.account_type">
       <img class="img" src="../assets/icon_balance.png" alt="$$$">
       <p class="balance">余额</p>
@@ -146,6 +146,10 @@ export default {
 </script>
 
 <style scoped lang="less">
+.myinfo-container {
+  height: 100%;
+  overflow-y: auto;
+}
 .visitor {
   .img {
     width: 60px;

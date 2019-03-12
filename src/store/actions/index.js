@@ -13,7 +13,7 @@ import {
   fetchAnnouncements
 } from '../../api'
 import {HKL_GAMES} from '../../config'
-import {take} from 'lodash'
+import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -113,26 +113,39 @@ export default {
   },
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
+      const { gameGroups } = res.filter(group => group.group_tag && group.group_tag.rank <= 3)
+        .reduce((merged, g, index) => ({
+          ...merged,
+          gameGroups: {
+            ...merged.gameGroups,
+            [g.group_tag.name]: g.group_tag.default
+          }
+        }), {})
+      Object.keys(gameGroups).forEach(d => {
+        gameGroups[d] = gameGroups[d].map(gameCode => find(res, {code: gameCode}))
+      })
       const tagTable = {}
       res.forEach(game => {
         if (HKL_GAMES.includes(game.code)) {
           game.type = 'hkl'
         }
         game.tag.forEach(t => {
-          let gamesForTag
-          if (tagTable[t]) {
-            gamesForTag = tagTable[t]
-          } else {
-            gamesForTag = []
-            tagTable[t] = gamesForTag
+          if (t === '热门游戏') {
+            let gamesForTag
+            if (tagTable[t]) {
+              gamesForTag = tagTable[t]
+            } else {
+              gamesForTag = []
+              tagTable[t] = gamesForTag
+            }
+            gamesForTag.push(game)
           }
-          gamesForTag.push(game)
         })
       })
       commit(types.SET_GAMES, {
         games: res
       })
-      commit(types.TAG_TABLE, tagTable)
+      commit(types.TAG_TABLE, {...tagTable, ...gameGroups})
       fetchGamesDetail().then(gamesDetail => {
         gamesDetail.forEach(({id, categories, playpositions}) => {
           if (playpositions) {
@@ -251,5 +264,11 @@ export default {
   },
   setTheme: ({commit}, id) => {
     commit(types.SET_THEME, id)
+  },
+  showRightMenu: ({commit}) => {
+    commit(types.SHOW_RIGHT_MENU)
+  },
+  hideRightMenu: ({commit}) => {
+    commit(types.HIDE_RIGHT_MENU)
   }
 }

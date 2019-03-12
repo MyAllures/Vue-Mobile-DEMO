@@ -1,9 +1,9 @@
 .theme (@main: @azul, @gradient, @playColor) {
-  .vux-header {
+  .topbar {
     background-color: @main;
     background-image: @gradient;
-    &-right {
-      .actions .link .login {
+    &__right {
+      .link .login {
         color: @main;
       }
     }
@@ -93,13 +93,16 @@
     color: darken(@main, 30%);
   }
 
-
-  .game .data-section {
-    background-image: @gradient;;
+  .game-ad-info {
+    background-image: @gradient;
   }
 
+  // .game .data-section {
+  //   background-image: @gradient;
+  // }
+
   .category-menu-item.active {
-    background-color: @playColor;;
+    background-color: @playColor;
   }
 
   .weui-grid.play.active {
@@ -125,11 +128,11 @@
     }
   }
 
-  .calender-contentitem .calender-chosenday {
+  .calendar-contentitem .calendar-chosenday {
     background-color: @main;
   }
 
-  .calender-contentitem .calender-hasbet::after {
+  .calendar-contentitem .calendar-hasbet::after {
     background-color: @main;
   }
 
@@ -171,12 +174,12 @@
 
 .theme1 {// default
   .game .data-section {
-    background-image: linear-gradient(to bottom, #166fd8, #1568ca);
+    // background-image: linear-gradient(to bottom, #166fd8, #1568ca);
   }
-  .calender-contentitem .calender-chosenday {
+  .calendar-contentitem .calendar-chosenday {
     background-color: #166fd8;
   }
-  .calender-hasbet::after {
+  .calendar-hasbet::after {
     background-color: #166fd8;
   }
 }
