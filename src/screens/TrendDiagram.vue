@@ -38,7 +38,7 @@
       <div class="loading" v-show="loading">
         <inline-loading></inline-loading>
       </div>
-      <div v-show="!loading">
+      <div class="table-wrapper" v-show="!loading">
         <table class="table record" ref="record-table">
           <tbody>
             <tr v-for="(rec, recIdx) in records" :key="recIdx">
@@ -76,8 +76,9 @@ import { XButton, InlineLoading } from 'vux'
 export default {
   name: 'TrendDiagram',
   props: {
-    gameCode: {
-      type: String
+    game: {
+      type: Object,
+      required: true
     }
   },
   components: {
@@ -85,7 +86,7 @@ export default {
     InlineLoading
   },
   data () {
-    const currentSettings = settings[this.gameCode]
+    const currentSettings = settings[this.game.code]
     return {
       selectedSetting: currentSettings[0],
       selectedTabIdx: 0,
@@ -112,7 +113,7 @@ export default {
     conditions () {
       let date = this.$moment(this.selectedDate).format('YYYY-MM-DD')
       return {
-        game_code: this.gameCode,
+        game_code: this.game.code,
         type: this.selectedSetting.type,
         target: this.selectedTabIdx + 1,
         start_date: date,
@@ -354,6 +355,10 @@ export default {
     top: 0;
     right: 0;
   }
+}
+.table-wrapper {
+  box-sizing: border-box;
+  padding-bottom: 60px;
 }
 .table {
   width: 100%;
