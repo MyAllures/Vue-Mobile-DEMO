@@ -122,7 +122,7 @@ export default {
           }
         }), {})
       Object.keys(gameGroups).forEach(d => {
-        gameGroups[d] = gameGroups[d].map(gameCode => find(res, {code: gameCode}))
+        gameGroups[d] = gameGroups[d].filter(gameCode => !!find(res, {code: gameCode})).map(gameCode => find(res, {code: gameCode}))
       })
       const tagTable = {}
       res.forEach(game => {

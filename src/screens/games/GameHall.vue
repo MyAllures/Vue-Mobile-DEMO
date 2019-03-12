@@ -64,7 +64,8 @@ export default {
       sidebarShow: false,
       showRightMenu: false,
       contentType: '',
-      isGameMenuVisible: false
+      isGameMenuVisible: false,
+      showNotifiyMsg: true
     }
   },
   computed: {
@@ -179,7 +180,7 @@ export default {
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 98;
   top: 39px;
 }
 

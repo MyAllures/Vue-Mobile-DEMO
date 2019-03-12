@@ -116,7 +116,9 @@
       @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    <game-menu v-model="showGameMenu" @closeSideBar="closeGameMenu()" />
+    <template v-if="allGames&&allGames.length">
+      <game-menu v-model="showGameMenu" @closeSideBar="closeGameMenu()" />
+    </template>
     <div v-transfer-dom>
       <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
@@ -307,7 +309,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapGetters([
-      'user'
+      'user', 'allGames'
     ]),
     ...mapState([
       'theme', 'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'notificationVisible', 'notifications'
@@ -341,7 +343,7 @@ export default {
           if (this.showGameMenu) {
             this.closeGameMenu()
           } else {
-            // this.headerZindex = 503
+            this.headerZindex = 503
             this.showGameMenu = true
           }
         }
@@ -352,7 +354,7 @@ export default {
           if (this.showGameMenu) {
             this.closeGameMenu()
           } else {
-            // this.headerZindex = 503
+            this.headerZindex = 503
             this.showGameMenu = true
           }
         }

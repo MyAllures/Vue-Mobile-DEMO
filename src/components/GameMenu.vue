@@ -6,7 +6,7 @@
     @on-show="lockBackScroll"
     @on-hide="handleClose"
     class="popup"
-    :style="{zIndex: 101}">
+    :style="{zIndex: 99}">
     <div class="popup-content">
       <div class="tab-selector">
         <tab
@@ -349,7 +349,7 @@ export default {
   -webkit-tap-highlight-color:rgba(0,0,0,0);
   &.active {
     opacity: 1;
-    z-index: 100;
+    z-index: 98;
   }
 }
 
