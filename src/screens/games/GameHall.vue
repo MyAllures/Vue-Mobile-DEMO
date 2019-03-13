@@ -82,13 +82,13 @@ import { XHeader, Popup, XButton, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
+import GameMenu from '@/components/GameMenu.vue'
+import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
-import GameMenu from '@/components/GameMenu.vue'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import vClickOutside from 'v-click-outside'
-import GameMenuIcon from '@/components/GameMenuIcon'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
