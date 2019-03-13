@@ -9,21 +9,18 @@
       </div>
     </popup>
     <template v-if="allGames&&allGames.length">
-      <game-menu v-model="isGameMenuVisible" />
-      <div>
-        <div 
-          v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
-          @click="isGameMenuVisible = !isGameMenuVisible"
-          class="notify-msg menu-center" :style="{'background-color': theme}"
-        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
-        </div>
-        <game-menu-icon 
-          class="menu-center" 
-          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
-          @click.native="isGameMenuVisible = !isGameMenuVisible"
-          type="more" :theme="theme"
-        />
+      <div 
+        v-if="(showNotifiyMsg && currentGame.is_prompt)"
+        @click="isGameMenuVisible = !isGameMenuVisible"
+        class="notify-msg menu-center" :style="{'background-color': theme}"
+      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
       </div>
+      <game-menu-icon 
+        class="menu-center" 
+        :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
+        @click.native="handleGameMenu"
+        type="more" :theme="theme"
+      />
     </template> 
   </div>
 </template>
@@ -141,6 +138,10 @@ export default {
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
+    },
+    handleGameMenu () {
+      this.$root.bus.$emit('showGameMenu')
+      this.isGameMenuVisible = !this.isGameMenuVisible
     }
   }
 
