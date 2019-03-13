@@ -6,7 +6,7 @@
           class="left-ctrl back"
           @click="toHome">
           <span class="left-arrow"></span>
-          首页 
+          首页
         </div>
       </template>
       <div class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
@@ -57,29 +57,24 @@
     </top-bar>
     <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <popup v-model="isGameInfoVisible" @on-hide="handlePopupClose" height="90%" v-transfer-dom>
-      <div :class="['game-intro', contentType]">
-        <GameInfo :currentGame="currentGame" :contentType="contentType" v-if="contentType&&currentGame"/>
-        <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
-      </div>
-    </popup>
+     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <template v-if="allGames&&allGames.length">
       <game-menu v-model="isGameMenuVisible" />
       <div>
-        <div 
+        <div
           v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
           @click="isGameMenuVisible = !isGameMenuVisible"
           class="notify-msg menu-center" :style="{'background-color': theme}"
         >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
         </div>
-        <game-menu-icon 
-          class="menu-center" 
+        <game-menu-icon
+          class="menu-center"
           :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
           @click.native="isGameMenuVisible = !isGameMenuVisible"
           type="more" :theme="theme"
         />
       </div>
-    </template>    
+    </template>
   </div>
 </template>
 <script>
