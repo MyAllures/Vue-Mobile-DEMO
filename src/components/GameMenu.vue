@@ -299,8 +299,6 @@ export default {
     line-height: 20px;
     padding: 0px 5px;
     border-radius: 10px;
-    background-color: #d0e2f7;
-    color: #113f7c;
     font-size: 11px;
   }
 }
