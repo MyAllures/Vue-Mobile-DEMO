@@ -15,6 +15,7 @@ const loadingImg = require('../assets/loading.gif')
 export default new Vuex.Store({
   state: {
     theme: 0,
+    themeId: 0,
     user: {
       logined: 'pending',
       unread: 0
@@ -104,7 +105,8 @@ export default new Vuex.Store({
       }
     },
     latestResultMap: {},
-    lastGameData: getLastGameData()
+    lastGameData: getLastGameData(),
+    dataSectionStyle: {'padding-top': '10px'}
   },
   actions,
   mutations,

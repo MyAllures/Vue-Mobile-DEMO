@@ -173,5 +173,9 @@ export default {
   },
   [types.SET_THEME]: (state, themeId) => {
     state.theme = themeMap[themeId]
+    state.themeId = themeId
+  },
+  [types.DATA_SECTION_STYLE]: (state, style) => {
+    state.dataSectionStyle = style
   }
 }

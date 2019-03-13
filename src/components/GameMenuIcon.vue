@@ -13,7 +13,7 @@
         <g id="menu_less" transform="translate(161.000000, 419.000000)">
           <g id="Combined-Shape">
             <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-            <use :fill="theme" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <use :fill="backgroundColor" fill-rule="evenodd" xlink:href="#path-1"></use>
           </g>
           <g transform="translate(14.000000, 1.000000)" id="Path-3" stroke="#FFFFFF">
             <g>
@@ -39,7 +39,7 @@
         <g id="menu_less" transform="translate(161.000000, 419.000000)">
           <g id="Combined-Shape">
             <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-            <use :fill="theme" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <use :fill="backgroundColor" fill-rule="evenodd" xlink:href="#path-1"></use>
           </g>
           <g id="menu_more" transform="translate(14.000000, 0.000000)" stroke="#FFFFFF">
             <g id="Path-3">
@@ -54,16 +54,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     type: {
       type: String,
       required: true
-    },
-    theme: {
-      type: String,
-      required: true,
-      default: '#166FD8'
+    }
+  },
+  computed: {
+    ...mapState([
+      'themeId'
+    ]),
+    backgroundColor () {
+      switch (this.themeId.toString()) {
+        case '1' :return '#166FD8'
+        case '2' :return '#4AA3DE'
+        case '3' :return '#EA8653'
+        case '4' :return '#5CC5D0'
+        case '5' :return '#7379E1'
+      }
     }
   }
 }

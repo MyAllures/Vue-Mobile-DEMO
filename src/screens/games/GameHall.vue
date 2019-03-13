@@ -8,19 +8,20 @@
         <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
-    <template v-if="allGames&&allGames.length">
-      <div 
-        v-if="(showNotifiyMsg && currentGame.is_prompt)"
-        @click="isGameMenuVisible = !isGameMenuVisible"
-        class="notify-msg menu-center" :style="{'background-color': theme}"
-      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
+    <template v-if="allGames&&allGames.length&&theme">
+      <div>
+        <div
+          v-if="(showNotifiyMsg && currentGame.is_prompt)"
+          class="notify-msg menu-center vux-header" :style="{'background-color': theme}"
+        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
+        </div>
+        <game-menu-icon
+          class="menu-center"
+          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '64px' : '39px'}"
+          @click.native="handleGameMenu"
+          type="more"
+        />
       </div>
-      <game-menu-icon 
-        class="menu-center" 
-        :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
-        @click.native="handleGameMenu"
-        type="more" :theme="theme"
-      />
     </template> 
   </div>
 </template>
@@ -79,6 +80,7 @@ export default {
         } else {
           this.showNotifiyMsg = true
         }
+        this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
       }
       return game
     },
@@ -138,6 +140,7 @@ export default {
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
+      this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && this.currentGame.is_prompt ? '35px' : '10px'})
     },
     handleGameMenu () {
       this.$root.bus.$emit('showGameMenu')
@@ -188,14 +191,18 @@ export default {
 .notify-msg {
   height: 25px;
   font-size: 13px;
+  line-height: 25px;
   color: white;
   text-align: center;
-  top: 45px;
+  top: 45.5px;
 }
-.close-box {
+
+.close-btn {
   position: absolute;
-  right: 13px;
+  right: -1px;
   top: -1px;
-  font-size: 14px;
+  &::before, &::after {
+    height: 15px;
+  }
 }
 </style>
