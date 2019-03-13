@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="{'padding-top': '30px'}">
+    <div class="data-section" :style="dataSectionStyle">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
@@ -187,7 +187,7 @@ export default {
       }
     },
     ...mapState([
-      'systemConfig', 'user', 'latestResultMap', 'theme'
+      'systemConfig', 'user', 'latestResultMap', 'theme', 'dataSectionStyle'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -524,6 +524,7 @@ export default {
   flex-wrap: wrap;
   min-height: 80px;
   align-items: center;
+  transition-duration: .7s;
 }
 
 .active {
