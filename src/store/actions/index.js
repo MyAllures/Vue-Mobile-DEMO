@@ -114,6 +114,7 @@ export default {
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
       const { gameGroups } = res.filter(group => group.group_tag && group.group_tag.rank <= 3)
+        .sort((p, l) => p.group_tag.rank - l.group_tag.rank)
         .reduce((merged, g, index) => ({
           ...merged,
           gameGroups: {
@@ -124,6 +125,7 @@ export default {
       Object.keys(gameGroups).forEach(d => {
         gameGroups[d] = gameGroups[d].filter(gameCode => !!find(res, {code: gameCode})).map(gameCode => find(res, {code: gameCode}))
       })
+
       const tagTable = {}
       res.forEach(game => {
         if (HKL_GAMES.includes(game.code)) {
@@ -264,5 +266,8 @@ export default {
   },
   setTheme: ({commit}, id) => {
     commit(types.SET_THEME, id)
+  },
+  setDataSectionStyle: ({commit}, style) => {
+    commit(types.DATA_SECTION_STYLE, style)
   }
 }

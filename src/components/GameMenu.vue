@@ -71,7 +71,7 @@
     <game-menu-icon
       @click.native.prevent="handleClose"
       class="menu-center"
-      type="less" :theme="theme"
+      type="less"
     />
   </popup>
 </template>
@@ -247,7 +247,7 @@ export default {
 
   .grid-item {
     .name {
-      font-size: 13px;
+      font-size: 14px;
       color: #333;
     }
   }
@@ -297,10 +297,8 @@ export default {
     display: inline-block;
     height: 20px;
     line-height: 20px;
-    padding: 2px 5px;
+    padding: 0px 5px;
     border-radius: 10px;
-    background-color: #d0e2f7;
-    color: #113f7c;
     font-size: 11px;
   }
 }
@@ -315,9 +313,10 @@ export default {
     display: inline-block;
     height: 20px;
     line-height: 20px;
-    padding: 2px 5px;
+    padding: 0px 5px;
     color: #999;
     font-size: 11px;
+    background-color: initial;
   }
 }
 
@@ -327,7 +326,7 @@ export default {
   justify-content: center;
   align-items: flex-end;
   width: 100%;
-  height: 30px;
+  height: 22px;
   padding-bottom: 3px;
 }
 
@@ -358,7 +357,7 @@ export default {
   margin: 0 auto;
   left: 0;
   right: 0;
-  top: -5px;
+  top: -6px;
   position: relative;
 }
 </style>
