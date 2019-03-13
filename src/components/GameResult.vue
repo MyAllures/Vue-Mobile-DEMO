@@ -118,7 +118,7 @@ export default {
   width: 100%;
   flex:0 0 auto;
   display: flex;
-  color: #f0f0f0;
+  color: #999;
   .balls-text {
     font-size: 14px;
     flex: 1;

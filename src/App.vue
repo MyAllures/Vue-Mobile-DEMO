@@ -21,11 +21,7 @@
         preventGoBack: (($route.name === 'Login'||$route.name === 'Register') && noBackRoute)
       }">
 
-      <div @click="titleCondition.onClick">
-        {{titleCondition.text}}
-        <i v-if="titleCondition.showDropdown && titleCondition.text"
-          :class="['solid-triangle', (showGameMenu || showCalender) ? 'point-top' : 'point-down' ]"></i>
-      </div>
+      <div @click="titleCondition.onClick">{{titleCondition.text}}</div>
 
       <div v-if="!showChatRoom && !$route.meta.showBack && headerLeftTitle"
         slot="overwrite-left"
@@ -120,7 +116,9 @@
       @closeRightMenu="closeRightMenu"
       :show-links="showRightMenuLinks" />
     <tryplay-popup />
-    <game-menu :isShow="showGameMenu" @closeSideBar="closeGameMenu()" />
+    <template v-if="allGames&&allGames.length">
+      <game-menu v-model="showGameMenu" @closeSideBar="closeGameMenu()" />
+    </template>
     <div v-transfer-dom>
       <div class="feature-guide" v-if="showFeatureGuide" @click="showFeatureGuide=false">
         <div class="content">
@@ -298,7 +296,7 @@ export default {
       userLoading: true,
       error: '',
       showCalender: false,
-      headerZindex: 100,
+      headerZindex: 200,
       refreshTokenInterval: null,
       currentNotificationDetail: null,
       refreshTokenTimer: null,
@@ -311,7 +309,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapGetters([
-      'user'
+      'user', 'allGames'
     ]),
     ...mapState([
       'theme', 'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'notificationVisible', 'notifications'

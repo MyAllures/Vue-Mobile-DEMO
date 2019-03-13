@@ -8,13 +8,29 @@
         <x-button class="button-close" type="primary" @click.native="handlePopupClose">返回游戏</x-button>
       </div>
     </popup>
+    <template v-if="allGames&&allGames.length">
+      <div 
+        v-if="(showNotifiyMsg && currentGame.is_prompt)"
+        @click="isGameMenuVisible = !isGameMenuVisible"
+        class="notify-msg menu-center" :style="{'background-color': theme}"
+      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
+      </div>
+      <game-menu-icon 
+        class="menu-center" 
+        :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
+        @click.native="handleGameMenu"
+        type="more" :theme="theme"
+      />
+    </template> 
   </div>
 </template>
 <script>
 import { XHeader, Tab, TabItem, Popup, XButton, TransferDom } from 'vux'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
+import GameMenu from '@/components/GameMenu.vue'
+import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 
@@ -32,7 +48,9 @@ export default {
     TabItem,
     ChatRoom,
     GameInfo,
-    XButton
+    XButton,
+    GameMenu,
+    GameMenuIcon
   },
   directives: {
     TransferDom
@@ -42,15 +60,33 @@ export default {
       showGameInfo: false,
       sidebarShow: false,
       showRightMenu: false,
-      contentType: ''
+      contentType: '',
+      isGameMenuVisible: false,
+      showNotifiyMsg: true
     }
   },
   computed: {
     currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId)
+      const game = this.$store.getters.gameById(this.$route.params.gameId)
+      if (game) {
+        const checkDate = window.localStorage.getItem(game.display_name)
+        if (checkDate) {
+          if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+            this.showNotifiyMsg = true
+          } else {
+            this.showNotifiyMsg = false
+          }
+        } else {
+          this.showNotifiyMsg = true
+        }
+      }
+      return game
     },
     ...mapGetters([
       'allGames'
+    ]),
+    ...mapState([
+      'theme'
     ]),
     chatroomEnabled () {
       return this.$store.state.systemConfig.chatroomEnabled
@@ -98,6 +134,14 @@ export default {
     chooseGame () {
       const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
       this.$router.replace('/game/' + gameId)
+    },
+    hideNotifyMsg (gameName) {
+      window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
+      this.showNotifiyMsg = false
+    },
+    handleGameMenu () {
+      this.$root.bus.$emit('showGameMenu')
+      this.isGameMenuVisible = !this.isGameMenuVisible
     }
   }
 
@@ -129,5 +173,29 @@ export default {
     background-color: #f5f5f5;
   }
   height: 100%;
+}
+
+.menu-center {
+  display: block;
+  margin: 0 auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 98;
+  top: 39px;
+}
+
+.notify-msg {
+  height: 25px;
+  font-size: 13px;
+  color: white;
+  text-align: center;
+  top: 45px;
+}
+.close-box {
+  position: absolute;
+  right: 13px;
+  top: -1px;
+  font-size: 14px;
 }
 </style>
