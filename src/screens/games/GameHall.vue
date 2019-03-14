@@ -30,7 +30,7 @@
                     人工计划
                   </a>
                 </li>
-                <li class="helper-link" @click="showGameInfo('roadbeads')">
+                <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
                   路珠
                 </li>
                 <li class="helper-link" @click="showGameInfo('leaderboard')">
@@ -88,6 +88,7 @@ import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
+import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -135,6 +136,12 @@ export default {
         return false
       }
       return hasTrendDiagram(this.currentGame.code)
+    },
+    hasRoadBead () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasRoadBead(this.currentGame.code)
     },
     currentGame () {
       const game = this.$store.getters.gameById(this.$route.params.gameId)
