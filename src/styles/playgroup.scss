@@ -1,85 +1,87 @@
-.playgroup-title {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-.playgroup-title, .playgroup-odds {
-  background: #f5f5f5;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
-  color: #999;
-}
+.gamehall {
+  .playgroup-title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .playgroup-title, .playgroup-odds {
+    background: #f5f5f5;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    color: #999;
+  }
 
-.play {
-  &.active {
-    background: #156fd8;
-    .play-name {
-      color: #fff;
-      &.plain {
-        color: black; // lay over default active for plain ball
+  .play {
+    &.active {
+      background: #156fd8;
+      .play-name {
+        color: #fff;
+        &.plain {
+          color: black; // lay over default active for plain ball
+        }
+      }
+      .play-odds {
+        color: #fff;
       }
     }
-    .play-odds {
-      color: #fff;
-    }
   }
-}
 
-.play-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.play-name {
-  white-space: nowrap;
-  font-size: 20px;
-  color: #444;
-}
-.play-nums {
-  .play-num {
-    color: #333;
-    margin: 0 3px;
-    display: inline-block;
+  .play-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-}
-@media screen and (max-width: 360px) {
+  .play-name {
+    white-space: nowrap;
+    font-size: 20px;
+    color: #444;
+  }
   .play-nums {
     .play-num {
-      margin: 0 1px;
+      color: #333;
+      margin: 0 3px;
+      display: inline-block;
     }
   }
-}
-.play-odds {
-  font-size: 16px;
-  color: #999;
-  &.right {
-    position: absolute;
-    right: 5px;
+  @media screen and (max-width: 360px) {
+    .play-nums {
+      .play-num {
+        margin: 0 1px;
+      }
+    }
   }
-}
-@media screen and (max-width: 360px) {
   .play-odds {
-    font-size: 14px;
+    font-size: 16px;
+    color: #999;
+    &.right {
+      position: absolute;
+      right: 5px;
+    }
   }
-}
+  @media screen and (max-width: 360px) {
+    .play-odds {
+      font-size: 14px;
+    }
+  }
 
-.weui-grids {
-  margin-right: -1px;
-}
-.weui-grid {
-  padding: 13px 10px;
-}
-@media screen and (max-width: 360px) {
+  .weui-grids {
+    margin-right: -1px;
+  }
   .weui-grid {
-    padding: 10px 5px;
+    padding: 13px 10px;
   }
-}
-.gameplays {
-  /deep/ .weui-grids:after {
-    border: none;
+  @media screen and (max-width: 360px) {
+    .weui-grid {
+      padding: 10px 5px;
+    }
   }
-  &.no-title /deep/ .weui-grids:before{
-    border: none;
+  .gameplays {
+    /deep/ .weui-grids:after {
+      border: none;
+    }
+    &.no-title /deep/ .weui-grids:before{
+      border: none;
+    }
   }
 }
