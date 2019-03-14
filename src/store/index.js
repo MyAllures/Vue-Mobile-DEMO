@@ -4,6 +4,7 @@ import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
+import page from './page'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     },
     isLoading: false,
     showVerifyPopup: false,
+    isRightMenuVisible: false,
     games: [],
     tagTable: {
       ' ': [{icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}, {icon: loadingImg}],
@@ -110,5 +112,8 @@ export default new Vuex.Store({
   },
   actions,
   mutations,
-  getters
+  getters,
+  modules: {
+    page
+  }
 })

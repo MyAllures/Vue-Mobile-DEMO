@@ -1,5 +1,28 @@
 <template>
   <div class="container">
+    <top-bar>
+      <template slot="left">
+        <div
+          class="left-ctrl back"
+          @click="$router.go(-1)">
+          <span class="left-arrow"></span>
+          返回
+        </div>
+      </template>
+      <div class="main-title" @click="isCalendarVisible = !isCalendarVisible">
+        {{$route.params.date}}
+        <i :class="['solid-triangle', isCalendarVisible ? 'point-top' : 'point-down' ]"></i>
+      </div>
+      <template slot="right">
+        <div class="right-ctrl">
+          <div
+            class="balance fr"
+            @click="$store.dispatch('showRightMenu')">
+            {{ user.balance|currency('￥')}}
+          </div>
+        </div>
+      </template>
+    </top-bar>
     <div class="info-panel">
       <div class="info-panel-item">
         <div class="title">下注总计</div>
@@ -62,14 +85,18 @@
     </x-table>
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
+    <Calendar :visible="isCalendarVisible" @closeCalendar="isCalendarVisible = false" :date="$route.params.date" @selectDate="selectDate"/>
   </div>
 </template>
 
 <script>
 import { fetchBetHistory, fetchBetTotal } from '../../api'
-import { XTable, XButton, dateFormat, Box, Toast, Loading, Divider } from 'vux'
+import { mapState } from 'vuex'
+import { XTable, dateFormat, Toast, Loading } from 'vux'
 import { msgFormatter } from '../../utils'
 import infiniteScroll from 'vue-infinite-scroll'
+import TopBar from '@/components/TopBar'
+import Calendar from '@/components/Calendar'
 
 export default {
   name: 'DetailBetRecord',
@@ -85,13 +112,12 @@ export default {
     }
   },
   components: {
+    TopBar,
     XTable,
     dateFormat,
-    Box,
     Toast,
     Loading,
-    XButton,
-    Divider
+    Calendar
   },
   directives: {
     infiniteScroll
@@ -108,7 +134,8 @@ export default {
         msg: ''
       },
       totalProfit: 0,
-      totalAmount: 0
+      totalAmount: 0,
+      isCalendarVisible: false
     }
   },
   created () {
@@ -157,9 +184,18 @@ export default {
     },
     statusColor (val) {
       return val >= 0 ? val === 0 ? 'blue' : 'red' : 'green'
+    },
+    selectDate (date) {
+      this.$router.replace({name: 'DetailBetRecord', params: {date: date}})
     }
   },
   computed: {
+    ...mapState([
+      'user'
+    ]),
+    ...mapState('page', {
+      pageSetting: state => state.meta
+    }),
     date () {
       return this.$route.params.date
     }
