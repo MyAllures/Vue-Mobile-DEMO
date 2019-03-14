@@ -267,6 +267,12 @@ export default {
   setTheme: ({commit}, id) => {
     commit(types.SET_THEME, id)
   },
+  showRightMenu: ({commit}) => {
+    commit(types.SHOW_RIGHT_MENU)
+  },
+  hideRightMenu: ({commit}) => {
+    commit(types.HIDE_RIGHT_MENU)
+  },
   setDataSectionStyle: ({commit}, style) => {
     commit(types.DATA_SECTION_STYLE, style)
   }

@@ -6,7 +6,7 @@
     @on-show="lockBackScroll"
     @on-hide="handleClose"
     class="popup"
-    :style="{zIndex: 99}">
+    :style="{zIndex: 101}">
     <div class="popup-content">
       <div class="tab-selector">
         <tab
@@ -31,17 +31,19 @@
           <div class="category-title">相同玩法开奖更快</div>
           <div class="classic-game">
             <div class="images-container">
-              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
-                @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in recommendatoryGames" :key="index"
-                v-if="gamePlay[gameCode]"
-              >
-                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
-                <p class="name">{{gamePlay[gameCode].name}}</p>
-                <div class="game-label">
-                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+              <template  v-for="(gameCode,index) in recommendatoryGames">
+                <div v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                  :style="{width: `${imageContainerWidth}px`}"
+                  :key="index"
+                  @click="switchGame(gamePlay[gameCode])"
+                >
+                  <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                  <p class="name">{{gamePlay[gameCode].name}}</p>
+                  <div class="game-label">
+                    <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -50,17 +52,19 @@
           <div class="category-title">经典游戏</div>
           <div class="recommendatory-game">
             <div class="images-container">
-              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
-                @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in classicGames" :key="index"
-                v-if="gamePlay[gameCode]"
-              >
-                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
-                <p class="name">{{gamePlay[gameCode].name}}</p>
-                <div class="game-label">
-                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+              <template v-for="(gameCode,index) in classicGames">
+                <div  v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                  :style="{width: `${imageContainerWidth}px`}"
+                  @click="switchGame(gamePlay[gameCode])"
+                  :key="index"
+                >
+                  <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                  <p class="name">{{gamePlay[gameCode].name}}</p>
+                  <div class="game-label">
+                    <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -348,7 +352,7 @@ export default {
   -webkit-tap-highlight-color:rgba(0,0,0,0);
   &.active {
     opacity: 1;
-    z-index: 98;
+    z-index: 100;
   }
 }
 

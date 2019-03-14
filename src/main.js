@@ -168,10 +168,10 @@ axios.interceptors.response.use(res => {
     type: HTTP_ERROR,
     error
   })
-  Vue.$vux.toast.show({
-    text: '网路服务异常，请稍后再试',
-    type: 'warn'
-  })
+  // Vue.$vux.toast.show({
+  //   text: '网路服务异常，请稍后再试',
+  //   type: 'warn'
+  // })
   return Promise.reject(error)
 })
 
@@ -186,6 +186,9 @@ const toLogin = function (router) {
 
 // router config
 router.beforeEach((to, from, next) => {
+  if (!from || to.name !== from.name) {
+    store.dispatch('page/updatePageSetting', to.meta || {})
+  }
   // fisrMacthed might be the top-level parent route of others
   const firstMatched = to.matched.length ? to.matched[0] : null
   if ((firstMatched || to).meta.requiresAuth) {
