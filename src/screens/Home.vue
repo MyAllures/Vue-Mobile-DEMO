@@ -127,6 +127,7 @@
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
     </div>
     <x-dialog
+      v-transfer-dom
       v-model="showDialog"
       :dialog-style="{
         width: '90vw',
@@ -148,6 +149,8 @@
     </x-dialog>
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
+    <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
+    <div v-if="systemConfig.envelopeActivityId" class="envelope-btn" @click="showEnvelope"></div>
   </div>
 </template>
 
@@ -168,7 +171,8 @@ import {
   Cell,
   XButton,
   Tab,
-  TabItem
+  TabItem,
+  TransferDom
 } from 'vux'
 import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
@@ -176,6 +180,7 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -192,8 +197,12 @@ export default {
       showpromoPopup: false,
       today: this.$moment(),
       currentTag: '',
-      isGameMenuVisible: false
+      isGameMenuVisible: false,
+      isEnvelopeVisible: false
     }
+  },
+  directives: {
+    TransferDom
   },
   components: {
     TopBar,
@@ -215,7 +224,8 @@ export default {
     Marquee,
     Tab,
     TabItem,
-    GameMenu
+    GameMenu,
+    ActivityEnvelopeDialog
   },
   mixins: [freetrial],
   computed: {
@@ -279,6 +289,23 @@ export default {
         }
       }
     },
+    'isEnvelopeVisible': function (isEnvelopeVisible) {
+      if (isEnvelopeVisible) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
+      }
+    },
     'showDialog': function (showDialog) {
       if (showDialog) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -298,8 +325,10 @@ export default {
     }
   },
   created () {
-    const unwatch = this.$watch('announcements', function () {
-      this.showDialog = true
+    const unwatch = this.$watch('announcements', function (announcements) {
+      if (announcements.length > 0) {
+        this.showDialog = true
+      }
       unwatch()
     })
   },
@@ -325,6 +354,21 @@ export default {
     },
     switchTab (i) {
       this.currentTag = this.tags[i]
+    },
+    showEnvelope () {
+      if (this.user.logined === true) {
+        this.isEnvelopeVisible = true
+        this.sendGaEvent({
+          label: '首页',
+          category: '紅包',
+          action: '查看红包活动'
+        })
+      } else {
+        this.$vux.toast.show({
+          text: '需先登入',
+          type: 'warn'
+        })
+      }
     }
   }
 }
@@ -663,5 +707,16 @@ export default {
 
 .pc-link-btn {
   color: @azul;
+}
+.envelope-btn {
+  position: fixed;
+  right: 20px;
+  top: 70vh;
+  width: 40px;
+  height: 70px;
+  transform-origin: center center;
+  transform: rotate(15deg);
+  background: url('../assets/envelope_btn.svg') no-repeat;
+  background-size: contain;
 }
 </style>

@@ -80,7 +80,8 @@ export default new Vuex.Store({
       stickerGroups: [],
       smsValidationEnabled: false,
       appDownloadUrl: '',
-      planSiteUrl: ''
+      planSiteUrl: '',
+      envelopeActivityId: ''
     },
     envelope: {},
     urgencySwitchedGame: null,

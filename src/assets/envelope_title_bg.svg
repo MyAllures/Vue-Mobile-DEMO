@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="290px" height="32px" viewBox="0 0 290 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>bg-紅包標題文字背景@1x</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <radialGradient cx="50%" cy="50%" fx="50%" fy="50%" r="399.09668%" gradientTransform="translate(0.500000,0.500000),scale(0.104530,1.000000),rotate(90.000000),translate(-0.500000,-0.500000)" id="radialGradient-1">
+            <stop stop-color="#BB2B2B" offset="0%"></stop>
+            <stop stop-color="#DC3F3E" stop-opacity="0.875519328" offset="19.8451048%"></stop>
+            <stop stop-color="#DD140E" stop-opacity="0" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="bg-紅包標題文字背景" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-6" transform="translate(1.500000, 1.000000)" fill="url(#radialGradient-1)">
+            <rect id="Rectangle-4" x="0" y="0" width="287" height="30"></rect>
+        </g>
+    </g>
+</svg>
