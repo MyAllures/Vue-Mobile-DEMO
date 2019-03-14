@@ -178,11 +178,28 @@ export default {
     }
   },
   created () {
+    if (this.game && this.currentCategory) {
+      this.sendGaConfig(this.game.display_name, this.currentCategory.name)
+    } else {
+      const unwatch = this.$watch(vm => [vm.game, vm.currentCategory], result => {
+        if (result[0] && result[1]) {
+          this.sendGaConfig(result[0].display_name, result[1].name)
+          unwatch()
+        }
+      })
+    }
+
     if (this.currentCategory) {
       this.initPlayAndGroups(this.currentCategory)
     }
   },
   methods: {
+    sendGaConfig (gameName, categoryName) {
+      const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
+      if (gaTrackingId) {
+        window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${gameName} - ${categoryName}`})
+      }
+    },
     getPlayClass (play) {
       let num = play.display_name
       if (num[0] === '0' && num !== '0') {
@@ -247,12 +264,6 @@ export default {
       if (!currentCategory) {
         return
       }
-
-      const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
-      if (gaTrackingId) {
-        window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${this.game.display_name} - ${currentCategory.name}`})
-      }
-
       const tabs = {}
       const plays = {}
       const tabKeys = []

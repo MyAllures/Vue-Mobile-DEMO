@@ -1,43 +1,47 @@
 <template>
-  <section v-if="$route.params.date" class="calender-container" :style="{top: positionTop}" v-fix-scroll>
-    <div class="calender">
-      <div class="calender-top">
-        <li @click="preMonth(myDate, false)">
-          <div class="selector selector-left"></div>
-        </li>
-        <li class="calender-title">{{dateTop}}</li>
-        <li @click="nextMonth(myDate, false)">
-          <div class="selector selector-right"></div>
-        </li>
-      </div>
-      <div class="calender-content">
-        <div class="calender-contentitem" v-for="(tag, index) in textTop" :key="index">
-          <div class="weekday-tag">
-            {{tag}}
+  <transition name="fade">
+    <div v-show="visible">
+      <section v-if="date" class="calendar-container" :style="{top: positionTop}" v-fix-scroll>
+        <div class="calendar">
+          <div class="calendar-top">
+            <li @click="preMonth(myDate, false)">
+              <div class="selector selector-left"></div>
+            </li>
+            <li class="calendar-title">{{dateTop}}</li>
+            <li @click="nextMonth(myDate, false)">
+              <div class="selector selector-right"></div>
+            </li>
+          </div>
+          <div class="calendar-content">
+            <div class="calendar-contentitem" v-for="(tag, index) in textTop" :key="index">
+              <div class="weekday-tag">
+                {{tag}}
+              </div>
+            </div>
+          </div>
+          <div class="calendar-content">
+            <div class="calendar-contentitem"
+              v-for="(item, index) in list"
+              :key="index"
+              @click="clickDay(item, index)">
+              <div :class="[
+                'calendar-dateitem',
+                { 'calendar-dayhide': item.otherMonth !== 'nowMonth' },
+                { 'calendar-chosenday': item.chosen },
+                { 'calendar-hasbet': item.hasBet }]">
+                <p class="date-number">{{item.id}}</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="calender-content">
-        <div class="calender-contentitem"
-          v-for="(item, index) in list"
-          :key="index"
-          @click="clickDay(item, index)">
-          <div :class="[
-            'calender-dateitem',
-            { 'calender-dayhide': item.otherMonth !== 'nowMonth' },
-            { 'calender-chosenday': item.chosen },
-            { 'calender-hasbet': item.hasBet }]">
-            <p class="date-number">{{item.id}}</p>
-          </div>
-        </div>
-      </div>
+        <div class="calendar-mask" @click="$emit('closeCalendar')"></div>
+      </section>
     </div>
-    <div class="calender-mask" @click="$emit('closeCalender')"></div>
-  </section>
+  </transition>
 </template>
 
 <script>
-import timeUtil from '../utils/calender.js'
+import timeUtil from '../utils/calendar.js'
 import { fetchDateBetRecords } from '../api'
 import FixScroll from '../directive/fixscroll'
 
@@ -56,7 +60,12 @@ export default {
     positionTop: {
       type: String,
       default: '45px'
-    }
+    },
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    date: String
   },
   directives: {
     FixScroll
@@ -68,9 +77,8 @@ export default {
       } else {
         (item.otherMonth === 'preMonth') ? this.preMonth(item.date) : this.nextMonth(item.date)
       }
-      this.$emit('closeCalender')
-      let formattedDateForRoute = this.$moment(new Date(item.date)).format('YYYY-MM-DD')
-      this.$router.replace({name: 'DetailBetRecord', params: {date: formattedDateForRoute}})
+      this.$emit('closeCalendar')
+      this.$emit('selectDate', this.$moment(new Date(item.date)).format('YYYY-MM-DD'))
     },
     preMonth (date, isChosedDay = true) {
       date = timeUtil.dateFormat(date)
@@ -128,9 +136,8 @@ export default {
     }
   },
   watch: {
-    '$route': {
-      handler: function (route) {
-        let date = route.params.date
+    'date': {
+      handler: function (date) {
         if (date) {
           this.myDate = new Date(date)
           this.getList(this.myDate, timeUtil.dateFormat(this.myDate))
@@ -144,12 +151,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.calender-container {
+.calendar-container {
   position: absolute;
   max-width: 100%;
 }
 
-.calender-mask {
+.calendar-mask {
   position: fixed;
   top: 0;
   right: 0;
@@ -162,7 +169,7 @@ export default {
   z-index: 99;
 }
 
-.calender {
+.calendar {
   position: fixed;
   background-color: #fff;
   width: 100%;
@@ -173,9 +180,9 @@ export default {
   z-index: 501;
 }
 
-.calender-top {
+.calendar-top {
   display: flex;
-  .calender-title {
+  .calendar-title {
     flex: 2.5;
   }
   li {
@@ -189,7 +196,7 @@ export default {
   }
 }
 
-.calender-content {
+.calendar-content {
   display: flex;
   flex-wrap: wrap;
   padding: 0 3% 0 3%;
@@ -217,13 +224,13 @@ export default {
   }
 }
 
-.calender-contentitem {
+.calendar-contentitem {
   position: relative;
   width: 13.4%;
   height: 40px;
   text-align: center;
   color: #333;
-  .weekday-tag, .calender-dateitem {
+  .weekday-tag, .calendar-dateitem {
     display: flex;
     width: 45px;
     height: 45px;
@@ -232,16 +239,16 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .calender-dayhide {
+  .calendar-dayhide {
     color: #dde;
   }
-  .calender-chosenday {
+  .calendar-chosenday {
     border-radius: 50%;
     color: #fff;
   }
 }
 
-.calender-hasbet {
+.calendar-hasbet {
   flex-direction: column;
   .date-number {
     line-height: 25px;
@@ -255,7 +262,7 @@ export default {
     height: 5px;
     border-radius: 50%;
   }
-  &.calender-chosenday::after {
+  &.calendar-chosenday::after {
     background-color: #fff;
   }
 }

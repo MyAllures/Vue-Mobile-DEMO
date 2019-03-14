@@ -39,12 +39,18 @@ export const hasNotSubOption = (code) => {
   return noSubOptionGames.includes(code)
 }
 
-const hasJupanRoadGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
-export const hasJupanRoad = (code) => {
-  return hasJupanRoadGames.includes(code)
+const hasMoreRoadGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
+export const hasMoreRoad = (code) => {
+  return hasMoreRoadGames.includes(code)
 }
 
 const seriesSSC = ['jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
 export const isSeriesSSC = (code) => {
   return seriesSSC.includes(code)
+}
+
+const gameHasRoadBead = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'gd11x5', 'cqlf', 'gdklsf', 'jsk3', 'msk3', 'bjk3', 'bjkl8', 'auluck8', 'pcdd', 'jnd28', 'luckdd']
+
+export const hasRoadBead = (code) => {
+  return gameHasRoadBead.includes(code)
 }
