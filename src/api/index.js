@@ -291,7 +291,3 @@ export function sendSMSCode (phoneNumber) {
 export function sendHeartBeat () {
   return axios.get(urls.onine_heartbeat)
 }
-
-export function fetchTrendChart (params) {
-  return axios.get(urls.trend_chart, {params})
-}

@@ -1,64 +1,52 @@
 <template>
-  <div class="history-container">
-    <div class="title">
-      {{game.display_name}}
-      <div v-if="game.code === 'hkl' || game.code === 'fc3d'" class="date-picker">
-        <date-selector class="date-picker-input" :z-index="600" v-model="date" :max-date="new Date()" :column-count="2"></date-selector>
-        <i class="solid-triangle point-down"></i>
-      </div>
-      <div v-else class="date-picker">
-        <date-selector class="date-picker-input" :z-index="600" :max-date="new Date()" v-model="date"></date-selector>
-        <i class="solid-triangle point-down"></i>
-      </div>
-    </div>
-    <div class="content">
-      <table class="history-table">
-        <tr
-          v-for="(schedule, scheduleIndex) in records.results"
-          :key="'scheduleIndex' + scheduleIndex"
-          class="row">
-          <td class="show-time">
-            <p class="periods-number">
-              {{schedule.issue_number}}
-            </p>
-            <p class="periods-time">
-              {{schedule.schedule_result |dateFilter}}
-            </p>
-          </td>
-          <td class="show-count">
-            <div class="invalid text-center" v-if="schedule.result_status !== 'valid'">官方开奖无效</div>
-            <div class="lottery-result" v-else>
-              <lottery-record-num
-                :results="schedule.result_str"
-                :gameType="gameType" />
-              <div v-if="schedule.result_category && lotteryCompare" class="compare-content">
-                <span class="lottery-compare"
-                  v-for="(compareKey, index) in lotteryCompare"
-                  :key="'subHead' + index">
-                  {{schedule.result_category[compareKey] | changeDataType}}
-                </span>
-              </div>
+  <div ref="recordBox" class="history-container">
+    <table class="history-table">
+      <tr
+        v-for="(schedule, scheduleIndex) in records.results"
+        :key="'scheduleIndex' + scheduleIndex"
+        class="row">
+        <td class="show-time">
+          <p class="periods-number">
+            {{schedule.issue_number}}
+          </p>
+          <p class="periods-time">
+            {{schedule.schedule_result |dateFilter}}
+          </p>
+        </td>
+        <td class="show-count">
+          <div class="invalid text-center" v-if="schedule.result_status !== 'valid'">官方开奖无效</div>
+          <div class="invalid text-center" v-else-if="!schedule.result_category" >暂无统计资料</div>
+          <div class="lottery-result" v-else>
+            <lottery-record-num
+              :results="schedule.result_str"
+              :gameType="gameType" />
+            <div v-if="lotteryCompare" class="compare-content">
+              <span class="lottery-compare"
+                v-for="(compareKey, index) in lotteryCompare"
+                :key="'subHead' + index">
+                {{schedule.result_category[compareKey] | changeDataType}}
+              </span>
             </div>
-          </td>
-        </tr>
-        <tr class="condition loading text-center p-t-lg" v-if="loading">
-          <inline-loading></inline-loading>
-        </tr>
-        <tr class="condition" v-else-if="!records.results.length">
-          <div class="no-more" v-if="!records.results.length">{{$t('misc.no_data_yet')}}</div>
-        </tr>
-        <tr class="condition" v-else-if="(pagination.total > records.results.length)">
-          <x-button
-            type="default"
-            action-type="button"
-            class="add-more"
-            @click.native="addMore">
-            <inline-loading v-if="addMoreLoading"></inline-loading>
-            <span v-else>{{$t('misc.load_more')}}</span>
-          </x-button>
-        </tr>
-      </table>
-    </div>
+          </div>
+        </td>
+      </tr>
+      <tr class="condition loading text-center p-t-lg" v-if="loading">
+        <inline-loading></inline-loading>
+      </tr>
+      <tr class="condition" v-else-if="!records.results.length">
+        <div class="no-more" v-if="!records.results.length">{{$t('misc.no_data_yet')}}</div>
+      </tr>
+      <tr class="condition" v-else-if="(pagination.total > records.results.length)">
+        <x-button
+          type="default"
+          action-type="button"
+          class="add-more"
+          @click.native="addMore">
+          <inline-loading v-if="addMoreLoading"></inline-loading>
+          <span v-else>{{$t('misc.load_more')}}</span>
+        </x-button>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -67,7 +55,6 @@ import { XHeader, Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabIte
 import LotteryRecordNum from '@/components/LotteryRecordNum.vue'
 import { getGameHistoryData } from '../api'
 import {HKL_GAMES} from '../config'
-import DateSelector from '@/components/DateSelector'
 
 const TransformerCompareList = ['sum_of_1st_2st', 'sum_of_1st_2st_than_size', 'sum_of_1st_2st_odd_even', 'dragon_tiger_1_10', 'dragon_tiger_2_9', 'dragon_tiger_3_8', 'dragon_tiger_4_7', 'dragon_tiger_5_6']
 const sscCompareList = ['sum_of_ball', 'sum_of_ball_than_size', 'sum_of_ball_odd_even', 'dragon_tiger_1_5']
@@ -107,9 +94,15 @@ const gameTable = {
 }
 export default {
   props: {
-    game: {
-      type: Object,
+    gameCode: {
+      type: String,
       required: true
+    },
+    currentGame: {
+      type: Object
+    },
+    date: {
+      type: String
     }
   },
   data () {
@@ -120,8 +113,7 @@ export default {
         total: 0,
         offset: 0
       },
-      addMoreLoading: false,
-      date: this.game.code === 'hkl' || this.game.code === 'fc3d' ? this.$moment().format('YYYY-MM') : this.$moment().format('YYYY-MM-DD')
+      addMoreLoading: false
     }
   },
   filters: {
@@ -198,14 +190,14 @@ export default {
   },
   computed: {
     gameType () {
-      if (HKL_GAMES.includes(this.game.code)) {
+      if (HKL_GAMES.includes(this.gameCode)) {
         return 'hkl'
       }
-      return this.game.code
+      return this.gameCode
     },
     queryTime () {
       const date = this.$moment(this.date)
-      if (this.game.code === 'hkl' || this.game.code === 'fc3d') {
+      if (this.gameCode === 'hkl' || this.gameCode === 'fc3d') {
         return {
           schedule_result_0: date.date(1).format('YYYY-MM-DD'),
           schedule_result_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
@@ -220,7 +212,7 @@ export default {
     }
   },
   watch: {
-    'game': function () {
+    'currentGame': function () {
       this.initRecords()
     },
     'date': function (date) {
@@ -242,7 +234,7 @@ export default {
       }
       this.loading = true
       let data = {
-        game_code: this.game.code,
+        game_code: this.gameCode,
         offset: this.pagination.offset
       }
       Object.assign(data, this.queryTime)
@@ -252,6 +244,7 @@ export default {
         this.records = response
         this.lotteryCompare = gameTable[this.gameType]
         this.loading = false
+        this.$refs.recordBox && this.$refs.recordBox.scrollIntoView()
       })
     },
     addMore () {
@@ -262,7 +255,7 @@ export default {
       this.pagination.offset += 30
 
       let data = {
-        game_code: this.game.code,
+        game_code: this.gameCode,
         offset: this.pagination.offset
       }
       Object.assign(data, this.queryTime)
@@ -285,58 +278,15 @@ export default {
     XInput,
     XButton,
     InlineLoading,
-    LotteryRecordNum,
-    DateSelector
+    LotteryRecordNum
   }
 }
 </script>
 <style lang="less" scoped>
 .history-container {
-  height: 100%;
-  .title {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 10px;
-    font-size: 16px;
-    line-height: 40px;
-    height: 40px;
-
-    background-color: #f5f5f5;
-    top: 0;
-    z-index: 2;
-  }
-  .content {
-    height: calc(~"100%" - 40px);
-    overflow-y: auto;
-  }
+  height: calc(~"100% - "40px);
 }
-
-.date-picker {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 135px;
-  height: 40px;
-  margin-left: auto;
-  padding-right: 5px;
-  &-input {
-    padding: 0 5px 0 0;
-    font-size: 14px;
-    height: 40px;
-    line-height: 40px;
-    text-align: right;
-    color: #999;
-  }
-  .solid-triangle {
-    border-top: 5px solid #999;
-  }
-}
-
-
 .history-table {
-  box-sizing: border-box;
-  padding-bottom: 60px;
   display: inline-block;
   width: 100%;
   height: 100%;

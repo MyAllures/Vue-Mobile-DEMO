@@ -26,107 +26,62 @@
         <div class="arrow"></div>
       </div>
     </div>
-    <div class="diagram-area">
-      <div class="diagram-header">
-        <div v-if="hasMoreRoad" class="title">大路</div>
-        <div class="cumulative-panel">
-          <div class="text">累计次数</div>
-          <div class="count" v-for="option in cumulatives" :key="option.key">
-            <span :class="option.key">{{option.key|typeFilter}}: </span>
-            {{option.num||0}}
-          </div>
+    <div class="diagram-header">
+      <div v-if="hasJupanRoad" class="title">大路</div>
+      <div class="cumulative-panel">
+        <div class="text">累计次数</div>
+        <div class="count" v-for="option in cumulatives" :key="option.key">
+          <span :class="option.key">{{option.key|typeFilter}}: </span>
+          {{option.num||0}}
         </div>
       </div>
-      <div class="trend-diagram-wrapper" ref="daRoad" @touchstart="daRoadUsing = true" @touchend="daRoadUsing = false">
-        <table class="trend-diagram daRoad">
+    </div>
+    <div class="trend-diagram-wrapper" ref="daRoad" @touchstart="daRoadUsing = true" @touchend="daRoadUsing = false">
+      <table class="trend-diagram daRoad">
+        <tbody>
+          <tr v-if="mainName==='总和色波'">
+            <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
+              <template v-for="(k,i) in daRoadList[index]">
+                <div v-if="['red','blue','green'].includes(k)" :class="['circle', k]" :key="i"></div>
+                <div v-else class="font" :key="i">{{k}}</div>
+              </template>
+            </td>
+          </tr>
+          <tr v-else-if="mainName==='五行'">
+            <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
+              <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
+            </td>
+          </tr>
+          <tr v-else>
+            <td width="4%" class="column" v-for="index in Array.from(Array(25).keys())" :key="index">
+              <div :class="['circle', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <template v-if="hasJupanRoad">
+      <div class="diagram-header">
+        <div class="title">珠盘路</div>
+      </div>
+      <div class="trend-diagram-wrapper" ref="jupanRoad" @touchstart="jupanRoadUsing = true" @touchend="jupanRoadUsing = false">
+        <table class="trend-diagram jupanRoad">
           <tbody>
-            <tr v-if="mainName==='总和色波'">
-              <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <template v-for="(k,i) in daRoadList[index]">
-                  <div v-if="['red','blue','green'].includes(k)" :class="['hollow-ball', k]" :key="i"></div>
-                  <div v-else class="font" :key="i">{{k}}</div>
-                </template>
-              </td>
-            </tr>
-            <tr v-else-if="mainName==='五行'">
-              <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
-              </td>
-            </tr>
-            <tr v-else>
-              <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div :class="['hollow-ball', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
+            <tr v-for="rowIndex in Array.from(Array(6).keys())" :key="rowIndex">
+              <td width="4%" class="column" v-for="colIndex in Array.from(Array(25).keys())" :key="colIndex">
+                <div v-if="jupanRoadList[colIndex]" :class="['circle', jupanRoadList[colIndex][rowIndex]]"></div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <template v-if="hasMoreRoad">
-        <div class="diagram-header">
-          <div class="title">大眼仔路</div>
-        </div>
-        <div class="trend-diagram-wrapper" ref="bigEyeRoad" @touchstart="bigEyeRoadUsing = true" @touchend="bigEyeRoadUsing = false">
-          <table class="trend-diagram bigEyeRoad">
-            <tbody>
-              <tr v-for="(row, rowIndex) in Math.max(6,...bigEyeRoadList.map(l=>l.length))" :key="rowIndex">
-                <td width="4%" class="column" v-for="(col, colIndex) in 25" :key="colIndex">
-                  <div v-if="bigEyeRoadList[colIndex]&&bigEyeRoadList[colIndex][rowIndex]!==undefined" :class="`hollow-ball num${bigEyeRoadList[colIndex][rowIndex]}`"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="diagram-header">
-          <div class="title">小路</div>
-        </div>
-        <div class="trend-diagram-wrapper" ref="smallRoad" @touchstart="smallRoadUsing = true" @touchend="smallRoadUsing = false">
-          <table class="trend-diagram smallRoad">
-            <tbody>
-              <tr v-for="(row, rowIndex) in Math.max(6,...smallRoadList.map(l=>l.length))" :key="rowIndex">
-                <td width="4%" class="column" v-for="(col, colIndex) in 25" :key="colIndex">
-                  <div v-if="smallRoadList[colIndex]&&smallRoadList[colIndex][rowIndex]!==undefined" :class="`solid-ball num${smallRoadList[colIndex][rowIndex]}`"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="diagram-header">
-          <div class="title">曱甴路</div>
-        </div>
-        <div class="trend-diagram-wrapper" ref="beetleRoad" @touchstart="beetleRoadUsing = true" @touchend="beetleRoadUsing = false">
-          <table class="trend-diagram beetleRoad">
-            <tbody>
-              <tr v-for="(row, rowIndex) in Math.max(6,...beetleRoadList.map(l=>l.length))" :key="rowIndex">
-                <td width="4%" class="column" v-for="(col, colIndex) in 25" :key="colIndex">
-                  <div v-if="beetleRoadList[colIndex]&&beetleRoadList[colIndex][rowIndex]!==undefined" :class="`slash num${beetleRoadList[colIndex][rowIndex]}`"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="diagram-header">
-          <div class="title">珠盘路</div>
-        </div>
-        <div class="trend-diagram-wrapper" ref="jupanRoad" @touchstart="jupanRoadUsing = true" @touchend="jupanRoadUsing = false">
-          <table class="trend-diagram jupanRoad">
-            <tbody>
-              <tr v-for="rowIndex in Array.from(Array(6).keys())" :key="rowIndex">
-                <td width="4%" class="column" v-for="colIndex in Array.from(Array(25).keys())" :key="colIndex">
-                  <div v-if="jupanRoadList[colIndex]&&jupanRoadList[colIndex][rowIndex]!==undefined" :class="['solid-ball', jupanRoadList[colIndex][rowIndex]]"></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </template>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
 import gameTranslator from '../../utils/gameTranslator'
-import { fetchStatistic } from '@/api'
-import { settings, hasNotSubOption, hasMoreRoad, isSeriesSSC } from '../../utils/roadBeadSetting'
+import { settings, hasNotSubOption, hasJupanRoad, isSeriesSSC } from '../../utils/roadBeadSetting'
 import _ from 'lodash'
 
 const nameSort = (a, b) => {
@@ -156,31 +111,27 @@ const nameSort = (a, b) => {
 export default {
   name: 'RoadBeads',
   props: {
-    game: {
-      type: Object,
-      required: true
+    gameCode: {
+      type: String
+    },
+    type: String,
+    resultStatistic: {
+      type: Object
     }
   },
   data () {
     return {
-      hasNotSubOption: hasNotSubOption(this.game.code),
-      hasMoreRoad: hasMoreRoad(this.game.code),
-      isSeriesSSC: isSeriesSSC(this.game.code),
-      resultStatistic: null,
+      hasNotSubOption: hasNotSubOption(this.gameCode),
+      hasJupanRoad: hasJupanRoad(this.gameCode),
+      isSeriesSSC: isSeriesSSC(this.gameCode),
       daRoadUsing: false,
-      bigEyeRoadUsing: false,
-      smallRoadUsing: false,
-      beetleRoadUsing: false,
       jupanRoadUsing: false,
       mainOptions: null,
       cumulativeMap: {}, // 路珠統計
       subOptionMap: null,
       mainName: '',
       subName: '',
-      daRoadMap: {},
-      bigEyeRoadMap: {},
-      smallRoadMap: {},
-      beetleRoadMap: {},
+      daRoadMap: {}, // 趨勢
       jupanRoadMap: {},
       tableSetting: {
         jspk10: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -294,52 +245,7 @@ export default {
         results = this.daRoadMap[this.mainName][this.subName]
       }
       if (Array.isArray(results)) {
-        return [...results].reverse()
-      }
-      return []
-    },
-    bigEyeRoadList () {
-      if (!this.bigEyeRoadMap || !this.mainName) {
-        return []
-      }
-      let results
-      if (!this.subName) {
-        results = this.bigEyeRoadMap[this.mainName]
-      } else {
-        results = this.bigEyeRoadMap[this.mainName][this.subName]
-      }
-      if (Array.isArray(results)) {
-        return [...results].reverse()
-      }
-      return []
-    },
-    smallRoadList () {
-      if (!this.smallRoadMap || !this.mainName) {
-        return []
-      }
-      let results
-      if (!this.subName) {
-        results = this.smallRoadMap[this.mainName]
-      } else {
-        results = this.smallRoadMap[this.mainName][this.subName]
-      }
-      if (Array.isArray(results)) {
-        return [...results].reverse()
-      }
-      return []
-    },
-    beetleRoadList () {
-      if (!this.beetleRoadMap || !this.mainName) {
-        return []
-      }
-      let results
-      if (!this.subName) {
-        results = this.beetleRoadMap[this.mainName]
-      } else {
-        results = this.beetleRoadMap[this.mainName][this.subName]
-      }
-      if (Array.isArray(results)) {
-        return [...results].reverse()
+        return results.reverse()
       }
       return []
     },
@@ -354,12 +260,17 @@ export default {
         results = this.jupanRoadMap[this.mainName][this.subName]
       }
       if (Array.isArray(results)) {
-        return [...results].reverse()
+        return results.reverse()
       }
       return []
     }
   },
   watch: {
+    'resultStatistic': {
+      handler: function (resultStatistic) {
+        this.handleData()
+      }
+    },
     'subOptions': function (subOptions) {
       if (subOptions.length) {
         this.subName = subOptions[0].value
@@ -370,48 +281,6 @@ export default {
         return
       }
       const table = this.$refs.daRoad
-      if (table) {
-        let totalWidth = window.innerWidth
-        let nowTd = table.querySelectorAll('.column')[list.length - 1]
-        let currentPos = nowTd.offsetLeft + 24
-        if (currentPos > totalWidth) {
-          table.scrollLeft = currentPos - totalWidth
-        }
-      }
-    },
-    'bigEyeRoadList': function (list) {
-      if (this.bigEyeRoadUsing) {
-        return
-      }
-      const table = this.$refs.bigEyeRoad
-      if (table) {
-        let totalWidth = window.innerWidth
-        let nowTd = table.querySelectorAll('.column')[list.length - 1]
-        let currentPos = nowTd.offsetLeft + 24
-        if (currentPos > totalWidth) {
-          table.scrollLeft = currentPos - totalWidth
-        }
-      }
-    },
-    'smallRoadList': function (list) {
-      if (this.smallRoadUsing) {
-        return
-      }
-      const table = this.$refs.smallRoad
-      if (table) {
-        let totalWidth = window.innerWidth
-        let nowTd = table.querySelectorAll('.column')[list.length - 1]
-        let currentPos = nowTd.offsetLeft + 24
-        if (currentPos > totalWidth) {
-          table.scrollLeft = currentPos - totalWidth
-        }
-      }
-    },
-    'beetleRoadList': function (list) {
-      if (this.beetleRoadUsing) {
-        return
-      }
-      const table = this.$refs.beetleRoad
       if (table) {
         let totalWidth = window.innerWidth
         let nowTd = table.querySelectorAll('.column')[list.length - 1]
@@ -437,34 +306,9 @@ export default {
     }
   },
   created () {
-    this.fetchStatistic().then(() => {
-      this.handleData(true)
-    }).catch(() => {})
-    this.pollStatistic()
+    this.handleData(true)
   },
   methods: {
-    fetchStatistic () {
-      const code = this.game.code
-      this.loading = true
-      return fetchStatistic(code).then(result => {
-        this.resultStatistic = {
-          resultSingleStatistic: result.result_single_statistic,
-          daRoadStatistic: result.result_category_statistic,
-          bigEyeRoadStatistic: result.result_category_statistic_bigeyeroad,
-          smallRoadStatistic: result.result_category_statistic_littleroad,
-          beetleRoadStatistic: result.result_category_statistic_beetleroad,
-          jupanRoadStatistic: result.result_category_statistic_jupanroad
-        }
-        this.loading = false
-      })
-    },
-    pollStatistic () {
-      this.interval = setInterval(() => {
-        this.fetchStatistic().then(() => {
-          this.handleData()
-        }).catch(() => {})
-      }, 60000)
-    },
     chooseMainName (item) {
       const picker = this.$createPicker({
         data: [this.mainOptions],
@@ -492,9 +336,6 @@ export default {
     handleData (isFirst) {
       const resultSingleStatistic = this.resultStatistic.resultSingleStatistic
       const daRoadStatistic = this.resultStatistic.daRoadStatistic
-      const bigEyeRoadStatistic = this.resultStatistic.bigEyeRoadStatistic
-      const smallRoadStatistic = this.resultStatistic.smallRoadStatistic
-      const beetleRoadStatistic = this.resultStatistic.beetleRoadStatistic
       const jupanRoadStatistic = this.resultStatistic.jupanRoadStatistic
       let dragonTigerSpecial
 
@@ -505,16 +346,13 @@ export default {
         dragonTigerSpecial = '龙虎'
       }
 
-      let translator = gameTranslator[this.game.code]
-      let keys = settings[this.game.code]
+      let translator = gameTranslator[this.gameCode]
+      let keys = settings[this.gameCode]
 
       const mainOptions = []
       const subOptionMap = {}
       const cumulativeMap = {}
       const daRoadMap = {}
-      const bigEyeRoadMap = {}
-      const smallRoadMap = {}
-      const beetleRoadMap = {}
       const jupanRoadMap = {}
 
       _.each(keys, (key) => {
@@ -523,9 +361,6 @@ export default {
         let type
         let resultSingle = resultSingleStatistic[key]
         let daRoadStatisticArrs = daRoadStatistic[key]
-        let bigEyeRoadStatisticArrs = bigEyeRoadStatistic[key]
-        let smallRoadStatisticArrs = smallRoadStatistic[key]
-        let beetleRoadStatisticArrs = beetleRoadStatistic[key]
         let jupanRoadStatisticArrs = jupanRoadStatistic[key]
         if (key.includes('sum_number_odd_even')) {
           type = '合数单双'
@@ -562,9 +397,6 @@ export default {
           })
 
           daRoadMap[mainKey] = daRoadStatisticArrs
-          bigEyeRoadMap[mainKey] = bigEyeRoadStatisticArrs
-          smallRoadMap[mainKey] = smallRoadStatisticArrs
-          beetleRoadMap[mainKey] = beetleRoadStatisticArrs
           jupanRoadMap[mainKey] = jupanRoadStatisticArrs
         } else {
           let mainKey = title
@@ -572,17 +404,11 @@ export default {
           let options
           let cumulativeObj
           let daRoadObj
-          let bigEyeRoadObj
-          let smallRoadObj
-          let beetleRoadObj
           let jupanRoadObj
           if (subOptionMap[mainKey]) {
             options = subOptionMap[mainKey]
             cumulativeObj = cumulativeMap[mainKey]
             daRoadObj = daRoadMap[mainKey]
-            bigEyeRoadObj = bigEyeRoadMap[mainKey]
-            smallRoadObj = smallRoadMap[mainKey]
-            beetleRoadObj = beetleRoadMap[mainKey]
             jupanRoadObj = jupanRoadMap[mainKey]
           } else {
             if (isFirst) {
@@ -591,16 +417,10 @@ export default {
             options = []
             cumulativeObj = {}
             daRoadObj = {}
-            bigEyeRoadObj = {}
-            smallRoadObj = {}
-            beetleRoadObj = {}
             jupanRoadObj = {}
             subOptionMap[mainKey] = options
             cumulativeMap[mainKey] = cumulativeObj
             daRoadMap[mainKey] = daRoadObj
-            bigEyeRoadMap[mainKey] = bigEyeRoadObj
-            smallRoadMap[mainKey] = smallRoadObj
-            beetleRoadMap[mainKey] = beetleRoadObj
             jupanRoadMap[mainKey] = jupanRoadObj
           }
           options.push({ text: type, value: type })
@@ -611,12 +431,10 @@ export default {
           })
 
           daRoadObj[subKey] = daRoadStatisticArrs
-          bigEyeRoadObj[subKey] = bigEyeRoadStatisticArrs
-          smallRoadObj[subKey] = smallRoadStatisticArrs
-          beetleRoadObj[subKey] = beetleRoadStatisticArrs
           jupanRoadObj[subKey] = jupanRoadStatisticArrs
         }
       })
+
       if (isFirst) {
         this.mainOptions = mainOptions
         if (!this.hasNotSubOption) {
@@ -626,9 +444,6 @@ export default {
       }
       this.cumulativeMap = cumulativeMap
       this.daRoadMap = daRoadMap
-      this.bigEyeRoadMap = bigEyeRoadMap
-      this.smallRoadMap = smallRoadMap
-      this.beetleRoadMap = beetleRoadMap
       this.jupanRoadMap = jupanRoadMap
     }
   }
@@ -636,18 +451,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.ball () {
-  box-sizing: border-box;
-  border: 3px solid;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin: 3px auto;
-}
 .roadbead-container {
   height: 100%;
   .selector-area {
+    position: sticky;
+    top: 0;
     z-index: 1;
     display: flex;
     box-sizing: border-box;
@@ -702,13 +510,6 @@ export default {
       }
     }
   }
-  .diagram-area {
-    box-sizing: border-box;
-    height: calc(~"100%" - 40px);
-    overflow-y: auto;
-    padding-bottom: 60px;
-
-  }
 
   .diagram-header {
     display: flex;
@@ -745,6 +546,15 @@ export default {
           box-sizing: border-box;
           padding-bottom: 16px;
           vertical-align: top;
+          .circle {
+            box-sizing: border-box;
+            border: 3px solid;
+            background-color: #fcfcfc;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 3px auto;
+          }
           .font {
             width: 20px;
             height: 20px;
@@ -755,29 +565,41 @@ export default {
           }
         }
       }
-      .solid-ball {
-        .ball();
-      }
-      .hollow-ball {
-        .ball();
-        background-color: #fcfcfc;
-      }
-      .slash {
-        height: 3px;
-        width: 20px;
-        border-radius: 1px;
-        transform-origin: center;
-        transform: translateY(14px) rotate(-45deg);
-        margin: 0 auto;
-      }
-
-      &.bigEyeRoad,&.smallRoad,&.beetleRoad,&.jupanRoad {
+      &.jupanRoad {
         min-height: 140px;
         .column {
           border: 1px solid #e6e6e6;
           box-sizing: border-box;
           vertical-align: top;
-          height: 31px;
+          .circle {
+            position: relative;
+            box-sizing: border-box;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 2px auto;
+            &.dragon,
+            &.sumodd,
+            &.odd,
+            &.odd_more,
+            &.bigger,
+            &.tailbigger,
+            &.front_part_more {
+              background: @red;
+            }
+            &.tiger,
+            &.sumeven,
+            &.even,
+            &.even_more,
+            &.smaller,
+            &.tailsmaller,
+            &.rear_part_more {
+              background: @azul;
+            }
+            &.equal {
+              background: @green;
+            }
+          }
         }
       }
     }
@@ -789,8 +611,7 @@ export default {
   .odd_more,
   .bigger,
   .tailbigger,
-  .front_part_more,
-  .num1 {
+  .front_part_more {
     color: @red;
     border-color: @red;
   }
@@ -800,47 +621,13 @@ export default {
   .even_more,
   .smaller,
   .tailsmaller,
-  .rear_part_more,
-  .num0 {
+  .rear_part_more {
     color: @azul;
     border-color: @azul;
   }
   .equal {
     color: @green;
     border-color: @green;
-  }
-  .solid-ball {
-    &.dragon,
-    &.sumodd,
-    &.odd,
-    &.odd_more,
-    &.bigger,
-    &.tailbigger,
-    &.front_part_more,
-    &.num1 {
-      background: @red;
-    }
-    &.tiger,
-    &.sumeven,
-    &.even,
-    &.even_more,
-    &.smaller,
-    &.tailsmaller,
-    &.rear_part_more,
-    &.num0 {
-      background: @azul;
-    }
-    &.equal {
-      background: @green;
-    }
-  }
-  .slash {
-    &.num0 {
-      background: @azul;
-    }
-    &.num1 {
-      background: @red;
-    }
   }
 }
 </style>

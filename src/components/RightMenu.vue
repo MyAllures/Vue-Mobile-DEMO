@@ -52,6 +52,10 @@
     props: {
       value: {
         type: Boolean
+      },
+      showLinks: {
+        type: Boolean,
+        default: true
       }
     },
     data () {
@@ -110,7 +114,6 @@
     methods: {
       toMy () {
         if (this.$route.path !== '/my') {
-          this.closeRightMenu()
           this.$router.push({path: '/my'})
           this.sendGaEvent({
             label: '右側菜單',
@@ -126,7 +129,6 @@
             category: '未结明细',
             action: '点击'
           })
-          this.closeRightMenu()
           this.$router.push({path: '/unsettle'})
         }
       },

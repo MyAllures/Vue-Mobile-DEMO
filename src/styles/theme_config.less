@@ -1,9 +1,9 @@
 .theme (@main: @azul, @gradient, @playColor) {
-  .topbar {
+  .vux-header {
     background-color: @main;
     background-image: @gradient;
-    &__right {
-      .link .login {
+    &-right {
+      .actions .link .login {
         color: @main;
       }
     }
@@ -128,11 +128,11 @@
     }
   }
 
-  .calendar-contentitem .calendar-chosenday {
+  .calender-contentitem .calender-chosenday {
     background-color: @main;
   }
 
-  .calendar-contentitem .calendar-hasbet::after {
+  .calender-contentitem .calender-hasbet::after {
     background-color: @main;
   }
 
@@ -176,10 +176,10 @@
   .game .data-section {
     // background-image: linear-gradient(to bottom, #166fd8, #1568ca);
   }
-  .calendar-contentitem .calendar-chosenday {
+  .calender-contentitem .calender-chosenday {
     background-color: #166fd8;
   }
-  .calendar-hasbet::after {
+  .calender-hasbet::after {
     background-color: #166fd8;
   }
   .game-label .game-label-text {
