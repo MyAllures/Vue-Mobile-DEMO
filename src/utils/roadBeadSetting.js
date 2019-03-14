@@ -39,9 +39,9 @@ export const hasNotSubOption = (code) => {
   return noSubOptionGames.includes(code)
 }
 
-const hasMoreRoadGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
-export const hasMoreRoad = (code) => {
-  return hasMoreRoadGames.includes(code)
+const hasJupanRoadGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']
+export const hasJupanRoad = (code) => {
+  return hasJupanRoadGames.includes(code)
 }
 
 const seriesSSC = ['jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc']

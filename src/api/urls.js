@@ -58,6 +58,5 @@ export default {
   chatinfo: apiChat + '/v1/user/',
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
-  onine_heartbeat: apiv2 + '/heart_beat/',
-  trend_chart: apiv2 + '/trend_chart/'
+  onine_heartbeat: apiv2 + '/heart_beat/'
 }
