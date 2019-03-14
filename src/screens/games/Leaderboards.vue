@@ -1,47 +1,47 @@
 <template>
   <div class="leaderbaord-container">
-    <div v-if="loading && firstFetch" class="text-center p-t-lg">
-      <InlineLoading></InlineLoading>
-    </div>
-    <div class="leaderbaord" v-else>
-      <x-table full-bordered class="table">
-        <thead>
-          <tr>
-            <td>彩种</td>
-            <td>期数</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in listItems" :key="index">
-            <td class="play text-center">
-              <span v-if="item.type === 'in' || item.type === 'not_in'">{{item.type | typeFilter}} - {{item.title}}</span>
-              <span v-else>{{item.title}} - {{item.type | typeFilter}}</span>
-            </td>
-            <td class="issue">
-              {{item.num}}期
-            </td>
-          </tr>
-        </tbody>
+    <div class="title">{{game.display_name}}</div>
+    <div class="content">
+      <div v-if="loading && !leaderboardData" class="text-center p-t-lg">
+        <InlineLoading></InlineLoading>
+      </div>
+      <div v-else class="table-wrapper">
+        <x-table full-bordered class="table">
+          <thead>
+            <tr>
+              <td>彩种</td>
+              <td>期数</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in leaderboard" :key="index">
+              <td class="play text-center">
+                <span v-if="item.type === 'in' || item.type === 'not_in'">{{item.type | typeFilter}} - {{item.title}}</span>
+                <span v-else>{{item.title}} - {{item.type | typeFilter}}</span>
+              </td>
+              <td class="issue">
+                {{item.num}}期
+              </td>
+            </tr>
+          </tbody>
         </x-table>
-      <divider>{{$t('misc.nomore_data')}}</divider>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Divider, XTable, InlineLoading } from 'vux'
+import { XTable, InlineLoading } from 'vux'
+import { fetchStatistic } from '@/api'
+import {HKL_GAMES} from '@/config'
+import gameTranslator from '@/utils/gameTranslator'
 
 export default {
   name: 'Leaderboards',
   props: {
-    listItems: {
-      type: Array
-    },
-    loading: {
-      type: Boolean
-    },
-    firstFetch: {
-      type: Boolean
+    game: {
+      type: Object,
+      required: true
     }
   },
   filters: {
@@ -153,7 +153,79 @@ export default {
     }
   },
   components: {
-    Divider, XTable, InlineLoading
+    XTable, InlineLoading
+  },
+  data () {
+    return {
+      resultStatistic: null,
+      leaderboardData: null,
+      loading: false,
+      firstFetch: true,
+      gameType: HKL_GAMES.includes(this.game.code) ? 'hkl' : this.game.code
+    }
+  },
+  computed: {
+    leaderboard () {
+      if (!this.leaderboardData) {
+        return []
+      }
+      return this.leaderboardData.sort((a, b) => {
+        return b.num - a.num
+      })
+    }
+  },
+  created () {
+    this.fetchLeaderboard()
+    this.pollLeaderboard()
+  },
+  methods: {
+    fetchLeaderboard () {
+      const code = this.game.code
+      this.loading = true
+      fetchStatistic(code).then(result => {
+        if (Array.isArray(result) && !result.length) {
+          this.leaderboardData = result
+          this.loading = false
+          return
+        }
+        const translator = gameTranslator[this.gameType]
+        const frequencyStats = result.frequency_stats
+        const keys = Object.keys(frequencyStats)
+        const statistic = []
+        keys.forEach((key) => {
+          let item = frequencyStats[key]
+          let type = Object.keys(item)
+          if (type.length === 0) {
+            return
+          }
+          type = type[0]
+          if (item[type] < 3) { // 連續三期以上
+            return
+          }
+          let translated = translator(key)
+          if (!translated[0]) {
+            return
+          }
+          statistic.push({
+            title: translated[0],
+            type: translated[1] ? translated[1] + type : type,
+            num: item[type]
+          })
+        })
+
+        this.leaderboardData = statistic
+        this.loading = false
+        this.firstFetch = false
+      })
+    },
+    pollLeaderboard () {
+      this.interval = setInterval(() => {
+        this.fetchLeaderboard()
+      }, 60000)
+    }
+  },
+  beforeDestroy () {
+    clearInterval(this.interval)
   }
 }
 </script>
@@ -161,11 +233,24 @@ export default {
 <style lang="less" scoped>
 .leaderbaord-container {
   height: 100%;
-  overflow-y: hidden;
-  .leaderbaord {
-    height: 100%;
+  background-color: #fff;
+  .title {
+    font-size: 16px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #f5f5f5;
+    text-align: center;
+    z-index: 2;
+  }
+  .content {
+    height: calc(~"100%" - 40px);
     overflow-y: auto;
   }
+}
+
+.table-wrapper {
+  box-sizing: border-box;
+  padding-bottom: 60px;
 }
 
 .table {
@@ -180,14 +265,6 @@ export default {
   .issue {
     color: @red;
   }
-}
-
-.no-data {
-  width: 100%;
-  height: calc(100vh / 2);
-  line-height: calc(100vh / 2);
-  font-size: 18px;
-  color: #9b9b9b;
 }
 
 .vux-table {
