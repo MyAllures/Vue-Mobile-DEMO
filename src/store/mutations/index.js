@@ -173,11 +173,15 @@ export default {
   },
   [types.SET_THEME]: (state, themeId) => {
     state.theme = themeMap[themeId]
+    state.themeId = themeId
   },
   [types.SHOW_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = true
   },
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
+  },
+  [types.DATA_SECTION_STYLE]: (state, style) => {
+    state.dataSectionStyle = style
   }
 }

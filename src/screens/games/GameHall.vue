@@ -30,7 +30,7 @@
                     人工计划
                   </a>
                 </li>
-                <li class="helper-link" @click="showGameInfo('roadbeads')">
+                <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
                   路珠
                 </li>
                 <li class="helper-link" @click="showGameInfo('leaderboard')">
@@ -58,20 +58,20 @@
     <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
      <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
-    <template v-if="allGames&&allGames.length">
+    <template v-if="allGames&&allGames.length&&theme">
       <game-menu v-model="isGameMenuVisible" />
       <div>
         <div
           v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
           @click="isGameMenuVisible = !isGameMenuVisible"
-          class="notify-msg menu-center" :style="{'background-color': theme}"
-        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-box" @click.stop="hideNotifyMsg(currentGame.display_name)">Ｘ</div>
+          class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
         </div>
         <game-menu-icon
           class="menu-center"
           :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
           @click.native="isGameMenuVisible = !isGameMenuVisible"
-          type="more" :theme="theme"
+          type="more"
         />
       </div>
     </template>
@@ -82,13 +82,14 @@ import { XHeader, Popup, XButton, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import GameInfo from './GameInfo'
 import ChatRoom from '../../components/ChatRoom'
+import GameMenu from '@/components/GameMenu.vue'
+import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
-import GameMenu from '@/components/GameMenu.vue'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
+import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
-import GameMenuIcon from '@/components/GameMenuIcon'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -136,6 +137,12 @@ export default {
       }
       return hasTrendDiagram(this.currentGame.code)
     },
+    hasRoadBead () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasRoadBead(this.currentGame.code)
+    },
     currentGame () {
       const game = this.$store.getters.gameById(this.$route.params.gameId)
       if (game) {
@@ -149,6 +156,7 @@ export default {
         } else {
           this.showNotifiyMsg = true
         }
+        this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
       }
       return game
     },
@@ -425,20 +433,23 @@ export default {
   left: 0;
   right: 0;
   z-index: 100;
-  top: 39px;
 }
 
 .notify-msg {
   height: 25px;
   font-size: 13px;
+  line-height: 25px;
   color: white;
   text-align: center;
-  top: 45px;
+  top: 45.5px;
 }
-.close-box {
+
+.close-btn {
   position: absolute;
-  right: 13px;
+  right: -1px;
   top: -1px;
-  font-size: 14px;
+  &::before, &::after {
+    height: 15px;
+  }
 }
 </style>

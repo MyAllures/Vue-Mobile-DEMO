@@ -238,7 +238,7 @@ export default {
   mixins: [freetrial],
   computed: {
     ...mapGetters([
-      'user'
+      'user', 'allGames'
     ]),
     ...mapState([
       'theme', 'isLoading', 'ws', 'roomInfo', 'roomId', 'systemConfig', 'notificationVisible', 'notifications'

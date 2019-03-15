@@ -31,17 +31,19 @@
           <div class="category-title">相同玩法开奖更快</div>
           <div class="classic-game">
             <div class="images-container">
-              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
-                @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in recommendatoryGames" :key="index"
-                v-if="gamePlay[gameCode]"
-              >
-                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
-                <p class="name">{{gamePlay[gameCode].name}}</p>
-                <div class="game-label">
-                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+              <template  v-for="(gameCode,index) in recommendatoryGames">
+                <div v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                  :style="{width: `${imageContainerWidth}px`}"
+                  :key="index"
+                  @click="switchGame(gamePlay[gameCode])"
+                >
+                  <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                  <p class="name">{{gamePlay[gameCode].name}}</p>
+                  <div class="game-label">
+                    <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -50,17 +52,19 @@
           <div class="category-title">经典游戏</div>
           <div class="recommendatory-game">
             <div class="images-container">
-              <div class="grid-item text-center" :style="{width: `${imageContainerWidth}px`}"
-                @click="switchGame(gamePlay[gameCode])"
-                v-for="(gameCode,index) in classicGames" :key="index"
-                v-if="gamePlay[gameCode]"
-              >
-                <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
-                <p class="name">{{gamePlay[gameCode].name}}</p>
-                <div class="game-label">
-                  <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+              <template v-for="(gameCode,index) in classicGames">
+                <div  v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                  :style="{width: `${imageContainerWidth}px`}"
+                  @click="switchGame(gamePlay[gameCode])"
+                  :key="index"
+                >
+                  <img class="icon" v-lazy="gamePlay[gameCode].icon" width="56" height="56"/>
+                  <p class="name">{{gamePlay[gameCode].name}}</p>
+                  <div class="game-label">
+                    <span class="game-label-text">{{gamePlay[gameCode].period}}</span>
+                  </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -71,7 +75,7 @@
     <game-menu-icon
       @click.native.prevent="handleClose"
       class="menu-center"
-      type="less" :theme="theme"
+      type="less"
     />
   </popup>
 </template>
@@ -247,7 +251,7 @@ export default {
 
   .grid-item {
     .name {
-      font-size: 13px;
+      font-size: 14px;
       color: #333;
     }
   }
@@ -297,10 +301,8 @@ export default {
     display: inline-block;
     height: 20px;
     line-height: 20px;
-    padding: 2px 5px;
+    padding: 0px 5px;
     border-radius: 10px;
-    background-color: #d0e2f7;
-    color: #113f7c;
     font-size: 11px;
   }
 }
@@ -315,9 +317,10 @@ export default {
     display: inline-block;
     height: 20px;
     line-height: 20px;
-    padding: 2px 5px;
+    padding: 0px 5px;
     color: #999;
     font-size: 11px;
+    background-color: initial;
   }
 }
 
@@ -327,7 +330,7 @@ export default {
   justify-content: center;
   align-items: flex-end;
   width: 100%;
-  height: 30px;
+  height: 22px;
   padding-bottom: 3px;
 }
 
@@ -358,7 +361,7 @@ export default {
   margin: 0 auto;
   left: 0;
   right: 0;
-  top: -5px;
+  top: -6px;
   position: relative;
 }
 </style>
