@@ -316,7 +316,6 @@ export default {
 .tip {
   position: absolute;
   top: 10px;
-  display: block;
   border-radius: 100%;
   width: 16px;
   height: 16px;
