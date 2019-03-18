@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{height: height, 'line-height': height}">
-    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{messages[currentIndex]}}</span>
+    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{removeHTML(messages[currentIndex])}}</span>
   </div>
 </template>
 
@@ -61,6 +61,10 @@ export default {
           this.scrollMarquee()
         }
       }, 17)
+    },
+    removeHTML (strText) {
+      const regEx = /<[^>]*>/g
+      return strText.replace(regEx, '')
     }
   },
   beforeDestroy () {
