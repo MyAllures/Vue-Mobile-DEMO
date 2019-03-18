@@ -404,6 +404,13 @@ export default {
   height: 180px;
   overflow-y: scroll;
   overflow-x: hidden;
+  word-break: break-all;
+  width: calc(100%-10px);
+  overflow-x: hidden;
+  line-height: 1.5;
+  /deep/ strong {
+    font-weight: 800;
+  }
 }
 .weui-grids {
   &:after{
