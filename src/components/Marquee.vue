@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{height: height, 'line-height': height}">
-    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{removeHTML(messages[currentIndex])}}</span>
+    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{showMessage}}</span>
   </div>
 </template>
 
@@ -65,6 +65,11 @@ export default {
     removeHTML (strText) {
       const regEx = /<[^>]*>/g
       return strText.replace(regEx, '')
+    }
+  },
+  computed: {
+    showMessage () {
+      return this.removeHTML(this.messages[this.currentIndex])
     }
   },
   beforeDestroy () {
