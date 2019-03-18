@@ -13,6 +13,7 @@ const cs10fc = (resolve) => require(['@/screens/games/rules/cs10fc'], resolve)
 const cs5fc = (resolve) => require(['@/screens/games/rules/cs5fc'], resolve)
 const cs600cr = (resolve) => require(['@/screens/games/rules/cs600cr'], resolve)
 const cs600hkl = (resolve) => require(['@/screens/games/rules/cs600hkl'], resolve)
+const cs75hkl = (resolve) => require(['@/screens/games/rules/cs75hkl'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
 const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
@@ -61,6 +62,7 @@ export default {
     hkl,
     luckl,
     cshkl,
+    cs75hkl,
     xjssc,
     tjssc,
     csffc,
