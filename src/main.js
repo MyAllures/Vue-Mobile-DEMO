@@ -168,10 +168,10 @@ axios.interceptors.response.use(res => {
     type: HTTP_ERROR,
     error
   })
-  Vue.$vux.toast.show({
-    text: '网路服务异常，请稍后再试',
-    type: 'warn'
-  })
+  // Vue.$vux.toast.show({
+  //   text: '网路服务异常，请稍后再试',
+  //   type: 'warn'
+  // })
   return Promise.reject(error)
 })
 
