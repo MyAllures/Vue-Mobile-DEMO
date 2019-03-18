@@ -141,7 +141,7 @@
           <swiper-item
             :key="'swiper-anmt' + index"
             v-for="(a, index) in announcements">
-            <p class="m-t swiper-announcement">{{a}}</p>
+            <p v-html="a" class="m-t swiper-announcement"></p>
           </swiper-item>
         </swiper>
       </div>
