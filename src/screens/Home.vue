@@ -141,7 +141,7 @@
           <swiper-item
             :key="'swiper-anmt' + index"
             v-for="(a, index) in announcements">
-            <p class="m-t swiper-announcement">{{a}}</p>
+            <p v-html="a" class="m-t swiper-announcement"></p>
           </swiper-item>
         </swiper>
       </div>
@@ -404,6 +404,13 @@ export default {
   height: 180px;
   overflow-y: scroll;
   overflow-x: hidden;
+  word-break: break-all;
+  width: calc(100%-10px);
+  overflow-x: hidden;
+  line-height: 1.5;
+  /deep/ strong {
+    font-weight: 800;
+  }
 }
 .weui-grids {
   &:after{

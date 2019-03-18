@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{height: height, 'line-height': height}">
-    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{messages[currentIndex]}}</span>
+    <span v-html="showMessage" class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}"></span>
   </div>
 </template>
 
@@ -61,6 +61,15 @@ export default {
           this.scrollMarquee()
         }
       }, 17)
+    },
+    removeHTML (strText) {
+      const regEx = /<[^>]*>/g
+      return strText.replace(regEx, '')
+    }
+  },
+  computed: {
+    showMessage () {
+      return this.removeHTML(this.messages[this.currentIndex])
     }
   },
   beforeDestroy () {
