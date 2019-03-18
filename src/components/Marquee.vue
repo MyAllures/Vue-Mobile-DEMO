@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{height: height, 'line-height': height}">
-    <span class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}">{{showMessage}}</span>
+    <span v-html="showMessage" class="text" ref="message" :style="{ position:'relative', left: `-${leftOffset}px`}"></span>
   </div>
 </template>
 
