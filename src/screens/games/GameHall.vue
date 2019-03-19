@@ -59,10 +59,9 @@
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
      <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <template v-if="allGames&&allGames.length&&theme">
-      <game-menu v-model="isGameMenuVisible" />
-      <div>
-        <div
-          v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
+      <game-menu v-model="isGameMenuVisible" v-if="allGames.length"/>
+      <div v-if="currentGame">
+        <div v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
           @click="isGameMenuVisible = !isGameMenuVisible"
           class="notify-msg menu-center topbar" :style="{'background-color': theme}"
         >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
@@ -144,21 +143,7 @@ export default {
       return hasRoadBead(this.currentGame.code)
     },
     currentGame () {
-      const game = this.$store.getters.gameById(this.$route.params.gameId)
-      if (game) {
-        const checkDate = window.localStorage.getItem(game.display_name)
-        if (checkDate) {
-          if (+checkDate < +this.$moment().format('YYYYMMDD')) {
-            this.showNotifiyMsg = true
-          } else {
-            this.showNotifiyMsg = false
-          }
-        } else {
-          this.showNotifiyMsg = true
-        }
-        this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
-      }
-      return game
+      return this.$store.getters.gameById(this.$route.params.gameId)
     },
     ...mapGetters([
       'allGames'
@@ -227,6 +212,24 @@ export default {
 
         to(scrollTop)
       }
+    },
+    'currentGame': {
+      handler (game) {
+        if (game) {
+          const checkDate = window.localStorage.getItem(game.display_name)
+          if (checkDate) {
+            if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+              this.showNotifiyMsg = true
+            } else {
+              this.showNotifiyMsg = false
+            }
+          } else {
+            this.showNotifiyMsg = true
+          }
+          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
+        }
+      },
+      immediate: true
     }
   },
   created () {
