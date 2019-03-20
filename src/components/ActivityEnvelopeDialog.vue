@@ -5,8 +5,8 @@
       :hide-on-blur="true"
       @on-hide="$emit('on-close')"
       :dialog-style="{
-        width: '90vw',
-        height: '154vw',
+        width: '48vh',
+        height: '80vh',
         'background-image': `url('${require('../assets/envelope_bg.png')}')`,
         'background-size': 'contain',
         'background-position': 'top center',
@@ -59,9 +59,9 @@
           </template>
           <template v-else-if="status==='success'">
             <div class="title" >领取成功</div>
-            <div class="article-area">
+            <div class="result-area success">
               <div class="amount">{{amount|currency('￥')}}</div>
-              <div class="success-icon"></div>
+              <div class="icon"></div>
               <div class="desc">
                 <p>红包已存入您的帐户</p>
                 <p>稍后可在交易纪录中查询</p>
@@ -73,8 +73,8 @@
           </template>
           <template v-else>
             <div class="title">领取失败</div>
-            <div class="article-area">
-              <div class="fail-icon"></div>
+            <div class="result-area fail">
+              <div class="icon"></div>
               <div class="desc">
                 <p>红包就在刚刚被抢完了</p>
                 <p>明天再来吧</p>
@@ -128,6 +128,13 @@ export default {
     'visible': function (visible) {
       this.isVisible = visible
       if (visible) {
+        this.status = ''
+        this.messages = []
+        this.name = ''
+        this.description = ''
+        this.criteria = ''
+        this.duration_desc = ''
+        this.takenEnvelope = false
         fetchActivityEnvelope(this.envelopeActivityId).then(res => {
           this.status = res.available_status.code
           this.messages = res.available_status.messages
@@ -138,16 +145,6 @@ export default {
         }).catch(() => {
 
         })
-      } else {
-        setTimeout(() => {
-          this.status = ''
-          this.messages = []
-          this.name = ''
-          this.description = ''
-          this.criteria = ''
-          this.duration_desc = ''
-          this.takenEnvelope = false
-        }, 1000)
       }
     }
   },
@@ -178,14 +175,14 @@ export default {
 <style lang="less" scoped>
 .wrapper {
   width: 100%;
-  height: 154vw;
+  height: 80vh;
 }
 .content {
   box-sizing: border-box;
-  padding-top: 47vw;
-  padding-bottom: 9vw;
+  padding-top: 24vh;
+  padding-bottom: 1vh;
   width: 100%;
-  height: 144vw;
+  height: 75vh;
   pointer-events: auto;
   .title {
     box-sizing: border-box;
@@ -238,33 +235,59 @@ export default {
         }
       }
     }
-    .amount {
-      color: #fff;
-      font-size: 40px;
-    }
+  }
+  .result-area {
+    box-sizing: border-box;
+    height: calc(~"100%" - 110px);
+    padding-top: 2%;
     .desc {
-      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       font-size: 14px;
+      color: #fdebc5;
       p {
         font-weight: lighter;
       }
     }
-    .success-icon {
-      width: 80px;
-      height: 80px;
-      background: url('../assets/envelope_success.png') center no-repeat;
-      background-size: contain;
-    }
-    .fail-icon {
-      width: 80px;
-      height: 80px;
-      background: url('../assets/envelope_fail.png') center no-repeat;
-      background-size: contain;
+    .amount {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 32px;
     }
     @media screen and (max-width: 320px) {
       .amount {
         color: #fff;
         font-size: 24px;
+      }
+    }
+    .icon {
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      width: 100%;
+      height: 60%;
+    }
+    &.success {
+      .amount {
+        height: 20%;
+      }
+      .desc {
+        height: 20%;
+      }
+      .icon {
+          background-image: url('../assets/envelope_success.png');
+      }
+    }
+    &.fail {
+      .desc {
+        height: 40%;
+      }
+      .icon {
+        background-image: url('../assets/envelope_fail.png');
       }
     }
   }
