@@ -199,7 +199,7 @@ export default {
         limit: 30
       }
       if (this.selectedTabIdx !== undefined) {
-        conditions.target = this.selectedTabIdx
+        conditions.target = this.selectedTabIdx + 1
       }
       return conditions
     }
