@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading">
+    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading" @click="$root.bus.$emit('showGameHistory')">
       <div class="balls-frame">
         <div v-if="result.status!=='valid'">官方开奖无效</div>
         <div
@@ -13,6 +13,7 @@
           <p class="ball-zodiac" v-if="resultZodiac"> {{resultZodiac[index]}} </p>
         </div>
       </div>
+      <i class="solid-triangle point-down"></i>
     </div>
     <game-result-animate
       v-else-if="result"
@@ -92,7 +93,7 @@ export default {
           arr = this.result.zodiac.slice()
         }
 
-        arr.splice(6, 0, '＋')
+        arr.splice(6, 0, '+')
         return arr
       } else {
         return null
@@ -148,10 +149,15 @@ export default {
       max-width: 265px;
     }
   }
+  .solid-triangle {
+    position: absolute;
+    right: 5px;
+    border-top: 5px solid #666;
+  }
   .text {
     font-size: 12px;
     .ball-zodiac {
-      display: none;
+      text-indent: -9999px;
     }
   }
 
@@ -163,15 +169,12 @@ export default {
     font-size: 12px;
   }
   .ball-zodiac {
-    position: relative;
-    text-align: left;
-    left: 5px;
-    top: 28px;
+    text-align: center;
     font-size: 13px;
     margin-left: 1px;
   }
   .wrapper-hkl .result{
-    margin-bottom: 10px;
+    margin-bottom: 2px;
   }
   .result-bjkl8,.result-auluck8  {
     margin-bottom: 2px;
