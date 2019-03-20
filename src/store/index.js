@@ -108,7 +108,7 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '10px'}
+    dataSectionStyle: {'padding-top': '5px'}
   },
   actions,
   mutations,

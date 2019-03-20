@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector">
+    <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector lower-tab">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
           :animate="false"
+          line-width="2"
           active-color="theme" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
@@ -320,6 +321,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 .tab-selector {
   width: 100%;
   overflow: scroll;
@@ -330,8 +332,18 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  .vux-tab {
-    overflow-x: auto;
+  /deep/ .vux-tab-wrap {
+    padding-top: 34px;
+  }
+  /deep/ .vux-tab-container {
+    height: 34px;
+    .vux-tab {
+      height: 34px;
+      overflow-x: auto;
+    }
+  }
+  .vux-tab-item {
+    line-height: 34px;
   }
 }
 
