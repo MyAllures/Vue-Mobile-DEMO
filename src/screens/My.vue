@@ -61,7 +61,9 @@
           is-link>
           <img class="svg-icon" src="../assets/my/reset_wpassword.svg" slot="icon" alt="reset-wpwd">
         </cell>
-        <cell v-if="customerServiceUrl" @click.native="sendGaEvent({label: '我的帳號',category: '聯繫客服',action: '點擊'});window.open(customerServiceUrl)" :title="'联系客服'" is-link>
+        <cell v-if="serviceAction"
+          @click.native="sendGaEvent({label: '我的帳號',category: '聯繫客服',action: '點擊'});serviceAction()"
+          :title="'联系客服'" is-link>
           <img class="svg-icon" src="../assets/my/customer_service.svg" slot="icon" alt="service">
         </cell>
       </group>
@@ -108,8 +110,8 @@ export default {
     ...mapState([
       'systemConfig'
     ]),
-    customerServiceUrl () {
-      return this.systemConfig.customer_service_url
+    serviceAction () {
+      return this.systemConfig.serviceAction
     },
     bankAccount () {
       let bank = this.user.bank

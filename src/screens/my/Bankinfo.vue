@@ -97,10 +97,10 @@
           </div>
         </div>
       </div>
-      <div class="set-bottom" v-if="systemConfig.customerServiceUrl">
-        <a target="_blank" :href="systemConfig.customerServiceUrl" class="service-btn">
+      <div class="set-bottom" v-if="systemConfig.serviceAction">
+        <span @click="systemConfig.serviceAction()" class="service-btn">
           <span>{{$t('misc.need_help')}}</span>
-        </a>
+        </span>
       </div>
     </div>
 
