@@ -51,7 +51,8 @@ function initData () {
           envelopeSettings: pref.red_envelope_settings || {},
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
-          planSiteUrl: pref.plan_site_url
+          planSiteUrl: pref.plan_site_url,
+          envelopeActivityId: response.envelope_activity_id
         })
 
       const themeId = response.theme || 1

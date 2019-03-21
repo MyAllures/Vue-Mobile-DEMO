@@ -29,7 +29,7 @@ export function fetchAnnouncements () {
 }
 
 export function gethomePage () {
-  return axios.get(urls.homePage)
+  return axios.get(`${urls.homePage}?platform=mobile`)
 }
 
 export function fetchGames () {
@@ -270,6 +270,16 @@ export function takeEnvelope (envelopId, userId) {
   return axios.put(`${urls.envelope}${envelopId}/`, {
     receiver_id: userId
   }, {
+    'Content-Type': 'application/json'
+  })
+}
+
+export function fetchActivityEnvelope (envelopId) {
+  return axios.get(`${urls.envelope_activity}${envelopId}/?platform=mobile`)
+}
+
+export function takeActivityEnvelope (data) {
+  return axios.post(urls.take_envelope_activity, data, {
     'Content-Type': 'application/json'
   })
 }
