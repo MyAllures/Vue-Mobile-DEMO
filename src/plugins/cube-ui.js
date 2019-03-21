@@ -9,9 +9,15 @@ import {
   Picker,
   DatePicker,
   // scroll
-  Scroll
+  Scroll,
+  Input,
+  Upload,
+  Loading
 } from 'cube-ui'
 
 Vue.use(Picker)
 Vue.use(DatePicker)
 Vue.use(Scroll)
+Vue.use(Input)
+Vue.use(Upload)
+Vue.use(Loading)

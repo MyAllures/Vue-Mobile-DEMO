@@ -14,11 +14,11 @@
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
           </template>
           <template v-else>
-            <div
-              class="balance fr"
+            <div class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥')}}
+              <span>{{ user.balance|currency('￥')}}</span>
             </div>
+            <UnreadPoint></UnreadPoint>
           </template>
         </div>
       </template>
@@ -176,6 +176,7 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -196,6 +197,7 @@ export default {
     }
   },
   components: {
+    UnreadPoint,
     TopBar,
     Swiper,
     SwiperItem,
@@ -244,11 +246,11 @@ export default {
       }
       const actions = []
       const config = this.systemConfig
-      if (config.customerServiceUrl) {
+      if (config.serviceAction) {
         actions.push({
           type: 'link',
           className: 'service',
-          url: config.customerServiceUrl,
+          click: config.serviceAction,
           text: '联系客服'
         })
       }

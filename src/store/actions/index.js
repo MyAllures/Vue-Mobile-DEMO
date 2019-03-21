@@ -14,6 +14,7 @@ import {
 } from '../../api'
 import {HKL_GAMES} from '../../config'
 import {take, find} from 'lodash'
+
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
