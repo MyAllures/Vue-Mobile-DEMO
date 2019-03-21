@@ -272,8 +272,5 @@ export default {
   },
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
-  },
-  setDataSectionStyle: ({commit}, style) => {
-    commit(types.DATA_SECTION_STYLE, style)
   }
 }

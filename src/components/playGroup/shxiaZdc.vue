@@ -2,14 +2,16 @@
   <div class="gameplays">
     <div class="playgroup-odds" v-if="!activePlay"> {{ groupName }}</div>
     <div class="playgroup-odds" v-else> 賠率：<span class="red">{{activePlay.odds}}</span></div>
-    <grid :cols="zodiacs ? 1 : 5"
+    <div
+      class="playgroup-content"
       v-for="(options, index) in [customOptions]"
       :key="index">
-      <grid-item
-        :class="['play','text-center', {active: option.active && !gameClosed}]"
+      <div
+        :class="['play-wrapper','text-center', {active: option.active && !gameClosed}]"
+        :style="{width: `calc(${100/(zodiacs ? 1 : 5)}%)`}"
         v-for="(option, index) in options"
         :key="index"
-        @on-item-click="toggleActive(option)">
+        @click="toggleActive(option)">
        <div class="play-area" v-if="zodiacs">
           <span class="play-name">{{option.displayName}}
             <span class="play-odds">{{option.odds}}</span>
@@ -18,17 +20,17 @@
             <span :class="`play-num result-${gameCode} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[option.displayName]" :key="num"></span>
           </span>
         </div>
-        <div v-else :class="`result-${gameCode} resultnum-${option.num}`">
+        <div class="play-area" v-else>
+          <div :class="`result-${gameCode} resultnum-${option.num}`">
+          </div>
         </div>
-      </grid-item>
-    </grid>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import { Grid, GridItem, Toast, Flexbox, FlexboxItem } from 'vux'
-
 export default {
   name: 'shixaZdc',
   props: {
@@ -125,9 +127,6 @@ export default {
       }
       option.active = !option.active
     }
-  },
-  components: {
-    Grid, GridItem, Toast, Flexbox, FlexboxItem
   }
 }
 </script>

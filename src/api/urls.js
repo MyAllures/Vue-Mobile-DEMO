@@ -22,6 +22,7 @@ export default {
   logout: host + '/logout/',
   games: apiv2 + '/game/',
   bettrack: apiv2 + '/bettrackrecord/',
+  bettrackNew: apiv2 + '/bettrackrecordv2/',
   category: apiv2 + '/game/category/',
   playgroup: apiv2 + '/game/playgroup/',
   schedule: apiv2 + '/game/schedule/',

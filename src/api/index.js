@@ -72,6 +72,19 @@ export function betTrack (data) {
   return axios.post(`${urls.bettrack}`, data)
 }
 
+/**
+ * 新版追號
+ * @param {Number} data.type 追號期數
+ * @param {Number} data.bet_amount 追號下注金額
+ * @param {Number} data.play_ids 追號下的play(只能有一個)
+ * @param {String} data.stopping_tracking_type 遇贏則止：when_win_stop, 追好追滿：never_stop
+ * @param {Number} data.multiple 倍率
+ * @param {Number} data.game_schedule 預下注期號的id
+ */
+export function betTrackNew (data) {
+  return axios.post(`${urls.bettrackNew}`, data)
+}
+
 export function placeBet (data) {
   return axios.post(urls.betrecord, data, {
     'Content-Type': 'application/json'

@@ -55,25 +55,29 @@
         </div>
       </template>
     </top-bar>
-    <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
-    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-    <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <template v-if="allGames&&allGames.length&&theme">
       <game-menu v-model="isGameMenuVisible" v-if="allGames.length"/>
-      <div v-if="currentGame">
-        <div v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
-          @click="isGameMenuVisible = !isGameMenuVisible"
-          class="notify-msg menu-center topbar" :style="{'background-color': theme}"
-        >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
+      <template v-if="currentGame">
+        <div class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
+          <div v-if="!isGameMenuVisible && showNotifiyMsg"
+            @click="isGameMenuVisible = !isGameMenuVisible"
+            class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+          >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
+          </div>
         </div>
-        <game-menu-icon
-          class="menu-center"
-          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
-          @click.native="isGameMenuVisible = !isGameMenuVisible"
-          type="more"
-        />
-      </div>
+      </template>
     </template>
+    <game-menu-icon
+      class="menu-center"
+      :style="{top: showNotifiyMsg ? '63px' : '39px'}"
+      @click.native="isGameMenuVisible = !isGameMenuVisible"
+      type="more"
+    />
+    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 18px)'}">
+      <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
+    </div>
+    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
+    <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
   </div>
 </template>
 <script>
@@ -126,7 +130,7 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: true
+      showNotifiyMsg: false
     }
   },
   computed: {
@@ -216,17 +220,16 @@ export default {
     'currentGame': {
       handler (game) {
         if (game) {
-          const checkDate = window.localStorage.getItem(game.display_name)
-          if (checkDate) {
-            if (+checkDate < +this.$moment().format('YYYYMMDD')) {
-              this.showNotifiyMsg = true
+          if (game.is_prompt) {
+            const checkDate = window.localStorage.getItem(game.display_name)
+            if (checkDate) {
+              if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+                this.showNotifiyMsg = true
+              }
             } else {
-              this.showNotifiyMsg = false
+              this.showNotifiyMsg = true
             }
-          } else {
-            this.showNotifiyMsg = true
           }
-          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
         }
       },
       immediate: true
@@ -321,6 +324,7 @@ export default {
 <style lang="less" scoped>
 .gamehall {
   height: 100%;
+  background-color: #fff;
 }
 
 .button-close {
@@ -437,19 +441,21 @@ export default {
 .menu-center {
   display: block;
   margin: 0 auto;
-  position: fixed;
-  left: 0;
-  right: 0;
-  z-index: 100;
+}
+
+.notify-msg-wrapper {
+  height: 25px;
+  transition-duration: .7s;
+  margin-top: 0;
 }
 
 .notify-msg {
+  position: relative;
   height: 25px;
   font-size: 13px;
   line-height: 25px;
   color: white;
   text-align: center;
-  top: 45.5px;
 }
 
 .close-btn {
