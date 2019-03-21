@@ -377,6 +377,7 @@ export default {
 @import '~vux/src/styles/reset.less';
 @import './styles/base.less';
 @import './styles/theme_config.less';
+@import '~vux/src/styles/1px.less';
 </style>
 <style lang="less" scoped>
 

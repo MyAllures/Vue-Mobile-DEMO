@@ -80,7 +80,8 @@ export default new Vuex.Store({
       stickerGroups: [],
       smsValidationEnabled: false,
       appDownloadUrl: '',
-      planSiteUrl: ''
+      planSiteUrl: '',
+      envelopeActivityId: ''
     },
     envelope: {},
     urgencySwitchedGame: null,
@@ -108,7 +109,7 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '10px'}
+    dataSectionStyle: {'padding-top': '5px'}
   },
   actions,
   mutations,

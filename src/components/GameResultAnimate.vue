@@ -108,7 +108,7 @@ export default {
             arr.push(randomGenerator())
           }
           arr.push(arr[0])
-          arr[0] = this.lastNums[index]
+          arr[0] = parseInt(num.data)
           return arr
         }
       })
@@ -206,7 +206,7 @@ export default {
   font-size: 12px;
 }
 .wrapper-hkl .view{
-  margin-bottom: 10px;
+  margin-bottom: 23px; // for zodiac text height
 }
 
 @keyframes scroll {

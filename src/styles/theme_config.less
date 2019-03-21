@@ -97,10 +97,6 @@
     background-image: @gradient;
   }
 
-  // .game .data-section {
-  //   background-image: @gradient;
-  // }
-
   .category-menu-item.active {
     background-color: @playColor;
   }
@@ -163,6 +159,15 @@
     background-color: @playColor;
     border: 1px solid @playColor;
   }
+
+  .trend-diagram-container {
+    .tab {
+      .tab-item.active {
+        color: @main;
+        border-color: @main;
+      }
+    }
+  }
 }
 
 .theme0 { // processing
@@ -173,9 +178,6 @@
 }
 
 .theme1 {// default
-  .game .data-section {
-    // background-image: linear-gradient(to bottom, #166fd8, #1568ca);
-  }
   .calendar-contentitem .calendar-chosenday {
     background-color: #166fd8;
   }
