@@ -226,7 +226,7 @@ export default {
           } else {
             this.showNotifiyMsg = true
           }
-          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '10px'})
+          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '13px'})
         }
       },
       immediate: true
@@ -311,7 +311,7 @@ export default {
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
-      this.$store.dispatch('setDataSectionStyle', {'padding-top': '10px'})
+      this.$store.dispatch('setDataSectionStyle', {'padding-top': '13px'})
       this.showNotifiyMsg = false
     }
   }
