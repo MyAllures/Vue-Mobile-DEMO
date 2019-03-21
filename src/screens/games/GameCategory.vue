@@ -15,6 +15,16 @@
         </tab-item>
       </tab>
     </div>
+    <div v-if="shawOptions.length" class="shaw-options vux-1px-b">
+      <div class="wrapper">
+        <check-icon 
+          :key="option.name"
+          v-on:click.native="toggleShaw(option, $event)"
+          v-for="option in shawOptions"
+          :value.sync="option.selected"
+          >{{ option.name }}</check-icon>
+      </div>
+    </div>
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -73,7 +83,7 @@
 
 <script>
 import _ from 'lodash'
-import { Grid, GridItem, Tab, TabItem } from 'vux'
+import { Grid, GridItem, Tab, TabItem, CheckIcon } from 'vux'
 import { customPlayGroups } from '../../config'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
@@ -109,6 +119,7 @@ export default {
     GridItem,
     Tab,
     TabItem,
+    CheckIcon,
     WithCode,
     gd11x5Seq,
     hk6Exl,
@@ -127,7 +138,8 @@ export default {
       tabs: {},
       tabKeys: [],
       currentTab: '',
-      showCombinationDetails: false
+      showCombinationDetails: false,
+      shawOptions: []
     }
   },
   computed: {
@@ -164,6 +176,14 @@ export default {
     'activePlays': {
       handler: function (activePlays) {
         this.$emit('updatePlays', activePlays)
+        // select/unselect shaw option when any play is active/inactive
+        let activeNums = activePlays.map(item => {
+          return parseInt(item.display_name)
+        })
+        this.shawOptions.forEach(option => {
+          let found = option.nums.every(r => activeNums.includes(r))
+          this.$set(option, 'selected', found)
+        })
       },
       deep: true
     },
@@ -195,6 +215,17 @@ export default {
     }
   },
   methods: {
+    toggleShaw (option, event) {
+      if (this.gameClosed) {
+        return
+      }
+      _.filter(this.plays, play => {
+        let matched = option.nums.includes(parseInt(play.display_name)) && this.currentTab === play.group
+        if (matched) {
+          this.$set(play, 'active', option.selected)
+        }
+      })
+    },
     sendGaConfig (gameName, categoryName) {
       const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
       if (gaTrackingId) {
@@ -265,6 +296,26 @@ export default {
       if (!currentCategory) {
         return
       }
+      // check if it's needed to show shaw options
+      this.categories.some(item => {
+        // for HKL and '特码' only
+        let existed = this.currentCategory.name === '特码' && item.name === '特肖' && item.extra_info && item.extra_info.shaw
+        if (existed) {
+          let shawOptions = []
+          let shaw = item.extra_info.shaw
+          // transform original object data to []
+          Object.keys(shaw).map(key => {
+            shawOptions.push({
+              'name': key,
+              'selected': false,
+              'nums': shaw[key]
+            })
+          })
+          this.shawOptions = shawOptions
+        }
+        return existed
+      })
+
       const tabs = {}
       const plays = {}
       const tabKeys = []
@@ -321,7 +372,26 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.shaw-options {
+  overflow-x: scroll; 
+  .wrapper { 
+    width: 600px;
+  }
+  
+  /deep/ .vux-check-icon {
+    width: 50px;
+    text-align: center;
+    padding: 2px 0 5px;
+    > span {
+      font-size: 13px;
+      color: #666;
+    }
+    .weui-icon  {
+      margin: 0 -0.2em;
+      font-size: 20px;
+    }
+  }
+}
 .tab-selector {
   width: 100%;
   overflow: scroll;
