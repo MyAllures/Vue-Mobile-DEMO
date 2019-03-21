@@ -61,9 +61,9 @@
     <template v-if="allGames&&allGames.length&&theme">
       <game-menu v-model="isGameMenuVisible" v-if="allGames.length"/>
       <div v-if="currentGame">
-        <div v-if="!isGameMenuVisible && (showNotifiyMsg && currentGame.is_prompt)"
+        <div v-if="!isGameMenuVisible && currentGame.is_prompt"
           @click="isGameMenuVisible = !isGameMenuVisible"
-          class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+          class="notify-msg menu-center topbar" :class="{hide: !showNotifiyMsg}" :style="{'background-color': theme}"
         >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
         </div>
         <game-menu-icon
@@ -311,6 +311,7 @@ export default {
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
+      this.$store.dispatch('setDataSectionStyle', {'padding-top': '10px'})
       this.showNotifiyMsg = false
     }
   }
@@ -435,6 +436,7 @@ export default {
 }
 
 .menu-center {
+  transition: top 1s;
   display: block;
   margin: 0 auto;
   position: fixed;
@@ -446,10 +448,14 @@ export default {
 .notify-msg {
   height: 25px;
   font-size: 13px;
-  line-height: 25px;
+  line-height: 22px;
   color: white;
   text-align: center;
   top: 45.5px;
+  transition: top 1s;
+  &.hide {
+    top: 20px;
+  }
 }
 
 .close-btn {

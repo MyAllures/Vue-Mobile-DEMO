@@ -174,16 +174,20 @@ $k3_length: length($results_k3);
 }
 
 @media screen and (max-width: 320px) {
-  .result-cshkl,
-  .result-luckl,
-  .result-cs600hkl,
   .result-cs75hkl,
+  .result-cshkl,
+  .result-cs600hkl,
+  .result-csjndhkl,
+  .result-cs75hkl,
+  .result-luckl,
   .result-hkl {
-    height: 24px;
-    width: 24px;
-    @for $num from 1 through 49 {
-      &.resultnum-#{$num} {
-        background-position: 0 (-24px * ($num - 1));
+    .num {
+      height: 24px;
+      width: 24px;
+      @for $num from 1 through 49 {
+        &.resultnum-#{$num} {
+          background-position: 0 (-24px * ($num - 1));
+        }
       }
     }
   }
