@@ -52,6 +52,9 @@
                   <li v-for="(m,i) in messages" :key="i"class="msg">・{{m}}</li>
                 </ul>
               </div>
+              <div v-else-if="status === 'need_login'" class="button disabled">
+                请先登入
+              </div>
               <div v-else class="button disabled">
                 {{messages[0]}}
               </div>
