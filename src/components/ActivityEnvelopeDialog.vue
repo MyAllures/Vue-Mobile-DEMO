@@ -5,12 +5,8 @@
       :hide-on-blur="true"
       @on-hide="$emit('on-close')"
       :dialog-style="{
-        width: '48vh',
-        height: '80vh',
-        'background-image': `url('${require('../assets/envelope_bg.png')}')`,
-        'background-size': 'contain',
-        'background-position': 'top center',
-        'background-repeat': 'no-repeat',
+        width: `${width}px`,
+        height: `${height}px`,
         'background-color': 'rgba(0,0,0,0)',
         'max-width': 'none',
         'pointer-events': 'none',
@@ -28,8 +24,23 @@
                 </div>
                 <div class="article">
                   <div class="article-title">领取条件</div>
-                  <div class="article-content">
-                    <p v-for="(p, index) in criteria" :key="index">・{{p}}</p>
+                  <div class="article-content" v-if="status === 'ineligible'">
+                    <template v-for="(p, index) in criteria">
+                      <p  v-if="p.eligible===true":key="index">
+                        ✓ {{p.message}}
+                      </p>
+                      <p class="false" v-else-if="p.eligible===false":key="index">
+                        ✗ {{p.message}}
+                      </p>
+                      <p  v-else :key="index">
+                        ・{{p}}
+                      </p>
+                    </template>
+                  </div>
+                  <div class="article-content" v-else>
+                    <p  v-for="(p, index) in criteria" :key="index">
+                      ・{{p.message}}
+                    </p>
                   </div>
                 </div>
                 <div class="article">
@@ -47,13 +58,9 @@
               </div>
               <div v-else-if="status === 'ineligible'" class="button disabled ineligible">
                 未满足领取条件
-                <i class="tip">!</i>
-                <ul class="messages">
-                  <li v-for="(m,i) in messages" :key="i"class="msg">・{{m}}</li>
-                </ul>
               </div>
               <div v-else-if="status === 'need_login'" class="button disabled">
-                请先登入
+                请先登录
               </div>
               <div v-else class="button disabled">
                 {{messages[0]}}
@@ -109,6 +116,14 @@ export default {
     InlineLoading
   },
   data () {
+    let width = window.innerWidth
+    let height = window.innerHeight
+    let imageRatio = 681 / 1061
+    if (width / height > imageRatio) {
+      width = height * imageRatio
+    } else {
+      height = width / imageRatio
+    }
     return {
       isVisible: false,
       name: '',
@@ -119,7 +134,9 @@ export default {
       takenEnvelope: false,
       amount: '',
       messages: [],
-      loading: false
+      loading: false,
+      width: width,
+      height: height
     }
   },
   computed: {
@@ -177,17 +194,26 @@ export default {
 </script>
 <style lang="less" scoped>
 .wrapper {
-  width: 100%;
-  height: 80vh;
+  position: relative;
+  background-image: url('../assets/envelope_bg.png');
+  background-size: contain;
+  background-position: top center;
+  background-repeat: no-repeat;
+  width: 90%;
+  height: 90%;
+  margin: 0 auto;
 }
 .content {
   box-sizing: border-box;
-  padding-top: 24vh;
-  padding-bottom: 1vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 49%;
+  padding-bottom: 1%;
   width: 100%;
-  height: 75vh;
+  height: 100%;
   pointer-events: auto;
   .title {
+    flex: 0 0 auto;
     box-sizing: border-box;
     width: 100%;
     height: 30px;
@@ -199,11 +225,11 @@ export default {
     color: #fdebc5;
   }
   .article-area {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 82%;
-    height: calc(~"100% - 110px");
+    width: 85%;
     overflow-y: auto;
     color: #fdebc5;
     margin: 0 auto;
@@ -229,6 +255,9 @@ export default {
           background-image: linear-gradient(to left, #c34141, #d13e3e);
         }
         .article-content {
+          .false {
+            color: #fff;
+          }
           font-weight: lighter;
           p {
             font-weight: lighter;
@@ -295,6 +324,7 @@ export default {
     }
   }
   .button-area {
+    flex: 0 0 auto;
     box-sizing: border-box;
     height: 80px;
     padding: 19px 30px;
@@ -315,17 +345,12 @@ export default {
         background-image: linear-gradient(to bottom, #ffffff, #bababa);
         box-shadow: 0px 7px 0px 0px darken(#bababa, 15%);
       }
-      &.ineligible:active {
-        .messages {
-          opacity: 1;
-        }
-      }
     }
   }
 }
 .close-btn {
   position: absolute;
-  bottom: 0;
+  bottom: -40px;
   width: 23px;
   height: 23px;
   left: 50%;
@@ -337,51 +362,6 @@ export default {
     width: 1px;
     top: 4px;
     left: 11px;
-  }
-}
-.tip {
-  position: absolute;
-  top: 10px;
-  border-radius: 100%;
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
-  text-align: center;
-  border: 2px solid red;
-  font-weight: bold;
-  font-style: normal;
-  color: red;
-  transform-origin: center;
-  transform: scale(.8);
-}
-.messages {
-  position: absolute;
-  top: 0;
-  right: 20px;
-  background-color: #333;
-  opacity: 0;
-  color: #fff;
-  text-align: left;
-  font-size: 12px;
-  transition: opacity .1s;
-  padding: 5px 20px;
-  transform: translateY(-100%);
-  &::before {
-    content: '';
-    position: absolute;
-    display: inline-block;
-    bottom: -12px;
-    right: 20px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 6px;
-    border-color:  #333 transparent transparent transparent;
-  }
-  .msg {
-    height: 20px;
-    line-height: 20px;
-    display: block;
   }
 }
 </style>
