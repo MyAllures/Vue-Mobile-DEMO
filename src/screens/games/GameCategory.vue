@@ -243,10 +243,9 @@ export default {
             return 'play-name'
           }
           if (this.game.code === 'fc3d') {
-            if (play.display_name.length > 2) {
+            if (play.display_name.length > 1) {
               return `play result-${this.game.code} text-sm`
             }
-            return `play result-${this.game.code}`
           }
           return `play result-${this.game.code} resultnum-${num}`
         } else {
