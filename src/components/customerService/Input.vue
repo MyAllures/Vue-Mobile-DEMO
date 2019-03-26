@@ -4,14 +4,18 @@
       v-model="value"
       @input="handleInput"
       :placeholder="''"
-      type="text"
-    >
+      type="text">
     </cube-input>
+    <StickerBtn></StickerBtn>
   </div>
 </template>
 
 <script>
+import StickerBtn from './StickerBtn.vue'
 export default {
+  components: {
+    StickerBtn
+  },
   props: {
     value: {
       type: String,

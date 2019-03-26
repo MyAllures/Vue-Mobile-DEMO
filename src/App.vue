@@ -347,7 +347,7 @@ export default {
     fetchServiceUnread () {
       fetchServiceUnread().then((res) => {
         this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
-      }).catch(() => {
+      }).catch((e) => {
         window.clearInterval(this.serviceUnreadInterval)
       })
     }

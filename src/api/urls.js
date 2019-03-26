@@ -63,8 +63,8 @@ export default {
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
   trend_chart: apiv2 + '/trend_chart/',
-  service_emoji: venomHost + '/chat/emoji',
-  service_unread: venomHost + '/support/has_unread',
-  service_image_attachment: venomHost + '/chat/attachment',
+  service_stickers: venomHost + '/chat/stickers/',
+  service_unread: venomHost + '/support/has_unread/',
+  service_image_attachment: venomHost + '/chat/attachment/',
   get_jwt_token: host + '/get_jwt_token/'
 }

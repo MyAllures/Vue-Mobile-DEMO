@@ -6,28 +6,29 @@
       @pulling-down="onPullingDown"
       ref="msg-scroll">
       <ul class="msgs">
-        <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
+        <li :ref="`message-${msgIndex}`" class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
           <div :class="msg.wrapperClassList">
-            <template v-if="msg.displayType === 'system'">
               <div :class="['content', ...msg.contentClassList]">
-                <p v-html="msg.text"></p>
-              </div>
-            </template>
-            <template v-else>
-              <div :class="['content', ...msg.contentClassList]">
-                <template v-if="msg.user">
-                  <img v-if="msg.user.avatar_url" class="avatar" :src="msg.user.avatar_url" alt="a">
-                  <i class="no-avatar" v-else>{{msg.user.username[0].toUpperCase()}}</i>
-                </template>
-                <div class="user-wrapper">
-                  <p class="username" v-if="msg.user">{{msg.user.nickname || msg.user.username}}</p>
-                  <div class="msg-wrapper" v-if="msg.text">
-                    <span class="bubble">{{msg.text}}</span>
-                    <span class="date">{{msg.timestamp}}</span>
+                <template v-if="msg.isChatMsg">
+                  <template>
+                    <img v-if="msg.user.avatar_url" class="avatar" :src="msg.user.avatar_url" alt="a">
+                    <i class="no-avatar" v-else>{{msg.user.username[0].toUpperCase()}}</i>
+                  </template>
+                  <div class="user-wrapper">
+                    <p class="username">{{msg.user.nickname || msg.user.username}}</p>
+                    <div class="msg-wrapper" v-if="msg.text">
+                      <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
+                        {{msg.text}}
+                      </span>
+                      <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img"/>
+                      <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
+                    </div>
                   </div>
-                </div>
+                </template>
+                <template v-else>
+                  <p v-html="msg.text"></p>
+                </template>
               </div>
-            </template>
           </div>
         </li>
       </ul>
@@ -58,16 +59,21 @@
 
 <script>
 import {map} from 'lodash'
-import {EMITTED_ACTION, RECEIVED_ACTION} from '@/utils/CustomerService'
+import {EMITTED_ACTION, MSG_TYPE} from '@/utils/CustomerService'
 export default {
   props: {
     rawMessages: {
       type: Array,
       default: []
+    },
+    hasHistory: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
+      MSG_TYPE,
       options: {
         pullDownRefresh: {
           threshold: 60,
@@ -78,12 +84,22 @@ export default {
   },
   methods: {
     onPullingDown () {
-      console.log('delete')
       this.$store.dispatch('customerService/deleteMessage', {msgid: 999})
       setTimeout(() => {
-        this.options.pullDownRefresh = false
         this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
       }, 2000)
+    }
+  },
+  watch: {
+    hasHistory: {
+      handler (isHas) {
+        if (isHas) {
+          this.options.pullDownRefresh = {threshold: 60, stopTime: 1000}
+        } else {
+          this.options.pullDownRefresh = false
+        }
+      },
+      immediate: true
     }
   },
   computed: {
@@ -91,43 +107,47 @@ export default {
       const myName = this.$store.state.user.username
       return map(this.rawMessages, msg => {
         let wrapperClassList = []
-        let timestamp = ''
-        let displayType = '' // chatting, system
         let contentClassList = []
-        if (msg.date_tag) {
-          displayType = 'system'
-          wrapperClassList = ['date_tag']
-          contentClassList = ['date-badge']
-          if (msg.text === this.$moment().format('YYYY-MM-DD')) { msg.text = '今天' }
-        } else if (msg.action === RECEIVED_ACTION.welcome_message) {
-          displayType = 'system'
-          wrapperClassList = [msg.action]
-          contentClassList = ['box']
-        } else if (msg.action === 'pulldown') {
-          displayType = 'system'
-          wrapperClassList = [msg.action]
-          contentClassList = ['tip']
-        } else {
-          displayType = 'chatting'
-          wrapperClassList = [msg.action, (msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
-          timestamp = this.$moment(msg.created_at).format('HH:mm:ss')
-          contentClassList = []
+        let isChatMsg = false
+        switch (msg.type) {
+          case MSG_TYPE.pulldown:
+            wrapperClassList = ['pulldown']
+            contentClassList = ['tip']
+            break
+          case MSG_TYPE.welcome:
+            wrapperClassList = ['welcome']
+            contentClassList = ['box']
+            break
+          case MSG_TYPE.datetag:
+            wrapperClassList = ['datetag']
+            contentClassList = ['date-badge']
+            if (msg.text === this.$moment().format('YYYY-MM-DD')) { msg.text = '今天' }
+            break
+          case MSG_TYPE.sticker:
+            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
+            contentClassList = ['image']
+            isChatMsg = true
+            break
+          case MSG_TYPE.image:
+            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
+            contentClassList = ['image']
+            isChatMsg = true
+            break
+          case MSG_TYPE.normal:
+            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
+            contentClassList = ['text']
+            isChatMsg = true
+            break
+          default:
+            return
         }
         return {
           ...msg,
           wrapperClassList,
-          timestamp,
-          displayType,
-          contentClassList
+          contentClassList,
+          isChatMsg
         }
       })
-    },
-    watch: {
-      'has_history_message': {
-        handler () {
-
-        }
-      }
     }
   }
 }
@@ -144,68 +164,64 @@ export default {
 .msg {
   margin-bottom: 10px;
   margin-top: 10px;
+  .bubble {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    max-width: 240px;
+    font-size: 14px;
+    word-break: break-all;
+    &.image {
+      padding: 0;
+    }
+  }
+  .date {
+    font-size: 12px;
+    transform: scale(.75);
+    color: #999;
+  }
+  .content {
+    display: flex;
+    align-items: flex-start;
+  }
+  .msg-wrapper {
+    display: flex;
+    align-items: flex-end;
+  }
+
   .self-sent {
     display: flex;
     justify-content: flex-end;
-    .avatar, .no-avatar {
+    .avatar, .no-avatar, .username {
       display: none;
-    }
-    .username {
-      display: none;
-    }
-    .msg-wrapper {
-      display: flex;
-      align-items: flex-end;
-    }
-    .content {
-      display: flex;
-      align-items: flex-start;
     }
     .bubble {
       order: 2;
-      display: inline-block;
-      box-sizing: border-box;
-      padding: 5px 10px;
-      max-width: 240px;
       border-radius: 8px 0 8px 8px;
       background-color: #166fd8;
-      font-size: 14px;
       color: #fff;
-      word-break: break-all;
     }
     .date {
       order: 1;
-      font-size: 12px;
-      transform: scale(.75);
-      color: #999;
     }
   }
 
   .other-sent {
     display: flex;
     justify-content: flex-start;
-    .content {
-      display: flex;
-      align-items: flex-start;
-    }
-    .msg-wrapper {
-      display: flex;
-      align-items: flex-end;
-    }
-    .avatar {
+    .avatar, .no-avatar {
       order: 1;
       width: 36px;
       height: 36px;
       border-radius: 15px;
+    }
+    .avatar {
       background-color: #ddd;
       margin-right: 5px;
     }
     .no-avatar {
       order: 1;
-      width: 36px;
-      height: 36px;
       line-height: 36px;
-      border-radius: 15px;
       background-color: azure;
       color: #333;
       text-align: center;
@@ -219,55 +235,37 @@ export default {
       color: #166fd8;
       margin-bottom: 5px;
     }
-    .date {
-      font-size: 12px;
-      transform: scale(.75);
-      color: #999;
-    }
     .bubble {
-      display: inline-block;
-      box-sizing: border-box;
-      padding: 5px 10px;
       border-radius: 0px 8px 8px 8px;
-      max-width: 240px;
       background-color: #fff;
       color: #333;
-      font-size: 14px;
-      word-break: break-all;
     }
   }
 
-  // naminig rule apply backend response action type
-  .date_tag {
+  .datetag, .welcome, .pulldown {
     display: flex;
     justify-content: center;
-    .date-badge {
-      display: inline-block;
-      padding: 1px 10px;
-      background-color: #e0e0e0;
-      border-radius: 10px;
-      font-size: 12px;
-      color: #999;
-    }
   }
 
-  .welcome_message {
-    display: flex;
-    justify-content: center;
-    .box {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 5px 13px;
-      text-align: left;
-      font-size: 14px;
-      color: #333;
-    }
+  .date-badge {
+    display: inline-block;
+    padding: 1px 10px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #999;
   }
 
-  // custom for display
+  .box {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 5px 13px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+  }
+
   .pulldown {
-    display: flex;
-    justify-content: center;
     padding-top: 10px;
     .tip {
       font-size: 12px;
