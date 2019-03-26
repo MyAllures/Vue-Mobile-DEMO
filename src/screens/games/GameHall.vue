@@ -52,6 +52,7 @@
             </div>
             <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
           </template>
+          <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
@@ -89,6 +90,7 @@ import TopBar from '@/components/TopBar'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -105,6 +107,7 @@ export default {
     }
   },
   components: {
+    UnreadPoint,
     Popup,
     XHeader,
     ChatRoom,
