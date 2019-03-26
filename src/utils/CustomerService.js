@@ -5,7 +5,7 @@ const RECEIVED_ACTION = {
   'history_message': 'history_message',
   'offline_message': 'offline_message',
   'welcome_message': 'welcome_message',
-  // functional
+  'has_history_message': 'has_history_message',
   'pulldown': 'pulldown'
 }
 
@@ -17,14 +17,14 @@ const EMITTED_ACTION = {
 }
 
 const MSG_TYPE = {
-  0: 'system',
-  1: 'normal',
-  2: 'image',
-  3: 'sticker',
-  // custom for display
-  97: 'datetag',
-  98: 'welcome',
-  99: 'pulldown'
+  'system': 0,
+  'normal': 1,
+  'image': 2,
+  'sticker': 3,
+  // below is custom for display
+  'datetag': 97,
+  'welcome': 98,
+  'pulldown': 99
 }
 
 export {

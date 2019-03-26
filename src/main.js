@@ -147,7 +147,6 @@ axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
   const fromRaven = config.url.includes(urls.ravenHost)
   if (fromVenom) {
-    console.log('from venom')
     config.headers['Authorization'] = `JWT ${Vue.cookie.get(JWT.venom + '_token')}`
   }
   if (fromRaven) {
@@ -165,7 +164,11 @@ axios.interceptors.request.use((config) => {
 
 const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
+  const fromVenom = res.config.url.includes(urls.venomHost)
   let responseData = res.data
+  if (fromVenom) {
+    return responseData
+  }
   if (responseData.code === 2000) {
     return responseData.data
   } else if (responseData.code === 9001) {
@@ -287,7 +290,6 @@ const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
   store.dispatch('fetchUser').then(() => {
-    console.log('fetchUser')
     checkJWTTokenAlive(JWT.venom + '_token', fetchServiceUnread, fetchVenomJWTToken)
   }).catch(() => {
     initData()

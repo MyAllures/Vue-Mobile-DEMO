@@ -14,7 +14,6 @@ VenomSocketObj.prototype.initWs = function () {
   this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${Vue.cookie.get(JWT[TYPE] + '_token')}`)
 
   this.ws.onopen = (e) => {
-    console.log('venom open')
     clearInterval(this.checkWsLivingInterval)
     this.checkWsLivingInterval = setInterval(() => {
       if (wsLivingCount > 3) {
@@ -35,38 +34,33 @@ VenomSocketObj.prototype.initWs = function () {
     if (typeof response.data === 'string') {
       try {
         data = JSON.parse(response.data)
-        console.log(data, 'venom socket')
         if (data.message) {
           data.message.action = data.action || ''
         }
 
         switch (data.action) {
           case RECEIVED_ACTION.welcome_message:
-            if (data.message.has_history_message) {
-              store.dispatch('customerService/addMessages', [
-                {'id': 999, 'action': RECEIVED_ACTION.pulldown, 'text': '上滑阅读过往聊天记录 ↓'}
-              ])
-            }
-
-            if (data.message.has_offline_message) {
-              this.ws.send(JSON.stringify({action: 'offline_message'}))
-            }
+            data.message.type = 98
             store.dispatch('customerService/addMessages', [data.message])
             break
+          case RECEIVED_ACTION.has_history_message:
+            store.dispatch('customerService/addMessages', [{'id': 999, 'action': RECEIVED_ACTION.pulldown, 'text': '上滑阅读过往聊天记录 ↓', type: 99}])
+            store.dispatch('customerService/updateIsHasHistory', data.message.has_history_message)
+            break
           case RECEIVED_ACTION.offline_message:
+            data.message.forEach((msg) => { if (msg.date_tag) { msg.type = 97 } })
             this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message[data.message.length].id}})
             store.dispatch('customerService/addMessages', [...data.message])
             break
           case RECEIVED_ACTION.history_message:
+            store.dispatch('customerService/updateIsHasHistory', false)
+
+            data.message.forEach((msg) => { if (msg.date_tag) { msg.type = 97 } })
             store.dispatch('customerService/insertHistoryMessages', [...data.message])
             break
           case RECEIVED_ACTION.image:
-
             store.dispatch('customerService/addMessages', [data.message])
             this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message.id}})
-            break
-          case RECEIVED_ACTION.system:
-            store.dispatch('customerService/addMessages', [data.message])
             break
           case RECEIVED_ACTION.normal:
             store.dispatch('customerService/addMessages', [data.message])

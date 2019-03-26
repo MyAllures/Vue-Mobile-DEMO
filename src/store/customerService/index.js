@@ -4,7 +4,8 @@ export default {
   namespaced: true,
   state: {
     unread: 0,
-    messages: []
+    messages: [],
+    hasHistory: false
   },
   mutations: {
     setServiceUnread: (state, count) => {
@@ -23,6 +24,9 @@ export default {
     deleteMessage: (state, {msgid}) => {
       const index = findIndex(state.messages, msg => msg.id === msgid)
       if (index !== -1) state.messages.splice(index, 1)
+    },
+    updateIsHasHistory: (state, isHas) => {
+      state.hasHistory = isHas
     }
   },
   actions: {
@@ -40,6 +44,9 @@ export default {
     },
     deleteMessage: ({ commit }, {msgid}) => {
       commit('updateMessage', {msgid})
+    },
+    updateIsHasHistory: ({ commit }, isHas) => {
+      commit('updateIsHasHistory', isHas)
     }
   }
 }
