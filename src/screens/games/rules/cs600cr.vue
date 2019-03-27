@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>{{gameName}}是自主研发的极速彩系列之一，以PK10游戏玩法为依据，10分钟即时开奖，全天候开奖不间断。</p>
+    <p>{{gameName}}是以PK10游戏玩法为依据，10分钟即时开奖，共144期，全天候开奖不间断。</p>
     <h3>
       <span class="warn">1～10 两面：</span>指 单、双；大、小。</h3>
     <ul>

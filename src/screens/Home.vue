@@ -142,7 +142,7 @@
           <swiper-item
             :key="'swiper-anmt' + index"
             v-for="(a, index) in announcements">
-            <p class="m-t swiper-announcement">{{a}}</p>
+            <p v-html="a" class="m-t swiper-announcement"></p>
           </swiper-item>
         </swiper>
       </div>
@@ -150,7 +150,11 @@
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
     <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
-    <div v-if="systemConfig.envelopeActivityId" class="envelope-btn" @click="showEnvelope"></div>
+    <div
+      v-if="systemConfig.envelopeActivityId"
+      class="envelope-btn"
+      @click="showEnvelope">
+    </div>
   </div>
 </template>
 
@@ -356,19 +360,12 @@ export default {
       this.currentTag = this.tags[i]
     },
     showEnvelope () {
-      if (this.user.logined === true) {
-        this.isEnvelopeVisible = true
-        this.sendGaEvent({
-          label: '首页',
-          category: '紅包',
-          action: '查看红包活动'
-        })
-      } else {
-        this.$vux.toast.show({
-          text: '需先登入',
-          type: 'warn'
-        })
-      }
+      this.isEnvelopeVisible = true
+      this.sendGaEvent({
+        label: '首页',
+        category: '紅包',
+        action: '查看红包活动'
+      })
     }
   }
 }
@@ -448,6 +445,13 @@ export default {
   height: 180px;
   overflow-y: scroll;
   overflow-x: hidden;
+  word-break: break-all;
+  width: calc(100%-10px);
+  overflow-x: hidden;
+  line-height: 1.5;
+  /deep/ strong {
+    font-weight: 800;
+  }
 }
 .weui-grids {
   &:after{
@@ -713,10 +717,46 @@ export default {
   right: 20px;
   top: 70vh;
   width: 40px;
-  height: 70px;
-  transform-origin: center center;
-  transform: rotate(15deg);
+  height: 60px;
   background: url('../assets/envelope_btn.svg') no-repeat;
   background-size: contain;
+  animation-duration: 6s;
+  animation-timing-function: ease;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-name: shaking;
+  transform-origin: top center;
+  transform: rotate(15deg);
+}
+@keyframes shaking {
+  //start shaking
+  0% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  2% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+  4% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  6% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+  8% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  10% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+
+  // start staying
+  99% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+
+  100% {
+    transform: translateX(0%) rotate(15deg);
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="trend-diagram-container">
     <div class="header">
       <div class="type-tab">
         <div
@@ -11,66 +11,172 @@
       <div class="divide"></div>
       <div class="calendar-icon" @click="showDatePicker"></div>
     </div>
-    <div class="tab">
+    <div class="tab" v-if="selectedSetting.tabs">
       <div
         :class="['tab-item', {active: selectedTabIdx===tabIdx}]"
         v-for="(text, tabIdx) in selectedSetting.tabs"
         :key="tabIdx"
         @click="chooseTabIdx(tabIdx)">{{text}}</div>
     </div>
-    <div class="total-section">
-      <table class="table total">
-        <thead class="thead">
-          <tr>
-            <th :style="{width: firstColWidth+'px'}" class="first-col col">{{selectedSetting.cumulationType}}</th>
-            <th :style="{width: colWidth+'px'}" class="col" v-for="(name, index) in selectedSetting.cumulationNames" :key="index">{{name}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="first-col col">今日总次数</td>
-            <td class="col" v-for="(num, index) in selectedSetting.cumulationNames" :key="index">{{cumulation[index]||0}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="record-section">
+    <div :class="['table__container', {'has-more': records.length<total_count}]" v-if="selectedSetting.cumulationNames.length>10">
+      <div :class="['table__fix-column', {'at-middle': !isTableAtRight}]" :style="{width: `${firstColWidth}px`}">
+        <div class="total-section">
+          <table class="table total" :style="{width: `${firstColWidth}px`}">
+            <thead class="thead">
+              <tr>
+                <th class="first-col col">{{selectedSetting.cumulationType}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="first-col col">今日总次数</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="record-section" ref="fcBody">
+          <div class="table-wrapper">
+            <table class="table record" >
+              <tbody>
+                <tr v-for="(rec, recIdx) in records" :key="recIdx">
+                  <td :style="{width: firstColWidth+'px'}" class="first-col col">{{rec.issue_number}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div :class="['table__rest-column', {'at-middle': !isTableAtRight}]" :style="{width: `calc(100% - ${firstColWidth}px)`}">
+        <div class="total-section" ref="rcHead">
+          <table class="table total" :style="{width: `${selectedSetting.cumulationNames.length*colWidth}px`}">
+            <thead class="thead">
+              <tr>
+                <th :style="{width: colWidth+'px'}" class="col" v-for="(name, index) in selectedSetting.cumulationNames" :key="index">{{name}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="col" v-for="(num, index) in selectedSetting.cumulationNames" :key="index">{{cumulation[index]||0}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="record-section" ref="rcBody">
+          <div class="table-wrapper">
+            <table class="table record" ref="restRecordTable" :style="{width: `${selectedSetting.cumulationNames.length*colWidth}px`}">
+              <tbody>
+                <tr v-for="(rec, recIdx) in records" :key="recIdx">
+                  <td :style="{width: colWidth+'px'}" class="col" v-for="(num, index) in rec.numbers" :key="index">{{num}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="line-panel" :style="{width: `${svgPanelWidth}px`, top: `${svgH/2}px`}">
+              <svg width="100%" :height="`${tableHeight}px`">
+                <template v-for="(res, idx) in resultList">
+                  <line v-if="resultList[idx+1]!==undefined" :key="idx" :x1="colWidth/2+res[0]*colWidth" :y1="svgH*idx" :x2="colWidth/2+resultList[idx+1][0]*colWidth" :y2="svgH*(idx+1)" style="stroke: #156fd8;stroke-width: 1px"/>
+                </template>
+              </svg>
+            </div>
+            <div class="circle-panel" :style="{width: `${svgPanelWidth}px`}">
+              <svg width="100%" :height="`${tableHeight}px`">
+                <template v-for="(res, idx) in resultList">
+                  <circle :key="`circle${idx}`" :cx="colWidth/2+res[0]*colWidth" :cy="svgH/2+svgH*idx" r="10" fill="#156fd8" />
+                  <text :key="`text${idx}`" :x="colWidth/2+res[0]*colWidth" :y="svgH/2+svgH*idx" dominant-baseline="central" text-anchor="middle" style="fill:#fff;font-size:14px;">{{res[1]}}</text>
+                </template>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="loading" v-show="loading">
         <inline-loading></inline-loading>
       </div>
-      <div class="table-wrapper" v-show="!loading">
-        <table class="table record" ref="record-table">
+      <template  v-if="!loading">
+        <div class="foot bottom" v-if="records.length<total_count && footAreaBottomVisible">
+          <x-button
+            type="default"
+            action-type="button"
+            class="add-more"
+            @click.native="addMore">
+            <inline-loading v-if="addMoreLoading"></inline-loading>
+            <span v-else>{{$t('misc.load_more')}}</span>
+          </x-button>
+        </div>
+        <div class="foot top" v-else-if="total_count===0">
+          <div class="no-more" >{{$t('misc.no_data_yet')}}</div>
+        </div>
+      </template>
+    </div>
+    <template v-else>
+      <div class="total-section">
+        <table class="table total" :style="{width: `${firstColWidth + selectedSetting.cumulationNames.length*colWidth}px`}">
+          <thead class="thead">
+            <tr>
+              <th :style="{width: firstColWidth+'px'}" class="first-col col">{{selectedSetting.cumulationType}}</th>
+              <th :style="{width: colWidth+'px'}" class="col" v-for="(name, index) in selectedSetting.cumulationNames" :key="index">{{name}}</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr v-for="(rec, recIdx) in records" :key="recIdx">
-              <td :style="{width: firstColWidth+'px'}" class="first-col col">{{rec.issue_number}}</td>
-              <td :style="{width: colWidth+'px'}" class="col" v-for="(num, index) in rec.numbers" :key="index">{{num}}</td>
+            <tr>
+              <td class="first-col col">今日总次数</td>
+              <td class="col" v-for="(num, index) in selectedSetting.cumulationNames" :key="index">{{cumulation[index]||0}}</td>
             </tr>
           </tbody>
         </table>
-        <canvas class="canvas" ref="line"></canvas>
-        <template  v-if="!loading">
-          <div class="foot" v-if="records.length<total_count">
-            <x-button
-              type="default"
-              action-type="button"
-              class="add-more"
-              @click.native="addMore">
-              <inline-loading v-if="addMoreLoading"></inline-loading>
-              <span v-else>{{$t('misc.load_more')}}</span>
-            </x-button>
-          </div>
-          <div class="foot" v-else-if="total_count===0">
-            <div class="no-more" >{{$t('misc.no_data_yet')}}</div>
-          </div>
-        </template>
       </div>
-    </div>
+      <div class="record-section">
+        <div class="loading" v-show="loading">
+          <inline-loading></inline-loading>
+        </div>
+        <div class="table-wrapper" v-show="!loading">
+          <table class="table record" ref="recordTable">
+            <tbody>
+              <tr v-for="(rec, recIdx) in records" :key="recIdx">
+                <td :style="{width: firstColWidth+'px'}" class="first-col col">{{rec.issue_number}}</td>
+                <td :style="{width: colWidth+'px'}" class="col" v-for="(num, index) in rec.numbers" :key="index">
+                  {{num}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="line-panel" :style="{width: `${svgPanelWidth}px`, top: `${svgH/2}px`}">
+            <svg width="100%" :height="`${tableHeight}px`">
+              <template v-for="(res, idx) in resultList">
+                <line v-if="resultList[idx+1]!==undefined" :key="idx" :x1="colWidth/2+res[0]*colWidth" :y1="svgH*idx" :x2="colWidth/2+resultList[idx+1][0]*colWidth" :y2="svgH*(idx+1)" style="stroke: #156fd8;stroke-width: 1px"/>
+              </template>
+            </svg>
+          </div>
+          <div class="circle-panel" :style="{width: `${svgPanelWidth}px`}">
+            <svg width="100%" :height="`${tableHeight}px`">
+              <template v-for="(res, idx) in resultList">
+                <circle :key="`circle${idx}`" :cx="colWidth/2+res[0]*colWidth" :cy="svgH/2+svgH*idx" r="10" fill="#156fd8" />
+                <text :key="`text${idx}`" :x="colWidth/2+res[0]*colWidth" :y="svgH/2+svgH*idx" dominant-baseline="central" text-anchor="middle" style="fill:#fff;font-size:14px;">{{res[1]}}</text>
+              </template>
+            </svg>
+          </div>
+          <template  v-if="!loading">
+            <div class="foot" v-if="records.length<total_count">
+              <x-button
+                type="default"
+                action-type="button"
+                class="add-more"
+                @click.native="addMore">
+                <inline-loading v-if="addMoreLoading"></inline-loading>
+                <span v-else>{{$t('misc.load_more')}}</span>
+              </x-button>
+            </div>
+            <div class="foot" v-else-if="total_count===0">
+              <div class="no-more" >{{$t('misc.no_data_yet')}}</div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
 import { settings } from '@/utils/trendDiagramSetting'
 import { fetchTrendChart } from '@/api'
-import { throttle } from 'lodash'
 import { XButton, InlineLoading } from 'vux'
 
 export default {
@@ -89,37 +195,43 @@ export default {
     const currentSettings = settings[this.game.code]
     return {
       selectedSetting: currentSettings[0],
-      selectedTabIdx: 0,
+      selectedTabIdx: currentSettings[0].tabs ? 0 : undefined,
       selectedDate: new Date(),
       settings: currentSettings,
       isCalendarVisible: false,
       records: [],
       cumulation: [],
-      ctx: null,
-      ratio: 1,
-      canvas: null,
-      canvasWidth: 0,
-      canvasHeight: 0,
       colWidth: 0,
       firstColWidth: 100,
       total_count: 0,
       next_cursor: undefined,
       loading: false,
       addMoreLoading: false,
-      noMoreData: false
+      noMoreData: false,
+      footAreaBottomVisible: false,
+      isTableAtRight: true,
+      resultList: [],
+      svgH: 0,
+      tableHeight: 0
     }
   },
   computed: {
     conditions () {
       let date = this.$moment(this.selectedDate).format('YYYY-MM-DD')
-      return {
+      const conditions = {
         game_code: this.game.code,
         type: this.selectedSetting.type,
-        target: this.selectedTabIdx + 1,
         start_date: date,
         end_date: date,
         limit: 30
       }
+      if (this.selectedTabIdx !== undefined) {
+        conditions.target = this.selectedTabIdx + 1
+      }
+      return conditions
+    },
+    svgPanelWidth () {
+      return this.colWidth * this.selectedSetting.cumulationNames.length
     }
   },
   watch: {
@@ -131,23 +243,33 @@ export default {
     }
   },
   created () {
-    this.colWidth = (window.innerWidth - this.firstColWidth) / (this.selectedSetting.cumulationNames.length)
+    let num = this.selectedSetting.cumulationNames.length
+    num = num <= 10 ? num : 10
+    this.colWidth = (window.innerWidth - this.firstColWidth) / num
   },
   mounted () {
-    const ctx = this.$refs.line.getContext('2d')
-    this.ctx = ctx
-    this.canvas = this.$refs.line
-    // 屏幕的设备像素比
-    let devicePixelRatio = window.devicePixelRatio || 1
-    // 浏览器在渲染canvas之前存储画布信息的像素比
-    let backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
-                        ctx.mozBackingStorePixelRatio ||
-                        ctx.msBackingStorePixelRatio ||
-                        ctx.oBackingStorePixelRatio ||
-                        ctx.backingStorePixelRatio || 1
-    // canvas的实际渲染倍率
-    this.ratio = devicePixelRatio / backingStoreRatio
-    window.addEventListener('resize', this.reDraw)
+    if (this.selectedSetting.cumulationNames.length > 10) {
+      const fcBody = this.$refs.fcBody
+      const rcBody = this.$refs.rcBody
+      const rcHead = this.$refs.rcHead
+      const rcBodyInitLeft = rcBody.scrollLeft
+      const rcBodyClientHeight = rcBody.clientHeight
+      let self = this
+      rcBody.addEventListener('scroll', function () {
+        fcBody.scrollTop = this.scrollTop
+        rcHead.scrollLeft = this.scrollLeft
+        if ((this.scrollHeight - (this.scrollTop + rcBodyClientHeight)) <= 0) {
+          self.footAreaBottomVisible = true
+        } else {
+          self.footAreaBottomVisible = false
+        }
+        if (this.scrollLeft === rcBodyInitLeft) {
+          self.isTableAtRight = true
+        } else {
+          self.isTableAtRight = false
+        }
+      }, { passive: true })
+    }
   },
   methods: {
     chooseSetting (setting) {
@@ -174,11 +296,12 @@ export default {
           this.records = this.records.concat(res.results)
           this.next_cursor = res.next_cursor
           this.$nextTick(() => {
-            this.initCanvas()
+            this.saveLineInfo()
           })
         })
         .catch(() => {})
         .finally(() => {
+          this.footAreaBottomVisible = false
           this.addMoreLoading = false
         })
     },
@@ -196,60 +319,39 @@ export default {
           this.records = res.results
           this.next_cursor = res.next_cursor
           this.$nextTick(() => {
-            this.initCanvas()
+            if (this.selectedSetting.hotArea) {
+              const rcBody = this.$refs.rcBody
+              const rcHead = this.$refs.rcHead
+              rcBody.scrollLeft = this.colWidth * this.selectedSetting.hotArea
+              rcHead.scrollLeft = this.colWidth * this.selectedSetting.hotArea
+            }
+            this.saveLineInfo()
           })
         })
         .catch(() => {
           this.loading = false
         })
     },
-    reDraw: throttle(function (e) {
-      this.colWidth = (window.innerWidth - this.firstColWidth) / (this.selectedSetting.cumulationNames.length)
-      this.initCanvas()
-    }, 200),
-    initCanvas () {
-      let canvasStyleWidth = this.canvasWidth = window.innerWidth - this.firstColWidth
-      let canvasStyleHeight = this.canvasHeight = this.$refs['record-table'].clientHeight
+    saveLineInfo () {
+      let tableWidth
+      let tableHeight
+      if (this.selectedSetting.cumulationNames.length > 10) {
+        tableWidth = this.$refs['restRecordTable'].clientWidth
+        tableHeight = this.$refs['restRecordTable'].clientHeight
+      } else {
+        tableWidth = window.innerWidth - this.firstColWidth
+        tableHeight = this.$refs['recordTable'].clientHeight
+      }
+      this.svgW = tableWidth / (this.selectedSetting.cumulationNames.length)
+      this.svgH = tableHeight / this.records.length
+      this.tableHeight = tableHeight
 
-      this.canvas.style.width = canvasStyleWidth + 'px'
-      this.canvas.style.height = canvasStyleHeight + 'px'
-      this.canvas.width = canvasStyleWidth * this.ratio
-      this.canvas.height = canvasStyleHeight * this.ratio
-      this.drawLine()
-    },
-    drawLine () {
-      const ratio = this.ratio
-      const ctx = this.ctx
-      let w = this.canvasWidth / (this.selectedSetting.cumulationNames.length) * ratio
-      let h = this.canvasHeight / this.records.length * ratio
-      const hitList = []
-      const axis = []
+      const resultList = []
       this.records.forEach((rec, i) => {
         let xIdx = rec.numbers.indexOf(0)
-        hitList.push(xIdx)
-        axis.push([xIdx * w + w / 2, i * h + h / 2])
+        resultList.push([xIdx, this.selectedSetting.cumulationNames[xIdx]])
       })
-      ctx.beginPath()
-      ctx.lineWidth = 1 * this.ratio
-      axis.forEach(xy => {
-        ctx.lineTo(xy[0], xy[1])
-      })
-      ctx.strokeStyle = '#166fd8'
-      ctx.stroke()
-      ctx.closePath()
-
-      ctx.font = `${14 * this.ratio}px Avenir,Helvetica,Arial,sans-serif`
-      ctx.textBaseline = 'middle'
-      ctx.textAlign = 'center'
-      axis.forEach((xy, i) => {
-        ctx.beginPath()
-        ctx.fillStyle = '#166fd8'
-        ctx.arc(xy[0], xy[1], 10 * this.ratio, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.fillStyle = '#fff'
-        ctx.fillText(this.selectedSetting.cumulationNames[hitList[i]], xy[0], xy[1] + 1 * this.ratio)
-        ctx.closePath()
-      })
+      this.resultList = resultList
     },
     showDatePicker () {
       if (this.loading || this.addMoreLoading) {
@@ -270,14 +372,11 @@ export default {
         onSelect: (date) => { this.selectedDate = date }
       }).show()
     }
-  },
-  beforeDestroy () {
-    window.removeEventListener('resize', this.reDraw)
   }
 }
 </script>
 <style lang="less" scoped>
-.container {
+.trend-diagram-container {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -341,6 +440,82 @@ export default {
     }
   }
 }
+.table__container {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  .foot {
+    position: absolute;
+    right: 0;
+    &.top {
+      top: 65px;
+    }
+    &.bottom {
+      bottom: 60px;
+    }
+  }
+  &.has-more {
+    .table-wrapper {
+      padding-bottom: 105px;
+    }
+  }
+  .loading {
+    position: absolute;
+    width: 100%;
+    right: 0;
+    top: 65px;
+  }
+}
+.table__fix-column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  &.at-middle {
+    box-shadow: 5px 0 10px -5px rgba(0,0,0,.12);
+  }
+}
+.table__rest-column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  .total-section {
+    width: 100%;
+    overflow-x: auto;
+  }
+  &.at-middle {
+    .record-section {
+      box-shadow: 5px 5px 10px -5px rgba(0,0,0,.12) inset;
+    }
+  }
+  .record-section {
+    .line-panel{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: auto;
+      line-height: 1;
+      svg {
+        display: block
+      }
+    }
+    .circle-panel{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: auto;
+      line-height: 0;
+      svg {
+        display: block
+      }
+    }
+  }
+}
+
+
+
+
+
 .total-section {
   flex: 0 0 auto;
 }
@@ -348,20 +523,34 @@ export default {
   position: relative;
   flex: 1 1 auto;
   background: #f5f5f5;
-  box-shadow: 0 0 10px rgba(0,0,0,.12) inset;
-  overflow-y: auto;
-  .canvas {
+  box-shadow: 0 5px 10px -5px rgba(0,0,0,.12) inset;
+  overflow: auto;
+  .line-panel{
     position: absolute;
     top: 0;
     right: 0;
+    line-height: 1;
+    svg {
+      display: block
+    }
+  }
+  .circle-panel{
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 0;
+    svg {
+      display: block
+    }
   }
 }
 .table-wrapper {
+  position: relative;
   box-sizing: border-box;
   padding-bottom: 60px;
 }
 .table {
-  width: 100%;
+  table-layout:fixed;
   border-collapse: collapse;
   color: #333;
   font-size: 14px;
@@ -387,7 +576,6 @@ export default {
     }
   }
 }
-
 .loading {
   display: flex;
   align-items: center;

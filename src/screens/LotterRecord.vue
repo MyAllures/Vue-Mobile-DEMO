@@ -103,6 +103,7 @@ const gameTable = {
   'hkl': hklCompareList,
   'cs600hkl': hklCompareList,
   'csjndhkl': hklCompareList,
+  'cs75hkl': hklCompareList,
   'fc3d': fc3dCompareList
 }
 export default {
@@ -347,7 +348,6 @@ export default {
     box-sizing: border-box;
     width: 100%;
     padding: 5px;
-    border-bottom: 1px solid #ddd;
     &.loading {
       border: none;
       padding-top: 20px;

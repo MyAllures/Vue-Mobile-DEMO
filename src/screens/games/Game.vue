@@ -21,9 +21,8 @@
           </div>
       </div>
     </div>
-    <div class="border-shadow"></div>
     <div class="bet-area">
-      <group class="aside">
+      <group class="aside vux-1px-r">
         <cell-box
           :border-intent="false"
           :class="['category-menu-item',{'active': activeCategory === category.id + ''}]"
@@ -35,6 +34,7 @@
           </template>
           <template v-else>{{category.name}}</template>
         </cell-box>
+        <div class="vux-1px-b"></div>
       </group>
       <div class="main">
         <router-view
@@ -509,6 +509,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 .game {
   display: flex;
   overflow-x: hidden;
@@ -520,10 +521,9 @@ export default {
 }
 
 .data-section {
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 80px;
-  align-items: center;
+  background: #fff;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
+  z-index: 2; // higher than the sticky groupplay-title
   transition-duration: .7s;
 }
 
@@ -546,18 +546,23 @@ export default {
     }
   }
   .aside {
+    position: relative;
     display: flex;
     overflow-y: scroll;
     justify-content: safe center;
-    width: 110px;
-    border-width: 0 4px 0 0;
-    border-style: solid;
-    border-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent) 1 100%;
-    background-color: #f9f9f9;
+    width: 90px;
+    background-color: #f4f4f4;
     color: #9b9b9b;
+    /deep/ .weui-cells {
+      font-size: 15px;
+    }
+
+    .weui-cell {
+      padding: 8px 12px;
+    }
   }
   .main {
-    width: calc(~"100%" - 104px);
+    width: calc(~"100%" - 80px);
     overflow-y: scroll;
     overflow-x: hidden;
     background-color: #fff;
@@ -711,16 +716,6 @@ export default {
 
 .playposition-badge {
   position: relative;
-  &:after {
-    content: '';
-    display: inline-block;
-    width: 28px;
-    height: 15px;
-    vertical-align: middle;
-    margin-left: 10px;
-    background-image: url('../../assets/badge_new.svg');
-    background-repeat: no-repeat;
-  }
 }
 .border-shadow {
   height: 4px;
