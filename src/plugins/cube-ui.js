@@ -6,12 +6,20 @@ import Vue from 'vue'
 import {
   /* eslint-disable no-unused-vars */
   Style,
+  // form
+  Checkbox,
+  // popup
+  Popup,
   Picker,
   DatePicker,
   // scroll
-  Scroll
+  Scroll,
+  Sticky
 } from 'cube-ui'
 
+Vue.use(Checkbox)
+Vue.use(Popup)
 Vue.use(Picker)
 Vue.use(DatePicker)
 Vue.use(Scroll)
+Vue.use(Sticky)

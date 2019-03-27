@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="dataSectionStyle">
+    <div class="data-section">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
@@ -16,26 +16,23 @@
           :gameClosed="gameClosed"
           :closeCountDown="closeCountDown"
           :resultCountDown="resultCountDown"/>
-          <div class="p" v-else-if="!gameClosed">
-            <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
-          </div>
+        <div class="p" v-else-if="!gameClosed">
+          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+        </div>
       </div>
     </div>
     <div class="bet-area">
-      <group class="aside vux-1px-r">
-        <cell-box
-          :border-intent="false"
-          :class="['category-menu-item',{'active': activeCategory === category.id + ''}]"
-          v-for="(category, index) in categories"
-          @click.native="switchCategory(category.id)"
-          :key="index">
-          <template v-if="category.id === 'playpositions'">
-            <span class="playposition-badge">{{category.name}}</span>
-          </template>
-          <template v-else>{{category.name}}</template>
-        </cell-box>
-        <div class="vux-1px-b"></div>
-      </group>
+      <div class="aside">
+        <div class="category-menu">
+          <div
+            v-for="(category, index) in categories"
+            :class="['category-menu-item',{'active': activeCategory === category.id+''}]"
+            @click="switchCategory(category.id)"
+            :key="index">
+            {{category.name}}
+          </div>
+        </div>
+      </div>
       <div class="main">
         <router-view
           v-if="activeCategory !== 'playpositions'"
@@ -54,30 +51,22 @@
           @updateBetTrackData="updateBetTrackData"/>
       </div>
     </div>
-    <div class="bet-input">
-      <flexbox :gutter="0">
-        <flexbox-item>
-          <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-          <template>
-            <div v-if="activeCategory === 'playpositions'" class="playCount">
-              {{bettrackData.forDisplay.type}}
-              <span class="count">{{bettrackData.forDisplay.play_code_pattern}}</span>
-            </div>
-            <div v-else class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
-          </template>
-        </flexbox-item>
-        <flexbox-item>
-          <div class="amount-input-wrapper">
-            <AmountInput class="amount-input" placeholder="金额" v-model="amount"/>
-          </div>
-        </flexbox-item>
-        <flexbox-item>
-          <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
-        </flexbox-item>
-        <flexbox-item>
-          <x-button type="default" @click.native="playReset = !playReset;bettrackData = {track_numbers: [],forDisplay: {}}">{{$t('action.reset')}}</x-button>
-        </flexbox-item>
-      </flexbox>
+    <div class="footer">
+      <div class="footer-item">
+        <div class="balance">{{user.balance||0 | currency('￥')}}</div>
+        <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
+      </div>
+      <div class="footer-item">
+        <div class="amount-input-wrapper">
+          <AmountInput class="amount-input" placeholder="金额" v-model="amount"/>
+        </div>
+      </div>
+      <div class="footer-item">
+        <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+      </div>
+      <div class="footer-item">
+        <x-button type="default" @click.native="playReset = !playReset;bettrackData = {track_numbers: [],forDisplay: {}}">{{$t('action.reset')}}</x-button>
+      </div>
       <div v-if="(gameClosed&&closeCountDown&& activeCategory !== 'playpositions')" class="gameclosed-mask">
         <div class="mask color"></div>
         <span class="text">已封盘</span>
@@ -137,7 +126,6 @@ export default {
       loading: false,
       hasPlan: true,
       opts_combos_count: 1,
-      isBusy: false,
       indicator: null,
       diffBetweenServerAndClient: 0,
       hasDestroy: false,
@@ -145,12 +133,6 @@ export default {
         track_numbers: [],
         forDisplay: {}
       }
-    }
-  },
-  filters: {
-    complete (value) {
-      value = parseInt(value)
-      return value < 10 ? ('0' + value) : value
     }
   },
   computed: {
@@ -187,7 +169,7 @@ export default {
       }
     },
     ...mapState([
-      'systemConfig', 'user', 'latestResultMap', 'theme', 'dataSectionStyle'
+      'systemConfig', 'user', 'latestResultMap', 'theme'
     ]),
     gameId () {
       return this.$route.params.gameId
@@ -533,51 +515,53 @@ export default {
 }
 
 .bet-area {
-  flex: 1 1 auto;
   display: flex;
-  /deep/ .weui-cells {
-    margin: 0;
-    line-height: 18px;
-    width: 100%;
-    background: #f9f9f9;
-    overflow-y: auto;
-    &::after {
-      display: none;
-    }
-  }
+  flex: 1 1 auto;
   .aside {
+    flex: 0 0 auto;
+    width: 90px;
+    height: 100%;
+    overflow-y: scroll;
+  }
+  .category-menu {
+    flex: 0 0 auto;
     position: relative;
     display: flex;
-    overflow-y: scroll;
-    justify-content: safe center;
+    flex-direction: column;
     width: 90px;
-    background-color: #f4f4f4;
-    color: #9b9b9b;
-    /deep/ .weui-cells {
-      font-size: 15px;
-    }
-
-    .weui-cell {
+    color: #333;
+    .category-menu-item {
+      position: relative;
+      display: flex;
+      line-height: 18px;
+      align-items: center;
       padding: 8px 12px;
+      font-size: 15px;
+      &.active {
+        background: @azul;
+        color: #fff;
+      }
     }
-  }
-  .main {
-    width: calc(~"100%" - 80px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    background-color: #fff;
-    -webkit-overflow-scrolling: touch;
   }
 }
-.bet-input {
-  flex: 0 0 auto;
+.main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.footer {
   box-sizing: border-box;
   position: relative;
+  flex: 0 0 auto;
+  height: 50px;
+  display: flex;
   color: #fff;
   background: rgba(0, 0, 0, 0.7);
   border: none;
-  height: 55px;
-  padding: 7px;
+  padding: 5px;
+  .footer-item {
+    flex: 1;
+  }
   .text {
     margin-right: 10px;
   }
@@ -646,64 +630,6 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
-  }
-}
-
-.bet-content {
-  text-align: left;
-  background-color: #fff;
-  padding: 0 0 10px;
-  .title {
-    height: 44px;
-    line-height: 44px;
-    text-align: center;
-  }
-  .total {
-    text-align: center;
-    height: 30px;
-    line-height: 30px;
-    margin-bottom: 10px;
-    .bet-num {
-      margin-right: 10px;
-    }
-  }
-  .check-plan {
-    display: block;
-    margin-bottom: 10px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-  }
-  .amount {
-    margin-right: 10px;
-    color: @red;
-  }
-  .options,
-  .combinations {
-    width: 100%;
-    padding-left: 10px;
-  }
-  .loading {
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    font-size: 18px;
-    text-align: center;
-    .weui-loading {
-      height: 30px;
-      width: 30px;
-    }
-  }
-  .play {
-    color: #666;
-  }
-  .buttons {
-    box-sizing: border-box;
-    height: 50px;
-    padding: 0 10px;
-    .weui-btn {
-      overflow: visible;
-    }
   }
 }
 

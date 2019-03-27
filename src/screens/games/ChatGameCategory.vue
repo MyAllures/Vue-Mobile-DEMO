@@ -1,5 +1,5 @@
 <template>
-  <div class="game-category-container">
+  <div class="chat-game-category-container">
     <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector lower-tab">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
@@ -15,16 +15,6 @@
         </tab-item>
       </tab>
     </div>
-    <div v-if="shawOptions.length" class="shaw-options vux-1px-b">
-      <div class="wrapper">
-        <check-icon
-          :key="option.name"
-          v-on:click.native="toggleShaw(option, $event)"
-          v-for="option in shawOptions"
-          :value.sync="option.selected"
-          >{{ option.name }}</check-icon>
-      </div>
-    </div>
     <template v-if="!customPlayGroupsSetting">
       <div
         :class="['gameplays', !group.name ? 'no-title' : '']"
@@ -39,7 +29,7 @@
             :key="playIndex"
             @click="toggleActive(plays[play.id], $event)">
             <div class="play-area">
-              <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')">
+              <template v-if="play.display_name.indexOf(',')!== -1 && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')">
                 <div class="dice-container">
                   <span :class="`play result-${game.code} resultnum-${dice}`"
                     v-for="(dice, index) in play.display_name.split(',')"
@@ -61,7 +51,7 @@
                 <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
                   <span class="num">{{play.display_name}}</span>
                 </span>
-                <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')}]">{{play.odds}}</span>
+                <span :class="['play-odds', {'right': play.display_name.split(',').length && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')}]">{{play.odds}}</span>
               </template>
             </div>
           </div>
@@ -69,6 +59,8 @@
       </div>
     </template>
     <component v-else
+      :key="category.id"
+      :mode="mode"
       :is="customPlayGroupsSetting.component"
       :gameCode="game.code"
       :playReset="playReset"
@@ -81,41 +73,41 @@
       :zodiacMap="zodiacMap"/>
   </div>
 </template>
-
 <script>
 import _ from 'lodash'
-import { Tab, TabItem, CheckIcon } from 'vux'
-import { customPlayGroups } from '../../config'
-const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
-const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
-const hk6Exl = (resolve) => require(['../../components/playGroup/hk6Exl'], resolve)
-const shxiaZdc = (resolve) => require(['../../components/playGroup/shxiaZdc'], resolve)
-const fc3dIc = (resolve) => require(['../../components/playGroup/fc3dIc'], resolve)
-const fc3dCa2df = (resolve) => require(['../../components/playGroup/fc3dCa2df'], resolve)
+import { Tab, TabItem } from 'vux'
+import { customPlayGroups } from '@/config'
+const WithCode = (resolve) => require(['@/components/playGroup/WithCode'], resolve)
+const gd11x5Seq = (resolve) => require(['@/components/playGroup/gd11x5Seq'], resolve)
+const hk6Exl = (resolve) => require(['@/components/playGroup/hk6Exl'], resolve)
+const shxiaZdc = (resolve) => require(['@/components/playGroup/shxiaZdc'], resolve)
+const fc3dIc = (resolve) => require(['@/components/playGroup/fc3dIc'], resolve)
+const fc3dCa2df = (resolve) => require(['@/components/playGroup/fc3dCa2df'], resolve)
 const isNum = /^\d+$/
-
 export default {
-  name: 'GameCategory',
+  name: 'ChatGameCategory',
   props: {
     gameClosed: {
       type: Boolean,
       default: false
     },
+    category: {
+      required: true,
+      type: Object
+    },
     game: {
+      required: true,
       type: Object
     },
     playReset: {
       type: Boolean,
       default: false
     },
-    activeCategory: {
-      type: String
-    }
+    mode: String
   },
   components: {
     Tab,
     TabItem,
-    CheckIcon,
     WithCode,
     gd11x5Seq,
     hk6Exl,
@@ -134,8 +126,7 @@ export default {
       tabs: {},
       tabKeys: [],
       currentTab: '',
-      showCombinationDetails: false,
-      shawOptions: []
+      showCombinationDetails: false
     }
   },
   computed: {
@@ -143,27 +134,11 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
-      let currentPlayGroup = _.find(this.categories, item => item.id + '' === this.$route.params.categoryId)
-      let playGroupCode = currentPlayGroup.code
-      return _.find(customPlayGroups, item => item.code.includes(playGroupCode))
-    },
-    categories () {
-      return this.$store.state.categories[this.$route.params.gameId] || []
-    },
-    theme () {
-      return this.$store.state.theme
-    },
-    currentCategory () {
-      const categories = this.$store.state.categories[this.$route.params.gameId]
-      if (!categories || categories.length === 0) {
-        return undefined
-      }
-      const categoryId = this.$route.params.categoryId
-      return _.find(categories, item => (item.id + '') === categoryId)
+      return _.find(customPlayGroups, item => item.code.includes(this.category.code))
     },
     zodiacMap () {
-      if (this.currentCategory.extra_info) {
-        return this.currentCategory.extra_info.shaw
+      if (this.category.extra_info) {
+        return this.category.extra_info.shaw
       }
       return null
     }
@@ -172,14 +147,6 @@ export default {
     'activePlays': {
       handler: function (activePlays) {
         this.$emit('updatePlays', activePlays)
-        // select/unselect shaw option when any play is active/inactive
-        let activeNums = activePlays.map(item => {
-          return parseInt(item.display_name)
-        })
-        this.shawOptions.forEach(option => {
-          let found = option.nums.every(r => activeNums.includes(r))
-          this.$set(option, 'selected', found)
-        })
       },
       deep: true
     },
@@ -190,44 +157,44 @@ export default {
         }
       })
     },
-    'currentCategory': function (currentCategory) {
-      this.initPlayAndGroups(currentCategory)
-    }
-  },
-  created () {
-    if (this.game && this.currentCategory) {
-      this.sendGaConfig(this.game.display_name, this.currentCategory.name)
-    } else {
-      const unwatch = this.$watch(vm => [vm.game, vm.currentCategory], result => {
-        if (result[0] && result[1]) {
-          this.sendGaConfig(result[0].display_name, result[1].name)
-          unwatch()
-        }
-      })
-    }
+    'category': {
+      handler: function (category) {
+        this.reset()
+        const tabs = {}
+        const plays = {}
+        const tabKeys = []
 
-    if (this.currentCategory) {
-      this.initPlayAndGroups(this.currentCategory)
+        let groupName = category.name
+
+        category.tabs.forEach(tab => {
+          const tabName = tab.name || 'no-alias'
+          tabKeys.push(tabName)
+
+          const groups = tab.groups
+          groups.forEach(group => {
+            if (!group.plays) {
+              return
+            }
+            if (group.name) {
+              groupName = group.name
+            }
+            group.plays.forEach(play => {
+              plays[play.id] = play
+              plays[play.id]['group'] = groupName
+            })
+          })
+          tabs[tabName] = groups
+        })
+        this.currentTab = tabKeys[0]
+        this.tabKeys = tabKeys
+        this.tabs = tabs
+        this.groups = tabs[this.currentTab]
+        this.plays = plays
+      },
+      immediate: true
     }
   },
   methods: {
-    toggleShaw (option, event) {
-      if (this.gameClosed) {
-        return
-      }
-      _.filter(this.plays, play => {
-        let matched = option.nums.includes(parseInt(play.display_name)) && this.currentTab === play.group
-        if (matched) {
-          this.$set(play, 'active', option.selected)
-        }
-      })
-    },
-    sendGaConfig (gameName, categoryName) {
-      const gaTrackingId = this.$store.state.systemConfig.gaTrackingId
-      if (gaTrackingId) {
-        window.gtag('config', gaTrackingId, {page_path: this.$route.path, page_title: `${gameName} - ${categoryName}`})
-      }
-    },
     getPlayClass (play) {
       let num = play.display_name
       if (num[0] === '0' && num !== '0') {
@@ -288,69 +255,22 @@ export default {
       this.$set(play, 'combinations', [])
       this.$set(play, 'activedOptions', [])
     },
-    initPlayAndGroups (currentCategory) {
-      if (!currentCategory) {
-        return
-      }
-      // check if it's needed to show shaw options
-      this.categories.some(item => {
-        // for HKL and '特码' only
-        let existed = this.currentCategory.name === '特码' && item.name === '特肖' && item.extra_info && item.extra_info.shaw
-        if (existed) {
-          let shawOptions = []
-          let shaw = item.extra_info.shaw
-          // transform original object data to []
-          Object.keys(shaw).map(key => {
-            shawOptions.push({
-              'name': key,
-              'selected': false,
-              'nums': shaw[key]
-            })
-          })
-          this.shawOptions = shawOptions
-        }
-        return existed
-      })
-
-      const tabs = {}
-      const plays = {}
-      const tabKeys = []
-
-      let groupName = currentCategory.name
-      if (currentCategory.id === 'playpositions') {
-        return
-      }
-
-      currentCategory.tabs.forEach(tab => {
-        const tabName = tab.name || 'no-alias'
-        tabKeys.push(tabName)
-
-        const groups = tab.groups
-        groups.forEach(group => {
-          if (!group.plays) {
-            return
-          }
-          if (group.name) {
-            groupName = group.name
-          }
-          group.plays.forEach(play => {
-            plays[play.id] = play
-            plays[play.id]['group'] = groupName
-          })
-        })
-        tabs[tabName] = groups
-      })
-      this.currentTab = tabKeys[0]
-      this.tabKeys = tabKeys
-      this.tabs = tabs
-      this.groups = tabs[this.currentTab]
-      this.plays = plays
-    },
     toggleActive (play, event) {
       if (this.gameClosed) {
         return
       }
-      this.$set(play, 'active', !play.active)
+      if (play.active) {
+        this.$set(play, 'active', false)
+      } else {
+        if (this.mode === 'bettrack') {
+          _.each(this.plays, play => {
+            if (play.active) {
+              this.$set(play, 'active', false)
+            }
+          })
+        }
+        this.$set(play, 'active', true)
+      }
     },
     switchTab (key) {
       this.groups = this.tabs[key]
@@ -360,34 +280,11 @@ export default {
     reset () {
       this.$emit('resetPlays')
     }
-  },
-  beforeDestroy () {
-    this.reset()
   }
 }
 </script>
-
 <style lang="less" scoped>
-.shaw-options {
-  overflow-x: scroll;
-  .wrapper {
-    width: 600px;
-  }
 
-  /deep/ .vux-check-icon {
-    width: 50px;
-    text-align: center;
-    padding: 2px 0 5px;
-    > span {
-      font-size: 13px;
-      color: #666;
-    }
-    .weui-icon  {
-      margin: 0 -0.2em;
-      font-size: 20px;
-    }
-  }
-}
 .tab-selector {
   width: 100%;
   overflow: scroll;

@@ -26,6 +26,10 @@
     }
   }
 
+  .cube-checkbox_checked .cube-checkbox-ui i {
+    color: @main;
+  }
+
   .weui-btn_primary {
     background-color: @main;
     background-image: @gradient;
@@ -97,8 +101,22 @@
     background-image: @gradient;
   }
 
-  .category-menu-item.active {
-    background-color: @playColor;
+  .game-category-container, .chat-game-category-container {
+    .play-wrapper.active {
+      .play-area {
+        background-color: @playColor;
+      }
+    }
+  }
+
+  .bet-area {
+    .aside {
+      .category-menu {
+        .category-menu-item.active {
+          background-color: @playColor;
+        }
+      }
+    }
   }
 
   .weui-grid.play.active {

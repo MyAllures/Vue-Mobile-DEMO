@@ -1,11 +1,12 @@
 <template>
   <div class="gameplays">
-    <grid :cols="1">
-      <grid-item
-        :class="['play', {active: option.active && !gameClosed}]"
+    <div class="playgroup-content">
+      <div
+        :class="['play-wrapper', {active: option.active && !gameClosed}]"
+        :style="{width: '100%'}"
         v-for="(option, index) in customOptions"
         :key="index"
-        @on-item-click="toggleActive(option)">
+        @click="toggleActive(option)">
         <div class="play-area">
           <span class="play-name">{{option.display_name}}
             <span class="play-odds">{{option.odds}}</span>
@@ -14,13 +15,12 @@
             <span :class="`play-num result-${gameCode} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[option.display_name]||tailMap[option.display_name]" :key="num"></span>
           </span>
         </div>
-      </grid-item>
-    </grid>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import _ from 'lodash'
-import { Grid, GridItem } from 'vux'
 import Combinatorics from 'js-combinatorics'
 import { tailMap } from '../../utils/hk6'
 export default {
@@ -44,10 +44,6 @@ export default {
     zodiacMap: {
       type: Object
     }
-  },
-  components: {
-    Grid,
-    GridItem
   },
   data () {
     return {

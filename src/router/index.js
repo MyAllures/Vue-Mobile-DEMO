@@ -71,6 +71,24 @@ export default new Router({
       ]
     },
     {
+      path: '/chat_gamehall',
+      name: 'ChatGameHall',
+      component: resolve => { require(['../screens/games/ChatGameHall.vue'], resolve) },
+      meta: {
+        requiresAuth: true,
+        tabbarHidden: true
+      },
+      children: [
+        {
+          path: ':gameId',
+          component: resolve => { require(['../screens/games/ChatGame.vue'], resolve) },
+          meta: {
+            tabbarHidden: true
+          }
+        }
+      ]
+    },
+    {
       path: '/unsettle',
       name: 'UnsettleRecord',
       component: resolve => { require(['../screens/finance/UnsettleRecord.vue'], resolve) },

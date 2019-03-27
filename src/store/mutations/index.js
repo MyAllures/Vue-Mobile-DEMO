@@ -180,8 +180,5 @@ export default {
   },
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
-  },
-  [types.DATA_SECTION_STYLE]: (state, style) => {
-    state.dataSectionStyle = style
   }
 }
