@@ -362,9 +362,8 @@ export default {
 
 .show-time {
   box-sizing: border-box;
-  flex: 0 0 100px;
+  flex: 0 0 110px;
   width: auto;
-  padding: 0px 5px;
   border-right: 1px solid #dcd9d9;
   .periods-number {
     display: flex;
