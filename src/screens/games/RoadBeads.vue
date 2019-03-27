@@ -643,7 +643,7 @@ export default {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  margin: 3px auto;
+  margin: 1px auto;
 }
 .roadbead-container {
   height: 100%;
@@ -767,7 +767,7 @@ export default {
         width: 20px;
         border-radius: 1px;
         transform-origin: center;
-        transform: translateY(14px) rotate(-45deg);
+        transform: translateY(10px) rotate(-45deg);
         margin: 0 auto;
       }
 
@@ -777,7 +777,6 @@ export default {
           border: 1px solid #e6e6e6;
           box-sizing: border-box;
           vertical-align: top;
-          height: 31px;
         }
       }
     }
