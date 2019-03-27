@@ -2,6 +2,7 @@ const RECEIVED_ACTION = {
   'normal': 'normal',
   'system': 'system',
   'image': 'image',
+  'sticker': 'sticker',
   'history_message': 'history_message',
   'offline_message': 'offline_message',
   'welcome_message': 'welcome_message',
@@ -11,6 +12,7 @@ const RECEIVED_ACTION = {
 
 const EMITTED_ACTION = {
   normal: 'normal',
+  sticker: 'sticker',
   history_message: 'history_message',
   offline_message: 'offline_message',
   unread: 'unread'

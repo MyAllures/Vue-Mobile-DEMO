@@ -62,6 +62,10 @@ VenomSocketObj.prototype.initWs = function () {
             store.dispatch('customerService/addMessages', [data.message])
             this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message.id}})
             break
+          case RECEIVED_ACTION.sticker:
+            store.dispatch('customerService/addMessages', [data.message])
+            this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message.id}})
+            break
           case RECEIVED_ACTION.normal:
             store.dispatch('customerService/addMessages', [data.message])
             this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message.id}})
