@@ -12,27 +12,24 @@
       </div>
     </div>
     <div class="content">
-      <table class="history-table">
+      <x-table class="table">
         <tr
           v-for="(schedule, scheduleIndex) in records.results"
-          :key="'scheduleIndex' + scheduleIndex"
-          class="row">
-          <td class="show-time">
-            <p class="periods-number">
+          :key="'scheduleIndex' + scheduleIndex">
+          <td width="30%">
+            <p class="issue-number">
               {{schedule.issue_number}}
-            </p>
-            <p class="periods-time">
-              {{schedule.schedule_result |dateFilter}}
+              <span class="issued-at">{{schedule.schedule_result |dateFilter}}</span>
             </p>
           </td>
-          <td class="show-count">
+          <td>
             <div class="invalid text-center" v-if="schedule.result_status !== 'valid'">官方开奖无效</div>
             <div class="lottery-result" v-else>
               <lottery-record-num
                 :results="schedule.result_str"
                 :gameType="gameType" />
-              <div v-if="schedule.result_category && lotteryCompare" class="compare-content">
-                <span class="lottery-compare"
+              <div v-if="schedule.result_category && lotteryCompare">
+                <span
                   v-for="(compareKey, index) in lotteryCompare"
                   :key="'subHead' + index">
                   {{schedule.result_category[compareKey] | changeDataType}}
@@ -41,29 +38,35 @@
             </div>
           </td>
         </tr>
-        <tr class="condition loading text-center p-t-lg" v-if="loading">
-          <inline-loading></inline-loading>
+        <tr v-if="loading">
+          <td class="condition loading text-center p-t-lg">
+            <inline-loading></inline-loading>
+          </td>
         </tr>
-        <tr class="condition" v-else-if="!records.results.length">
-          <div class="no-more" v-if="!records.results.length">{{$t('misc.no_data_yet')}}</div>
+        <tr v-else-if="!records.results.length">
+          <td colspan="2"  class="condition" >
+            <div class="no-more" v-if="!records.results.length">{{$t('misc.no_data_yet')}}</div>
+            </td>
         </tr>
-        <tr class="condition" v-else-if="(pagination.total > records.results.length)">
-          <x-button
-            type="default"
-            action-type="button"
-            class="add-more"
-            @click.native="addMore">
-            <inline-loading v-if="addMoreLoading"></inline-loading>
-            <span v-else>{{$t('misc.load_more')}}</span>
-          </x-button>
+        <tr v-else-if="(pagination.total > records.results.length)">
+          <td colspan="2" class="condition" >
+            <x-button
+              type="default"
+              action-type="button"
+              class="add-more"
+              @click.native="addMore">
+              <inline-loading v-if="addMoreLoading"></inline-loading>
+              <span v-else>{{$t('misc.load_more')}}</span>
+            </x-button>
+          </td>
         </tr>
-      </table>
+      </x-table>
     </div>
   </div>
 </template>
 
 <script>
-import { XHeader, Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, InlineLoading } from 'vux'
+import { XHeader, Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, InlineLoading, XTable } from 'vux'
 import LotteryRecordNum from '@/components/LotteryRecordNum.vue'
 import { getGameHistoryData } from '../api'
 import {HKL_GAMES} from '../config'
@@ -283,6 +286,7 @@ export default {
     dateFormat,
     TabItem,
     Group,
+    XTable,
     XInput,
     XButton,
     InlineLoading,
@@ -292,6 +296,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.vux-table {
+  line-height: 1.5;
+}
 .history-container {
   height: 100%;
   .title {
@@ -308,11 +315,14 @@ export default {
     z-index: 2;
   }
   .content {
+    padding-bottom: 70px;
     height: calc(~"100%" - 40px);
     overflow-y: auto;
   }
 }
-
+.condition {
+  padding: 5px;
+}
 .date-picker {
   display: flex;
   align-items: center;
@@ -334,81 +344,24 @@ export default {
   }
 }
 
-
-.history-table {
-  box-sizing: border-box;
-  padding-bottom: 60px;
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-collapse: collapse;
-  .condition {
-    display: inline-block;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 5px;
-    &.loading {
-      border: none;
-      padding-top: 20px;
-    }
-  }
-  .row {
-    display: flex;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-  }
-}
-
-.show-time {
-  box-sizing: border-box;
-  flex: 0 0 100px;
-  width: auto;
-  padding: 0px 5px;
-  border-right: 1px solid #dcd9d9;
-  .periods-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50%;
-    width: 100%;
-    font-size: 14px;
-
-  }
-  .periods-time {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50%;
-    width: 100%;
+.issue-number {
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+  .issued-at {
+    display: block;
+    color: #999;
     font-size: 13px;
-    color: #999;
   }
 }
 
-
-.show-count {
-  flex: 1 0 auto;
-  .lottery-result {
-    width: 100%;
-    color: #327bce;
-  }
-  .lottery-compare {
-    color: #999;
-    width: 100%;
-    height: 25px;
-    text-align: center;
-    line-height: 25px;
-    margin-right: 5px;
-    font-size: 14px;
-  }
-  .compare-content {
-    width: 100%;
-    text-align: center;
-  }
+.lottery-result {
+  color: #999;
+  font-size: 13px;
 }
 
 .add-more, .no-more{
+  width: 100%;
   position: relative;
   font-size: 14px;
 }

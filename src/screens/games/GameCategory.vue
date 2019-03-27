@@ -15,8 +15,8 @@
         </tab-item>
       </tab>
     </div>
-    <div v-if="shawOptions.length" class="shaw-options vux-1px-b">
-      <div class="wrapper">
+    <div v-if="shawOptions.length" class="shaw-options">
+      <div class="wrapper vux-1px-b">
         <check-icon 
           :key="option.name"
           v-on:click.native="toggleShaw(option, $event)"

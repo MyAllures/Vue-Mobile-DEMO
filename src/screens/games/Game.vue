@@ -68,7 +68,14 @@
         </flexbox-item>
         <flexbox-item>
           <div class="amount-input-wrapper">
-            <AmountInput class="amount-input" placeholder="金额" v-model="amount"/>
+            <ul v-if="user.bet_amount_count.length" class="amount-shortcut" :class="{'collapsed' : !showShortcut }">
+              <li 
+                v-if="index < 5"
+                @click="amount=item.bet_amount + ''" 
+                v-for="(item, index) in user.bet_amount_count" 
+                class="vux-1px-b">{{ item.bet_amount | currency('￥') }}</li>
+            </ul>
+            <AmountInput class="amount-input" placeholder="金额" v-model="amount" @focus.native="showShortcut=true" @blur.native="showShortcut=false"/>
           </div>
         </flexbox-item>
         <flexbox-item>
@@ -144,7 +151,8 @@ export default {
       bettrackData: {
         track_numbers: [],
         forDisplay: {}
-      }
+      },
+      showShortcut: false
     }
   },
   filters: {
@@ -533,6 +541,7 @@ export default {
 }
 
 .bet-area {
+  overflow: auto;
   flex: 1 1 auto;
   display: flex;
   /deep/ .weui-cells {
@@ -609,6 +618,8 @@ export default {
     width: 90%;
   }
   .amount-input-wrapper {
+    position: relative;
+    z-index: 2; //hight than play group title
     box-sizing: border-box;
     height: 40px;
     padding: 0 5px;
@@ -621,9 +632,33 @@ export default {
       color: #333;
     }
   }
+  .amount-shortcut {
+    transition: max-height 0.5s ease-in; // ref: https://css-tricks.com/using-css-transitions-auto-dimensions/
+    max-height: 300px;
+    height: auto;
+    box-shadow: 2px 2px 4px rgba(0,0,0, .15);
+    text-align: center;
+    background: #efefef;
+    color: #666;
+    width: 120%;
+    left: -10%;
+    position: absolute;
+    bottom: 42px;
+    border-radius: 4px;
+    font-size: 13px;
+    overflow: hidden;
+    &.collapsed {
+      max-height: 0;
+    }
+    li {
+      margin-bottom: -1px;
+      line-height: 36px;
+    }
+  }
 }
 .gameclosed-mask {
   position: absolute;
+  z-index: 3;
   top: 0;
   left: 0;
   right: 0;
