@@ -21,7 +21,7 @@
                         {{msg.text}}
                       </span>
                       <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img"/>
-                      <img class="sticker" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker">
+                      <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker">
                       <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default {
     display: flex;
     align-items: flex-end;
   }
-  .sticker {
+  .sticker-img {
     display: inline-block;
     width: 120px;
     height: 120px;
@@ -207,7 +207,7 @@ export default {
       background-color: #166fd8;
       color: #fff;
     }
-    .sticker {
+    .sticker-img {
       order: 2;
     }
     .date {

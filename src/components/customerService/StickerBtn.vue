@@ -72,12 +72,12 @@ export default {
   }
 }
 
-
 .sticker-popup {
   position: absolute;
   width: 100%;
   bottom: 50px;
   left: 0;
+  z-index: 1;
 }
 
 .stickers-wrapper {
