@@ -132,6 +132,7 @@ $gd_length: length($results_gd);
     width: 26px;
     height: 26px;
     line-height: 999em;
+    overflow: hidden;
     @for $num from 1 through 20 {
       &.resultnum-#{$num} {
         background-position: 0 (-26px * ($num - 1 ));
@@ -250,6 +251,7 @@ $dd_length: length($results_dd);
     width: 26px;
     height: 26px;
     line-height: 999em;
+    overflow: hidden;
     @for $num from 0 through 27 {
       &.resultnum-#{$num} {
         background-position: 0 (-26px * $num);
@@ -265,6 +267,7 @@ $dd_length: length($results_dd);
   width: $size;
   height: $size;
   line-height: 999em;
+    overflow: hidden;
   @for $num from 1 through 20 {
     &.resultnum-#{$num} {
       background-position: 0 (-$size * ($num - 1 ));
@@ -282,6 +285,7 @@ $l8_length: length($results_l8);
     width: $size;
     height: $size;
     line-height: 999em;
+    overflow: hidden;
     @for $num from 1 through 80 {
       &.resultnum-#{$num} {
         background-position: 0 (-$size * ($num - 1 ));
