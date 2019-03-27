@@ -40,6 +40,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   display: flex;
+  position: relative;
   box-sizing: border-box;
   justify-content: space-around;
   align-content: center;

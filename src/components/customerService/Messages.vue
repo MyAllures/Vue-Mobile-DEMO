@@ -21,6 +21,7 @@
                         {{msg.text}}
                       </span>
                       <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img"/>
+                      <img class="sticker" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker">
                       <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                     </div>
                   </div>
@@ -125,7 +126,7 @@ export default {
             break
           case MSG_TYPE.sticker:
             wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
-            contentClassList = ['image']
+            contentClassList = ['sticker']
             isChatMsg = true
             break
           case MSG_TYPE.image:
@@ -188,6 +189,11 @@ export default {
     display: flex;
     align-items: flex-end;
   }
+  .sticker {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+  }
 
   .self-sent {
     display: flex;
@@ -200,6 +206,9 @@ export default {
       border-radius: 8px 0 8px 8px;
       background-color: #166fd8;
       color: #fff;
+    }
+    .sticker {
+      order: 2;
     }
     .date {
       order: 1;

@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <cube-input
+      class="input"
       v-model="value"
       @input="handleInput"
       :placeholder="''"
@@ -39,10 +40,6 @@ export default {
 }
 
 .input {
-  background: #fff;
-  border: solid 1px #f2f2f2;
-  border-radius: 3px;
-  height: 40px;
-  width: 100%;
+  padding-right: 30px;
 }
 </style>
