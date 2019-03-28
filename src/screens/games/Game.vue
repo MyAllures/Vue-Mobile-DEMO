@@ -68,9 +68,9 @@
         </flexbox-item>
         <flexbox-item>
           <div class="amount-input-wrapper">
-            <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }">
+            <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
               <span class="tips">常用金额</span>
-              <ul v-if="user.bet_amount_count.length" class="items" >
+              <ul  class="items" >
                 <li 
                   v-if="index < 5"
                   @click="amount=item.bet_amount + ''" 
