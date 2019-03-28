@@ -1,6 +1,6 @@
 <template>
   <ViewArea>
-    <top-bar v-if="$route.name!=='GameDetail' && $route.name!=='Home' && $route.name !== 'DetailBetRecord'">
+    <top-bar v-if="$route.name!=='GameDetail' && $route.name!=='Home' && $route.name !== 'DetailBetRecord' && $route.name !== 'ChatGameHall'">
       <template slot="left" v-if="pageSetting.leftCtrl">
         <div
           v-if="pageSetting.leftCtrl === 'back'"
@@ -74,6 +74,7 @@
     <bet-dialog />
     <balance-hint-dialog />
     <bet-track-dialog/>
+    <bet-track-new-dialog/>
     <div v-if="isInfirstLevelPage">
       <transition name="fade">
         <div v-show="notificationVisible">
@@ -102,6 +103,7 @@ import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
+import BetTrackNewDialog from './dialog/BetTrackNewDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
@@ -120,6 +122,7 @@ export default {
     BetDialog,
     BalanceHintDialog,
     BetTrackDialog,
+    BetTrackNewDialog,
     Notification,
     DetailNotification,
     TopBar,

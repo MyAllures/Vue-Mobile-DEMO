@@ -61,6 +61,11 @@ export default new Vuex.Store({
           forDisplay: {}
         },
         isSuccess: false
+      },
+      bettrackNew: {
+        visible: false,
+        data: null,
+        isSuccess: false
       }
     },
     categories: {},

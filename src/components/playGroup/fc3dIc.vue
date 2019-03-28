@@ -2,22 +2,24 @@
   <div class="gameplays">
     <div class="playgroup-title" v-if="!activePlay">{{groupName}}</div>
     <div class="playgroup-odds" v-else>赔率：<span class="red">{{activePlay.odds}}</span></div>
-    <grid :cols="2">
-      <grid-item
-        :class="['play', {active: option.active && !gameClosed}]"
+    <div class="playgroup-content">
+      <div
+        :class="['play-wrapper', {active: option.active && !gameClosed}]"
+        :style="{width: '50%'}"
         v-for="(option, index) in customOptions"
         :key="index"
-        @on-item-click="toggleActive(option)">
-        <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
-          <span class="num">{{option.num}}</span>
+        @click="toggleActive(option)">
+        <div class="play-area">
+          <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
+            <span class="num">{{option.num}}</span>
+          </div>
         </div>
-      </grid-item>
-    </grid>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import _ from 'lodash'
-import { Grid, GridItem } from 'vux'
 export default {
   name: 'fc3dIc',
   props: {
@@ -39,10 +41,6 @@ export default {
     groupName: {
       type: String
     }
-  },
-  components: {
-    Grid,
-    GridItem
   },
   data () {
     const customOptions = []
@@ -76,7 +74,7 @@ export default {
     }
   },
   watch: {
-    'activedOptions': function () {
+    'activedOptions': function (activedOptions) {
       this.updateForSubmit()
     },
     'playReset': function () {

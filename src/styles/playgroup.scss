@@ -1,26 +1,46 @@
-.gamehall {
+.game-category-container, .chat-game-category-container {
+  height: 100%;
+  background: #eee;
   .playgroup-title {
     font-size: 13px;
     position: sticky;
     top: 0;
     z-index: 1;
-    background: #f5f5f5;
     height: 24px;
     line-height: 24px;
-    text-align: center;
-    color: #999;
+    text-align: left;
+    background: #eee;
+    color: #666;
+    padding-left: 5px;
   }
+  .playgroup-content {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 5px;
+    background: #eee;
+  }
+  .gameplays {
+    background: #eee;
+  }
+  .gameplays + .gameplays.no-title{
+    padding-top: 5px;
+  }
+
   .playgroup-odds {
-    background: #f5f5f5;
     height: 32px;
     line-height: 32px;
     text-align: center;
     color: #999;
   }
 
-  .play {
+  .play-wrapper {
+    box-sizing: border-box;
+    padding-right: 5px;
+    padding-bottom: 5px;
     &.active {
-      background: #156fd8;
+      .play-area{
+        background: #156fd8;
+      }
       .play-name {
         color: #fff;
         &.plain {
@@ -34,9 +54,13 @@
   }
 
   .play-area {
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 5px;
+    background: #fff;
+    border-radius: 4px;
   }
   .play-name {
     white-space: nowrap;
@@ -44,6 +68,8 @@
     color: #444;
   }
   .play-nums {
+    display: flex;
+    align-items: center;
     .play-num {
       color: #333;
       margin: 0 3px;
@@ -68,26 +94,6 @@
   @media screen and (max-width: 360px) {
     .play-odds {
       font-size: 13px;
-    }
-  }
-
-  .weui-grids {
-    margin-right: -1px;
-  }
-  .weui-grid {
-    padding: 10px;
-  }
-  @media screen and (max-width: 360px) {
-    .weui-grid {
-      padding: 10px 5px;
-    }
-  }
-  .gameplays {
-    /deep/ .weui-grids:after {
-      border: none;
-    }
-    &.no-title /deep/ .weui-grids:before{
-      border: none;
     }
   }
 }
