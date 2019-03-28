@@ -74,7 +74,7 @@
         />
       </div>
 
-      <div v-if="promotedGame && currentGame.is_prompt" class="bottom-promit" :class="{ 'hidden' : !showBottomPromot }">
+      <div v-if="promotedGame && currentGame.is_prompt" class="bottom-prompt" :class="{ 'hidden' : !showBottomPrompt }">
         <div class="inner topbar" :style="{'background-color': theme}">
           <div class="close-btn small" @click="hideBottomPromot"></div>
           <div class="txt">开奖太慢？推荐您体验{{promotedGame.period_descroption}}的{{promotedGame.display_name}}</div>
@@ -136,17 +136,22 @@ export default {
       isGameMenuVisible: false,
       isHelperVisible: false,
       showNotifiyMsg: true,
-      showBottomPromot: true,
-      recommMaps: {
-        'hkl': 'cshkl',
-        'bcr': 'cs60cr',
-        'tjssc': 'csffc',
-        'xjssc': 'csffc',
-        'cqssc': 'csffc'
-      }
+      showBottomPrompt: true
     }
   },
   computed: {
+    recommMaps () {
+      if (!this.allGames || !this.allGames.length) {
+        return {}
+      }
+      let map = {}
+      this.allGames.forEach(game => {
+        if (game.prompt_game) {
+          map[game.code] = game.prompt_game
+        }
+      })
+      return map
+    },
     hasTrendDiagram () {
       if (!this.currentGame) {
         return false
@@ -245,7 +250,7 @@ export default {
           const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
           const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
           this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
-          this.showBottomPromot = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
+          this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
           this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '13px'})
         }
       },
@@ -273,7 +278,7 @@ export default {
     },
     hideBottomPromot () {
       this.setBottomPromotFlag()
-      this.showBottomPromot = false
+      this.showBottomPrompt = false
       this.sendGaEvent({
         label: this.currentGame.display_name,
         category: 'bottom-promot',
@@ -518,17 +523,18 @@ export default {
     }
   }
 }
-.bottom-promit {
+.bottom-prompt {
   opacity: 0.9;
   width: 100%;
   position: absolute;
   bottom: 55px;
-  transition: bottom 1s;
+  transition: bottom 1s, opacity 1s;
   z-index: 5;
   justify-content: center;
   align-items: center;
   &.hidden {
     bottom: 100%;
+    opacity: 0;
   }
   .inner {
     border-radius: 4px;
