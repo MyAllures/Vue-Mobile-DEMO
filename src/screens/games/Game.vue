@@ -619,7 +619,7 @@ export default {
   }
   .amount-input-wrapper {
     position: relative;
-    z-index: 2; //hight than play group title
+    z-index: 6; //hight than play group title and bottom game prompt
     box-sizing: border-box;
     height: 40px;
     padding: 0 5px;
