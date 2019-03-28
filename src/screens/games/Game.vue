@@ -68,13 +68,16 @@
         </flexbox-item>
         <flexbox-item>
           <div class="amount-input-wrapper">
-            <ul v-if="user.bet_amount_count.length" class="amount-shortcut" :class="{'collapsed' : !showShortcut }">
-              <li 
-                v-if="index < 5"
-                @click="amount=item.bet_amount + ''" 
-                v-for="(item, index) in user.bet_amount_count" 
-                class="vux-1px-b">{{ item.bet_amount | currency('￥') }}</li>
-            </ul>
+            <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }">
+              <span class="tips">常用金额</span>
+              <ul v-if="user.bet_amount_count.length" class="items" >
+                <li 
+                  v-if="index < 5"
+                  @click="amount=item.bet_amount + ''" 
+                  v-for="(item, index) in user.bet_amount_count" 
+                  class="vux-1px-l">{{ item.bet_amount }}</li>
+              </ul>
+            </div>
             <AmountInput class="amount-input" placeholder="金额" v-model="amount" @focus.native="showShortcut=true" @blur.native="showShortcut=false"/>
           </div>
         </flexbox-item>
@@ -619,7 +622,6 @@ export default {
   }
   .amount-input-wrapper {
     position: relative;
-    z-index: 6; //hight than play group title and bottom game prompt
     box-sizing: border-box;
     height: 40px;
     padding: 0 5px;
@@ -632,28 +634,47 @@ export default {
       color: #333;
     }
   }
-  .amount-shortcut {
-    transition: max-height 0.5s ease-in; // ref: https://css-tricks.com/using-css-transitions-auto-dimensions/
-    max-height: 300px;
-    height: auto;
-    box-shadow: 2px 2px 4px rgba(0,0,0, .15);
-    text-align: center;
-    background: #efefef;
-    color: #666;
-    width: 120%;
-    left: -10%;
-    position: absolute;
-    bottom: 42px;
-    border-radius: 4px;
+  
+}
+.amount-shortcut {
+  display: flex;
+  transition: max-height 0.5s ease-in; // ref: https://css-tricks.com/using-css-transitions-auto-dimensions/
+  max-height: 300px;
+  height: auto;
+  box-shadow: 0 -2px 4px rgba(0,0,0, .2);
+  text-align: center;
+  background: #efefef;
+  color: #666;
+  width: 100%;
+  position: absolute;
+  z-index: 6; //hight than play group title and bottom game prompt
+  bottom: 55px;
+  overflow: hidden;
+  align-items: center;
+  &.collapsed {
+    max-height: 0;
+  }
+  .tips { 
     font-size: 13px;
+    padding: 0 5px;
+    color: #999;
+  }
+  .items {
+    flex: 1;
+    display: flex;
+    align-content: space-between;
+    align-items: center;
+  }
+  li {
+    font-weight: 500;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: no-wrap;
+    flex: 1;
+    margin-bottom: -1px;
+    line-height: 44px;
+    height: 44px;
     overflow: hidden;
-    &.collapsed {
-      max-height: 0;
-    }
-    li {
-      margin-bottom: -1px;
-      line-height: 36px;
-    }
   }
 }
 .gameclosed-mask {
