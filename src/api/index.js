@@ -318,3 +318,32 @@ export function sendHeartBeat () {
 export function fetchTrendChart (params) {
   return axios.get(urls.trend_chart, {params})
 }
+
+/**
+ * 專家計畫
+ * @param {number} params.game - game_code
+ * @param {number} params.scheme_type
+    - FIVE_NUM_FOR_SINGLE: 單期5碼
+    - SIX_NUM_FOR_SINGLE: 單期6碼
+    - FIVE_NUM_FOR_TRIPLE: 3期5碼
+    - SIX_NUM_FOR_DOUBLE: 2期6碼
+ * @param {number} params.position
+    - PK10: 1~10 (冠,亞,三,...,十)，預設應為 1
+    - 時時彩: 1~5 (萬,千,百,十,個)，預設應為 1
+ * @param {String} params.expert - 專家id，如果有傳此參數指定專家，則回傳資料中的cur_expert及cur_plans篩選出的內容會不同; 如未指定則以勝率最高的專家做為條件
+ */
+export function fetchExpertPlan (params) {
+  return axios.get(urls.expert_plan, {params})
+}
+
+/**
+ * 專家計劃多期下注
+ * @param {string} data.game - 下注遊戲game_code ex. bcr
+ * @param {number[]} data.issue_numbers - 期號
+ * @param {number} data.position - 第n名
+ * @param {number[]} data.bet_numbers - 下注號碼
+ * @param {number} data.bet_amount - 下注金額
+ */
+export function betExperPlan (data) {
+  return axios.post(urls.expert_bet, data)
+}

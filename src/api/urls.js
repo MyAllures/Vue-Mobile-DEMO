@@ -62,5 +62,7 @@ export default {
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
-  trend_chart: apiv2 + '/trend_chart/'
+  trend_chart: apiv2 + '/trend_chart/',
+  expert_plan: apiv2 + '/expert_plans/',
+  expert_bet: apiv2 + '/expert_plan_tracked_bets/'
 }

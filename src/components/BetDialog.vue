@@ -33,14 +33,10 @@
           <div v-if="loading" class="loading">
             <inline-loading></inline-loading>加载中
           </div>
-          <flexbox v-else class="buttons">
-            <flexbox-item>
-              <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
-            </flexbox-item>
-            <flexbox-item>
-              <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-            </flexbox-item>
-          </flexbox>
+          <div v-else class="buttons">
+            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
+            <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+          </div>
         </div>
       </x-dialog>
   </div>
@@ -309,11 +305,17 @@ export default {
     color: #666;
   }
   .buttons {
-    box-sizing: border-box;
-    height: 50px;
-    padding: 0 10px;
-    .weui-btn {
-      overflow: visible;
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    width: 270px;
+    margin: 15px auto;
+    /deep/ .weui-btn {
+      margin: 0;
+      width: 130px;
+    }
+    /deep/ .weui-btn + .weui-btn {
+      margin: 0;
     }
   }
 }

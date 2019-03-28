@@ -620,7 +620,6 @@ export default {
     .amount-input-wrapper {
       box-sizing: border-box;
       height: 40px;
-      width: 60px;
       padding: 0 5px;
       .amount-input {
         background: #fff;

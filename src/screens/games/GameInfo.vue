@@ -22,6 +22,7 @@ const RoadBeads = (resolve) => require(['@/screens/games/RoadBeads'], resolve)
 const Leaderboards = (resolve) => require(['@/screens/games/Leaderboards'], resolve)
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 const TrendDiagram = (resolve) => require(['@/screens/TrendDiagram'], resolve)
+const ExpertPlan = (resolve) => require(['@/screens/ExpertPlan'], resolve)
 
 export default {
   name: 'GameInfo',
@@ -57,6 +58,8 @@ export default {
           return LotterRecord
         case 'intro':
           return GameIntro
+        case 'expertplan':
+          return ExpertPlan
       }
     }
   }
