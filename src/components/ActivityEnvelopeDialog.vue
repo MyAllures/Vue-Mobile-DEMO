@@ -62,24 +62,24 @@
               <div v-else-if="status === 'need_login'" class="two-btns">
                 <div class="col">
                   <span class="tips">已有账号</span>
-                  <router-link tag="div" class="button disabled" to="/login" @click.native="$emit('on-close')">
+                  <router-link tag="div" class="button" to="/login" @click.native="$emit('on-close')">
                     立即登录
                   </router-link>
                 </div>
                 <div class="col">
                   <span class="tips">尚未注册</span>
-                  <router-link tag="div" class="button disabled" to="/register" @click.native="$emit('on-close')">
+                  <router-link tag="div" class="button" to="/register" @click.native="$emit('on-close')">
                     免费注册
                   </router-link>
                 </div>
               </div>
               <div v-else-if="status === 'need_register'">
                 <span class="tips">注册正式会员即可抢红包</span>
-                <router-link tag="div" class="button disabled" to="/register"  @click.native="$emit('on-close')">
+                <router-link tag="div" class="button" to="/register"  @click.native="$emit('on-close')">
                   注册正式会员
                 </router-link>
               </div>
-              <div v-else class="button disabled ineligible">
+              <div v-else class="button disabled ineligible"  @click="$emit('on-close')">
                 {{ messages[0] }}
               </div>
             </div>
