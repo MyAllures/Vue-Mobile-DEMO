@@ -27,10 +27,10 @@
                   <div class="article-content" v-if="status === 'ineligible'">
                     <template v-for="(p, index) in criteria">
                       <p  v-if="p.eligible===true":key="index">
-                        ✓ {{p.message}}
+                        <icon type="success"></icon> {{p.message}}
                       </p>
                       <p class="false" v-else-if="p.eligible===false":key="index">
-                        ✗ {{p.message}}
+                        <icon type="clear"></icon> {{p.message}}
                       </p>
                       <p  v-else :key="index">
                         ・{{p}}
@@ -56,14 +56,31 @@
               <div v-else-if="status === 'available'" class="button" @click="takeActivityEnvelope">
                 抢红包
               </div>
-              <div v-else-if="status === 'ineligible'" class="button disabled ineligible">
+              <div v-else-if="status === 'ineligible'" class="button disabled ineligible"  @click="$emit('on-close')">
                 未满足领取条件
               </div>
-              <div v-else-if="status === 'need_login'" class="button disabled">
-                请先登录
+              <div v-else-if="status === 'need_login'" class="two-btns">
+                <div class="col">
+                  <span class="tips">已有账号</span>
+                  <router-link tag="div" class="button disabled" to="/login" @click.native="$emit('on-close')">
+                    立即登录
+                  </router-link>
+                </div>
+                <div class="col">
+                  <span class="tips">尚未注册</span>
+                  <router-link tag="div" class="button disabled" to="/register" @click.native="$emit('on-close')">
+                    免费注册
+                  </router-link>
+                </div>
               </div>
-              <div v-else class="button disabled">
-                {{messages[0]}}
+              <div v-else-if="status === 'need_register'">
+                <span class="tips">注册正式会员即可抢红包</span>
+                <router-link tag="div" class="button disabled" to="/register"  @click.native="$emit('on-close')">
+                  注册正式会员
+                </router-link>
+              </div>
+              <div v-else class="button disabled ineligible">
+                {{ messages[0] }}
               </div>
             </div>
           </template>
@@ -71,20 +88,20 @@
             <div class="title" >领取成功</div>
             <div class="result-area success">
               <div class="amount">{{amount|currency('￥')}}</div>
-              <div class="icon"></div>
+              <icon type="success-circle"></icon>
               <div class="desc">
                 <p>红包已存入您的帐户</p>
                 <p>稍后可在交易纪录中查询</p>
               </div>
             </div>
             <div class="button-area">
-              <div class="button" @click="$emit('on-close')">确认</div>
+              <div class="button confirm-btn" @click="$emit('on-close')">确认</div>
             </div>
           </template>
           <template v-else>
             <div class="title">领取失败</div>
             <div class="result-area fail">
-              <div class="icon"></div>
+              <icon type="info-circle"></icon>
               <div class="desc">
                 <p>红包就在刚刚被抢完了</p>
                 <p>明天再来吧</p>
@@ -101,7 +118,7 @@
   </div>
 </template>
 <script>
-import {XDialog, InlineLoading} from 'vux'
+import {XDialog, InlineLoading, Icon} from 'vux'
 import {fetchActivityEnvelope, takeActivityEnvelope} from '@/api'
 export default {
   name: 'EnvelopeHomeDialog',
@@ -113,7 +130,8 @@ export default {
   },
   components: {
     XDialog,
-    InlineLoading
+    InlineLoading,
+    Icon
   },
   data () {
     let width = window.innerWidth
@@ -263,14 +281,20 @@ export default {
             font-weight: lighter;
           }
           font-size: 14px;
-          width: 100%;
+          line-height: 1.3;
+          padding-right: 10px;
+          .weui-icon {
+            vertical-align: middle;
+            color: #fff;
+            font-size: 16px;
+          }
         }
       }
     }
   }
   .result-area {
     box-sizing: border-box;
-    height: calc(~"100%" - 110px);
+    height: calc(~"100%" - 120px);
     padding-top: 2%;
     .desc {
       display: flex;
@@ -296,12 +320,10 @@ export default {
         font-size: 24px;
       }
     }
-    .icon {
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position: center;
-      width: 100%;
-      height: 60%;
+    .weui-icon  {
+      color: #fdebc5;
+      font-size: 70px;
+      margin: 10px 0 20px;
     }
     &.success {
       .amount {
@@ -310,30 +332,27 @@ export default {
       .desc {
         height: 20%;
       }
-      .icon {
-          background-image: url('../assets/envelope_success.png');
-      }
     }
     &.fail {
+      .weui-icon  {
+        margin-top: 30px;
+      }
       .desc {
         height: 40%;
-      }
-      .icon {
-        background-image: url('../assets/envelope_fail.png');
       }
     }
   }
   .button-area {
     flex: 0 0 auto;
     box-sizing: border-box;
-    height: 80px;
-    padding: 19px 30px;
+    height: 90px;
+    padding: 0 30px;
     .button {
       position: relative;
       width: 100%;
       max-width: 220px;
-      height: 42px;
-      line-height: 42px;
+      height: 40px;
+      line-height: 40px;
       border-radius: 25px;
       background-image: linear-gradient(to bottom, #fffbef, #fff0c5 3%, #ffcc5a);
       box-shadow: 0px 7px 0px 0px darken(#ffca7b, 35%);
@@ -345,6 +364,20 @@ export default {
         background-image: linear-gradient(to bottom, #ffffff, #bababa);
         box-shadow: 0px 7px 0px 0px darken(#bababa, 15%);
       }
+    }
+    .two-btns {
+      display: flex;
+      .col {
+        flex: 1;
+        margin: 0 5px;
+      }
+    }
+    .tips {
+      color: #fdebc5;
+      font-size: 13px;
+    }
+    .confirm-btn {
+      margin-top: 20px;
     }
   }
 }
