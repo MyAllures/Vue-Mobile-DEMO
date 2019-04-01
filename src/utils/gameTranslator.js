@@ -264,6 +264,7 @@ export default {
   'cs600cr': transformerTranslator,
   'cqssc': ssTranslator,
   'jsssc': ssTranslator,
+  'ynssc': ssTranslator,
   'csffc': ssTranslator,
   'xjssc': ssTranslator,
   'tjssc': ssTranslator,
