@@ -265,6 +265,7 @@ export default {
   'cqssc': ssTranslator,
   'jsssc': ssTranslator,
   'ynssc': ssTranslator,
+  'hjssc': ssTranslator,
   'csffc': ssTranslator,
   'xjssc': ssTranslator,
   'tjssc': ssTranslator,
