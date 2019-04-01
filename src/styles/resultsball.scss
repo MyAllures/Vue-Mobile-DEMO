@@ -17,10 +17,7 @@ $ssc_length: length($results_ssc);
     background-size: 100% 1000%;
     width: 30px;
     height: 30px;
-    overflow: hidden;
-    .num {
-      line-height: 999em;
-    }
+    text-indent: -999em;
 }
 
 @for $index from 1 through $ssc_length {
@@ -131,8 +128,7 @@ $gd_length: length($results_gd);
     background-size: 100% 2000%;
     width: 26px;
     height: 26px;
-    line-height: 999em;
-    overflow: hidden;
+    text-indent: -999em;
     @for $num from 1 through 20 {
       &.resultnum-#{$num} {
         background-position: 0 (-26px * ($num - 1 ));
@@ -250,8 +246,7 @@ $dd_length: length($results_dd);
     background-size: 100% 2800%;
     width: 26px;
     height: 26px;
-    line-height: 999em;
-    overflow: hidden;
+    text-indent: -999em;
     @for $num from 0 through 27 {
       &.resultnum-#{$num} {
         background-position: 0 (-26px * $num);
@@ -266,8 +261,7 @@ $dd_length: length($results_dd);
   $size: 24px;
   width: $size;
   height: $size;
-  line-height: 999em;
-    overflow: hidden;
+  text-indent: -999em;
   @for $num from 1 through 20 {
     &.resultnum-#{$num} {
       background-position: 0 (-$size * ($num - 1 ));
@@ -284,8 +278,7 @@ $l8_length: length($results_l8);
     background-size: 100% 8000%;
     width: $size;
     height: $size;
-    line-height: 999em;
-    overflow: hidden;
+    text-indent: -999em;
     @for $num from 1 through 80 {
       &.resultnum-#{$num} {
         background-position: 0 (-$size * ($num - 1 ));
