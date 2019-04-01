@@ -88,6 +88,7 @@ const gameTable = {
   'er75ft': TransformerCompareList,
   'cs600cr': TransformerCompareList,
   'cqssc': sscCompareList,
+  'ynssc': sscCompareList,
   'cs10fc': sscCompareList,
   'cs5fc': sscCompareList,
   'jsssc': sscCompareList,

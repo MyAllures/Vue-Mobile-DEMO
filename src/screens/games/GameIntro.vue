@@ -25,6 +25,7 @@ const bcr = (resolve) => require(['@/screens/games/rules/bcr'], resolve)
 const jsssc = (resolve) => require(['@/screens/games/rules/jsssc'], resolve)
 const jspk10 = (resolve) => require(['@/screens/games/rules/jspk10'], resolve)
 const cqssc = (resolve) => require(['@/screens/games/rules/cqssc'], resolve)
+const ynssc = (resolve) => require(['@/screens/games/rules/ynssc'], resolve)
 const pcdd = (resolve) => require(['@/screens/games/rules/pcdd'], resolve)
 const luckdd = (resolve) => require(['@/screens/games/rules/luckdd'], resolve)
 const hkl = (resolve) => require(['@/screens/games/rules/hkl'], resolve)
@@ -58,6 +59,7 @@ export default {
     jsssc,
     jspk10,
     cqssc,
+    ynssc,
     pcdd,
     luckdd,
     hkl,
