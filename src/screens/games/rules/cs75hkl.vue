@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>{{gameName}}是比照香港六合彩的系列之一，以六合彩游戏玩法为依据，75秒开奖一次共1152期全天候开奖不间断！</p>
+    <p>开奖时间和结果完全同步75 sec 7/49，从 0:00 起，每75秒开一次，全天共1152期开奖不间断。</p>
     <h3>
       <span class="warn">1.特码</span>
     </h3>
