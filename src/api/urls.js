@@ -61,5 +61,6 @@ export default {
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
-  trend_chart: apiv2 + '/trend_chart/'
+  trend_chart: apiv2 + '/trend_chart/',
+  win_history: host + '/members_win_histories?limit=20'
 }

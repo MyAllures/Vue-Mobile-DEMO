@@ -105,23 +105,9 @@
         </a>
       </template>
     </div>
-    <div v-if="promotions.length > 0" class="activity">
-      <div class="activity-title">
-        优惠活动
-      </div>
-      <div
-        class="activity-item"
-        v-for="(promotion, index) in promotions.slice(0,5)"
-        :key="index"
-        @click="handleClick(promotion)">
-        <div class="activity-item-title">{{promotion.name}}</div>
-        <div class="activity-item-img" v-lazy:background-image="promotion.image_mobile" :key="promotion.image_mobile"></div>
-      </div>
-      <div
-        class="activity-more"
-        v-if="promotions.length > 5"
-        @click="$router.push({name: 'Promotions'})">更多活动</div>
-    </div>
+
+    <win-history></win-history>
+
     <div class="pc-link" @click="openPClink">
         前往
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
@@ -163,6 +149,7 @@ import {
   Swiper,
   SwiperItem,
   Card,
+  GroupTitle,
   Grid,
   GridItem,
   XDialog,
@@ -184,6 +171,7 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import WinHistory from '@/components/WinHistory'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -218,6 +206,7 @@ export default {
     Masker,
     Alert,
     Card,
+    GroupTitle,
     Grid,
     GridItem,
     InlineLoading,
@@ -229,7 +218,8 @@ export default {
     Tab,
     TabItem,
     GameMenu,
-    ActivityEnvelopeDialog
+    ActivityEnvelopeDialog,
+    WinHistory
   },
   mixins: [freetrial],
   computed: {
@@ -258,6 +248,14 @@ export default {
       }
       const actions = []
       const config = this.systemConfig
+      if (this.promotions.length > 0) {
+        actions.push({
+          type: 'button',
+          className: 'promotion',
+          click: this.openPromotions,
+          text: '优惠活动'
+        })
+      }
       if (config.customerServiceUrl) {
         actions.push({
           type: 'link',
@@ -337,6 +335,9 @@ export default {
     })
   },
   methods: {
+    openPromotions () {
+      this.$router.push({name: 'Promotions'})
+    },
     openPClink () {
       this.$cookie.set('desktop', 1)
       window.location.reload()
@@ -686,6 +687,9 @@ export default {
     .download {
       background-image: url('../assets/download_app.svg')
     }
+    .promotion {
+      background-image: url('../assets/promotion.png')
+    }
     .icon {
       width: 24px;
       height: 24px;
@@ -702,6 +706,7 @@ export default {
 }
 
 .pc-link {
+  color: #999;
   height: 62px;
   line-height: 62px;
   width: 100px;
