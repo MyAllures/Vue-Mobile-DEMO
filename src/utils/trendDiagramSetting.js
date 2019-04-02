@@ -59,6 +59,8 @@ export const settings = {
   cs600cr: racingSetting,
   jsssc: sscSetting,
   cqssc: sscSetting,
+  ynssc: sscSetting,
+  hjssc: sscSetting,
   xjssc: sscSetting,
   tjssc: sscSetting,
   csffc: sscSetting,
@@ -74,7 +76,7 @@ export const settings = {
   gdklsf: gdklsfSetting
 }
 
-const hasTrendDiagramGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'pcdd', 'jnd28', 'luckdd', 'jsk3', 'msk3', 'bjk3', 'gd11x5', 'gdklsf']
+const hasTrendDiagramGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'ynssc', 'hjssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'pcdd', 'jnd28', 'luckdd', 'jsk3', 'msk3', 'bjk3', 'gd11x5', 'gdklsf']
 export const hasTrendDiagram = (code) => {
   return hasTrendDiagramGames.includes(code)
 }
