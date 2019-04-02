@@ -1,11 +1,51 @@
 <template>
 <div class="chat-game-footer" id="typing" @click="handTriggerPanel">
-  <template v-if="mode==='typing'">
+  <div v-show="isShowEmojiPanel" class="emoji-panel">
+    <div class="select-panel">
+      <swiper
+        height="180px"
+        dots-position="center"
+        dots-class="emoji">
+        <swiper-item
+          v-for="(chunk, index) in currentEmojisChunk"
+          :key="index">
+          <ul
+            class="sticker-series"
+            @click="sendEmojiSticker">
+            <li
+              class="sticker-item"
+              v-for="(sticker, stickerIndex) in chunk"
+              :key="stickerIndex"
+              :data-content="sticker.url"
+              :data-stickerid="sticker.id">
+              <div class="sticker" :style="{'background-image': `url('${sticker.url}')`}"></div>
+              </li>
+          </ul>
+        </swiper-item>
+      </swiper>
+    </div>
+    <div class="series-panel">
+      <ul>
+        <li :class="{active: series.name === activeSeries}" v-for="(series, index) in emojiSeries" :key="index" @click="activeSeries = series.id">
+          <div v-if="series.logo" class="logo" :style="{'background-image':`url('${series.logo}')`}"></div>
+          <span v-else>{{series.display_name}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="input-panel" v-if="mode==='typing'">
     <div id="switch-btn" class="switch-btn" @click="mode='bet'">
     </div>
-    <div class="image-btn"></div>
+    <label class="image-btn">
+      <input @change="sendImg"
+        type="file"
+        ref="fileImgSend"
+        class="img-upload-input"
+        accept="image/*">
+    </label>
     <label class="touch-input">
       <textarea
+        id="typing"
         type="textarea"
         autocomplete="off"
         validateevent="true"
@@ -19,13 +59,13 @@
     <div class="send-btn" @click="sendMsg">
       <div class="icon"></div>
     </div>
-  </template>
-  <template v-else>
+  </div>
+  <div class="input-panel" v-else>
     <div id="keyboard-btn" class="keyboard-btn" @click="mode='typing'">
     </div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bet')">下注</div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bettrack')">追号</div>
-  </template>
+  </div>
 </div>
 </template>
 
@@ -34,7 +74,7 @@ import _ from 'lodash'
 import { mapState } from 'vuex'
 import { msgFormatter } from '@/utils'
 import { Swiper, SwiperItem } from 'vux'
-import { sendImgToChat } from '@/api'
+import { eagle } from '@/api'
 import lrz from 'lrz'
 export default {
   name: 'ChatFooter',
@@ -47,32 +87,41 @@ export default {
       isShowControlPanel: false,
       isShowEmojiPanel: false,
       msgCnt: '',
-      activeSeries: 'symbol',
+      activeSeries: '1',
       mode: 'typing'
     }
   },
   computed: {
     ...mapState([
-      'user', 'systemConfig', 'emojis', 'ws', 'personal_setting', 'roomId'
+      'user', 'systemConfig', 'personal_setting'
     ]),
+    ...mapState('eagle', {
+      ws: state => state.ws,
+      roomId: state => state.roomId,
+      emojiMap: state => state.emojiMap
+    }),
     noPermission () {
       return false
     },
     emojiSeries () {
-      if (!this.emojis) {
+      if (!this.emojiMap) {
         return []
       }
-      return Object.values(this.emojis).sort((a, b) => a.order - b.order)
+      return Object.values(this.emojiMap).sort((a, b) => a.order - b.order)
     },
     currentEmojisChunk () {
-      if (!this.emojis) {
+      if (!this.emojiMap) {
         return []
       }
-      const emojis = this.emojis[this.activeSeries]
-      if (this.activeSeries === 'symbol') {
-        return _.chunk(emojis.stickers, 24)
+      const emojiMap = this.emojiMap[this.activeSeries]
+      return _.chunk(emojiMap.stickers, 8)
+    },
+    chatConditionMessage () {
+      if (!this.personal_setting.chatable) {
+        return this.$store.state.systemConfig.global_preferences.chat_condition_message || ''
+      } else {
+        return ''
       }
-      return _.chunk(emojis.stickers, 8)
     }
   },
   methods: {
@@ -85,12 +134,11 @@ export default {
           this.isShowEmojiPanel = false
           break
         } else if (id === 'emoji-btn') {
-          if (!this.user.account_type) {
-            return
-          }
           if (this.noPermission) {
             return
           }
+          e.stopPropagation()
+          e.preventDefault()
           this.isShowControlPanel = false
           this.isShowEmojiPanel = !this.isShowEmojiPanel
           break
@@ -107,9 +155,9 @@ export default {
       this.isShowControlPanel = false
       this.isShowEmojiPanel = false
     },
-    sendMsgImg (e) {
-      if (this.noPermission) { return false }
+    sendImg (e) {
       let fileInp = this.$refs.fileImgSend
+      if (this.noPermission || !fileInp) { return false }
       let file = fileInp.files[0]
 
       if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileInp.value)) {
@@ -129,33 +177,22 @@ export default {
           return
         }
         let formData = new FormData()
-        formData.append('receivers', this.roomId)
+        formData.append('receiver', this.ws.roomId)
         formData.append('image', rst.file)
-        sendImgToChat(formData).then((data) => {
-          this.hidePanel()
+        eagle.sendImg(formData).then((data) => {
           fileInp.value = ''
         }).catch((errRes) => {
           this.$vux.toast.show({
             text: msgFormatter(errRes),
             type: 'warn'
           })
-          this.hidePanel()
         })
       })
     },
     sendMsg () {
       if (this.noPermission || !this.msgCnt.trim()) { return false }
-      this.ws.raven.send({
-        'type': 0,
-        'content': this.msgCnt
-      })
+      this.ws.sendMsg(this.msgCnt)
       this.msgCnt = ''
-    },
-    sendEmojiSymbol (e) {
-      let target = e.target
-      if (target.nodeName === 'LI') {
-        this.msgCnt = this.msgCnt + target.dataset.content
-      }
     },
     sendEmojiSticker (e, id) {
       let target = e.target
@@ -186,15 +223,19 @@ export default {
 
 <style lang="less" scoped>
 .chat-game-footer {
-  box-sizing: border-box;
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 50px;
   flex: 0 0 auto;
   background: #fafafa;
   width: 100%;
+  .input-panel {
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background: #fafafa;
+    width: 100%;
+  }
   .send-btn {
     flex: 0 0 auto;
     box-sizing: border-box;
@@ -207,7 +248,7 @@ export default {
       width: 100%;
       border-radius: 4px;
       background-color: @azul;
-      background-image: url('../../assets/icon_paper-plane.svg');
+      background-image: url("../../assets/icon_paper-plane.svg");
       background-repeat: no-repeat;
       background-size: 70%;
       background-position: center;
@@ -215,7 +256,8 @@ export default {
       color: #fff;
     }
   }
-  .switch-btn,.keyboard-btn {
+  .switch-btn,
+  .keyboard-btn {
     flex: 0 0 auto;
     box-sizing: border-box;
     height: 100%;
@@ -224,17 +266,21 @@ export default {
     background-size: 60% 60%;
   }
   .keyboard-btn {
-    background: url('../../assets/chatGame/keyboard.svg') no-repeat center center;
+    background: url("../../assets/chatGame/keyboard.svg") no-repeat center
+      center;
   }
   .switch-btn {
-    background: url('../../assets/chatGame/switch.svg') no-repeat center center;
+    background: url("../../assets/chatGame/switch.svg") no-repeat center center;
   }
   .image-btn {
     flex: 0 0 auto;
     height: 100%;
     width: 40px;
-    background: url('../../assets/chatGame/picture.svg') no-repeat center center;
+    background: url("../../assets/chatGame/picture.svg") no-repeat center center;
     background-size: 60% 60%;
+    .img-upload-input {
+      display: none;
+    }
   }
   .emoji-btn {
     position: absolute;
@@ -242,11 +288,11 @@ export default {
     right: 0;
     height: 100%;
     width: 40px;
-    background: url('../../assets/chatGame/smile.svg') no-repeat center center;
+    background: url("../../assets/chatGame/smile.svg") no-repeat center center;
     background-size: 60% auto;
   }
 
-  .touch-input{
+  .touch-input {
     position: relative;
     flex: 1 1 auto;
     height: 100%;
@@ -282,7 +328,7 @@ export default {
     background-color: #fff;
     border: 1px solid #f2f2f2;
     border-radius: 4px;
-    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     box-sizing: border-box;
     background-image: none;
     &.is-disabled {
@@ -295,7 +341,7 @@ export default {
     .select-panel {
       width: 100%;
       height: 180px;
-      .sticker-series,.symbol-series {
+      .sticker-series {
         height: 100%;
         width: 100%;
         display: flex;
@@ -310,7 +356,7 @@ export default {
           justify-content: center;
         }
       }
-      .sticker-series{
+      .sticker-series {
         .sticker-item {
           height: 50%;
           width: 25%;
@@ -323,13 +369,6 @@ export default {
             background-repeat: no-repeat;
             background-position: center;
           }
-        }
-      }
-      .symbol-series{
-        .sticker-item {
-          height: 33%;
-          width: 12.5%;
-          font-size: 20px;
         }
       }
     }
@@ -358,54 +397,6 @@ export default {
             background-repeat: no-repeat;
           }
         }
-      }
-    }
-  }
-  .control-panel {
-    display: flex;
-    width: 100%;
-    height: 90px;
-    padding: 5px 0 0 12px;
-    box-sizing: border-box;
-    .control-btn {
-      height: 100%;
-      width: 72px;
-      padding-right: 12px;
-      box-sizing: border-box;
-      .icon-bg {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 60px;
-        border-radius: 5px;
-        background-color: #ffffff;
-        border: solid 1px #dfdfdf;
-        box-sizing: border-box;
-      }
-      .picture-icon {
-        .icon {
-          background: url('../../assets/picture.png') no-repeat center;
-          background-size: contain;
-          height: 30px;
-          width: 38px;
-        }
-        &:active {
-          .icon {
-            background-image: url('../../assets/picture_pressed.png');
-          }
-        }
-      }
-      .title {
-        width: 100%;
-        height: 30px;
-        line-height: 30px;
-        text-align: center;
-        color: #9b9b9b;
-        font-size: 12px;
-      }
-      .img-upload-input {
-        display: none;
       }
     }
   }

@@ -5,6 +5,9 @@ Vue.use(VueCookie)
 
 jest.mock('@/api', () => {
   return {
+    axiosRaven: {defaults: {headers: {common: {}}}},
+    axiosGhost: {defaults: {headers: {common: {}}}},
+    axiosEagle: {defaults: {headers: {common: {}}}},
     login: () => Promise.resolve({'access_token': '8d3f5a64dbaaaeb4d71e63bdc075bd00', 'token_type': 'Bearer', 'expires_in': '2018-08-21 11:44:07', 'refresh_token': '62e98c8196a80a5db5ef1e6cfb88a5f3', 'type': 'member'}),
     logout: () => Promise.resolve(),
     fetchUser: () => Promise.resolve([{'id': 7620, 'avatar': null, 'username': 'eeeeee', 'real_name': '袁鴻升', 'nickname': null, 'phone': '13255984398', 'gender': null, 'email': null, 'birthday': null, 'wechat': null, 'qq': '132984', 'memo': null, 'logout_time': '2018-08-20T11:44:03.751147+08:00', 'account_type': 1, 'platform_registered': 'pc', 'is_reg_present_sent': false, 'level': {'name': '一般会员', 'remit_limit': {'lower': '10'}, 'online_limit': {'upper': null, 'lower': '10'}, 'withdraw_fee': '0', 'withdraw_limit': {'upper': null, 'lower': '10'}}, 'bank': null, 'balance': 0.0, 'envelopes': [], 'unsettled': 0}]),

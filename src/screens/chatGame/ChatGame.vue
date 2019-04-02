@@ -54,7 +54,7 @@
             </div>
             <div class="main">
               <chat-game-category
-                v-if="currentCategory&&currentGame"
+                v-if="currentCategory"
                 :category="currentCategory"
                 :game="currentGame"
                 :gameClosed="gameClosed"
@@ -187,9 +187,7 @@ export default {
         period: 1,
         multiple: 1
       },
-      messages: [{
-
-      }],
+      messages: [],
       historyData: [],
       isHistoryVisible: false
     }
@@ -343,8 +341,6 @@ export default {
           return
         }
         const schedule = results[0][0]
-        console.log(schedule)
-
         if (schedule) {
           this.schedule = schedule
           let serverTime = this.$moment(this.schedule.schedule_result)
@@ -631,6 +627,7 @@ export default {
       position: relative;
       display: flex;
       flex-direction: column;
+      // overflow-y: scroll;
       width: 90px;
       color: #333;
       .category-menu-item {

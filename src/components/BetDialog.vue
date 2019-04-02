@@ -30,6 +30,9 @@
           <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
             将此笔注单分享至聊天室开放跟单
           </check-icon>
+          <cube-checkbox v-model="isShared" v-if="betDialog.hasShared">
+            分享我的注单
+          </cube-checkbox>
           <div v-if="loading" class="loading">
             <inline-loading></inline-loading>加载中
           </div>
@@ -65,7 +68,8 @@ export default {
       loading: false,
       hasPlan: true,
       betAmounts: null,
-      currentFocusInput: null
+      currentFocusInput: null,
+      isShared: true
     }
   },
   computed: {
@@ -169,7 +173,11 @@ export default {
           bet_amount: parseFloat(this.betAmounts[i])
         }
       })
-      placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
+      const betData = {send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet}
+      if (this.betDialog.hasShared) {
+        betData.share_bet_info = this.isShared
+      }
+      placeBet(betData)
         .then(res => {
           window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
           if (res && res[0].member) {

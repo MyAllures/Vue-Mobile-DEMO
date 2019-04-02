@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
-import axios from 'axios'
 import {
+  axiosGhost,
+  axiosEagle,
   fetchUser,
   login as userLogin,
   logout,
@@ -27,8 +28,9 @@ const login = function ({ commit, state, dispatch }, { user }) {
       Vue.cookie.set('refresh_token', res.refresh_token, {
         expires: expires
       })
-      axios.defaults.withCredentials = true
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      axiosGhost.defaults.withCredentials = true
+      axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+      axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       if (res.agent) {
         commit(types.SET_USER, {
           ...user,

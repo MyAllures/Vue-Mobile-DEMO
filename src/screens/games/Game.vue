@@ -2,12 +2,6 @@
   <div class="game">
     <div class="data-section">
       <div class="wrapper">
-        <GameResult v-if="result" :result="result"/>
-        <div class="result-skeleton-wrapper" v-else>
-          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[30,40]"></rowSkeleton>
-        </div>
-      </div>
-      <div class="wrapper">
         <Countdown
           :schedule="schedule"
           :realSchedule="realSchedule"
@@ -16,8 +10,14 @@
           :gameClosed="gameClosed"
           :closeCountDown="closeCountDown"
           :resultCountDown="resultCountDown"/>
-        <div class="p" v-else-if="!gameClosed">
+        <div v-else-if="!gameClosed" :style="{padding: '7px'}">
           <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+        </div>
+      </div>
+      <div class="wrapper">
+        <GameResult v-if="result" :result="result"/>
+        <div class="result-skeleton-wrapper" v-else>
+          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[30,40]"></rowSkeleton>
         </div>
       </div>
     </div>

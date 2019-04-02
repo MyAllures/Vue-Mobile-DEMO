@@ -59,7 +59,7 @@
           </div>
           <div v-else class="buttons">
             <x-button type="default" @click.native="dialogVisible = false">取消</x-button>
-            <x-button type="primary" :disabled="isBtnDisabled" @click.native="doBetTrackNew">确定</x-button>
+            <x-button type="primary" :disabled="isBtnDisabled" @click.native="doNewBetTrack">确定</x-button>
           </div>
         </div>
       </x-dialog>
@@ -68,14 +68,14 @@
 
 <script>
 import {XDialog, XButton, TransferDom, InlineLoading} from 'vux'
-import {betTrackNew} from '@/api'
+import {newBetTrack} from '@/api'
 import FixScroll from '@/directive/fixscroll'
 import { msgFormatter } from '@/utils'
 import { mapState } from 'vuex'
 import AmountInput from '@/components/AmountInput'
 
 export default {
-  name: 'BetTrackNewDialog',
+  name: 'NewBetTrackDialog',
   components: {
     XDialog, XButton, InlineLoading, AmountInput
   },
@@ -98,19 +98,19 @@ export default {
     }
   },
   methods: {
-    doBetTrackNew () {
+    doNewBetTrack () {
       this.loading = true
       let submitData = {...this.bettrack}
       submitData.bet_amount = parseFloat(submitData.bet_amount)
       submitData.stopping_tracking_type = this.ifStopTracking ? 'when_win_stop' : 'never_stop'
-      betTrackNew(submitData).then((res) => {
+      newBetTrack(submitData).then((res) => {
         this.sendGaEvent({
           label: this.gameInfo.display_name,
           category: '遊戲追號',
           action: '投注'
         })
         this.$store.dispatch('updateDialog', {
-          name: 'bettrackNew',
+          name: 'new_bettrack',
           state: {
             visible: false,
             data: null,
@@ -147,10 +147,10 @@ export default {
   computed: {
     ...mapState(['gameInfo']),
     dialog () {
-      return this.$store.state.dialog.bettrackNew
+      return this.$store.state.dialog.new_bettrack
     },
     dialogData () {
-      return this.$store.state.dialog.bettrackNew.data
+      return this.$store.state.dialog.new_bettrack.data
     },
     predictSchedule () {
       if (this.dialogData.issue_number === undefined) {
@@ -183,7 +183,7 @@ export default {
     'dialogVisible': function (dialogVisible) {
       if (dialogVisible === false && this.dialog.visible !== dialogVisible) {
         this.$store.dispatch('updateDialog', {
-          name: 'bettrackNew',
+          name: 'new_bettrack',
           state: Object.assign({}, this.dialog, {visible: false, data: null})
         })
       }

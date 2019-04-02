@@ -66,8 +66,10 @@ import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import { hasRoadBead } from '@/utils/roadBeadSetting'
 // import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 // import {hasRoadBead} from '@/utils/roadBeadSetting'
-import GameInfo from './GameInfo'
+import GameInfo from '@/screens/games/GameInfo'
 import { mapState } from 'vuex'
+import {EagleWebSocket} from '@/wsObj/eagle'
+import {eagle} from '@/api'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -98,13 +100,17 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: false
+      showNotifiyMsg: false,
+      ws: null
     }
   },
   computed: {
     ...mapState([
       'games', 'theme'
     ]),
+    ...mapState('eagle', {
+      emojiMap: state => state.emojiMap
+    }),
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
@@ -115,7 +121,7 @@ export default {
       return hasExpertPlan(this.currentGame.code)
     },
     helperGroup () {
-      const expertConfig = { key: 'expert', content: '<p>专家</p><p>计划</p>' }
+      const expertConfig = { key: 'expertplan', content: '<p>专家</p><p>计划</p>' }
       const roadBeadConfig = { key: 'roadbeads', content: '路珠' }
       const leaderBoardConfig = { key: 'leaderboard', content: '长龙' }
       const group = []
@@ -135,7 +141,7 @@ export default {
   },
   watch: {
     'currentGame': {
-      handler (game) {
+      handler (game, oldGame) {
         if (game) {
           if (game.is_prompt) {
             const checkDate = window.localStorage.getItem(game.display_name)
@@ -146,6 +152,11 @@ export default {
             } else {
               this.showNotifiyMsg = true
             }
+          }
+          if (this.ws === null) {
+            this.ws = new EagleWebSocket(this.$cookie.get('access_token'), game.rooms[0].id)
+          } else if (game.code !== oldGame.code) {
+            this.ws.joinRoom(game.rooms[0].id)
           }
         }
       },
@@ -171,6 +182,20 @@ export default {
       }
     }
   },
+  created () {
+    if (this.emojiMap === null) {
+      eagle.fetchStickers().then(res => {
+        this.$store.dispatch('eagle/initSticker', res)
+        const emojiMap = {}
+        res.forEach((series, index) => {
+          emojiMap[series.id] = {...series, order: index}
+        })
+        this.$store.dispatch('eagle/initEmoji', emojiMap)
+      }).catch(() => {
+
+      })
+    }
+  },
   methods: {
     toHome () {
       if (this.$route.name !== 'Home') {
@@ -190,6 +215,9 @@ export default {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
     }
+  },
+  beforeDestroy () {
+    this.ws.leaveRoom()
   }
 }
 </script>
@@ -310,7 +338,7 @@ export default {
         border: 2px solid #a442b8;
         background: #c252d9;
       }
-      .expert {
+      .expertplan {
         border: 2px solid #b43a49;
         background: #d54052;
       }

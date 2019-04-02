@@ -314,7 +314,6 @@ export default {
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
-      this.$store.dispatch('setDataSectionStyle', {'padding-top': '13px'})
       this.showNotifiyMsg = false
     }
   }
