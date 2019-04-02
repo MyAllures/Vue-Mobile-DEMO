@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <p class="pulldown" v-if="hasHistory"><span class="tip">上滑阅读过往聊天记录 ↓</span></p>
+    <p class="pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">上滑阅读过往聊天记录 ↓</span></p>
     <cube-scroll
       ref="scroll"
       :data="messages"
@@ -9,28 +9,28 @@
       <ul ref="msgs" class="msgs">
         <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
           <div :class="msg.wrapperClassList">
-              <div :class="['content', ...msg.contentClassList]">
-                <template v-if="msg.isChatMsg">
-                  <template>
-                    <img v-if="msg.user.avatar_url" class="avatar" :src="msg.user.avatar_url" alt="a">
-                    <i class="no-avatar" v-else>{{msg.user.username[0].toUpperCase()}}</i>
-                  </template>
-                  <div class="user-wrapper">
-                    <p class="username">{{msg.user.nickname || msg.user.username}}</p>
-                    <div class="msg-wrapper" v-if="msg.text">
-                      <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
-                        {{msg.text}}
-                      </span>
-                      <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img"/>
-                      <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker">
-                      <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
-                    </div>
+            <div :class="['content', ...msg.contentClassList]">
+              <template v-if="msg.isChatMsg">
+                <template>
+                  <img v-if="msg.user.avatar_url" class="avatar" :src="msg.user.avatar_url" alt="a">
+                  <i class="no-avatar" v-else>{{msg.user.username[0].toUpperCase()}}</i>
+                </template>
+                <div class="user-wrapper">
+                  <p class="username">{{msg.user.nickname || msg.user.username}}</p>
+                  <div class="msg-wrapper" v-if="msg.text">
+                    <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
+                      {{msg.text}}
+                    </span>
+                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" v-on:load="handleScroll(true)" />
+                    <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" v-on:load="handleScroll(true)" />
+                    <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                   </div>
-                </template>
-                <template v-else>
-                  <p v-html="msg.text"></p>
-                </template>
-              </div>
+                </div>
+              </template>
+              <template v-else>
+                <p v-html="msg.text"></p>
+              </template>
+            </div>
           </div>
         </li>
       </ul>
@@ -68,26 +68,42 @@ export default {
     rawMessages: {
       type: Array,
       default: []
+    },
+    userSend: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
     return {
       MSG_TYPE,
+      showPullDownTip: true,
       options: {
         pullDownRefresh: {
           threshold: 60,
           stopTime: 1000
+        },
+        scrollbar: {
+          fade: true
         }
       }
     }
   },
   methods: {
     onPullingDown () {
-      setTimeout(() => {
-        this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
-      }, 2000)
+      this.showPullDownTip = false
+      this.$emit('pulldown')
+      this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
     },
-    scrollToEnd () {
+    handleScroll (isImage = false) {
+      this.$nextTick(() => {
+        if (!this.userSend) return
+        this.scrollToLast()
+      })
+    },
+    scrollToLast () {
+      this.$refs.scroll.refresh()
+      this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
     }
   },
   watch: {
@@ -100,6 +116,9 @@ export default {
         }
       },
       immediate: true
+    },
+    'rawMessages.length' (val) {
+      this.handleScroll()
     }
   },
   computed: {
@@ -156,6 +175,11 @@ export default {
 }
 </script>
 
+<style lang="scss">
+body {
+  overflow-x: hidden;
+}
+</style>
 <style lang="scss" scoped>
 .container {
   box-sizing: border-box;
@@ -285,6 +309,29 @@ export default {
   .tip {
     font-size: 12px;
     color: #999;
+  }
+}
+
+ .cube-pulldown-wrapper {
+  top: -60px;
+  text-align: center;
+
+  .before-trigger {
+    height: auto;
+    font-size: 30px;
+    align-self: flex-end;
+
+    span {
+      display: inline-block;
+      line-height: 1;
+      transition: all 0.3s;
+      color: #666;
+      padding: 15px 0;
+
+      &.rotate {
+        transform: rotate(180deg)
+      }
+    }
   }
 }
 </style>

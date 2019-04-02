@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="body">
-      <Messages :rawMessages="messages"></Messages>
+      <Messages :rawMessages="messages" :userSend="userSend" @pulldown="userSend = false" />
     </div>
     <div class="footer">
-      <Footer></Footer>
+      <Footer @send="userSend = true" />
     </div>
   </div>
 </template>
@@ -18,6 +18,9 @@ import {mapState} from 'vuex'
 export default {
   components: {
     Footer, Messages
+  },
+  data: {
+    userSend: true
   },
   created () {
     if (!this.$store.state.ws.venom) {

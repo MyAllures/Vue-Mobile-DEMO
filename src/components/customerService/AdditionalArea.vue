@@ -38,9 +38,7 @@ export default {
           })
           return
         }
-        let formData = new FormData(
-
-        )
+        let formData = new FormData()
         formData.append('image', rst.file)
         uploadImgToService(formData).then((data) => {
           fileInp.value = ''
