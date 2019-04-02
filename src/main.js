@@ -42,7 +42,7 @@ function initData () {
       if (enableBuiltInCustomerService) {
         if (store.state.user.account_type) {
           serviceAction = () => {
-            Vue.sendGaEvent({
+            sendGaEvent({
               label: '我的',
               category: '點擊/進入客服',
               action: '點擊'
