@@ -35,8 +35,17 @@ function initData () {
       const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
       let serviceAction = null
       if (enableBuiltInCustomerService) {
-        serviceAction = () => {
-          router.push({path: '/CustomerSerivce'})
+        if (store.state.user.account_type) {
+          serviceAction = () => {
+            router.push({path: '/CustomerSerivce'})
+          }
+        } else {
+          serviceAction = () => {
+            Vue.$vux.toast.show({
+              text: '请先登录',
+              type: 'text'
+            })
+          }
         }
       } else {
         if (customerServiceUrl) {

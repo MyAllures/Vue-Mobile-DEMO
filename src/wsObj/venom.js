@@ -44,7 +44,6 @@ VenomSocketObj.prototype.initWs = function () {
             store.dispatch('customerService/addMessages', [data.message])
             break
           case RECEIVED_ACTION.has_history_message:
-            store.dispatch('customerService/addMessages', [{'id': 999, 'action': RECEIVED_ACTION.pulldown, 'text': '上滑阅读过往聊天记录 ↓', type: 99}])
             store.dispatch('customerService/updateIsHasHistory', data.message.has_history_message)
             break
           case RECEIVED_ACTION.offline_message:
