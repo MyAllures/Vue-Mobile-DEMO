@@ -1,12 +1,13 @@
 <template>
   <div class="container">
+    <p class="pulldown" v-if="hasHistory"><span class="tip">上滑阅读过往聊天记录 ↓</span></p>
     <cube-scroll
+      ref="scroll"
       :data="messages"
       :options="options"
-      @pulling-down="onPullingDown"
-      ref="msg-scroll">
-      <ul class="msgs">
-        <li :ref="`message-${msgIndex}`" class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
+      @pulling-down="onPullingDown">
+      <ul ref="msgs" class="msgs">
+        <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
           <div :class="msg.wrapperClassList">
               <div :class="['content', ...msg.contentClassList]">
                 <template v-if="msg.isChatMsg">
@@ -61,15 +62,12 @@
 <script>
 import {map} from 'lodash'
 import {EMITTED_ACTION, MSG_TYPE} from '@/utils/CustomerService'
+import {mapState} from 'vuex'
 export default {
   props: {
     rawMessages: {
       type: Array,
       default: []
-    },
-    hasHistory: {
-      type: Boolean,
-      default: false
     }
   },
   data () {
@@ -85,10 +83,11 @@ export default {
   },
   methods: {
     onPullingDown () {
-      this.$store.dispatch('customerService/deleteMessage', {msgid: 999})
       setTimeout(() => {
         this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
       }, 2000)
+    },
+    scrollToEnd () {
     }
   },
   watch: {
@@ -104,6 +103,9 @@ export default {
     }
   },
   computed: {
+    ...mapState('customerService',
+      {hasHistory: state => state.hasHistory}
+    ),
     messages () {
       const myName = this.$store.state.user.username
       return map(this.rawMessages, msg => {
@@ -251,7 +253,7 @@ export default {
     }
   }
 
-  .datetag, .welcome, .pulldown {
+  .datetag, .welcome {
     display: flex;
     justify-content: center;
   }
@@ -274,13 +276,15 @@ export default {
     color: #333;
   }
 
-  .pulldown {
-    padding-top: 10px;
-    .tip {
-      font-size: 12px;
-      color: #999;
-    }
+}
+.pulldown {
+  position: absolute;
+  padding-top: 5px;
+  width: 100%;
+  text-align: center;
+  .tip {
+    font-size: 12px;
+    color: #999;
   }
 }
-
 </style>

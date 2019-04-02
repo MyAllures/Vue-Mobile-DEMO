@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="body">
-      <Messages :rawMessages="messages" :hasHistory="hasHistory"></Messages>
+      <Messages :rawMessages="messages"></Messages>
     </div>
     <div class="footer">
       <Footer></Footer>
@@ -26,8 +26,7 @@ export default {
   },
   computed: {
     ...mapState('customerService',
-      {messages: state => state.messages},
-      {hasHistory: state => state.hasHistory}
+      {messages: state => state.messages}
     )
   }
 }

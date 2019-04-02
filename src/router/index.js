@@ -363,7 +363,7 @@ export default new Router({
       meta: {
         title: '联系客服',
         leftCtrl: 'back',
-        // requiresAuth: true,
+        requiresAuth: true,
         tabbarHidden: true
       },
       component: resolve => { require(['../screens/CustomerService.vue'], resolve) }
