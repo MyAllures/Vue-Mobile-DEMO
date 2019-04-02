@@ -21,6 +21,7 @@ import sign from './utils/sign'
 import {checkJWTTokenAlive, JWT} from './utils/jwtToken'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
+
 function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
@@ -37,6 +38,11 @@ function initData () {
       if (enableBuiltInCustomerService) {
         if (store.state.user.account_type) {
           serviceAction = () => {
+            Vue.sendGaEvent({
+              label: '我的',
+              category: '點擊/進入客服',
+              action: '點擊'
+            })
             router.push({path: '/CustomerSerivce'})
           }
         } else {
