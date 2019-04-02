@@ -30,17 +30,16 @@
           <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
             将此笔注单分享至聊天室开放跟单
           </check-icon>
+          <cube-checkbox v-model="isShared" v-if="betDialog.hasShared">
+            分享我的注单
+          </cube-checkbox>
           <div v-if="loading" class="loading">
             <inline-loading></inline-loading>加载中
           </div>
-          <flexbox v-else class="buttons">
-            <flexbox-item>
-              <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
-            </flexbox-item>
-            <flexbox-item>
-              <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-            </flexbox-item>
-          </flexbox>
+          <div v-else class="buttons">
+            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
+            <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+          </div>
         </div>
       </x-dialog>
   </div>
@@ -69,7 +68,8 @@ export default {
       loading: false,
       hasPlan: true,
       betAmounts: null,
-      currentFocusInput: null
+      currentFocusInput: null,
+      isShared: true
     }
   },
   computed: {
@@ -173,7 +173,11 @@ export default {
           bet_amount: parseFloat(this.betAmounts[i])
         }
       })
-      placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
+      const betData = {send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet}
+      if (this.betDialog.hasShared) {
+        betData.share_bet_info = this.isShared
+      }
+      placeBet(betData)
         .then(res => {
           window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
           if (res && res[0].member) {
@@ -309,11 +313,17 @@ export default {
     color: #666;
   }
   .buttons {
-    box-sizing: border-box;
-    height: 50px;
-    padding: 0 10px;
-    .weui-btn {
-      overflow: visible;
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    width: 270px;
+    margin: 15px auto;
+    /deep/ .weui-btn {
+      margin: 0;
+      width: 130px;
+    }
+    /deep/ .weui-btn + .weui-btn {
+      margin: 0;
     }
   }
 }

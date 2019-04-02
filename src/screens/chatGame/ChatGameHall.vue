@@ -41,12 +41,10 @@
     </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <div :class="['helper-btn-group', {visible: isHelperVisible}]">
-      <div class="helper-btn leaderboard" @click="showGameInfo('leaderboard')">长龙</div>
-      <div class="helper-btn roadbead" @click="showGameInfo('roadbeads')">路珠</div>
-      <div class="helper-btn expert">
-        <p>专家</p>
-        <p>计划</p>
-      </div>
+      <div
+        v-for="(item, index) in helperGroup"
+        :key="index"
+        :class="['helper-btn', item.key, `order${helperGroup.length - index}`]" @click="showGameInfo(item.key)" v-html="item.content"></div>
     </div>
     <div :class="['helper-btn fold', {visible: isHelperVisible}]" @click="isHelperVisible = !isHelperVisible">
       <template v-if="!isHelperVisible">
@@ -64,8 +62,14 @@ import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
-import GameInfo from './GameInfo'
+import { hasExpertPlan } from '@/utils/expertPlanSetting'
+import { hasRoadBead } from '@/utils/roadBeadSetting'
+// import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
+// import {hasRoadBead} from '@/utils/roadBeadSetting'
+import GameInfo from '@/screens/games/GameInfo'
 import { mapState } from 'vuex'
+import {EagleWebSocket} from '@/wsObj/eagle'
+import {eagle} from '@/api'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -96,20 +100,48 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: false
+      showNotifiyMsg: false,
+      ws: null
     }
   },
   computed: {
     ...mapState([
       'games', 'theme'
     ]),
+    ...mapState('eagle', {
+      emojiMap: state => state.emojiMap
+    }),
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
+    },
+    hasExpertPlan () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasExpertPlan(this.currentGame.code)
+    },
+    helperGroup () {
+      const expertConfig = { key: 'expertplan', content: '<p>专家</p><p>计划</p>' }
+      const roadBeadConfig = { key: 'roadbeads', content: '路珠' }
+      const leaderBoardConfig = { key: 'leaderboard', content: '长龙' }
+      const group = []
+      if (!this.currentGame) {
+        return []
+      }
+      let code = this.currentGame.code
+      group.push(leaderBoardConfig)
+      if (hasRoadBead(code)) {
+        group.push(roadBeadConfig)
+      }
+      if (hasExpertPlan(code)) {
+        group.push(expertConfig)
+      }
+      return group
     }
   },
   watch: {
     'currentGame': {
-      handler (game) {
+      handler (game, oldGame) {
         if (game) {
           if (game.is_prompt) {
             const checkDate = window.localStorage.getItem(game.display_name)
@@ -120,6 +152,11 @@ export default {
             } else {
               this.showNotifiyMsg = true
             }
+          }
+          if (this.ws === null) {
+            this.ws = new EagleWebSocket(this.$cookie.get('access_token'), game.rooms[0].id)
+          } else if (game.code !== oldGame.code) {
+            this.ws.joinRoom(game.rooms[0].id)
           }
         }
       },
@@ -145,6 +182,20 @@ export default {
       }
     }
   },
+  created () {
+    if (this.emojiMap === null) {
+      eagle.fetchStickers().then(res => {
+        this.$store.dispatch('eagle/initSticker', res)
+        const emojiMap = {}
+        res.forEach((series, index) => {
+          emojiMap[series.id] = {...series, order: index}
+        })
+        this.$store.dispatch('eagle/initEmoji', emojiMap)
+      }).catch(() => {
+
+      })
+    }
+  },
   methods: {
     toHome () {
       if (this.$route.name !== 'Home') {
@@ -153,7 +204,7 @@ export default {
           category: '返回首頁',
           action: '点击'
         })
-        this.$router.push({name: 'Home'})
+        this.$router.push({ name: 'Home' })
       }
     },
     showGameInfo (type) {
@@ -164,6 +215,9 @@ export default {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
     }
+  },
+  beforeDestroy () {
+    this.ws.leaveRoom()
   }
 }
 </script>
@@ -197,7 +251,7 @@ export default {
 
   .notify-msg-wrapper {
     height: 25px;
-    transition-duration: .7s;
+    transition-duration: 0.7s;
     margin-top: 0;
   }
 
@@ -214,7 +268,8 @@ export default {
     position: absolute;
     right: -1px;
     top: -1px;
-    &::before, &::after {
+    &::before,
+    &::after {
       height: 15px;
     }
   }
@@ -232,7 +287,7 @@ export default {
     border-radius: 50%;
     color: #fff;
     font-size: 12px;
-    transition-duration: .2s;
+    transition-duration: 0.2s;
     .close-btn {
       top: 8px;
       left: 6px;
@@ -266,20 +321,26 @@ export default {
       .helper-btn {
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
       }
+      .order1 {
+        bottom: 50px;
+      }
+      .order2 {
+        bottom: 100px;
+      }
+      .order3 {
+        bottom: 150px;
+      }
       .leaderboard {
         border: 2px solid #3bb99c;
         background: #60d1b8;
-        bottom: 150px
       }
-      .roadbead {
+      .roadbeads {
         border: 2px solid #a442b8;
         background: #c252d9;
-        bottom: 100px
       }
-      .expert {
+      .expertplan {
         border: 2px solid #b43a49;
         background: #d54052;
-        bottom: 50px
       }
     }
   }

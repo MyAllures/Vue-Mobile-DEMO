@@ -63,7 +63,7 @@ export default {
   align-items: center;
   color: #999;
   font-size: 14px;
-  margin-bottom: 5px;
+  height: 30px;
 }
 .issue {
   flex: 1;

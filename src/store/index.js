@@ -5,6 +5,7 @@ import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
+import eagle from './eagle'
 
 Vue.use(Vuex)
 
@@ -62,7 +63,12 @@ export default new Vuex.Store({
         },
         isSuccess: false
       },
-      bettrackNew: {
+      new_bettrack: {
+        visible: false,
+        data: null,
+        isSuccess: false
+      },
+      expert_bettrack: {
         visible: false,
         data: null,
         isSuccess: false
@@ -113,13 +119,13 @@ export default new Vuex.Store({
       }
     },
     latestResultMap: {},
-    lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '5px'}
+    lastGameData: getLastGameData()
   },
   actions,
   mutations,
   getters,
   modules: {
-    page
+    page,
+    eagle
   }
 })

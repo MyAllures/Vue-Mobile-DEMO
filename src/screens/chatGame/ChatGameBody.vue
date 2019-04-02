@@ -1,21 +1,22 @@
 <template>
-  <div class="chat-game-body">
+  <div class="chat-game-body" ref="view">
     <ul class="message-group">
       <li
         v-for="(msg, index) in messages"
         :key="index"
         class="message-group-item">
         <div v-if="msg.type==='system'" class="system-message">{{msg.content}}</div>
-        <div v-else-if="user.username !== msg.sender.username" class="other-message">
-          <div class="avatar" :style="{'background-image': `url('${msg.sender.avatar_url}')`}"></div>
-          <div>
+        <div v-else-if="user.username !== msg.sender.username" :class="['other-message', {'bet-info': msg.type==='betrecord-sharing'}]">
+          <div class="avatar" :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
+          <div class="right">
             <div class="nickname">{{msg.sender.nickname||msg.sender.username}}</div>
             <div class="content-wrapper">
-              <div class="text">{{msg.content}}</div>
+              <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
+              <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
         </div>
-        <div v-else class="self-message">
+        <div v-else :class="['self-message', {'bet-info': msg.type==='betrecord-sharing'}]">
           <div class="content-wrapper">
             <div class="text">{{msg.content}}</div>
           </div>
@@ -25,19 +26,54 @@
   </div>
 </template>
 <script>
+import BetInfo from '@/screens/chatGame/BetInfo'
 import { mapState } from 'vuex'
 export default {
   name: 'ChatGameBody',
-  props: {
-    messages: {
-      type: Array,
-      default: []
+  components: {
+    BetInfo
+  },
+  data () {
+    const defaultAvatar = require('../../assets/avatar.png')
+    return {
+      notNeedScroll: false,
+      defaultAvatar
     }
   },
   computed: {
     ...mapState([
       'user'
-    ])
+    ]),
+    ...mapState('eagle', {
+      messages: state => state.messages
+    })
+  },
+  watch: {
+    'messages.length': function (newCount, oldCount) {
+      if (newCount === 0) {
+        return
+      }
+      this.notNeedScroll = false
+      const view = this.$refs.view
+      if (oldCount === 0) { // 初始
+        this.$nextTick(() => {
+          view.scrollTop = view.scrollHeight
+        })
+      } else if ( // 1. user正在閱讀之前訊息 2. 是否為自己發的訊息
+        view.scrollTop + view.clientHeight + 100 > view.scrollHeight ||
+        this.messages[newCount - 1].sender.username === this.user.username || this.messages[newCount - 1].type === 5) {
+        this.$nextTick(() => {
+          view.scrollTop = view.scrollHeight
+        })
+      } else {
+        this.notNeedScroll = true
+      }
+    }
+  },
+  mounted () {
+    this.notNeedScroll = false
+    const view = this.$refs.view
+    view.scrollTop = view.scrollHeight
   },
   methods: {}
 }
@@ -65,6 +101,18 @@ export default {
         background: #e0e0e0;
         text-align: center;
       }
+
+      .other-message, .self-message {
+        &.bet-info {
+          width: 90%;
+          .right {
+            width: 100%;
+            .content-wrapper {
+              width: 100%;
+            }
+          }
+        }
+      }
       .other-message {
         display: flex;
         color: #333;
@@ -75,7 +123,7 @@ export default {
           height: 36px;
           border-radius: 12px;
           margin-right: 5px;
-          background: lightblue;
+          background-size: contain;
         }
         .nickname {
           font-size: 12px;

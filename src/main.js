@@ -2,7 +2,6 @@
 // eslint-disable-next-line
 import "babel-polyfill"
 import Vue from 'vue'
-import axios from 'axios'
 import './plugins/cube-ui'
 import App from './App'
 import router from './router'
@@ -12,13 +11,12 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
+import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
-import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 
 function initData () {
@@ -109,7 +107,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
 let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
-  axios.defaults.headers.common['x-r'] = params.r
+  axiosGhost.defaults.headers.common['x-r'] = params.r
 }
 
 Vue.use(require('vue-moment'))
@@ -129,7 +127,7 @@ const i18n = new VueI18n({
   messages: locales
 })
 
-axios.interceptors.request.use((config) => {
+axiosGhost.interceptors.request.use((config) => {
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
     config.headers.common['x-sign'] = sign.ink(t)
@@ -141,7 +139,7 @@ axios.interceptors.request.use((config) => {
 })
 
 const pollingApi = [urls.unread, urls.game_result]
-axios.interceptors.response.use(res => {
+axiosGhost.interceptors.response.use(res => {
   let responseData = res.data
   if (responseData.code === 2000) {
     return responseData.data
@@ -158,7 +156,7 @@ axios.interceptors.response.use(res => {
         toLogin(router)
       }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
-      axios.defaults.withCredentials = true
+      axiosGhost.defaults.withCredentials = true
       Vue.cookie.set('sessionid', res.data.sessionid)
       return Promise.reject(responseData)
     }
@@ -173,6 +171,16 @@ axios.interceptors.response.use(res => {
   //   text: '网路服务异常，请稍后再试',
   //   type: 'warn'
   // })
+  return Promise.reject(error)
+})
+
+axiosEagle.interceptors.response.use(res => {
+  return res.data
+}, (error) => {
+  report({
+    type: HTTP_ERROR,
+    error
+  })
   return Promise.reject(error)
 })
 
@@ -262,7 +270,8 @@ const setChatRoomSetting = (username) => {
 // init data
 const token = Vue.cookie.get('access_token')
 if (token) {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
   store.dispatch('fetchUser').then(() => {}).catch(() => { initData() })
 } else {
   Vue.nextTick(() => {

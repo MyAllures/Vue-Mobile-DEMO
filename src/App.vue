@@ -74,7 +74,8 @@
     <bet-dialog />
     <balance-hint-dialog />
     <bet-track-dialog/>
-    <bet-track-new-dialog/>
+    <new-bet-track-dialog/>
+    <expert-bet-track-dialog/>
     <div v-if="isInfirstLevelPage">
       <transition name="fade">
         <div v-show="notificationVisible">
@@ -94,8 +95,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken } from './api'
-import axios from 'axios'
+import { getToken, axiosGhost, axiosEagle } from './api'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
@@ -103,7 +103,8 @@ import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
-import BetTrackNewDialog from './dialog/BetTrackNewDialog'
+import NewBetTrackDialog from './dialog/NewBetTrackDialog'
+import ExpertBetTrackDialog from './dialog/ExpertBetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
@@ -122,7 +123,8 @@ export default {
     BetDialog,
     BalanceHintDialog,
     BetTrackDialog,
-    BetTrackNewDialog,
+    NewBetTrackDialog,
+    ExpertBetTrackDialog,
     Notification,
     DetailNotification,
     TopBar,
@@ -340,7 +342,8 @@ export default {
         this.$cookie.set('refresh_token', res.refresh_token, {
           expires: expires
         })
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+        axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+        axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       }).catch(() => {})
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()

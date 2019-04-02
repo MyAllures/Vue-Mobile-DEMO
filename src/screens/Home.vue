@@ -126,6 +126,10 @@
         前往
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
     </div>
+    <div class="pc-link">
+        <a class="pc-link-btn" v-if="betVersion==='old'" @click="switchBetVersion('new')" href="javascript:;">新版投注体验</a>
+        <a class="pc-link-btn" v-if="betVersion==='new'" @click="switchBetVersion('old')" href="javascript:;">返回旧版</a>
+    </div>
     <x-dialog
       v-transfer-dom
       v-model="showDialog"
@@ -185,6 +189,7 @@ import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
+import {switchRouter} from '@/router'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -202,7 +207,8 @@ export default {
       today: this.$moment(),
       currentTag: '',
       isGameMenuVisible: false,
-      isEnvelopeVisible: false
+      isEnvelopeVisible: false,
+      betVersion: 'new'
     }
   },
   directives: {
@@ -366,6 +372,10 @@ export default {
         category: '紅包',
         action: '查看红包活动'
       })
+    },
+    switchBetVersion (version) {
+      this.betVersion = version
+      switchRouter(version)
     }
   }
 }
