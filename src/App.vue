@@ -283,13 +283,15 @@ export default {
   },
   watch: {
     'user.logined' (newStatus, old) {
-      let token = this.$cookie.get('message_broker_token')
       if (!newStatus) {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
       } else {
-        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        fetchEiderJWTToken().then(() => {
+          let token = this.$cookie.get('message_broker_token')
+          this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        })
       }
     },
     '$route' (to, from) {
@@ -350,8 +352,6 @@ export default {
     this.$root.bus.$on('showFeatureGuide', () => {
       this.showFeatureGuide = true
     })
-
-    fetchEiderJWTToken()
 
     this.indicator = new Indicator(() => {
       const expireTime = localStorage.getItem('token_expire')
