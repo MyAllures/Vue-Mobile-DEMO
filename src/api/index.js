@@ -197,6 +197,10 @@ export function changeUserInformation (id, member) {
   return axios.put(urls.user + id + '/', member)
 }
 
+export function fetchUnreadCount () {
+  return axios.get(urls.unreadMessage)
+}
+
 export function fetchMessages (limit, offset) {
   return axios.get(urls.messages + `?limit=${limit}&offset=${offset}`)
 }
