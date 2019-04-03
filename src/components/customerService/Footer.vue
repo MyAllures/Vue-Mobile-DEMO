@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <AdditionalArea></AdditionalArea>
-    <Input :value.sync="value"></Input>
-    <SendBtn @send="handleSend"></SendBtn>
+    <AdditionalArea />
+    <Input :value.sync="value" />
+    <SendBtn @send="handleSend" />
   </div>
 </template>
 
@@ -32,6 +32,7 @@ export default {
       }
       this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: this.value}})
       this.value = ''
+      this.$emit('send')
     }
   }
 }
