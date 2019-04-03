@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <p class="pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">上滑阅读过往聊天记录 ↓</span></p>
     <cube-scroll
       ref="scroll"
       :data="messages"
       :options="options"
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
+        <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">上滑阅读过往聊天记录 ↓</span></li>
         <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
           <div :class="msg.wrapperClassList">
             <div :class="['content', ...msg.contentClassList]">
@@ -21,7 +21,7 @@
                     <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
                       {{msg.text}}
                     </span>
-                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" v-on:load="handleScroll(true)" />
+                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" v-on:load="handleScroll(true)"  @click="showImgAction(msg.text)" />
                     <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" v-on:load="handleScroll(true)" />
                     <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                   </div>
@@ -95,14 +95,28 @@ export default {
       this.$emit('pulldown')
       this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
     },
+    showImgAction (imgSrc) {
+      this.$createActionSheet({
+        title: '图片操作',
+        pickerStyle: true,
+        data: [{
+          content: '查看大图'
+        }],
+        onSelect: (item, index) => {
+          if (index === 0) {
+            window.open(imgSrc)
+          }
+        }
+      }).show()
+    },
     handleScroll (isImage = false) {
       this.$nextTick(() => {
+        this.$refs.scroll.refresh()
         if (!this.userSend) return
         this.scrollToLast()
       })
     },
     scrollToLast () {
-      this.$refs.scroll.refresh()
       this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
     }
   },
@@ -302,8 +316,6 @@ body {
 
 }
 .pulldown {
-  position: absolute;
-  padding-top: 5px;
   width: 100%;
   text-align: center;
   .tip {
