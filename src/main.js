@@ -286,7 +286,6 @@ store.watch((state) => {
   return state.user.logined
 }, (logined) => {
   store.dispatch('fetchPromotions')
-  store.dispatch('initUnread')
   if (store.state.user.account_type) {
     if (store.state.systemConfig.process === 'pending') {
       const unwatch = store.watch((state) => {
@@ -302,6 +301,7 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
   } else {
