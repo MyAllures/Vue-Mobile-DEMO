@@ -67,7 +67,7 @@ export default {
     },
     rolling () {
       let wrapper = this.$refs.wrapper
-      let firstList = wrapper.children[0]
+      let firstList = wrapper.children && wrapper.children[0]
       if (wrapper.scrollTop >= firstList.scrollHeight) {
         wrapper.scrollTop = 0
         // 滚动到顶部的时候 两个 ul 换位
