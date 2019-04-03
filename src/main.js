@@ -42,8 +42,8 @@ function initData () {
         } else {
           serviceAction = () => {
             Vue.$vux.toast.show({
-              text: '请先登录',
-              type: 'text'
+              text: '请先登入会员，如未有会员帐号请先注册',
+              type: 'warn'
             })
           }
         }

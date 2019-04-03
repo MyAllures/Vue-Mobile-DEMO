@@ -248,7 +248,7 @@ export default {
       const config = this.systemConfig
       if (config.serviceAction) {
         actions.push({
-          type: 'link',
+          type: 'button',
           className: 'service',
           click: config.serviceAction,
           text: '联系客服'
