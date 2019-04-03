@@ -286,6 +286,7 @@ store.watch((state) => {
   return state.user.logined
 }, (logined) => {
   store.dispatch('fetchPromotions')
+  store.dispatch('initUnread')
   if (store.state.user.account_type) {
     if (store.state.systemConfig.process === 'pending') {
       const unwatch = store.watch((state) => {
