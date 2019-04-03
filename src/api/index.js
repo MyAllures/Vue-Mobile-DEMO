@@ -305,3 +305,7 @@ export function sendHeartBeat () {
 export function fetchTrendChart (params) {
   return axios.get(urls.trend_chart, {params})
 }
+
+export function fetchWinHistory () {
+  return axios.get(urls.win_history)
+}
