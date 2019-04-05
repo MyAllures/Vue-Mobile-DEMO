@@ -32,10 +32,16 @@ export default {
       topItems: [],
       bottomItems: [],
       index: 0,
-      timeout: null
+      timeout: null,
+      filterHKL: true
     }
   },
   created () {
+    let now = new this.$moment()
+    let hklBegain = this.$moment('9:35pm', 'h:mma')
+    let hklEnd = this.$moment('9:45pm', 'h:mma')
+    this.filterHKL = ![2, 4, 6].includes(now.day()) || now.isBefore(hklBegain) || now.isAfter(hklEnd)
+
     this.fillWinHistory().then(() => {
       this.$nextTick(() => {
         setInterval(this.rolling, 50)
@@ -51,6 +57,15 @@ export default {
     },
     fillWinHistory () {
       return fetchWinHistory().then(res => {
+        if (this.filterHKL) {
+          res = res.map(item => {
+            if (item.display === '香港六合彩') {
+              console.log('found')
+              item.display = '极速六合彩'
+            }
+            return item
+          })
+        }
         if (res.length) {
           if (this.index === 0) {
             this.topItems = this.bottomItems = res
