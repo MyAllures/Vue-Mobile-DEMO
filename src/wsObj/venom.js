@@ -55,6 +55,14 @@ VenomSocketObj.prototype.initWs = function (token) {
             store.dispatch('customerService/updateIsHasHistory', false)
 
             data.message.forEach((msg) => { if (msg.date_tag) { msg.type = 97 } })
+            const today = Vue.moment().format('YYYY-MM-DD')
+            const lastDay = Vue.moment(data.message[data.message.length - 1].created_at).format('YYYY-MM-DD')
+            if (today !== lastDay) {
+              data.message.push({
+                date_tag: true,
+                text: today
+              })
+            }
             store.dispatch('customerService/insertHistoryMessages', [...data.message])
             break
           case RECEIVED_ACTION.system:
