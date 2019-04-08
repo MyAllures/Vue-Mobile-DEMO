@@ -25,6 +25,9 @@ export default {
       const index = findIndex(state.messages, msg => msg.id === msgid)
       if (index !== -1) state.messages.splice(index, 1)
     },
+    clearMessage: (state) => {
+      state.messages = []
+    },
     updateIsHasHistory: (state, isHas) => {
       state.hasHistory = isHas
     }
@@ -44,6 +47,9 @@ export default {
     },
     deleteMessage: ({ commit }, {msgid}) => {
       commit('updateMessage', {msgid})
+    },
+    clearMessage: ({ commit }) => {
+      commit('clearMessage')
     },
     updateIsHasHistory: ({ commit }, isHas) => {
       commit('updateIsHasHistory', isHas)

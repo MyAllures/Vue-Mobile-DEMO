@@ -6,7 +6,7 @@
       :options="options"
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
-        <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">上滑阅读过往聊天记录 ↓</span></li>
+        <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
         <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
           <div :class="msg.wrapperClassList">
             <div :class="['content', ...msg.contentClassList]">

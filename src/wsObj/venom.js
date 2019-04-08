@@ -10,8 +10,8 @@ function VenomSocketObj (token) {
   this.initWs(token)
 }
 
-VenomSocketObj.prototype.initWs = function () {
-  this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${Vue.cookie.get(JWT[TYPE] + '_token')}`)
+VenomSocketObj.prototype.initWs = function (token) {
+  this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${token}`)
 
   this.ws.onopen = (e) => {
     clearInterval(this.checkWsLivingInterval)
