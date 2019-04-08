@@ -155,8 +155,8 @@ export default {
             contentClassList = ['box']
             break
           case MSG_TYPE.datetag:
-            wrapperClassList = ['datetag']
-            contentClassList = ['date-badge']
+            wrapperClassList = ['msg-badge']
+            contentClassList = ['badge']
             if (msg.text === this.$moment().format('YYYY-MM-DD')) { msg.text = '今天' }
             break
           case MSG_TYPE.sticker:
@@ -173,6 +173,15 @@ export default {
             wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
             contentClassList = ['text']
             isChatMsg = true
+            break
+          case MSG_TYPE.system:
+            wrapperClassList = ['msg-badge']
+            contentClassList = ['badge']
+            break
+          case MSG_TYPE.inform_message:
+            wrapperClassList = ['msg-badge']
+            contentClassList = ['badge']
+            msg.text = `客服转派为 ${msg.text}`
             break
           default:
             return
@@ -291,12 +300,12 @@ body {
     }
   }
 
-  .datetag, .welcome {
+  .msg-badge, .welcome {
     display: flex;
     justify-content: center;
   }
 
-  .date-badge {
+  .badge {
     display: inline-block;
     padding: 1px 10px;
     background-color: #e0e0e0;
