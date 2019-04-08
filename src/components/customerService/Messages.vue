@@ -178,11 +178,6 @@ export default {
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
             break
-          case MSG_TYPE.inform_message:
-            wrapperClassList = ['msg-badge']
-            contentClassList = ['badge']
-            msg.text = `客服转派为 ${msg.text}`
-            break
           default:
             return
         }
