@@ -197,7 +197,7 @@ export default {
     seoWebsite () {
       if (this.systemConfig.planSiteUrl && this.currentGame) {
         const code = this.currentGame.code
-        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'jspk10', 'mlaft', 'cs60cr']
+        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft', 'cs60cr']
         if (gamesHasPlan.includes(code)) {
           return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
         }
