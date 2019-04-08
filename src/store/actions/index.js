@@ -10,8 +10,11 @@ import {
   fetchCategories,
   getPromotions,
   fetchBanner,
-  fetchAnnouncements
-} from '../../api'
+  fetchAnnouncements,
+  fetchVenomJWTToken
+} from '@/api'
+import { JWT } from '@/utils/jwtToken'
+
 import {HKL_GAMES} from '../../config'
 import {take, find} from 'lodash'
 
@@ -38,7 +41,9 @@ const login = function ({ commit, state, dispatch }, { user }) {
         })
       }
     }
-    return dispatch('fetchUser')
+    return fetchVenomJWTToken().then(() => {
+      return dispatch('fetchUser')
+    })
   }, error => {
     return Promise.reject(error)
   })
@@ -46,10 +51,14 @@ const login = function ({ commit, state, dispatch }, { user }) {
 
 export default {
   login: login,
-  logout: ({ commit, state }) => {
+  logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
+        Vue.cookie.delete('access_token')
+        Vue.cookie.delete('refresh_token')
+        Vue.cookie.delete(`${JWT.venom}_token`)
         commit(types.RESET_USER)
+        dispatch('customerService/clearMessage')
       },
       errRes => Promise.reject(errRes)
     )
@@ -208,6 +217,9 @@ export default {
   },
   setWs: ({commit}, {ws, type}) => {
     commit(types.SET_WS, {ws, type})
+  },
+  closeWs: ({commit}, {ws, type}) => {
+    commit(types.CLOSE_WS, {ws, type})
   },
   initMessage: ({ commit }, messages) => {
     commit(types.INIT_MESSAGE, messages)

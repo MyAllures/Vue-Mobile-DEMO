@@ -98,14 +98,14 @@ import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
-import freetrial from './mixins/freetrial.js'
+import freetrial from './mixins/freetrial'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-import GhostSocketObj from './wsObj/eider.js'
+import GhostSocketObj from './wsObj/eider'
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -284,12 +284,15 @@ export default {
   },
   watch: {
     'user.logined' (newStatus, old) {
-      let token = this.$cookie.get('access_token')
       if (!newStatus) {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
+        if (this.ws.venom) {
+          this.ws.venom.closeConnect()
+        }
       } else {
+        let token = this.$cookie.get('access_token')
         this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
       }
     },
