@@ -1,6 +1,7 @@
 const RECEIVED_ACTION = {
-  'normal': 'normal',
   'system': 'system',
+  'transfer': 'transfer',
+  'normal': 'normal',
   'image': 'image',
   'sticker': 'sticker',
   'history_message': 'history_message',
@@ -24,6 +25,7 @@ const MSG_TYPE = {
   'image': 2,
   'sticker': 3,
   // below is custom for display
+  'inform_message': 96,
   'datetag': 97,
   'welcome': 98,
   'pulldown': 99
