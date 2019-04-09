@@ -174,9 +174,13 @@ export default {
             contentClassList = ['text']
             isChatMsg = true
             break
-          case MSG_TYPE.system:
+          case MSG_TYPE.inform:
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
+
+            const csUsername = msg[msg.action === 'assign' ? 'support_username' : 'to_support_username']
+            const csNickname = msg[msg.action === 'assign' ? 'support_nickname' : 'to_support_nickname']
+            msg.text = `客服 ${csUsername}${csNickname ? ' ' + csNickname : ''} 為您服務`
             break
           default:
             return
