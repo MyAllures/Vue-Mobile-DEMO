@@ -65,11 +65,14 @@ VenomSocketObj.prototype.initWs = function (token) {
             }
             store.dispatch('customerService/insertHistoryMessages', [...data.message])
             break
-          case RECEIVED_ACTION.system:
+          case RECEIVED_ACTION.assign:
           case RECEIVED_ACTION.transfer:
           case RECEIVED_ACTION.normal:
           case RECEIVED_ACTION.image:
           case RECEIVED_ACTION.sticker:
+            if (['assign', 'transfer'].includes(data.action)) {
+              data.message.type = 96
+            }
             store.dispatch('customerService/addMessages', [data.message])
             this.send({action: EMITTED_ACTION.unread, parameter: {message_id: data.message.id}})
             break
