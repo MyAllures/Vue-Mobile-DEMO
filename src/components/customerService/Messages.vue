@@ -1,9 +1,11 @@
 <template>
-  <div class="container">
+  <div class="container" ref="scrollContainer">
     <cube-scroll
       ref="scroll"
       :data="messages"
       :options="options"
+      @scroll="onScroll"
+      :scrollEvents='["scroll"]'
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
         <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
@@ -56,6 +58,9 @@
         </div>
       </template>
     </cube-scroll>
+    <div class="to-bottom" v-if="showScrollToBottom" @click="scrollToLast">
+      <img src="../../assets/icon_double_arrow_down.svg" />
+    </div>
   </div>
 </template>
 
@@ -78,18 +83,20 @@ export default {
     return {
       MSG_TYPE,
       showPullDownTip: true,
+      showScrollToBottom: false,
       options: {
         pullDownRefresh: {
           threshold: 60,
           stopTime: 1000
         },
-        scrollbar: {
-          fade: true
-        }
+        scrollbar: false
       }
     }
   },
   methods: {
+    onScroll (pos) {
+      this.showScrollToBottom = pos.y !== 0 && (this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight + 42) < pos.y
+    },
     onPullingDown () {
       this.showPullDownTip = false
       this.$emit('pulldown')
@@ -198,12 +205,12 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 body {
   overflow-x: hidden;
 }
 </style>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .container {
   box-sizing: border-box;
   height: 100%;
@@ -227,8 +234,8 @@ body {
   }
   .date {
     font-size: 12px;
-    transform: scale(.75);
     color: #999;
+    margin: 0 3px;
   }
   .content {
     display: flex;
@@ -353,6 +360,29 @@ body {
         transform: rotate(180deg)
       }
     }
+  }
+}
+.to-bottom {
+  box-shadow: 0 0 4px rgba(0, 0, 0, .2);
+  background: #fff;
+  text-align: center;
+  font-family: Arial;
+  font-weight: 200;
+  display: flex;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  line-height: 40px;
+  border-radius: 50%;
+  position: fixed;
+  z-index: 2; // higher than .cube-scroll-content
+  right: 5px;
+  bottom: 55px;
+  img {
+    path {
+      fill: @azul;
+    }
+    width: 20px;
   }
 }
 </style>
