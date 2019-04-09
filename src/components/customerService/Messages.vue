@@ -102,7 +102,10 @@ export default {
   },
   methods: {
     onScroll (pos) {
-      this.showScrollToBottom = pos.y !== 0 && (this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight + 42) < pos.y
+      // 10 => ul > li margin-bottom
+      const initial = this.$refs.scroll.scroll.y === this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight - 10
+      // 42 = 10 + 32, 32 => height of one line
+      this.showScrollToBottom = !initial && (this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight + 42) < pos.y
     },
     handleSize () {
       if (window.innerHeight !== this.browser.height) {
@@ -129,11 +132,15 @@ export default {
         }
       }).show()
     },
+    scrollToLast () {
+      const betterScroll = this.$refs.scroll.scroll
+      betterScroll.scrollTo(0, betterScroll.maxScrollY, 200)
+    },
     handleScrollTop () {
       this.$nextTick(() => {
         this.$refs.scroll.refresh()
         if (this.userSend) {
-          this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
+          this.scrollToLast()
         }
       })
     }
