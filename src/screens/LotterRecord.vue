@@ -106,6 +106,7 @@ const gameTable = {
   'bjk3': jsk3CompareList,
   'gxk3': jsk3CompareList,
   'shk3': jsk3CompareList,
+  'hubk3': jsk3CompareList,
   'gd11x5': gd11x5CompareList,
   'hkl': hklCompareList,
   'cs600hkl': hklCompareList,
