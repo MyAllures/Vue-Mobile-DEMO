@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <AdditionalArea />
-    <Input :value.sync="value" />
+    <Input ref="textbox" :value.sync="value" />
     <SendBtn @send="handleSend" />
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
   },
   methods: {
     handleSend () {
+      this.$refs.textbox.$refs.input.focus()
       if (!this.value) {
         return
       }
