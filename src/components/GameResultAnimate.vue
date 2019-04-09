@@ -1,7 +1,7 @@
 <template>
   <div :class="['balls-number', 'wrapper-' + gameType]">
     <div class="balls-frame">
-      <div v-if="gameType === 'jsk3'|| gameCode === 'msk3'|| gameCode === 'bjk3'|| gameCode ==='gxk3' || gameCODE ==='shk3'" class="jsk3-loading">
+      <div v-if="gameType === 'jsk3'|| gameCode === 'msk3'|| gameCode === 'bjk3'|| gameCode ==='gxk3' || gameCode ==='shk3' || gameCode ==='hubk3'" class="jsk3-loading">
         <div class="camera">
           <div class="space space1">
               <div class="dice dice1"></div>
