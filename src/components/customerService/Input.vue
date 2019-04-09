@@ -2,6 +2,7 @@
   <div class="wrapper">
     <cube-input
       class="input"
+      ref="input"
       v-model="value"
       @input="handleInput"
       :placeholder="''"

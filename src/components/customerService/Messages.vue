@@ -16,7 +16,7 @@
                   <i class="no-avatar" v-else>{{msg.user.username[0].toUpperCase()}}</i>
                 </template>
                 <div class="user-wrapper">
-                  <p class="username">{{msg.user.nickname || msg.user.username}}</p>
+                  <p class="username">客服 {{msg.user.nickname || msg.user.username}}</p>
                   <div class="msg-wrapper" v-if="msg.text">
                     <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
                       {{msg.text}}
@@ -86,10 +86,23 @@ export default {
         scrollbar: {
           fade: true
         }
+      },
+      browser: {
+        width: window.innerWidth,
+        height: window.innerHeight
       }
     }
   },
+  mounted () {
+    window.addEventListener('resize', this.handleSize)
+  },
   methods: {
+    handleSize () {
+      if (window.innerHeight !== this.browser.height) {
+        this.browser.height = window.innerHeight
+        this.handleScrollTop()
+      }
+    },
     onPullingDown () {
       this.showPullDownTip = false
       this.$emit('pulldown')
@@ -191,6 +204,9 @@ export default {
         }
       })
     }
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleSize)
   }
 }
 </script>
