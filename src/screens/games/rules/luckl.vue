@@ -1,8 +1,5 @@
 <template>
   <section class="rule-details">
-    <p>官网:
-      <a href="http://ontariolotto.com/" target="_blank">Ontario Keno</a>
-    </p>
     <h3>
       <span class="warn">「幸运六合彩」按幸运快乐8的开奖结果为基础。</span>
     </h3>
