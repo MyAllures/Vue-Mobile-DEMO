@@ -283,5 +283,6 @@ export default {
   'jsk3': msk3Translator,
   'msk3': msk3Translator,
   'bjk3': msk3Translator,
+  'gxk3': msk3Translator,
   'fc3d': fc3dTranslator
 }

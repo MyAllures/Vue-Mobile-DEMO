@@ -29,6 +29,7 @@ export const settings = {
   jsk3: k3Setting,
   msk3: k3Setting,
   bjk3: k3Setting,
+  gxk3: k3Setting,
   bjkl8: kl8Setting,
   auluck8: auluck8Setting,
   pcdd: ddSetting,

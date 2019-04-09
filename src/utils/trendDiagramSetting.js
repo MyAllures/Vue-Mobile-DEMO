@@ -72,6 +72,7 @@ export const settings = {
   jsk3: k3Setting,
   msk3: k3Setting,
   bjk3: k3Setting,
+  gxk3: k3Setting,
   gd11x5: gd11x5Setting,
   gdklsf: gdklsfSetting
 }
