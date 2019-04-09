@@ -86,10 +86,23 @@ export default {
         scrollbar: {
           fade: true
         }
+      },
+      browser: {
+        width: window.innerWidth,
+        height: window.innerHeight
       }
     }
   },
+  mounted () {
+    window.addEventListener('resize', this.handleSize)
+  },
   methods: {
+    handleSize () {
+      if (window.innerHeight !== this.browser.height) {
+        this.browser.height = window.innerHeight
+        this.handleScrollTop()
+      }
+    },
     onPullingDown () {
       this.showPullDownTip = false
       this.$emit('pulldown')
@@ -191,6 +204,9 @@ export default {
         }
       })
     }
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.handleSize)
   }
 }
 </script>
