@@ -21,8 +21,8 @@
                     <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
                       {{msg.text}}
                     </span>
-                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" v-on:load="handleScroll(true)"  @click="showImgAction(msg.text)" />
-                    <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" v-on:load="handleScroll(true)" />
+                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" @load="handleScrollTop" @click="showImgAction(msg.text)" />
+                    <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" @load="handleScrollTop" />
                     <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                   </div>
                 </div>
@@ -109,15 +109,13 @@ export default {
         }
       }).show()
     },
-    handleScroll (isImage = false) {
+    handleScrollTop () {
       this.$nextTick(() => {
         this.$refs.scroll.refresh()
-        if (!this.userSend) return
-        this.scrollToLast()
+        if (this.userSend) {
+          this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
+        }
       })
-    },
-    scrollToLast () {
-      this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
     }
   },
   watch: {
@@ -131,8 +129,8 @@ export default {
       },
       immediate: true
     },
-    'rawMessages.length' (val) {
-      this.handleScroll()
+    'rawMessages.length' () {
+      this.handleScrollTop()
     }
   },
   computed: {
@@ -174,14 +172,13 @@ export default {
             contentClassList = ['text']
             isChatMsg = true
             break
-          case MSG_TYPE.system:
+          case MSG_TYPE.inform:
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
-            break
-          case MSG_TYPE.inform_message:
-            wrapperClassList = ['msg-badge']
-            contentClassList = ['badge']
-            msg.text = `客服转派为 ${msg.text}`
+
+            const csUsername = msg[msg.action === 'assign' ? 'support_username' : 'to_support_username']
+            const csNickname = msg[msg.action === 'assign' ? 'support_nickname' : 'to_support_nickname']
+            msg.text = `客服 ${csUsername}${csNickname ? ' ' + csNickname : ''} 为您服务`
             break
           default:
             return
