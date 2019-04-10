@@ -27,13 +27,15 @@ export default {
   },
   methods: {
     handleSend () {
+      const cleanValue = this.value.trim()
+      this.value = ''
       this.$refs.input.$refs.input.focus()
       this.$refs.input.$refs.emojiSelector.showEmojiMenu = false
-      if (!this.value) {
+
+      if (!cleanValue) {
         return
       }
-      this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: this.value}})
-      this.value = ''
+      this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: cleanValue}})
       this.$emit('send')
     }
   }

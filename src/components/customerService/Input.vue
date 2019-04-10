@@ -36,6 +36,7 @@ export default {
     },
     insertEmoji (emoji) {
       this.$emit('update:value', `${this.value} ${emoji} `)
+      this.$refs.input.focus()
     }
   }
 }
