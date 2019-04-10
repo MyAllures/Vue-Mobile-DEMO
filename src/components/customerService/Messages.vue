@@ -204,7 +204,7 @@ export default {
 
             const csUsername = msg[msg.action === 'assign' ? 'support_username' : 'to_support_username']
             const csNickname = msg[msg.action === 'assign' ? 'support_nickname' : 'to_support_nickname']
-            msg.text = `客服 ${csUsername}${csNickname ? ' ' + csNickname : ''} 为您服务`
+            msg.text = `客服 ${csNickname || csUsername} 为您服务`
             break
           default:
             return
