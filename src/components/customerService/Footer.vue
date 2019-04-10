@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <AdditionalArea />
-    <Input ref="textbox" :value.sync="value" />
+    <Input ref="input" :value.sync="value" />
     <SendBtn @send="handleSend" />
   </div>
 </template>
@@ -27,12 +27,15 @@ export default {
   },
   methods: {
     handleSend () {
-      this.$refs.textbox.$refs.input.focus()
-      if (!this.value) {
+      const cleanValue = this.value.trim()
+      this.value = ''
+      this.$refs.input.$refs.input.focus()
+      this.$refs.input.$refs.emojiSelector.showEmojiMenu = false
+
+      if (!cleanValue) {
         return
       }
-      this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: this.value}})
-      this.value = ''
+      this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: cleanValue}})
       this.$emit('send')
     }
   }

@@ -5,15 +5,16 @@
       ref="input"
       v-model="value"
       @input="handleInput"
+      @focus="inputFocused"
       :placeholder="''"
       type="text">
     </cube-input>
-    <EmojiSelector @emojiSelected="insertEmoji" v-if="showEmojiSelector" />
+    <EmojiSelector ref="emojiSelector" @emojiSelected="insertEmoji" v-if="showEmojiSelector" />
   </div>
 </template>
 
 <script>
-import EmojiSelector from '../EmojiSelector'
+import EmojiSelector from './EmojiSelector'
 
 export default {
   components: {
@@ -33,6 +34,9 @@ export default {
   methods: {
     handleInput (e) {
       this.$emit('update:value', e)
+    },
+    inputFocused () {
+      this.$refs.emojiSelector.showEmojiMenu = false
     },
     insertEmoji (emoji) {
       this.$emit('update:value', `${this.value} ${emoji} `)
