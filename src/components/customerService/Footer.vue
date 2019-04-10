@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <AdditionalArea />
-    <Input ref="textbox" :value.sync="value" />
+    <Input ref="input" :value.sync="value" />
     <SendBtn @send="handleSend" />
   </div>
 </template>
@@ -27,7 +27,8 @@ export default {
   },
   methods: {
     handleSend () {
-      this.$refs.textbox.$refs.input.focus()
+      this.$refs.input.$refs.input.focus()
+      this.$refs.input.$refs.emojiSelector.showEmojiMenu = false
       if (!this.value) {
         return
       }

@@ -8,7 +8,7 @@
       :placeholder="''"
       type="text">
     </cube-input>
-    <EmojiSelector @emojiSelected="insertEmoji" v-if="showEmojiSelector" />
+    <EmojiSelector ref="emojiSelector" @emojiSelected="insertEmoji" v-if="showEmojiSelector" />
   </div>
 </template>
 
