@@ -1,14 +1,16 @@
 <template>
-  <div class="container">
+  <div class="container" ref="scrollContainer">
     <cube-scroll
       ref="scroll"
       :data="messages"
       :options="options"
+      @scroll="onScroll"
+      :scrollEvents='["scroll"]'
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
         <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
         <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
-          <div :class="msg.wrapperClassList">
+          <div :class="msg.wrapperClassList" v-if="msg">
             <div :class="['content', ...msg.contentClassList]">
               <template v-if="msg.isChatMsg">
                 <template>
@@ -56,6 +58,9 @@
         </div>
       </template>
     </cube-scroll>
+    <div class="to-bottom" v-if="showScrollToBottom" @click="scrollToLast">
+      <img src="../../assets/icon_double_arrow_down.svg" />
+    </div>
   </div>
 </template>
 
@@ -78,14 +83,13 @@ export default {
     return {
       MSG_TYPE,
       showPullDownTip: true,
+      showScrollToBottom: false,
       options: {
         pullDownRefresh: {
           threshold: 60,
           stopTime: 1000
         },
-        scrollbar: {
-          fade: true
-        }
+        scrollbar: false
       },
       browser: {
         width: window.innerWidth,
@@ -97,6 +101,11 @@ export default {
     window.addEventListener('resize', this.handleSize)
   },
   methods: {
+    onScroll (pos) {
+      const initial = this.$refs.scroll.scroll.y < this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight
+      // 42 = 10 + 32, 32 => height of one line
+      this.showScrollToBottom = !initial && (this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight + 42) < pos.y
+    },
     handleSize () {
       if (window.innerHeight !== this.browser.height) {
         this.browser.height = window.innerHeight
@@ -122,11 +131,15 @@ export default {
         }
       }).show()
     },
+    scrollToLast () {
+      const betterScroll = this.$refs.scroll.scroll
+      betterScroll.scrollTo(0, betterScroll.maxScrollY, 200)
+    },
     handleScrollTop () {
       this.$nextTick(() => {
         this.$refs.scroll.refresh()
         if (this.userSend) {
-          this.$refs.scroll.scrollToElement(document.querySelector('.msgs > :last-child'), 200)
+          this.scrollToLast()
         }
       })
     }
@@ -211,12 +224,12 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 body {
   overflow-x: hidden;
 }
 </style>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .container {
   box-sizing: border-box;
   height: 100%;
@@ -240,8 +253,8 @@ body {
   }
   .date {
     font-size: 12px;
-    transform: scale(.75);
     color: #999;
+    margin: 0 3px;
   }
   .content {
     display: flex;
@@ -366,6 +379,29 @@ body {
         transform: rotate(180deg)
       }
     }
+  }
+}
+.to-bottom {
+  box-shadow: 0 0 4px rgba(0, 0, 0, .2);
+  background: #fff;
+  text-align: center;
+  font-family: Arial;
+  font-weight: 200;
+  display: flex;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  line-height: 40px;
+  border-radius: 50%;
+  position: fixed;
+  z-index: 2; // higher than .cube-scroll-content
+  right: 5px;
+  bottom: 55px;
+  img {
+    path {
+      fill: @azul;
+    }
+    width: 20px;
   }
 }
 </style>
