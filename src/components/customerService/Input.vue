@@ -8,15 +8,16 @@
       :placeholder="''"
       type="text">
     </cube-input>
-    <StickerBtn></StickerBtn>
+    <EmojiSelector @emojiSelected="insertEmoji" />
   </div>
 </template>
 
 <script>
-import StickerBtn from './StickerBtn.vue'
+import EmojiSelector from '../EmojiSelector'
+
 export default {
   components: {
-    StickerBtn
+    EmojiSelector
   },
   props: {
     value: {
@@ -27,6 +28,9 @@ export default {
   methods: {
     handleInput (e) {
       this.$emit('update:value', e)
+    },
+    insertEmoji (emoji) {
+      this.$emit('update:value', `${this.value} ${emoji} `)
     }
   }
 }

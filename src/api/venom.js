@@ -1,6 +1,10 @@
 import axios from 'axios'
 import urls from './urls'
 
+function fetchServiceEmoji () {
+  return axios.get(urls.service_emoji)
+}
+
 function fetchServiceStickers () {
   return axios.get(urls.service_stickers)
 }
@@ -14,6 +18,7 @@ function uploadImgToService (data) {
 }
 
 export {
+  fetchServiceEmoji,
   fetchServiceStickers,
   fetchServiceUnread,
   uploadImgToService
