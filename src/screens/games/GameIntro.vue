@@ -21,6 +21,7 @@ const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
 const bjk3 = (resolve) => require(['@/screens/games/rules/bjk3'], resolve)
 const gxk3 = (resolve) => require(['@/screens/games/rules/gxk3'], resolve)
 const shk3 = (resolve) => require(['@/screens/games/rules/shk3'], resolve)
+const hubk3 = (resolve) => require(['@/screens/games/rules/hubk3'], resolve)
 const mlaft = (resolve) => require(['@/screens/games/rules/mlaft'], resolve)
 const gdklsf = (resolve) => require(['@/screens/games/rules/gdklsf'], resolve)
 const bcr = (resolve) => require(['@/screens/games/rules/bcr'], resolve)
@@ -58,6 +59,7 @@ export default {
     bjk3,
     gxk3,
     shk3,
+    hubk3,
     mlaft,
     gdklsf,
     bcr,
