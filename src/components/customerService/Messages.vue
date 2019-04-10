@@ -10,7 +10,7 @@
       <ul ref="msgs" class="msgs">
         <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
         <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
-          <div :class="msg.wrapperClassList">
+          <div :class="msg.wrapperClassList" v-if="msg">
             <div :class="['content', ...msg.contentClassList]">
               <template v-if="msg.isChatMsg">
                 <template>
@@ -102,8 +102,7 @@ export default {
   },
   methods: {
     onScroll (pos) {
-      // 10 => ul > li margin-bottom
-      const initial = this.$refs.scroll.scroll.y === this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight - 10
+      const initial = this.$refs.scroll.scroll.y < this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight
       // 42 = 10 + 32, 32 => height of one line
       this.showScrollToBottom = !initial && (this.$refs.scrollContainer.scrollHeight - this.$refs.msgs.scrollHeight + 42) < pos.y
     },
