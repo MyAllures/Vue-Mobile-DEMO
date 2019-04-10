@@ -8,7 +8,7 @@ module.exports = merge(prodEnv, {
   chatHost: '"ws://staging-raven.h9339.com"',
   chatApi: '"https://staging-raven.h9339.com"',
   eiderHost: '"wss://staging-eider.h9339.com"',
-  venomHost: '"http://staging-venom.h9339.com"',
+  venomHost: '"https://staging-venom.h9339.com"',
   venomSocket: '"ws://staging-venom.h9339.com"',
   company: '"staging"'
 })

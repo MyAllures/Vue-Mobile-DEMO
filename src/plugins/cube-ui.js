@@ -13,7 +13,9 @@ import {
   Scroll,
   Input,
   Upload,
-  Loading
+  Loading,
+  TabBar,
+  TabPanels
 } from 'cube-ui'
 
 Vue.use(Picker)
@@ -23,3 +25,5 @@ Vue.use(Scroll)
 Vue.use(Input)
 Vue.use(Upload)
 Vue.use(Loading)
+Vue.use(TabBar)
+Vue.use(TabPanels)
