@@ -59,7 +59,7 @@ import {HKL_GAMES} from '../config'
 const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'jsk3', 'cs60cr']
 const rand1to10 = ['jspk10', 'bcr', 'mlaft', 'er75ft']
 const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'ynssc', 'hjssc', 'csffc', 'pcdd', 'jnd28']
-const rand1to11 = ['gd11x5']
+const rand1to11 = ['gd11x5', 'ah11x5']
 const rand1to20 = ['cqlf', 'gdklsf', 'hkl']
 const rand1to49 = ['bjkl8', 'auluck8']
 const randomGeneratorFactory = (gameType) => {
