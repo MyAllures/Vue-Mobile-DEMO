@@ -8,7 +8,7 @@
       :placeholder="''"
       type="text">
     </cube-input>
-    <EmojiSelector @emojiSelected="insertEmoji" />
+    <EmojiSelector @emojiSelected="insertEmoji" v-if="showEmojiSelector" />
   </div>
 </template>
 
@@ -23,6 +23,11 @@ export default {
     value: {
       type: String,
       default: ''
+    }
+  },
+  data () {
+    return {
+      showEmojiSelector: false
     }
   },
   methods: {

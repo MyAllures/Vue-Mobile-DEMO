@@ -1,5 +1,5 @@
 <template>
-  <div class="emoji-selector">
+  <div class="emoji-selector" v-show="Object.keys(emojis).length">
     <div class="emoji-button" @click="showEmojiMenu = !showEmojiMenu">
       <img src="@/assets/icon_sticker.svg" />
     </div>
