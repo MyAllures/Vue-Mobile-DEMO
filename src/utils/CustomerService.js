@@ -1,7 +1,5 @@
 const RECEIVED_ACTION = {
   'system': 'system',
-  'assign': 'assign',
-  'transfer': 'transfer',
   'normal': 'normal',
   'image': 'image',
   'sticker': 'sticker',
@@ -26,7 +24,6 @@ const MSG_TYPE = {
   'image': 2,
   'sticker': 3,
   // below is custom for display
-  'inform': 96,
   'datetag': 97,
   'welcome': 98,
   'pulldown': 99
