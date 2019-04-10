@@ -27,7 +27,8 @@ export default {
           text: '文件格式不正确或您目前尚不符合发言条件',
           type: 'warn'
         })
-        return false
+        fileInp.value = ''
+        return
       }
 
       lrz(file).then(rst => {
@@ -36,6 +37,7 @@ export default {
             text: '图片尺寸太大，请选择较小尺寸的图片',
             type: 'warn'
           })
+          fileInp.value = ''
           return
         }
         let formData = new FormData()
