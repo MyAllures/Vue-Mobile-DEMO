@@ -3,13 +3,13 @@ import {findIndex} from 'lodash'
 export default {
   namespaced: true,
   state: {
-    unread: 0,
+    unread: false,
     messages: [],
     hasHistory: false
   },
   mutations: {
-    setServiceUnread: (state, count) => {
-      state.unread = +count
+    setServiceUnread: (state, bool) => {
+      state.unread = bool
     },
     addMessages: (state, messages) => {
       state.messages.push(...messages)
@@ -33,8 +33,8 @@ export default {
     }
   },
   actions: {
-    setServiceUnread: ({ commit }, count) => {
-      commit('setServiceUnread', count)
+    setServiceUnread: ({ commit }, bool) => {
+      commit('setServiceUnread', bool)
     },
     addMessages: ({ commit }, messages) => {
       commit('addMessages', messages)
