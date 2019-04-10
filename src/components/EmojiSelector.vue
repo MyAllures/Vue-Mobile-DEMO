@@ -15,6 +15,7 @@
         </cube-tab-panel>
       </cube-tab-panels>
     </div>
+    <div class="emoji-mask" @click="showEmojiMenu = false" v-if="showEmojiMenu"></div>
   </div>
 </template>
 
@@ -100,12 +101,12 @@ $blue: #156fd8;
   position: absolute;
   left: 0;
   bottom: 50px;
-  width: 100%;
+  width: 100vw;
   height: 360px;
   max-height: calc(100vh - 46px - 50px);
   background: #FFF;
   border-top: solid 1px #e5e5e5;
-  z-index: 1;
+  z-index: 2;
 
   .cube-tab-bar {
     height: 54px;
@@ -132,7 +133,7 @@ $blue: #156fd8;
     overflow-y: scroll;
   }
   .emoji {
-    width: 36px;
+    width: 10%;
     height: 36px;
     line-height: 36px;
     text-align: center;
@@ -143,5 +144,13 @@ $blue: #156fd8;
       line-height: 32px;
     }
   }
+}
+.emoji-mask {
+  position: absolute;
+  left: 0;
+  bottom: 50px;
+  width: 100vw;
+  height: calc(100vh - 50px);
+  z-index: 1;
 }
 </style>
