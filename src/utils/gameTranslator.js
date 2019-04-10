@@ -275,6 +275,7 @@ export default {
   'gdklsf': cqlfTranslator,
   'gd11x5': gd11x5Translator,
   'ah11x5': gd11x5Translator,
+  'bj11x5': gd11x5Translator,
   'bjkl8': bjkl8Translator,
   'auluck8': auluck8Translator,
   'pcdd': pcddTranslator,

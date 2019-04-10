@@ -17,6 +17,7 @@ const cs75hkl = (resolve) => require(['@/screens/games/rules/cs75hkl'], resolve)
 const csjndhkl = (resolve) => require(['@/screens/games/rules/csjndhkl'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
 const ah11x5 = (resolve) => require(['@/screens/games/rules/ah11x5'], resolve)
+const bj11x5 = (resolve) => require(['@/screens/games/rules/bj11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
 const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
 const bjk3 = (resolve) => require(['@/screens/games/rules/bjk3'], resolve)
@@ -55,6 +56,7 @@ export default {
     cs600hkl,
     cqlf,
     gd11x5,
+    bj11x5,
     ah11x5,
     jsk3,
     msk3,
