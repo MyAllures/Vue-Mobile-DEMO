@@ -2,14 +2,14 @@
   <div class="container" ref="scrollContainer">
     <cube-scroll
       ref="scroll"
-      :data="messages"
+      :data="sortedMessages"
       :options="options"
       @scroll="onScroll"
       :scrollEvents='["scroll"]'
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
-        <li class="msg pulldown" v-if="hasHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
-        <li class="msg" v-for="(msg, msgIndex) in messages" :key="msgIndex">
+        <li class="msg pulldown" v-if="hasMoreHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
+        <li class="msg" v-for="(msg, msgIndex) in sortedMessages" :key="msgIndex">
           <div :class="msg.wrapperClassList" v-if="msg">
             <div :class="['content', ...msg.contentClassList]">
               <template v-if="msg.isChatMsg">
@@ -65,15 +65,12 @@
 </template>
 
 <script>
-import {map} from 'lodash'
-import {EMITTED_ACTION, MSG_TYPE} from '@/utils/CustomerService'
-import {mapState} from 'vuex'
+import { concat, map, takeRight } from 'lodash'
+import { MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
+import { mapState } from 'vuex'
+
 export default {
   props: {
-    rawMessages: {
-      type: Array,
-      default: []
-    },
     userSend: {
       type: Boolean,
       default: true
@@ -82,13 +79,12 @@ export default {
   data () {
     return {
       MSG_TYPE,
+      defaultHistoryNum: 30,
+      showFullHistory: false,
       showPullDownTip: true,
       showScrollToBottom: false,
       options: {
-        pullDownRefresh: {
-          threshold: 60,
-          stopTime: 1000
-        },
+        pullDownRefresh: false,
         scrollbar: false
       },
       browser: {
@@ -113,9 +109,11 @@ export default {
       }
     },
     onPullingDown () {
-      this.showPullDownTip = false
-      this.$emit('pulldown')
-      this.$store.state.ws.venom.send({action: EMITTED_ACTION.history_message})
+      setTimeout(() => {
+        this.$emit('pulldown')
+        this.showPullDownTip = false
+        this.showFullHistory = true
+      }, 500)
     },
     showImgAction (imgSrc) {
       this.$createActionSheet({
@@ -142,60 +140,71 @@ export default {
           this.scrollToLast()
         }
       })
+    },
+    catHasMessages (cat) {
+      return this.received[cat] && this.received[cat].length > 0
     }
   },
   watch: {
-    hasHistory: {
-      handler (isHas) {
-        if (isHas) {
-          this.options.pullDownRefresh = {threshold: 60, stopTime: 1000}
+    showPullDownTip: {
+      handler (show) {
+        if (show) {
+          this.options.pullDownRefresh = { threshold: 60, stopTime: 1000 }
         } else {
           this.options.pullDownRefresh = false
         }
       },
       immediate: true
     },
-    'rawMessages.length' () {
+    messageCollection () {
       this.handleScrollTop()
     }
   },
   computed: {
-    ...mapState('customerService',
-      {hasHistory: state => state.hasHistory}
-    ),
-    messages () {
-      const myName = this.$store.state.user.username
-      return map(this.rawMessages, msg => {
+    ...mapState('customerService', {
+      received: state => state.received
+    }),
+    historyMessage () {
+      return this.showFullHistory ? this.received[MSG_CAT.history] : takeRight(this.received[MSG_CAT.history], this.defaultHistoryNum)
+    },
+    hasMoreHistory () {
+      return this.received[MSG_CAT.history].length > this.defaultHistoryNum
+    },
+    messageCollection () {
+      return concat(
+        this.catHasMessages(MSG_CAT.offline) ? [] : this.historyMessage,
+        this.received[MSG_CAT.welcome],
+        this.received[MSG_CAT.offline],
+        this.received[MSG_CAT.common]
+      )
+    },
+    sortedMessages () {
+      return map(this.messageCollection, msg => {
         let wrapperClassList = []
         let contentClassList = []
         let isChatMsg = false
         switch (msg.type) {
-          case MSG_TYPE.pulldown:
-            wrapperClassList = ['pulldown']
-            contentClassList = ['tip']
-            break
-          case MSG_TYPE.welcome:
+          case MSG_TYPE.welcome_message:
             wrapperClassList = ['welcome']
             contentClassList = ['box']
             break
           case MSG_TYPE.datetag:
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
-            if (msg.text === this.$moment().format('YYYY-MM-DD')) { msg.text = '今天' }
-            break
-          case MSG_TYPE.sticker:
-            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
-            contentClassList = ['sticker']
-            isChatMsg = true
-            break
-          case MSG_TYPE.image:
-            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
-            contentClassList = ['image']
-            isChatMsg = true
+            if (msg.text === this.$moment().format('YYYY-MM-DD')) {
+              msg.text = '今天'
+            }
             break
           case MSG_TYPE.normal:
-            wrapperClassList = [(msg.user && (msg.user.username === myName)) ? 'self-sent' : 'other-sent']
-            contentClassList = ['text']
+          case MSG_TYPE.image:
+          case MSG_TYPE.sticker:
+            const className = {
+              1: 'normal',
+              2: 'image',
+              3: 'sticker'
+            }
+            wrapperClassList = [msg.user && msg.user.username === this.$store.state.user.username ? 'self-sent' : 'other-sent']
+            contentClassList = [className[msg.type]]
             isChatMsg = true
             break
           default:

@@ -2,7 +2,7 @@
   <div class="container">
     <AdditionalArea />
     <Input ref="input" :value.sync="value" />
-    <SendBtn @send="handleSend" />
+    <SendBtn @send="send" />
   </div>
 </template>
 
@@ -26,7 +26,7 @@ export default {
     }
   },
   methods: {
-    handleSend () {
+    send () {
       const cleanValue = this.value.trim()
       this.value = ''
       this.$refs.input.$refs.input.focus()

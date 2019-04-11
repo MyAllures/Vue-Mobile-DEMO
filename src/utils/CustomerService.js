@@ -1,13 +1,10 @@
 const RECEIVED_ACTION = {
-  'system': 'system',
-  'normal': 'normal',
-  'image': 'image',
-  'sticker': 'sticker',
-  'history_message': 'history_message',
-  'offline_message': 'offline_message',
-  'welcome_message': 'welcome_message',
-  'has_history_message': 'has_history_message',
-  'pulldown': 'pulldown'
+  welcome_message: 'welcome_message',
+  offline_message: 'offline_message',
+  history_message: 'history_message',
+  normal: 'normal',
+  image: 'image',
+  sticker: 'sticker'
 }
 
 const EMITTED_ACTION = {
@@ -19,18 +16,25 @@ const EMITTED_ACTION = {
 }
 
 const MSG_TYPE = {
-  'system': 0,
-  'normal': 1,
-  'image': 2,
-  'sticker': 3,
-  // below is custom for display
-  'datetag': 97,
-  'welcome': 98,
-  'pulldown': 99
+  system: 0,
+  normal: 1,
+  image: 2,
+  sticker: 3,
+  // custom types
+  datetag: 101,
+  welcome_message: 102
+}
+
+const MSG_CAT = {
+  common: 'common',
+  welcome: 'welcome',
+  history: 'history',
+  offline: 'offline'
 }
 
 export {
   RECEIVED_ACTION,
   EMITTED_ACTION,
-  MSG_TYPE
+  MSG_TYPE,
+  MSG_CAT
 }
