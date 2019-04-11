@@ -1,5 +1,5 @@
 <template>
-  <i ref="point" v-if="hasUnread" :class="['red-point', {'in-right-menu': inRightMenu}]"></i>
+  <i ref="point" v-show="hasUnread" :class="['red-point', {'in-right-menu': inRightMenu}]"></i>
 </template>
 
 <script>
@@ -20,10 +20,8 @@ export default {
     }
   },
   mounted () {
-    if (this.hasUnread) {
-      const pointDOM = this.$refs['point']
-      pointDOM.parentElement.style.position = 'relative'
-    }
+    const pointDOM = this.$refs.point
+    pointDOM.parentElement.style.position = 'relative'
   }
 }
 </script>
