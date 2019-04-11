@@ -15,8 +15,8 @@ import {
 } from '@/api'
 import { JWT } from '@/utils/jwtToken'
 
-import {HKL_GAMES} from '../../config'
-import {take, find} from 'lodash'
+import { HKL_GAMES } from '@/config'
+import { take, find } from 'lodash'
 
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
@@ -100,8 +100,7 @@ export default {
         })
       }
       commit(types.SET_ANNOUNCE, {page: 'homepage', announce: datas.map(data => data.announcement)})
-    }
-    )
+    })
   },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
