@@ -1,6 +1,13 @@
 import axios from 'axios'
 import urls from './urls'
 import qs from 'qs'
+import Vue from 'vue'
+
+export const JWT = {
+  venom: 'customer_service',
+  raven: 'chat',
+  eider: 'message_broker'
+}
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -215,6 +222,10 @@ export function changeUserInformation (id, member) {
   return axiosGhost.put(urls.user + id + '/', member)
 }
 
+export function fetchUnreadCount () {
+  return axiosGhost.get(urls.unreadMessage)
+}
+
 export function fetchMessages (limit, offset) {
   return axiosGhost.get(urls.messages + `?limit=${limit}&offset=${offset}`)
 }
@@ -350,6 +361,17 @@ export function fetchChatUserInfo (username) {
 }
 export function fetchRoomInfo () {
   return axiosGhost.get(urls.raven.roomInfo)
+}
+
+export function fetchWinHistory () {
+  return axiosGhost.get(urls.win_history)
+}
+
+export function fetchEiderJWTToken () {
+  return axiosGhost.post(urls.get_jwt_token, {service_type: JWT.eider}).then((res) => {
+    Vue.cookie.set(JWT.eider + '_token', res[JWT.eider + '_token'])
+    return res
+  })
 }
 
 // eagle

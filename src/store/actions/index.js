@@ -11,6 +11,7 @@ import {
   fetchCategories,
   getPromotions,
   fetchBanner,
+  fetchUnreadCount,
   fetchAnnouncements
 } from '../../api'
 import {take, find} from 'lodash'
@@ -156,6 +157,11 @@ export default {
   },
   setUnread: ({commit}, count) => {
     commit(types.SET_UNREAD, count)
+  },
+  initUnread: ({commit}) => {
+    fetchUnreadCount().then(res => {
+      commit(types.ADD_UNREAD, res.message_count)
+    })
   },
   addUnread: ({commit}, count) => {
     commit(types.ADD_UNREAD, count)

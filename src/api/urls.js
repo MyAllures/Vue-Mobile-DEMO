@@ -50,6 +50,7 @@ export default {
   remitpayee: v2Member + '/remitpayee/',
   remit: v2Member + '/remit_transaction/',
   readMessage: v2Member + '/message/read/',
+  unreadMessage: v2Member + '/message/count/',
   messages: v2Member + '/messages/',
   gamehistory: v2Member + '/history/',
   statistic: v2Member + '/statistic/',
@@ -64,6 +65,8 @@ export default {
   trend_chart: v2Member + '/trend_chart/',
   expert_plan: apiv2 + '/expert_plans/',
   expert_bettrack: v2Member + '/expert_plan_tracked_bets/',
+  win_history: host + '/members_win_histories?limit=20',
+  get_jwt_token: host + '/get_jwt_token/',
   raven: {
     chatEmoji: ravenHost + '/v1/emoji/',
     stickers: ravenHost + '/v1/stickers/',

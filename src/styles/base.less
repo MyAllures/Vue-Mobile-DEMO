@@ -241,6 +241,11 @@ html, body {
     width: 2px;
     background-color: @white;
   }
+  &.small {
+    &::before, &::after {
+      height: 15px;
+    }
+  }
   &::before {
     transform: rotate(45deg);
   }

@@ -66,6 +66,13 @@
           </div>
         </div>
       </template>
+      <div v-if="promotedGame && currentGame.is_prompt" class="bottom-prompt" :class="{ 'hidden' : !showBottomPrompt }">
+        <div class="inner topbar" :style="{'background-color': theme}">
+          <div class="close-btn small" @click="hideBottomPromot"></div>
+          <div class="txt">开奖太慢？推荐您体验{{promotedGame.period_descroption}}的{{promotedGame.display_name}}</div>
+          <x-button type="default" mini @click.native="forwardTo(promotedGame)">前往</x-button>
+        </div>
+      </div>
     </template>
     <game-menu-icon
       class="menu-center"
@@ -84,6 +91,7 @@
 import { XHeader, Popup, XButton, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import GameInfo from './GameInfo'
+import { find } from 'lodash'
 import ChatRoom from '../../components/ChatRoom'
 import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
@@ -130,10 +138,23 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: false
+      showNotifiyMsg: true,
+      showBottomPrompt: true
     }
   },
   computed: {
+    recommMaps () {
+      if (!this.allGames || !this.allGames.length) {
+        return {}
+      }
+      let map = {}
+      this.allGames.forEach(game => {
+        if (game.prompt_game) {
+          map[game.code] = game.prompt_game
+        }
+      })
+      return map
+    },
     hasTrendDiagram () {
       if (!this.currentGame) {
         return false
@@ -179,12 +200,21 @@ export default {
     seoWebsite () {
       if (this.systemConfig.planSiteUrl && this.currentGame) {
         const code = this.currentGame.code
-        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'jspk10', 'mlaft', 'cs60cr']
+        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft', 'cs60cr']
         if (gamesHasPlan.includes(code)) {
           return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
         }
       }
       return ''
+    },
+    promotedGame () {
+      if (!this.currentGame) {
+        return null
+      }
+      let code = this.recommMaps[this.currentGame.code]
+      return code ? find(this.allGames, game => {
+        return game.code === code
+      }) : null
     }
   },
   watch: {
@@ -220,16 +250,11 @@ export default {
     'currentGame': {
       handler (game) {
         if (game) {
-          if (game.is_prompt) {
-            const checkDate = window.localStorage.getItem(game.display_name)
-            if (checkDate) {
-              if (+checkDate < +this.$moment().format('YYYYMMDD')) {
-                this.showNotifiyMsg = true
-              }
-            } else {
-              this.showNotifiyMsg = true
-            }
-          }
+          const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
+          const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
+          this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
+          this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
+          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '13px'})
         }
       },
       immediate: true
@@ -251,6 +276,38 @@ export default {
     })
   },
   methods: {
+    setBottomPromotFlag () {
+      window.localStorage.setItem(`bottom-promot-${this.currentGame.code}`, this.$moment().format('YYYY-MM-DD HH:mm:ss'))
+    },
+    hideBottomPromot () {
+      this.setBottomPromotFlag()
+      this.showBottomPrompt = false
+      this.sendGaEvent({
+        label: this.currentGame.display_name,
+        category: 'bottom-promot',
+        action: 'hide'
+      })
+    },
+    forwardTo (game) {
+      this.setBottomPromotFlag()
+      this.sendGaEvent({
+        label: game.name,
+        category: 'bottom-promot',
+        action: 'via-' + this.currentGame.display_name
+      })
+      this.$store.dispatch('saveLastGame', game.id)
+      this.$router.push({path: `/game/${game.id}/`})
+    },
+    toggleGameMenu (trigger) {
+      this.isGameMenuVisible = !this.isGameMenuVisible
+      if (this.isGameMenuVisible) {
+        this.sendGaEvent({
+          label: this.currentGame.display_name,
+          category: trigger,
+          action: '查看遊戲菜單'
+        })
+      }
+    },
     changeRoute (to, from) {
       this.showChatRoom = false
       if (to.path === '/game') {
@@ -457,14 +514,56 @@ export default {
   line-height: 22px;
   color: white;
   text-align: center;
-}
+  top: 45.5px;
+  transition: top 1s;
+  &.hide {
+    top: 20px;
+  }
 
-.close-btn {
+  .close-btn {
+    position: absolute;
+    right: -1px;
+    top: -1px;
+    &::before, &::after {
+      height: 15px;
+    }
+  }
+}
+.bottom-prompt {
+  opacity: 0.9;
+  width: 100%;
   position: absolute;
-  right: -1px;
-  top: -1px;
-  &::before, &::after {
-    height: 15px;
+  bottom: 55px;
+  transition: bottom 1s, opacity 1s;
+  z-index: 5;
+  justify-content: center;
+  align-items: center;
+  &.hidden {
+    bottom: 100%;
+    opacity: 0;
+  }
+  .inner {
+    border-radius: 4px;
+    display: flex;
+    color: #fff;
+    margin: 10px;
+    padding: 10px 5px;
+  }
+  .close-btn {
+    margin-left: 10px;
+    align-self: center;
+  }
+  .txt {
+    line-height: 1.2;
+    font-size: 13px;
+    align-self: center;
+    padding: 0 10px;
+  }
+
+  .weui-btn.weui-btn_default {
+    height: 32px;
+    width: 80px;
+    align-self: center;
   }
 }
 </style>

@@ -1,26 +1,20 @@
 <template>
   <div class="leaderbaord-container">
-    <div class="title">{{game.display_name}}</div>
+    <div class="title vux-1px-b">{{game.display_name}} 长龙排行榜</div>
     <div class="content">
       <div v-if="loading && !leaderboardData" class="text-center p-t-lg">
         <InlineLoading></InlineLoading>
       </div>
       <div v-else class="table-wrapper">
-        <x-table full-bordered class="table">
-          <thead>
-            <tr>
-              <td>彩种</td>
-              <td>期数</td>
-            </tr>
-          </thead>
+        <x-table class="table">
           <tbody>
             <tr v-for="(item, index) in leaderboard" :key="index">
-              <td class="play text-center">
+              <td class="play text-center" width="60%">
                 <span v-if="item.type === 'in' || item.type === 'not_in'">{{item.type | typeFilter}} - {{item.title}}</span>
                 <span v-else>{{item.title}} - {{item.type | typeFilter}}</span>
               </td>
               <td class="issue">
-                {{item.num}}期
+                {{item.num}} 期
               </td>
             </tr>
           </tbody>
@@ -31,7 +25,7 @@
 </template>
 
 <script>
-import { XTable, InlineLoading } from 'vux'
+import { XTable, InlineLoading, XButton } from 'vux'
 import { fetchStatistic } from '@/api'
 import {HKL_GAMES} from '@/config'
 import gameTranslator from '@/utils/gameTranslator'
@@ -153,7 +147,7 @@ export default {
     }
   },
   components: {
-    XTable, InlineLoading
+    XTable, InlineLoading, XButton
   },
   data () {
     return {
@@ -235,7 +229,7 @@ export default {
   height: 100%;
   background-color: #fff;
   .title {
-    font-size: 16px;
+    color: #666;
     height: 40px;
     line-height: 40px;
     background-color: #f5f5f5;
@@ -256,10 +250,8 @@ export default {
 .table {
   background-color: #fff;
   .play, .issue {
-    font-size: 18px;
   }
   .play {
-    width: 60%;
     color: #4a4a4a;
   }
   .issue {
