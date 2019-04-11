@@ -59,6 +59,7 @@ export default {
         Vue.cookie.delete(`${JWT.venom}_token`)
         commit(types.RESET_USER)
         dispatch('customerService/clearMessage')
+        dispatch('customerService/setServiceUnread', false)
       },
       errRes => Promise.reject(errRes)
     )
