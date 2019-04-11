@@ -28,7 +28,7 @@
         <GameResult v-for="result in historyData" :key="result.issue_number" :result="result"/>
       </div>
     </div>
-    <chat-game-body :messages="messages"></chat-game-body>
+    <chat-game-body :game="currentGame" :messages="messages"></chat-game-body>
     <chat-game-footer @openBetInterface="openBetInterface"></chat-game-footer>
     <popup
       :value="isBetInterfaceVisible"

@@ -40,18 +40,6 @@
       <router-view :key="$route.params.gameId"/>
     </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
-    <div :class="['helper-btn-group', {visible: isHelperVisible}]">
-      <div
-        v-for="(item, index) in helperGroup"
-        :key="index"
-        :class="['helper-btn', item.key, `order${helperGroup.length - index}`]" @click="showGameInfo(item.key)" v-html="item.content"></div>
-    </div>
-    <div :class="['helper-btn fold', {visible: isHelperVisible}]" @click="isHelperVisible = !isHelperVisible">
-      <template v-if="!isHelperVisible">
-        展开
-      </template>
-      <div v-else class="close-btn"></div>
-    </div>
   </div>
 </template>
 
@@ -62,8 +50,6 @@ import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
-import { hasExpertPlan } from '@/utils/expertPlanSetting'
-import { hasRoadBead } from '@/utils/roadBeadSetting'
 // import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 // import {hasRoadBead} from '@/utils/roadBeadSetting'
 import GameInfo from '@/screens/games/GameInfo'
@@ -81,6 +67,7 @@ let scrollTop
 
 export default {
   name: 'ChatGameHall',
+  componentName: 'ChatGameHall',
   components: {
     Popup,
     XHeader,
@@ -99,7 +86,6 @@ export default {
       contentType: '',
       isGameInfoVisible: false,
       isGameMenuVisible: false,
-      isHelperVisible: false,
       showNotifiyMsg: false,
       ws: null
     }
@@ -113,30 +99,6 @@ export default {
     }),
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
-    },
-    hasExpertPlan () {
-      if (!this.currentGame) {
-        return false
-      }
-      return hasExpertPlan(this.currentGame.code)
-    },
-    helperGroup () {
-      const expertConfig = { key: 'expertplan', content: '<p>专家</p><p>计划</p>' }
-      const roadBeadConfig = { key: 'roadbeads', content: '路珠' }
-      const leaderBoardConfig = { key: 'leaderboard', content: '长龙' }
-      const group = []
-      if (!this.currentGame) {
-        return []
-      }
-      let code = this.currentGame.code
-      group.push(leaderBoardConfig)
-      if (hasRoadBead(code)) {
-        group.push(roadBeadConfig)
-      }
-      if (hasExpertPlan(code)) {
-        group.push(expertConfig)
-      }
-      return group
     }
   },
   watch: {
@@ -195,6 +157,11 @@ export default {
 
       })
     }
+    this.$on('gameHall.showGameInfo', (type) => {
+      console.log(type)
+      this.isGameInfoVisible = !!type
+      this.contentType = type
+    })
   },
   methods: {
     toHome () {
@@ -206,10 +173,6 @@ export default {
         })
         this.$router.push({ name: 'Home' })
       }
-    },
-    showGameInfo (type) {
-      this.isGameInfoVisible = !!type
-      this.contentType = type
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
@@ -262,87 +225,6 @@ export default {
     line-height: 25px;
     color: white;
     text-align: center;
-  }
-
-  .close-btn {
-    position: absolute;
-    right: -1px;
-    top: -1px;
-    &::before,
-    &::after {
-      height: 15px;
-    }
-  }
-  .helper-btn {
-    box-sizing: border-box;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 12px;
-    transition-duration: 0.2s;
-    .close-btn {
-      top: 8px;
-      left: 6px;
-    }
-    &.fold {
-      bottom: 62px;
-      right: 10px;
-      background-color: #bfbfbf;
-      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-    }
-    &.leaderboard {
-      border: 2px solid #3bb99c;
-      background: #60d1b8;
-    }
-    &.roadbead {
-      border: 2px solid #a442b8;
-      background: #c252d9;
-    }
-    &.expert {
-      border: 2px solid #b43a49;
-      background: #d54052;
-    }
-  }
-  .helper-btn-group {
-    visibility: visible;
-    position: absolute;
-    bottom: 62px;
-    right: 10px;
-    &.visible {
-      visibility: visible;
-      .helper-btn {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-      }
-      .order1 {
-        bottom: 50px;
-      }
-      .order2 {
-        bottom: 100px;
-      }
-      .order3 {
-        bottom: 150px;
-      }
-      .leaderboard {
-        border: 2px solid #3bb99c;
-        background: #60d1b8;
-      }
-      .roadbeads {
-        border: 2px solid #a442b8;
-        background: #c252d9;
-      }
-      .expertplan {
-        border: 2px solid #b43a49;
-        background: #d54052;
-      }
-    }
   }
 }
 </style>

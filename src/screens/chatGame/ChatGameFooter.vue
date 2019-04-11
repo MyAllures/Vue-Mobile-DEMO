@@ -1,6 +1,6 @@
 <template>
 <div class="chat-game-footer" id="typing" @click="handTriggerPanel">
-  <div v-show="isShowEmojiPanel" class="emoji-panel">
+  <div v-if="isShowEmojiPanel" class="emoji-panel" v-click-outside="hidePanel">
     <div class="select-panel">
       <swiper
         height="180px"
@@ -76,19 +76,22 @@ import { msgFormatter } from '@/utils'
 import { Swiper, SwiperItem } from 'vux'
 import { eagle } from '@/api'
 import lrz from 'lrz'
+import vClickOutside from 'v-click-outside'
 export default {
   name: 'ChatFooter',
   components: {
     Swiper,
     SwiperItem
   },
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
   data () {
     return {
-      isShowControlPanel: false,
-      isShowEmojiPanel: false,
       msgCnt: '',
       activeSeries: '1',
-      mode: 'typing'
+      mode: 'typing',
+      isShowEmojiPanel: false
     }
   },
   computed: {
@@ -130,7 +133,6 @@ export default {
       let id = target.id
       while (id !== 'typing') {
         if (id === 'switch-btn') {
-          this.isShowControlPanel = !this.isShowControlPanel
           this.isShowEmojiPanel = false
           break
         } else if (id === 'emoji-btn') {
@@ -139,7 +141,6 @@ export default {
           }
           e.stopPropagation()
           e.preventDefault()
-          this.isShowControlPanel = false
           this.isShowEmojiPanel = !this.isShowEmojiPanel
           break
         }
@@ -152,7 +153,6 @@ export default {
       }
     },
     hidePanel () {
-      this.isShowControlPanel = false
       this.isShowEmojiPanel = false
     },
     sendImg (e) {
