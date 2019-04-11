@@ -310,6 +310,7 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
   } else {

@@ -10,6 +10,7 @@ function onmessage (response) {
         store.dispatch('eagle/initMsg', data.recent_messages)
         break
       case 'message':
+      case 'image':
       case 'system':
         store.dispatch('eagle/receiveMsg', data)
         break

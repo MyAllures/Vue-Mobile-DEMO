@@ -58,8 +58,20 @@
       </div>
       <div class="footer-item">
         <div class="amount-input-wrapper">
-          <AmountInput class="amount-input" placeholder="金额" v-model="amount"/>
-        </div>
+            <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
+              <span class="tips">常用金额</span>
+              <ul class="items">
+                <template v-for="(item, index) in user.bet_amount_count">
+                  <li
+                    :key="index"
+                    v-if="index < 5"
+                    @click="amount=item.bet_amount + ''"
+                    class="vux-1px-l">{{ item.bet_amount }}</li>
+                </template>
+              </ul>
+            </div>
+            <AmountInput class="amount-input" placeholder="金额" v-model="amount" @focus.native="showShortcut=true" @blur.native="showShortcut=false"/>
+          </div>
       </div>
       <div class="footer-item">
         <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
@@ -132,7 +144,8 @@ export default {
       bettrackData: {
         track_numbers: [],
         forDisplay: {}
-      }
+      },
+      showShortcut: false
     }
   },
   computed: {
@@ -515,6 +528,7 @@ export default {
 }
 
 .bet-area {
+  overflow: auto;
   display: flex;
   flex: 1 1 auto;
   .aside {
@@ -593,6 +607,7 @@ export default {
     width: 90%;
   }
   .amount-input-wrapper {
+    position: relative;
     box-sizing: border-box;
     height: 40px;
     padding: 0 5px;
@@ -605,9 +620,52 @@ export default {
       color: #333;
     }
   }
+
+}
+.amount-shortcut {
+  display: flex;
+  transition: max-height 0.5s ease-in; // ref: https://css-tricks.com/using-css-transitions-auto-dimensions/
+  max-height: 300px;
+  height: auto;
+  box-shadow: 0 -2px 4px rgba(0,0,0, .2);
+  text-align: center;
+  background: #efefef;
+  color: #666;
+  width: 100%;
+  position: absolute;
+  z-index: 6; //hight than play group title and bottom game prompt
+  bottom: 55px;
+  overflow: hidden;
+  align-items: center;
+  &.collapsed {
+    max-height: 0;
+  }
+  .tips {
+    font-size: 13px;
+    padding: 0 5px;
+    color: #999;
+  }
+  .items {
+    flex: 1;
+    display: flex;
+    align-content: space-between;
+    align-items: center;
+  }
+  li {
+    font-weight: 500;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: no-wrap;
+    flex: 1;
+    margin-bottom: -1px;
+    line-height: 44px;
+    height: 44px;
+    overflow: hidden;
+  }
 }
 .gameclosed-mask {
   position: absolute;
+  z-index: 3;
   top: 0;
   left: 0;
   right: 0;
