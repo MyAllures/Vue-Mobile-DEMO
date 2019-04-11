@@ -1,13 +1,13 @@
 export const customPlayGroups = [
   {
     // 广东11选5 连码
-    code: ['gd11x5_ca-m_wc', 'ah11x5_ca-m_wc', 'bj11x5_ca-m_wc'],
+    code: ['gd11x5_ca-m_wc', 'ah11x5_ca-m_wc', 'bj11x5_ca-m_wc', 'fh11x5_ca-m_wc', 'gs11x5_ca-m_wc'],
     component: 'WithCode',
     options: Array.from(Array(11).keys()).map(item => item + 1)
   },
   {
     // 广东11选5 直选
-    code: ['gd11x5_ca-m_seq', 'ah11x5_ca-m_seq', 'bj11x5_ca-m_seq'],
+    code: ['gd11x5_ca-m_seq', 'ah11x5_ca-m_seq', 'bj11x5_ca-m_seq', 'fh11x5_ca-m_seq', 'gs11x5_ca-m_seq'],
     component: 'gd11x5Seq',
     options: Array.from(Array(11).keys()).map(item => item + 1)
   },

@@ -110,6 +110,8 @@ const gameTable = {
   'gd11x5': gd11x5CompareList,
   'ah11x5': gd11x5CompareList,
   'bj11x5': gd11x5CompareList,
+  'fh11x5': gd11x5CompareList,
+  'gs11x5': gd11x5CompareList,
   'hkl': hklCompareList,
   'cs600hkl': hklCompareList,
   'csjndhkl': hklCompareList,
