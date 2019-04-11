@@ -84,10 +84,7 @@ export default {
       showPullDownTip: true,
       showScrollToBottom: false,
       options: {
-        pullDownRefresh: {
-          threshold: 60,
-          stopTime: 1000
-        },
+        pullDownRefresh: false,
         scrollbar: false
       },
       browser: {
@@ -187,10 +184,6 @@ export default {
         let contentClassList = []
         let isChatMsg = false
         switch (msg.type) {
-          case MSG_TYPE.pulldown:
-            wrapperClassList = ['pulldown']
-            contentClassList = ['tip']
-            break
           case MSG_TYPE.welcome_message:
             wrapperClassList = ['welcome']
             contentClassList = ['box']

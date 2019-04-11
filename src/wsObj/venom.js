@@ -71,11 +71,13 @@ VenomSocketObj.prototype.initWs = function (token) {
             }
           })
           const today = Vue.moment().format('YYYY-MM-DD')
-          const lastDay = Vue.moment(data.message[data.message.length - 1].created_at).format('YYYY-MM-DD')
+          const lastMsg = data.message[data.message.length - 1]
+          const lastDay = lastMsg ? Vue.moment(lastMsg.created_at).format('YYYY-MM-DD') : ''
           if (today !== lastDay) {
             data.message.push({
               date_tag: true,
-              text: today
+              text: today,
+              type: MSG_TYPE.datetag
             })
           }
           store.dispatch('customerService/receiveMessages', {
