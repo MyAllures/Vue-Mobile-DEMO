@@ -283,17 +283,21 @@ export default {
     }
   },
   watch: {
-    'user.logined' (newStatus, old) {
-      if (!newStatus) {
+    'user.logined' (isLogin, old) {
+      if (isLogin) {
+        let token = this.$cookie.get('access_token')
+        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        this.serviceUnreadInterval = setInterval(() => {
+          this.fetchServiceUnread()
+        }, 5000)
+      } else {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
-      } else {
-        let token = this.$cookie.get('access_token')
-        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        clearInterval(this.serviceUnreadInterval)
       }
     },
     '$route' (to, from) {
@@ -351,7 +355,7 @@ export default {
       fetchServiceUnread().then((res) => {
         this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
       }).catch((e) => {
-        window.clearInterval(this.serviceUnreadInterval)
+        clearInterval(this.serviceUnreadInterval)
       })
     }
   },
@@ -378,14 +382,10 @@ export default {
     }, () => {
 
     })
-
-    this.serviceUnreadInterval = setInterval(() => {
-      this.fetchServiceUnread()
-    }, 5000)
   },
   beforeDestroy () {
-    window.clearTimeout(this.refreshTokenTimer)
-    window.clearInterval(this.serviceUnreadInterval)
+    clearTimeout(this.refreshTokenTimer)
+    clearInterval(this.serviceUnreadInterval)
   }
 }
 </script>
