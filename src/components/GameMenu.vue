@@ -10,7 +10,6 @@
     <div class="popup-content">
       <div class="tab-selector">
         <tab
-          :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
           :bar-active-color="theme"
           :animate="false"
           default-color="#666"
@@ -236,7 +235,7 @@ export default {
   .ellipsis {
     white-space: nowrap;
     display: block;
-    width: 60px;
+    padding: 0 10px;
     text-overflow: ellipsis;
     overflow: hidden;
   }
