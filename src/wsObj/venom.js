@@ -100,7 +100,7 @@ VenomSocketObj.prototype.initWs = function (token) {
           store.dispatch('customerService/receiveMessages', {
             category: MSG_CAT.common,
             messages: [data.message],
-            replace: false
+            once: false
           })
           this.send({
             action: EMITTED_ACTION.unread,
