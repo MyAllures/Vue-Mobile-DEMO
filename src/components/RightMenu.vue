@@ -247,8 +247,8 @@
     }
   }
   .logout {
-    height: 55px;
-    line-height: 55px;
+    height: 53px;
+    line-height: 53px;
     background: #666666;
     text-align: center;
     font-size: 18px;
