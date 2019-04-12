@@ -176,7 +176,8 @@ export default {
         this.catHasMessages(MSG_CAT.offline) ? [] : this.historyMessage,
         this.received[MSG_CAT.welcome],
         this.received[MSG_CAT.offline],
-        this.received[MSG_CAT.common]
+        this.received[MSG_CAT.common],
+        this.received[MSG_CAT.error]
       )
     },
     sortedMessages () {
@@ -186,8 +187,9 @@ export default {
         let isChatMsg = false
         switch (msg.type) {
           case MSG_TYPE.welcome_message:
-            wrapperClassList = ['welcome']
-            contentClassList = ['box']
+          case MSG_TYPE.error:
+            wrapperClassList = ['msg-box']
+            contentClassList = ['box', msg.cat]
             break
           case MSG_TYPE.datetag:
             wrapperClassList = ['msg-badge']
@@ -328,11 +330,10 @@ body {
     }
   }
 
-  .msg-badge, .welcome {
+  .msg-badge, .msg-box {
     display: flex;
     justify-content: center;
   }
-
   .badge {
     display: inline-block;
     padding: 1px 10px;
@@ -341,7 +342,6 @@ body {
     font-size: 12px;
     color: #999;
   }
-
   .box {
     background-color: #fff;
     border-radius: 8px;
@@ -350,7 +350,9 @@ body {
     font-size: 14px;
     color: #333;
   }
-
+  .error {
+    color: #d0021b;
+  }
 }
 .pulldown {
   width: 100%;
