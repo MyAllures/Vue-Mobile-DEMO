@@ -14,9 +14,11 @@ export default {
     setServiceUnread: (state, bool) => {
       state.unread = bool
     },
-    receiveMessages: (state, { category, messages, replace }) => {
-      if (replace) {
-        state.received[category] = messages
+    receiveMessages: (state, { category, messages, once }) => {
+      if (once) {
+        if (state.received[category].length === 0) {
+          state.received[category] = messages
+        }
       } else {
         state.received[category].push(...messages)
       }
@@ -33,8 +35,8 @@ export default {
     setServiceUnread: ({ commit }, bool) => {
       commit('setServiceUnread', bool)
     },
-    receiveMessages: ({ commit }, { category, messages, replace = true }) => {
-      commit('receiveMessages', { category, messages, replace })
+    receiveMessages: ({ commit }, { category, messages, once = true }) => {
+      commit('receiveMessages', { category, messages, once })
     },
     clearMessage: ({ commit }) => {
       commit('clearMessage')
