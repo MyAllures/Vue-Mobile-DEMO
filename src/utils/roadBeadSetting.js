@@ -24,6 +24,10 @@ export const settings = {
   cs10fc: sscSetting,
   cs5fc: sscSetting,
   gd11x5: gd11x5Setting,
+  ah11x5: gd11x5Setting,
+  bj11x5: gd11x5Setting,
+  fh11x5: gd11x5Setting,
+  gs11x5: gd11x5Setting,
   cqlf: gdklsfSetting,
   gdklsf: gdklsfSetting,
   jsk3: k3Setting,
@@ -54,7 +58,7 @@ export const isSeriesSSC = (code) => {
   return seriesSSC.includes(code)
 }
 
-const gameHasRoadBead = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'ynssc', 'hjssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'gd11x5', 'cqlf', 'gdklsf', 'jsk3', 'gxk3', 'shk3', 'hubk3', 'msk3', 'bjk3', 'bjkl8', 'auluck8', 'pcdd', 'jnd28', 'luckdd']
+const gameHasRoadBead = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'ynssc', 'hjssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'gd11x5', 'ah11x5', 'bj11x5', 'fh11x5', 'gs11x5', 'cqlf', 'gdklsf', 'jsk3', 'gxk3', 'shk3', 'hubk3', 'msk3', 'bjk3', 'bjkl8', 'auluck8', 'pcdd', 'jnd28', 'luckdd']
 
 export const hasRoadBead = (code) => {
   return gameHasRoadBead.includes(code)
