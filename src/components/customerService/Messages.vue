@@ -9,6 +9,13 @@
       @pulling-down="onPullingDown">
       <ul ref="msgs" class="msgs">
         <li class="msg pulldown" v-if="hasMoreHistory && showPullDownTip"><span class="tip">下拉阅读过往聊天记录 ↓</span></li>
+        <li class="msg" v-if="tempDateTag">
+          <div class="msg-badge">
+            <div class="content badge">
+              <p>{{tempDateTag}}</p>
+            </div>
+          </div>
+        </li>
         <li class="msg" v-for="(msg, msgIndex) in sortedMessages" :key="msgIndex">
           <div :class="msg.wrapperClassList" v-if="msg">
             <div :class="['content', ...msg.contentClassList]">
@@ -79,6 +86,7 @@ export default {
   data () {
     return {
       MSG_TYPE,
+      MSG_CAT,
       defaultHistoryNum: 30,
       showFullHistory: false,
       showPullDownTip: true,
@@ -132,11 +140,13 @@ export default {
     },
     scrollToLast () {
       const betterScroll = this.$refs.scroll.scroll
-      betterScroll.scrollTo(0, betterScroll.maxScrollY, 200)
+      if (betterScroll) {
+        betterScroll.scrollTo(0, betterScroll.maxScrollY, 200)
+      }
     },
     handleScrollTop () {
       this.$nextTick(() => {
-        this.$refs.scroll.refresh()
+        this.$refs.scroll && this.$refs.scroll.refresh()
         if (this.userSend) {
           this.scrollToLast()
         }
@@ -147,9 +157,9 @@ export default {
     }
   },
   watch: {
-    showPullDownTip: {
-      handler (show) {
-        if (show) {
+    hasMoreHistory: {
+      handler (bool) {
+        if (bool && this.showPullDownTip) {
           this.options.pullDownRefresh = { threshold: 60, stopTime: 1000 }
         } else {
           this.options.pullDownRefresh = false
@@ -170,6 +180,18 @@ export default {
     },
     hasMoreHistory () {
       return this.received[MSG_CAT.history].length > this.defaultHistoryNum
+    },
+    tempDateTag () {
+      if (!this.catHasMessages(MSG_CAT.history) || this.historyMessage[0].date_tag) {
+        return false
+      }
+      if ((this.hasMoreHistory && this.showPullDownTip) || !this.hasMoreHistory) {
+        const date = this.$moment(this.historyMessage[0].created_at).format('YYYY-MM-DD')
+        const today = this.$moment().format('YYYY-MM-DD')
+
+        return date === today ? '今天' : date
+      }
+      return false
     },
     messageCollection () {
       return concat(
