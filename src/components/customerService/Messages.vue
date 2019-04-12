@@ -95,6 +95,7 @@ export default {
   },
   mounted () {
     window.addEventListener('resize', this.handleSize)
+    this.handleScrollTop()
   },
   methods: {
     onScroll (pos) {
