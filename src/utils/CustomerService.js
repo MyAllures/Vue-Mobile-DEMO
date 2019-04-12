@@ -22,14 +22,16 @@ const MSG_TYPE = {
   sticker: 3,
   // custom types
   datetag: 101,
-  welcome_message: 102
+  welcome_message: 102,
+  error: 103
 }
 
 const MSG_CAT = {
   common: 'common',
   welcome: 'welcome',
   history: 'history',
-  offline: 'offline'
+  offline: 'offline',
+  error: 'error'
 }
 
 export {

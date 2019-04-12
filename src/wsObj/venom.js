@@ -18,6 +18,14 @@ VenomSocketObj.prototype.initWs = function (token) {
     clearInterval(this.checkWsLivingInterval)
     this.checkWsLivingInterval = setInterval(() => {
       if (wsLivingCount > 3) {
+        store.dispatch('customerService/receiveMessages', {
+          category: MSG_CAT.error,
+          messages: [{
+            text: '目前连线有问题，请重整网页',
+            type: MSG_TYPE.error,
+            cat: MSG_CAT.error
+          }]
+        })
         clearInterval(this.checkWsLivingInterval)
       } else {
         try {

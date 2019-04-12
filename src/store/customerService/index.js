@@ -6,7 +6,8 @@ export default {
       welcome: [],
       history: [],
       offline: [],
-      common: []
+      common: [],
+      error: []
     }
   },
   mutations: {
