@@ -1,5 +1,5 @@
 <template>
-<div class="chat-game-footer" id="typing" @click="handTriggerPanel">
+<div class="chat-game-footer">
   <div v-if="isShowEmojiPanel" class="emoji-panel" v-click-outside="hidePanel">
     <div class="select-panel">
       <swiper
@@ -33,7 +33,7 @@
       </ul>
     </div>
   </div>
-  <div class="input-panel" v-if="mode==='typing'">
+  <div class="input-panel" v-if="mode==='typing'" id="typing" @click="handTriggerPanel">
     <div id="switch-btn" class="switch-btn" @click="mode='bet'">
     </div>
     <label class="image-btn">
@@ -49,7 +49,8 @@
         type="textarea"
         autocomplete="off"
         validateevent="true"
-        :class="['el-textarea', noPermission ? 'is-disabled' : '']"
+        :placeholder="chatConditionMessage"
+        :class="noPermission ? 'is-disabled' : ''"
         v-model="msgCnt"
         :disabled="noPermission">
       </textarea>
@@ -100,11 +101,12 @@ export default {
     ]),
     ...mapState('eagle', {
       ws: state => state.ws,
+      permission: state => state.permission,
       roomId: state => state.roomId,
       emojiMap: state => state.emojiMap
     }),
     noPermission () {
-      return false
+      return !this.permission || !this.permission.eligible
     },
     emojiSeries () {
       if (!this.emojiMap) {
@@ -120,8 +122,8 @@ export default {
       return _.chunk(emojiMap.stickers, 8)
     },
     chatConditionMessage () {
-      if (!this.personal_setting.chatable) {
-        return this.$store.state.systemConfig.global_preferences.chat_condition_message || ''
+      if (this.noPermission && this.permission) {
+        return this.permission.messages
       } else {
         return ''
       }
@@ -156,6 +158,9 @@ export default {
       this.isShowEmojiPanel = false
     },
     sendImg (e) {
+      if (this.noPermission) {
+        return
+      }
       let fileInp = this.$refs.fileImgSend
       if (this.noPermission || !fileInp) { return false }
       let file = fileInp.files[0]
@@ -198,11 +203,7 @@ export default {
       let target = e.target
       while (target.nodeName !== 'UL') {
         if (target.nodeName === 'LI') {
-          this.ws.raven.send({
-            'type': 7,
-            'content': target.dataset.content,
-            'sticker': target.dataset.stickerid
-          })
+          this.ws.sendSticker(target.dataset.stickerid)
           this.hidePanel()
           break
         }
@@ -314,7 +315,7 @@ export default {
     }
   }
 
-  .el-textarea {
+  textarea {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
@@ -332,6 +333,8 @@ export default {
     box-sizing: border-box;
     background-image: none;
     &.is-disabled {
+      font-size: 14px;
+      line-height: 20px;
       color: #bbb;
     }
   }

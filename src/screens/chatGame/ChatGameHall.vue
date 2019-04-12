@@ -145,6 +145,16 @@ export default {
     }
   },
   created () {
+    if (!this.$route.params.gameId) {
+      if (this.games.length > 0) {
+        this.chooseGame()
+      } else {
+        const unwatch = this.$watch('games', function (games) {
+          this.chooseGame()
+          unwatch()
+        })
+      }
+    }
     if (this.emojiMap === null) {
       eagle.fetchStickers().then(res => {
         this.$store.dispatch('eagle/initSticker', res)
@@ -158,7 +168,6 @@ export default {
       })
     }
     this.$on('gameHall.showGameInfo', (type) => {
-      console.log(type)
       this.isGameInfoVisible = !!type
       this.contentType = type
     })
@@ -177,6 +186,10 @@ export default {
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
+    },
+    chooseGame () {
+      const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
+      this.$router.replace('/game/' + gameId)
     }
   },
   beforeDestroy () {

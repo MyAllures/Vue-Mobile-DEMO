@@ -38,8 +38,7 @@
             </div>
             <div class="summary">
               <p>一期<span class="red"> {{dialogData.bet_numbers.length}} </span>注 总金额：<span class="red">￥{{dialogData.bet_numbers.length * bettrack.bet_amount}}</span></p>
-              <p>如有一期中奖即停止追号</p>
-          </div>
+            </div>
           </div>
           <div v-if="loading"  class="loading">
             <inline-loading></inline-loading>加载中
