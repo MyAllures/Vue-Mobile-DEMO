@@ -60,7 +60,6 @@ export default {
         if (this.filterHKL) {
           res = res.map(item => {
             if (item.display === '香港六合彩') {
-              console.log('found')
               item.display = '极速六合彩'
             }
             return item

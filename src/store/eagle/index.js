@@ -3,14 +3,16 @@ export default {
   state: {
     ws: null,
     messages: [],
+    permission: null,
     emojiMap: null
   },
   mutations: {
     setWs: (state, ws) => {
       state.ws = ws
     },
-    initMsg: (state, messages) => {
-      state.messages = messages
+    init: (state, data) => {
+      state.messages = data.recent_messages
+      state.permission = data.user.chat_permission
     },
     receiveMsg: (state, message) => {
       state.messages.push(message)
@@ -23,8 +25,8 @@ export default {
     setWs: ({ commit }, ws) => {
       commit('setWs', ws)
     },
-    initMsg: ({ commit }, messages) => {
-      commit('initMsg', messages)
+    init: ({ commit }, data) => {
+      commit('init', data)
     },
     receiveMsg: ({ commit }, message) => {
       commit('receiveMsg', message)
