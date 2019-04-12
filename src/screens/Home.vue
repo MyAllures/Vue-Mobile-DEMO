@@ -1,7 +1,15 @@
 <template>
   <div class="container">
     <top-bar>
-      <div v-if="!isGameMenuVisible" class="main-title left">{{ systemConfig.siteName }}</div>
+      <template v-if="!isGameMenuVisible">
+        <div
+          v-if="!systemConfig.mobileLogo"
+          class="main-title left">{{ systemConfig.siteName }}</div>
+        <div
+          v-else
+          class="main-title left logo"
+          :style="{'background-image': `url('${systemConfig.mobileLogo}')`}"></div>
+      </template>
       <div v-else class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
         游戏选单
       </div>
