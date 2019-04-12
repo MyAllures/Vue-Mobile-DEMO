@@ -10,17 +10,41 @@
           <div class="avatar" :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
           <div class="right">
             <div class="nickname">{{msg.sender.nickname||msg.sender.username}}</div>
-            <div class="content-wrapper">
+            <img-wrapper
+              class="image"
+              v-if="msg.type==='image'"
+              :src="msg.content"
+              @imgStart="imgLoadCount++"
+              @imgLoad="imgLoadCount--"
+              @click.native="previewImg(msg.content)"/>
+            <img-wrapper
+              class="image"
+              v-else-if="msg.type==='sticker'"
+              :src="msg.content"
+              @imgStart="imgLoadCount++"
+              @imgLoad="imgLoadCount--"/>
+            <div v-else class="content-wrapper">
               <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
-              <div v-else-if="msg.type==='image'" class="image" :style="{'background-image': `url('${msg.content}')`}"></div>
               <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
         </div>
         <div v-else :class="['self-message', chatContentType(msg.type)]">
-          <div class="content-wrapper">
+          <img-wrapper
+            class="image"
+            v-if="msg.type==='image'"
+            :src="msg.content"
+            @imgStart="imgLoadCount++"
+            @imgLoad="imgLoadCount--"
+            @click.native="previewImg(msg.content)"/>
+          <img-wrapper
+            class="image"
+            v-else-if="msg.type==='sticker'"
+            :src="msg.content"
+            @imgStart="imgLoadCount++"
+            @imgLoad="imgLoadCount--"/>
+          <div v-else class="content-wrapper">
             <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
-            <div v-else-if="msg.type==='image'" class="img" :style="{'background-image': `url('${msg.content}')`}"></div>
             <div v-else class="text">{{msg.content}}</div>
           </div>
         </div>
@@ -39,16 +63,41 @@
       </template>
       <div v-else class="close-btn"></div>
     </div>
+    <cube-popup
+      v-transfer-dom
+      class="preview-image-popup"
+      type="extend-popup"
+      ref="image-popup"
+      :maskClosable="true"
+      :z-index="1000">
+      <div class="preview-image-popup-content" @click="hidePreviewImg">
+        <div class="close-btn"></div>
+        <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
+      </div>
+    </cube-popup>
+    <!-- <popup
+      :value="previewImgVisible"
+      @on-hide="$emit('update:visible', false)"
+      height="90%"
+      v-transfer-dom
+      :zIndex="1000">
+        <div class="cube-extend-popup-content">
+          <div class="close-btn" @click="hidePreviewImg"></div>
+          <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
+        </div>
+    </popup> -->
   </div>
 </template>
 <script>
 import BetInfo from '@/screens/chatGame/BetInfo'
 import { mapState } from 'vuex'
+import { TransferDom } from 'vux'
 import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import { hasRoadBead } from '@/utils/roadBeadSetting'
 import emitter from '@/mixins/emitter.js'
 import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
+import ImgWrapper from '@/screens/chatGame/ImgWrapper'
 
 export default {
   name: 'ChatGameBody',
@@ -59,10 +108,12 @@ export default {
     }
   },
   components: {
-    BetInfo
+    BetInfo,
+    ImgWrapper
   },
   directives: {
-    FixScroll
+    FixScroll,
+    TransferDom
   },
   mixins: [emitter],
   data () {
@@ -71,7 +122,10 @@ export default {
       notNeedScroll: false,
       defaultAvatar,
       isHelperVisible: false,
-      isToBottomBtnVisible: false
+      isToBottomBtnVisible: false,
+      imgLoadCount: 0,
+      selectedImage: '',
+      previewImgVisible: false
     }
   },
   computed: {
@@ -126,6 +180,16 @@ export default {
       } else {
         this.notNeedScroll = true
       }
+    },
+    'imgLoadCount': function (count) {
+      if (count === 0) {
+        if (!this.notNeedScroll) {
+          this.$nextTick(() => {
+            const view = this.$refs.view
+            view.scrollTop = view.scrollHeight
+          })
+        }
+      }
     }
   },
   mounted () {
@@ -158,7 +222,14 @@ export default {
       } else {
         this.isToBottomBtnVisible = false
       }
-    }, 500)
+    }, 500),
+    previewImg (src) {
+      this.selectedImage = src
+      this.$refs['image-popup'].show()
+    },
+    hidePreviewImg () {
+      this.$refs['image-popup'].hide()
+    }
   },
   beforeDestroy () {
     this.$refs.view.removeEventListener('scroll', this.showToBottomBtn)
@@ -191,7 +262,7 @@ export default {
 
       .other-message,
       .self-message {
-        &.bet-info,&.image {
+        &.bet-info {
           width: 90%;
           .content-wrapper {
             padding: 5px 10px;
@@ -203,40 +274,13 @@ export default {
             }
           }
         }
-        &.image {
-          .img {
-            background-repeat: no-repeat;
-            background-size: contain;
-            width: 100%;
-            height: 100px;
-          }
-        }
         &.text{
           font-size: 14px;
         }
       }
       .other-message {
-        &.text, &.bet-info {
-          .content-wrapper {
-            background: #fff;
-          }
-        }
-      }
-      .self-message {
-        &.text, &.bet-info {
-          .content-wrapper {
-            background: @azul;
-            color: #fff;
-          }
-        }
-        .img {
-          background-position: right center;
-        }
-      }
-      .other-message {
         display: flex;
         color: #333;
-        max-width: 90%;
         .avatar {
           flex: 0 0 auto;
           width: 36px;
@@ -252,16 +296,41 @@ export default {
           position: relative;
           border-radius: 10px;
           border-top-left-radius: 0;
+          padding: 5px 10px;
+        }
+        &.text {
+          max-width: 90%;
+        }
+        &.text, &.bet-info {
+          .content-wrapper {
+            background: #fff;
+          }
+        }
+        .image {
+          border-radius: 10px;
+          border-top-left-radius: 0;
         }
       }
       .self-message {
-        max-width: calc(~"90%" - 41px);
         margin-left: auto;
         .content-wrapper {
           position: relative;
           border-radius: 10px;
           border-top-right-radius: 0;
           padding: 5px 10px;
+        }
+        &.text {
+          max-width: calc(~"90%" - 41px);
+        }
+        &.text, &.bet-info {
+          .content-wrapper {
+            background: @azul;
+            color: #fff;
+          }
+        }
+        .image {
+          border-radius: 10px;
+          border-top-right-radius: 0;
         }
       }
     }
@@ -370,6 +439,25 @@ export default {
       border: 2px solid #b43a49;
       background: #d54052;
     }
+  }
+}
+.preview-image-popup {
+  .preview-image-popup-content {
+    box-sizing: border-box;
+    height: 80vh;
+    width: 100vw;
+    padding: 30px 0;
+  }
+  .close-btn {
+    top: 0;
+    right: 0;
+  }
+  .preview-image {
+    height: calc(~"100%" - 60px);
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
   }
 }
 </style>

@@ -7,10 +7,11 @@ function onmessage (response) {
     let data = JSON.parse(response.data)
     switch (data.type) {
       case 'initial-data':
-        store.dispatch('eagle/initMsg', data.recent_messages)
+        store.dispatch('eagle/init', data)
         break
       case 'message':
       case 'image':
+      case 'sticker':
       case 'system':
         store.dispatch('eagle/receiveMsg', data)
         break
@@ -34,6 +35,16 @@ export class EagleWebSocket {
     this.ws.send(
       {'command': 'send',
         'type': 'message',
+        'receiver': this.roomId,
+        'content': message
+      }
+    )
+  }
+
+  sendSticker (message) {
+    this.ws.send(
+      {'command': 'send',
+        'type': 'sticker',
         'receiver': this.roomId,
         'content': message
       }
