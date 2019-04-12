@@ -1,5 +1,6 @@
 import urls from '@/api/urls'
 import Vue from 'vue'
+import router from '@/router'
 import store from '@/store'
 import { JWT } from '@/utils/jwtToken'
 import { RECEIVED_ACTION, EMITTED_ACTION, MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
@@ -64,12 +65,14 @@ VenomSocketObj.prototype.initWs = function (token) {
             category: MSG_CAT.offline,
             messages: data.message
           })
-          this.send({
-            action: EMITTED_ACTION.unread,
-            parameter: {
-              message_id: data.message[data.message.length - 1].id
-            }
-          })
+          if (router.history.current.name === 'CustomerSerivce') {
+            this.send({
+              action: EMITTED_ACTION.unread,
+              parameter: {
+                message_id: data.message[data.message.length - 1].id
+              }
+            })
+          }
           break
         case RECEIVED_ACTION.history_message:
           data.message.forEach(msg => {
@@ -102,12 +105,14 @@ VenomSocketObj.prototype.initWs = function (token) {
             messages: [data.message],
             once: false
           })
-          this.send({
-            action: EMITTED_ACTION.unread,
-            parameter: {
-              message_id: data.message.id
-            }
-          })
+          if (router.history.current.name === 'CustomerSerivce') {
+            this.send({
+              action: EMITTED_ACTION.unread,
+              parameter: {
+                message_id: data.message.id
+              }
+            })
+          }
           break
         default:
           break
