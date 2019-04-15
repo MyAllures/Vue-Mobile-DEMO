@@ -5,7 +5,7 @@ import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
-import customerService from './customerService'
+import customerService from './CustomerService'
 
 Vue.use(Vuex)
 
