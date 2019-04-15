@@ -1,6 +1,6 @@
 import store from '@/store'
 import WebSocketBuilder from './builder'
-import {urls} from '@/api'
+import {urls, eagle} from '@/api'
 
 function onmessage (response) {
   if (typeof response.data === 'string') {
@@ -49,6 +49,13 @@ export class EagleWebSocket {
         'content': message
       }
     )
+  }
+
+  banMember (username, duration) {
+    eagle.controlChatMember(this.roomId, 'ban_user', {
+      username,
+      duration
+    })
   }
 
   joinRoom (roomId) {

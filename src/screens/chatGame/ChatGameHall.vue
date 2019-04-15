@@ -145,6 +145,7 @@ export default {
     }
   },
   created () {
+    console.log(this.user)
     if (!this.$route.params.gameId) {
       if (this.games.length > 0) {
         this.chooseGame()

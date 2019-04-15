@@ -51,8 +51,8 @@
             v-for="(record, index) in betRecords"
             :key="index">
           <td>
-            <p :class="{'half-height':record.is_bettrackrecord}">{{record.created_at|moment('HH:mm:ss')}}</p>
-            <p v-if="record.is_bettrackrecord" class="bettrack-hint half-height">追号</p>
+            <p :class="{'half-height':record.type==='bettrack'}">{{record.created_at|moment('HH:mm:ss')}}</p>
+            <p v-if="record.type==='bettrack'" class="bettrack-hint half-height">追号</p>
           </td>
           <td>
             <span class="game">{{record.game.display_name}}</span>
