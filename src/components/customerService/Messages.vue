@@ -92,8 +92,7 @@ export default {
       showPullDownTip: true,
       showScrollToBottom: false,
       options: {
-        pullDownRefresh: false,
-        scrollbar: false
+        pullDownRefresh: false
       },
       browser: {
         width: window.innerWidth,
@@ -157,15 +156,8 @@ export default {
     }
   },
   watch: {
-    hasMoreHistory: {
-      handler (bool) {
-        if (bool && this.showPullDownTip) {
-          this.options.pullDownRefresh = { threshold: 60, stopTime: 1000 }
-        } else {
-          this.options.pullDownRefresh = false
-        }
-      },
-      immediate: true
+    pullDownRefreshOptions (val) {
+      this.options.pullDownRefresh = val
     },
     messageCollection () {
       this.handleScrollTop()
@@ -175,6 +167,13 @@ export default {
     ...mapState('customerService', {
       received: state => state.received
     }),
+    pullDownRefreshOptions () {
+      if (this.hasMoreHistory && this.showPullDownTip) {
+        return { threshold: 60, stopTime: 1000 }
+      } else {
+        return false
+      }
+    },
     historyMessage () {
       return this.showFullHistory ? this.received[MSG_CAT.history] : takeRight(this.received[MSG_CAT.history], this.defaultHistoryNum)
     },
