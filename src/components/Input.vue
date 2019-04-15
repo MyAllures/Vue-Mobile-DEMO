@@ -277,7 +277,7 @@ export default {
   height: 100%;
   input::-webkit-input-placeholder {
     color: #bfbfbf;
-    font-size: 16px;
+    font-size: 14px;
   }
   textarea::-webkit-input-placeholder {
     color: #bfbfbf;
