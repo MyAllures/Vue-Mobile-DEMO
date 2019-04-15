@@ -1,40 +1,47 @@
-import urls from '@/api/urls'
 import Vue from 'vue'
-import router from '@/router'
 import store from '@/store'
+import router from '@/router'
+import urls from '@/api/urls'
 import { JWT } from '@/utils/jwtToken'
 import { RECEIVED_ACTION, EMITTED_ACTION, MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 
 const JWT_TYPE = 'venom'
-let wsLivingCount = 0
+const RETRY_COUNT = 3
+
+function wsDebug (...args) {
+  if (process.env.NODE_ENV !== 'development') return
+  console.warn('[Venom]', ...args)
+}
 
 function VenomSocketObj (token) {
+  wsDebug('init venom instance')
+  this.ws = null
+  this.wsConnCheckInterval = null
+  this.wsConnTryCount = 0
+  this.wsConnCheckTime = 0
+  this.pingPongContainer = {}
+
   this.initWs(token)
 }
 
 VenomSocketObj.prototype.initWs = function (token) {
   this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${token}`)
 
+  this.ws.onerror = e => {
+    wsDebug('ws onerror')
+    this.wsConnRetry()
+  }
+
   this.ws.onopen = e => {
-    clearInterval(this.checkWsLivingInterval)
-    this.checkWsLivingInterval = setInterval(() => {
-      if (wsLivingCount > 3) {
-        store.dispatch('customerService/receiveMessages', {
-          category: MSG_CAT.error,
-          messages: [{
-            text: '目前连线有问题，请重整网页',
-            type: MSG_TYPE.error,
-            cat: MSG_CAT.error
-          }]
-        })
-        clearInterval(this.checkWsLivingInterval)
-      } else {
-        try {
-          this.checkLiving()
-          wsLivingCount = 0
-        } catch (err) {
-          wsLivingCount += 1
-        }
+    wsDebug('ws onopen')
+    clearInterval(this.wsConnCheckInterval)
+    this.wsConnCheckTime = 0
+    this.pingPongContainer = { ping: 0, pong: 0 }
+
+    this.wsConnCheckInterval = setInterval(() => {
+      if (!this.wsConnCheck()) {
+        wsDebug('ws check failed')
+        this.wsConnRetry()
       }
     }, 3000)
   }
@@ -44,7 +51,6 @@ VenomSocketObj.prototype.initWs = function (token) {
 
     try {
       let data = JSON.parse(response.data)
-
       switch (data.action) {
         case RECEIVED_ACTION.welcome_message:
           data.message.type = MSG_TYPE.welcome_message
@@ -114,18 +120,17 @@ VenomSocketObj.prototype.initWs = function (token) {
             })
           }
           break
+        case 'ping':
+          this.ws.send(JSON.stringify({
+            'action': 'pong'
+          }))
+          break
+        case 'pong':
+          this.wsConnCheckTime = Vue.moment()
+          this.pingPongContainer.pong++
+          break
         default:
           break
-      }
-
-      if (data['ping']) {
-        this.ws.send(JSON.stringify({
-          'action': 'pong'
-        }))
-      }
-
-      if (data['pong']) {
-        this.lastCheckTime = Vue.moment()
       }
     } catch (e) {
       console.log(e, 'error')
@@ -139,7 +144,14 @@ VenomSocketObj.prototype.send = function ({ action, parameter }) {
   this.ws.send(JSON.stringify(request))
 }
 
-VenomSocketObj.prototype.closeConnect = function () {
+VenomSocketObj.prototype.closeConnect = function (clearStore = true) {
+  clearInterval(this.wsConnCheckInterval)
+  if (clearStore) {
+    store.dispatch('setWs', {
+      ws: null,
+      type: JWT_TYPE
+    })
+  }
   if (this.ws) {
     if (this.ws.readyState === 1) { // 若連線已建立才返回訊息
       this.ws.send(JSON.stringify({
@@ -147,34 +159,65 @@ VenomSocketObj.prototype.closeConnect = function () {
       }))
     }
     this.ws.close()
+    this.ws = null
   }
-
-  clearInterval(this.checkWsLivingInterval)
-  store.dispatch('setWs', {
-    ws: null,
-    type: JWT_TYPE
-  })
 }
 
 VenomSocketObj.prototype.reconnect = function () {
-  clearInterval(this.checkWsLivingInterval)
-
   let token = Vue.cookie.get(JWT[JWT_TYPE] + '_token')
-  if (token) this.initWs(token)
+  if (token) {
+    this.closeConnect(false)
+    this.initWs(token)
+  }
 }
 
-VenomSocketObj.prototype.checkLiving = function () {
-  if (this.lastCheckTime && Vue.moment(this.lastCheckTime).diff(Vue.moment(), 'seconds') > 9) {
-    this.reconnect()
-    return
-  }
+VenomSocketObj.prototype.wsConnCheck = function () {
+  wsDebug(`check ws connection`)
   if (this.ws.readyState !== 1) {
-    this.reconnect()
-    return
+    wsDebug(`check readyState error:`, this.ws.readyState)
+    return false
   }
+  if (this.wsConnCheckTime && Vue.moment(this.wsConnCheckTime).diff(Vue.moment(), 'seconds') > 9) {
+    wsDebug(`check time error`)
+    return false
+  }
+  if (this.pingPongContainer.ping !== this.pingPongContainer.pong) {
+    wsDebug('check ping pong error:', this.pingPongContainer)
+    return false
+  }
+  wsDebug(`ws connection pass`)
   this.ws.send(JSON.stringify({
     'action': 'ping'
   }))
+  this.pingPongContainer.ping++
+  this.wsConnTryCount = 0
+  return true
+}
+
+VenomSocketObj.prototype.wsConnRetry = function () {
+  if (this.wsConnTryCount >= RETRY_COUNT) {
+    this.wsConnError()
+    return
+  }
+  wsDebug(`reconnecting...`)
+  setTimeout(() => {
+    this.reconnect()
+    this.wsConnTryCount++
+    wsDebug(`wsConnTryCount: ${this.wsConnTryCount}`)
+  }, 1000)
+}
+
+VenomSocketObj.prototype.wsConnError = function () {
+  wsDebug('ws connect error... STOP!')
+  this.closeConnect()
+  store.dispatch('customerService/receiveMessages', {
+    category: MSG_CAT.error,
+    messages: [{
+      text: '目前连线有问题，请重整网页',
+      type: MSG_TYPE.error,
+      cat: MSG_CAT.error
+    }]
+  })
 }
 
 export default VenomSocketObj
