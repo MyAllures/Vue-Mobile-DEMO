@@ -35,6 +35,25 @@
             v-model="member.qq">
           </v-input>
         </v-form-item>
+        <v-form-item label="昵称" prop="nickname">
+          <v-input
+            v-model="member.nickname">
+          </v-input>
+        </v-form-item>
+        <v-form-item class="avatar-selector-wrapper" label="头像">
+          <div class="avatar-selector">
+            <div v-if="previewImage" class="avatar" :style="{'background-image': `url('${previewImage}')`}"></div>
+            <label class="select">
+              变换头像
+              <input @change="setAvatar"
+                type="file"
+                ref="fileImgSend"
+                class="img-upload-input"
+                accept="image/*">
+            </label>
+            <div class="arrow"></div>
+          </div>
+        </v-form-item>
       </v-form>
     </div>
 
@@ -55,7 +74,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
-const inputs = ['phone', 'email', 'qq', 'wechat']
+const inputs = ['phone', 'email', 'qq', 'wechat', 'nickname', 'avatar']
 const originUser = {}
 export default {
   name: 'profile',
@@ -105,14 +124,19 @@ export default {
         phone: '',
         email: '',
         wechat: '',
-        qq: ''
+        qq: '',
+        nickname: '',
+        avatar: ''
       },
       origin: {
         phone: '',
         email: '',
         wechat: '',
-        qq: ''
+        qq: '',
+        nickname: '',
+        avatar: ''
       },
+      previewImage: '',
       loading: false,
       response: {
         msg: '',
@@ -148,11 +172,26 @@ export default {
     ...mapActions([
       'fetchUser'
     ]),
+    setAvatar (e) {
+      let file = e.target.files[0]
+      this.previewImage = URL.createObjectURL(file)
+      if (file.size > 1024 * 1024) {
+        this.$vux.toast.show({
+          text: '图片尺寸太大，请选择较小尺寸的图片',
+          type: 'warn'
+        })
+      } else {
+        this.member.avatar = file
+      }
+    },
     init () {
       inputs.forEach(input => {
         this.member[input] = this.user[input] || ''
         this.origin[input] = this.user[input] || ''
       })
+      if (this.member.avatar) {
+        this.previewImage = this.member.avatar
+      }
     },
     submit () {
       if (this.loading) {
@@ -161,16 +200,15 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true
-          const sendData = {}
+          let sendData = new FormData()
           Object.keys(this.member).forEach(key => {
             let value = this.member[key]
-            if (value !== '') {
-              sendData[key] = value
+            if (key !== 'phone' || !this.user.phone) {
+              if (value !== '') {
+                sendData.append(key, value)
+              }
             }
           })
-          if (this.user.phone) {
-            delete sendData.phone
-          }
           changeUserInformation(this.user.id, sendData).then((response) => {
             this.sendGaEvent({label: '我的帳號', category: '修改基本資料', action: '提交'})
             this.$store.dispatch('fetchUser').then(() => {
@@ -230,5 +268,39 @@ export default {
 
 .submit-btn {
   width: 85%;
+}
+
+.v-form-item.avatar-selector-wrapper {
+  height: 80px;
+  .avatar-selector {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    .avatar {
+      height: 60px;
+      width: 60px;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      border-radius: 10px;
+    }
+    .select {
+      margin-left: auto;
+      color: #bfbfbf;
+      &::after {
+        display: inline-block;
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid #999;
+        border-bottom: 2px solid #999;
+        transform-origin: center;
+        transform: rotate(-45deg);
+      }
+    }
+    .img-upload-input {
+      display: none;
+    }
+  }
 }
 </style>

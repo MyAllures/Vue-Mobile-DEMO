@@ -7,6 +7,10 @@ export default {
   props: {
     src: {
       type: String
+    },
+    type: {
+      type: String,
+      default: 'image'
     }
   },
   mounted () {
@@ -32,6 +36,10 @@ export default {
   methods: {
     formatImg () {
       const img = this.$el
+      if (this.type === 'sticker') {
+        img.style.width = img.style.height = '120px'
+        return
+      }
       let w = img.clientWidth
       let h = img.clientHeight
       if (w > h) {

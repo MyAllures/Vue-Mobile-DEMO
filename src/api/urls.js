@@ -64,7 +64,7 @@ export default {
   onine_heartbeat: v2Member + '/heart_beat/',
   trend_chart: v2Member + '/trend_chart/',
   expert_plan: apiv2 + '/expert_plans/',
-  expert_bettrack: v2Member + '/expert_plan_tracked_bets/',
+  expert_bettrack: host + '/betrecord/expert_plan_bets/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/',
   raven: {
@@ -78,6 +78,7 @@ export default {
     ws_host: wsEagleHost,
     games: eagleHost + '/v1/games/',
     sendImg: eagleHost + '/v1/attachment/',
-    stickers: eagleHost + '/v1/stickers/'
+    stickers: eagleHost + '/v1/stickers/',
+    room: eagleHost + '/v1/rooms/'
   }
 }
