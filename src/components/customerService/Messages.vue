@@ -182,7 +182,7 @@ export default {
       return this.received[MSG_CAT.history].length > this.defaultHistoryNum
     },
     tempDateTag () {
-      if (!this.catHasMessages(MSG_CAT.history) || this.historyMessage[0].date_tag) {
+      if (this.catHasMessages(MSG_CAT.offline) || !this.catHasMessages(MSG_CAT.history) || this.historyMessage[0].date_tag) {
         return false
       }
       if ((this.hasMoreHistory && this.showPullDownTip) || !this.hasMoreHistory) {
