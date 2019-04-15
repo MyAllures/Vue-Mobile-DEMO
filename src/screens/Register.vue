@@ -44,8 +44,8 @@
         </v-input>
       </v-form-item>
       <v-form-item required :label="$t('misc.real_name')" prop="real_name">
-        <v-input
-          placeholder="用于取款"
+        <v-input class="realname"
+          placeholder="请填写本人真实姓名，注册完成无法修改"
           v-model="user.real_name">
         </v-input>
       </v-form-item>
@@ -362,6 +362,9 @@ export default {
 }
 .captcha {
   vertical-align: middle;
+}
+.realname /deep/ .weui-input::-webkit-input-placeholder {
+  font-size : 12px;  
 }
 .withdraw-password {
   position: relative;
