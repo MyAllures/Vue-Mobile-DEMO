@@ -194,7 +194,7 @@ export default {
     },
     messageCollection () {
       return concat(
-        this.catHasMessages(MSG_CAT.offline) ? [] : this.historyMessage,
+        this.catHasMessages(MSG_CAT.offline) && !this.showFullHistory ? [] : this.historyMessage,
         this.received[MSG_CAT.welcome],
         this.received[MSG_CAT.offline],
         this.received[MSG_CAT.common],
