@@ -94,7 +94,7 @@ export function betTrack (data) {
  * @param {Number} data.game_schedule 預下注期號的id
  */
 export function newBetTrack (data) {
-  return axiosGhost.post(`${urls.newBettrack}`, data)
+  return axiosGhost.post(`${urls.new_bettrack}`, data)
 }
 
 export function placeBet (data) {
@@ -381,5 +381,14 @@ export const eagle = {
   },
   fetchStickers (name) {
     return axiosEagle.get(urls.eagle.stickers)
+  },
+  /**
+   * 禁言之設定與取消、管理員之加入與刪除
+   * @param {string} data.action - ban, unban, add_manager, remove_manager
+   * @param {string} data.username
+   * @param {number} data.duration - for action ban
+   */
+  controlChatMember (rommId, action, data) {
+    return axiosEagle.post(`${urls.eagle.room}${rommId}/${action}/`, data)
   }
 }

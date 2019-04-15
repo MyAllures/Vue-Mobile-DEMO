@@ -7,22 +7,20 @@
         class="message-group-item">
         <div v-if="msg.type==='system'" class="system-message">{{msg.content}}</div>
         <div v-else-if="user.username !== msg.sender.username" :class="['other-message', chatContentType(msg.type)]">
-          <div class="avatar" :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
+          <div
+            class="avatar"
+            :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"
+            @click="handleMember(msg.sender)"></div>
           <div class="right">
-            <div class="nickname">{{msg.sender.nickname||msg.sender.username}}</div>
+            <div class="nickname">{{msg.sender.nickname}}</div>
             <img-wrapper
               class="image"
-              v-if="msg.type==='image'"
+              v-if="msg.type==='image'||msg.type==='sticker'"
               :src="msg.content"
+              :type="msg.type"
               @imgStart="imgLoadCount++"
               @imgLoad="imgLoadCount--"
               @click.native="previewImg(msg.content)"/>
-            <img-wrapper
-              class="image"
-              v-else-if="msg.type==='sticker'"
-              :src="msg.content"
-              @imgStart="imgLoadCount++"
-              @imgLoad="imgLoadCount--"/>
             <div v-else class="content-wrapper">
               <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
               <div v-else class="text">{{msg.content}}</div>
@@ -32,17 +30,12 @@
         <div v-else :class="['self-message', chatContentType(msg.type)]">
           <img-wrapper
             class="image"
-            v-if="msg.type==='image'"
+            v-if="msg.type==='image'||msg.type==='sticker'"
             :src="msg.content"
+            :type="msg.type"
             @imgStart="imgLoadCount++"
             @imgLoad="imgLoadCount--"
             @click.native="previewImg(msg.content)"/>
-          <img-wrapper
-            class="image"
-            v-else-if="msg.type==='sticker'"
-            :src="msg.content"
-            @imgStart="imgLoadCount++"
-            @imgLoad="imgLoadCount--"/>
           <div v-else class="content-wrapper">
             <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
             <div v-else class="text">{{msg.content}}</div>
@@ -75,23 +68,37 @@
         <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
       </div>
     </cube-popup>
-    <!-- <popup
-      :value="previewImgVisible"
-      @on-hide="$emit('update:visible', false)"
-      height="90%"
+    <x-dialog
       v-transfer-dom
-      :zIndex="1000">
-        <div class="cube-extend-popup-content">
-          <div class="close-btn" @click="hidePreviewImg"></div>
-          <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
+      :show.sync="chatManageDialogVisible"
+      :hide-on-blur="true"
+      :dialog-style="{
+        width: '90%',
+        'max-width': '90%'
+      }"
+      @touchmove.native.prevent>
+      <div class="dialog-wrapper" v-if="selectedMember">
+        <div class="header">
+          <div class="title">会员</div>
         </div>
-    </popup> -->
+        <div class="content">
+          <div
+            class="avatar"
+            :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
+          <div class="nickname">{{selectedMember.nickname}}</div>
+        </div>
+        <div class="buttons">
+          <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
+          <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
+        </div>
+      </div>
+    </x-dialog>
   </div>
 </template>
 <script>
 import BetInfo from '@/screens/chatGame/BetInfo'
 import { mapState } from 'vuex'
-import { TransferDom } from 'vux'
+import { TransferDom, XDialog, XButton } from 'vux'
 import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import { hasRoadBead } from '@/utils/roadBeadSetting'
 import emitter from '@/mixins/emitter.js'
@@ -109,7 +116,9 @@ export default {
   },
   components: {
     BetInfo,
-    ImgWrapper
+    ImgWrapper,
+    XDialog,
+    XButton
   },
   directives: {
     FixScroll,
@@ -125,7 +134,9 @@ export default {
       isToBottomBtnVisible: false,
       imgLoadCount: 0,
       selectedImage: '',
-      previewImgVisible: false
+      previewImgVisible: false,
+      chatManageDialogVisible: false,
+      selectedMember: null
     }
   },
   computed: {
@@ -133,7 +144,9 @@ export default {
       'user'
     ]),
     ...mapState('eagle', {
-      messages: state => state.messages
+      messages: state => state.messages,
+      isManager: state => state.isManager,
+      ws: state => state.ws
     }),
     hasExpertPlan () {
       if (!this.game) {
@@ -145,9 +158,13 @@ export default {
       const expertConfig = { key: 'expertplan', content: '<p>专家</p><p>计划</p>' }
       const roadBeadConfig = { key: 'roadbeads', content: '路珠' }
       const leaderBoardConfig = { key: 'leaderboard', content: '长龙' }
+      const chatManageConfig = { key: 'chatmanage', content: '<p>禁言</p><p>管理</p>' }
       const group = []
       if (!this.game) {
         return []
+      }
+      if (this.isManager) {
+        group.push(chatManageConfig)
       }
       let code = this.game.code
       group.push(leaderBoardConfig)
@@ -229,6 +246,16 @@ export default {
     },
     hidePreviewImg () {
       this.$refs['image-popup'].hide()
+    },
+    handleMember (member) {
+      if (!this.isManager) {
+        return
+      }
+      this.selectedMember = member
+      this.chatManageDialogVisible = true
+    },
+    banMember (duration) {
+      this.ws.banMember(this.selectedMember.username, duration)
     }
   },
   beforeDestroy () {
@@ -310,6 +337,10 @@ export default {
           border-radius: 10px;
           border-top-left-radius: 0;
         }
+        .sticker {
+          width: 120px;
+          height: 120px;
+        }
       }
       .self-message {
         margin-left: auto;
@@ -364,6 +395,7 @@ export default {
   transition-duration: 0.2s;
   opacity: 0;
   visibility: hidden;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   &.visible {
     opacity: 1;
     visibility: visible;
@@ -394,6 +426,10 @@ export default {
     position: fixed;
     background-color: #bfbfbf;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+  &.chatmanage {
+    border: 2px solid #e29348;
+    background: #f5a623;
   }
   &.leaderboard {
     border: 2px solid #3bb99c;
@@ -427,6 +463,9 @@ export default {
     .order3 {
       bottom: 150px;
     }
+    .order4 {
+      bottom: 200px;
+    }
     .leaderboard {
       border: 2px solid #3bb99c;
       background: #60d1b8;
@@ -447,6 +486,8 @@ export default {
     height: 80vh;
     width: 100vw;
     padding: 30px 0;
+    display: flex;
+    align-items: center;
   }
   .close-btn {
     top: 0;
@@ -458,6 +499,61 @@ export default {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+  }
+}
+
+.dialog-wrapper {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background-color: #fff;
+  overflow: hidden;
+  color: #333;
+  .header {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .title {
+    font-size: 18px;
+    color: #333;
+  }
+
+  .content {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    .avatar {
+      width: 100%;
+      height: 80px;
+      border-radius: 12px;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin-bottom: 10px;
+    }
+    .nickname {
+      font-size: 16px;
+      text-align: center;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    width: 270px;
+    margin: 15px auto;
+    /deep/ .weui-btn {
+      margin: 0;
+      width: 130px;
+    }
+    /deep/ .weui-btn + .weui-btn {
+      margin: 0;
+    }
   }
 }
 </style>

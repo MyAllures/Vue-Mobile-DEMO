@@ -33,7 +33,7 @@
     <popup
       :value="isBetInterfaceVisible"
       @on-hide="isBetInterfaceVisible = false"
-      height="90%"
+      height="80%"
       v-transfer-dom
       :zIndex="200">
         <div class="bet-interface-container">

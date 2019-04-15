@@ -4,7 +4,8 @@ export default {
     ws: null,
     messages: [],
     permission: null,
-    emojiMap: null
+    emojiMap: null,
+    isManager: false
   },
   mutations: {
     setWs: (state, ws) => {
@@ -13,6 +14,7 @@ export default {
     init: (state, data) => {
       state.messages = data.recent_messages
       state.permission = data.user.chat_permission
+      state.isManager = data.user.is_manager
     },
     receiveMsg: (state, message) => {
       state.messages.push(message)

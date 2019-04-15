@@ -23,6 +23,7 @@ const Leaderboards = (resolve) => require(['@/screens/games/Leaderboards'], reso
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 const TrendDiagram = (resolve) => require(['@/screens/TrendDiagram'], resolve)
 const ExpertPlan = (resolve) => require(['@/screens/ExpertPlan'], resolve)
+const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 
 export default {
   name: 'GameInfo',
@@ -60,6 +61,8 @@ export default {
           return GameIntro
         case 'expertplan':
           return ExpertPlan
+        case 'chatmanage':
+          return ChatManage
       }
     }
   }
