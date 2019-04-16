@@ -184,8 +184,12 @@ axios.interceptors.request.use((config) => {
 const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   const fromVenom = res.config.url.includes(urls.venomHost)
+  const fromRaven = res.config.url.includes(urls.ravenHost)
   let responseData = res.data
   if (fromVenom) {
+    return responseData
+  }
+  if (fromRaven) {
     return responseData
   }
   if (responseData.code === 2000) {
@@ -293,8 +297,11 @@ const setChatRoomSetting = (username) => {
       })
     }).catch(() => {})
     fetchRoomInfo().then(res => {
+      if (!res) {
+        return
+      }
       const roomInfo = {}
-      res.forEach(room => {
+      res.data.data.forEach(room => {
         roomInfo[room.id] = {name: room.title, status: room.status}
       })
       store.commit(types.SET_ROOM_INFO, roomInfo)

@@ -101,11 +101,6 @@ let scrollTop
 
 export default {
   name: 'GameHall',
-  props: {
-    showChatRoom: {
-      type: Boolean
-    }
-  },
   components: {
     UnreadPoint,
     Popup,
@@ -129,7 +124,8 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: true
+      showNotifiyMsg: true,
+      showChatRoom: false
     }
   },
   computed: {
@@ -158,7 +154,7 @@ export default {
       return this.systemConfig.chatroomEnabled
     },
     isShowChatroomIcon () {
-      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
+      if (!this.systemConfig.chatroomEnabled) {
         return false
       }
       if (!this.$route.params.gameId || !this.roomInfo) {
