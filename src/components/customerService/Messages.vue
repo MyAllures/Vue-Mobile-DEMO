@@ -179,7 +179,7 @@ export default {
       return this.showFullHistory ? this.received[MSG_CAT.history] : takeRight(this.received[MSG_CAT.history], this.defaultHistoryNum)
     },
     hasMoreHistory () {
-      return this.received[MSG_CAT.history].length > this.defaultHistoryNum
+      return (this.isHideHistory && this.catHasMessages(MSG_CAT.history)) || (!this.isHideHistory && this.received[MSG_CAT.history].length > this.defaultHistoryNum)
     },
     isHideHistory () {
       return this.catHasMessages(MSG_CAT.offline) && !this.showFullHistory
