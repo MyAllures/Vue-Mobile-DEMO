@@ -5,7 +5,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 let axiosChat = axios.create()
 
 function fetchRoomInfo () {
-  return axios.get(urls.roomInfo)
+  return axiosChat.get(urls.roomInfo)
 }
 
 function fetchChatUserInfo (username) {
@@ -13,11 +13,11 @@ function fetchChatUserInfo (username) {
 }
 
 function fetchStickers (name) {
-  return axios.get(urls.stickers)
+  return axiosChat.get(urls.stickers)
 }
 
 function fetchChatEmoji () {
-  return axios.get(urls.chatEmoji)
+  return axiosChat.get(urls.chatEmoji)
 }
 
 export {
