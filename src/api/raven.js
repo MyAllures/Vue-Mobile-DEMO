@@ -13,11 +13,15 @@ function fetchChatUserInfo (username) {
 }
 
 function fetchStickers (name) {
-  return axiosChat.get(urls.stickers)
+  return axiosChat.get(urls.stickers).then((res) => {
+    return res.data.data
+  })
 }
 
 function fetchChatEmoji () {
-  return axiosChat.get(urls.chatEmoji)
+  return axiosChat.get(urls.chatEmoji).then((res) => {
+    return res.data.data
+  })
 }
 
 export {
