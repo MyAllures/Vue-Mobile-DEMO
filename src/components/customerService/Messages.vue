@@ -103,6 +103,7 @@ export default {
   mounted () {
     window.addEventListener('resize', this.handleSize)
     this.handleScrollTop()
+    this.options.pullDownRefresh = this.pullDownRefreshOptions
   },
   methods: {
     onScroll (pos) {
@@ -180,6 +181,20 @@ export default {
     hasMoreHistory () {
       return this.received[MSG_CAT.history].length > this.defaultHistoryNum
     },
+    isHideHistory () {
+      return this.catHasMessages(MSG_CAT.offline) && !this.showFullHistory
+    },
+    offlineMessage () {
+      const msg = this.received[MSG_CAT.offline].slice(0)
+      if (!this.isHideHistory && msg[0] && this.catHasMessages(MSG_CAT.history)) {
+        const hLastDate = this.$moment(this.historyMessage[this.historyMessage.length - 1].created_at).format('YYYY-MM-DD')
+        const oFirstDate = msg[0].text === '今天' ? this.$moment().format('YYYY-MM-DD') : msg[0].text
+        if (hLastDate === oFirstDate) {
+          msg.shift()
+        }
+      }
+      return msg
+    },
     tempDateTag () {
       if (this.catHasMessages(MSG_CAT.offline) || !this.catHasMessages(MSG_CAT.history) || this.historyMessage[0].date_tag) {
         return false
@@ -194,9 +209,9 @@ export default {
     },
     messageCollection () {
       return concat(
-        this.catHasMessages(MSG_CAT.offline) && !this.showFullHistory ? [] : this.historyMessage,
+        this.isHideHistory ? [] : this.historyMessage,
         this.received[MSG_CAT.welcome],
-        this.received[MSG_CAT.offline],
+        this.offlineMessage,
         this.received[MSG_CAT.common],
         this.received[MSG_CAT.error]
       )
