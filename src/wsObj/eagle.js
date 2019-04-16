@@ -15,6 +15,9 @@ function onmessage (response) {
       case 'system':
         store.dispatch('eagle/receiveMsg', data)
         break
+      case 'betrecord-sharing':
+        store.dispatch('eagle/receiveMsg', data)
+        break
     }
   }
 }
@@ -49,6 +52,10 @@ export class EagleWebSocket {
         'content': message
       }
     )
+  }
+
+  fetchBannedList () {
+    return eagle.fetchBannedList(this.roomId)
   }
 
   banMember (username, duration) {

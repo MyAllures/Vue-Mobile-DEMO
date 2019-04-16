@@ -95,7 +95,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchEiderJWTToken, axiosGhost, axiosEagle } from './api'
+import { getToken, axiosGhost, axiosEagle } from './api'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
@@ -108,7 +108,6 @@ import ExpertBetTrackDialog from './dialog/ExpertBetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -287,18 +286,6 @@ export default {
     }
   },
   watch: {
-    'user.logined' (newStatus, old) {
-      if (!newStatus) {
-        if (this.ws.eider) {
-          this.ws.eider.closeConnect()
-        }
-      } else {
-        fetchEiderJWTToken().then(() => {
-          let token = this.$cookie.get('message_broker_token')
-          this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
-        })
-      }
-    },
     '$route' (to, from) {
       this.tabbarHidden = to.meta.tabbarHidden
       this.noBackRoute = !window.history.state
@@ -331,12 +318,12 @@ export default {
       }
     },
     replaceToken () {
-      fetchEiderJWTToken()
       let refreshToken = this.$cookie.get('refresh_token')
       if (!refreshToken || !this.user.account_type) {
         return
       }
       getToken(refreshToken).then(res => {
+        this.$store.dispatch('fetchJWTToken', 'eagle')
         let expires = new Date(res.expires_in)
         localStorage.setItem('token_expire', res.expires_in)
         this.$cookie.set('access_token', res.access_token, {

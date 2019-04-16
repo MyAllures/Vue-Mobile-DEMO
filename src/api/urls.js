@@ -79,6 +79,7 @@ export default {
     games: eagleHost + '/v1/games/',
     sendImg: eagleHost + '/v1/attachment/',
     stickers: eagleHost + '/v1/stickers/',
-    room: eagleHost + '/v1/rooms/'
+    room: eagleHost + '/v1/rooms/',
+    room_banned_users: eagleHost + '/v1/room-banned-users/'
   }
 }

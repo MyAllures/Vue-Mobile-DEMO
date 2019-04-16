@@ -131,16 +131,6 @@ const baseRoutes = [
           requiresAuth: true
         },
         component: resolve => { require(['../screens/finance/PersonalReport.vue'], resolve) }
-      },
-      {
-        path: 'bettrack_record',
-        name: 'BetTrackRecord',
-        meta: {
-          title: '追号纪录',
-          gaTitle: '追号纪录',
-          requiresAuth: true
-        },
-        component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
       }
     ]
   },
@@ -327,8 +317,29 @@ const baseRoutes = [
     redirect: '/'
   }
 ]
+const oldBetTrackRecord = {
+  path: 'bettrack_record',
+  name: 'BetTrackRecord',
+  meta: {
+    title: '追号纪录',
+    gaTitle: '追号纪录',
+    requiresAuth: true
+  },
+  component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
+}
 
-const oldGame = [{
+const newBetTrackRecord = {
+  path: 'bettrack_record',
+  name: 'BetTrackRecord',
+  meta: {
+    title: '追号纪录',
+    gaTitle: '追号纪录',
+    requiresAuth: true
+  },
+  component: resolve => { require(['../screens/finance/NewBetTrackRecord.vue'], resolve) }
+}
+
+const oldGame = {
   path: '/game',
   name: 'Game',
   component: resolve => { require(['../screens/games/GameHall.vue'], resolve) },
@@ -363,9 +374,9 @@ const oldGame = [{
       ]
     }
   ]
-}]
+}
 
-const newGame = [{
+const newGame = {
   path: '/game',
   name: 'Game',
   component: resolve => { require(['../screens/chatGame/ChatGameHall.vue'], resolve) },
@@ -382,19 +393,40 @@ const newGame = [{
       }
     }
   ]
-}]
+}
 
-router.addRoutes(newGame)
-router.addRoutes(baseRoutes)
+let routes = createRoute(baseRoutes, 'new')
+router.addRoutes(routes)
 export default router
+
+function createRoute (routes, version) {
+  let result = []
+  if (version === 'new') {
+    result.push(newGame)
+  } else {
+    result.push(oldGame)
+  }
+  routes.forEach(route => {
+    let copyRoute = { ...route }
+    if (copyRoute.children) {
+      copyRoute.children = createRoute(copyRoute.children, version)
+    }
+    if (copyRoute.path === '/fin') {
+      if (version === 'new') {
+        copyRoute.children.push(newBetTrackRecord)
+      } else {
+        copyRoute.children.push(oldBetTrackRecord)
+      }
+    }
+    result.push(copyRoute)
+  })
+  return result
+}
 
 export function switchRouter (version) {
   const newRouter = new Router({ route: [] })
+
   router.matcher = newRouter.matcher
-  if (version === 'new') {
-    router.addRoutes(newGame)
-  } else {
-    router.addRoutes(oldGame)
-  }
-  router.addRoutes(baseRoutes)
+  let routes = createRoute(baseRoutes, version)
+  router.addRoutes(routes)
 }
