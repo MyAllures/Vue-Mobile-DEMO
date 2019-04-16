@@ -55,9 +55,9 @@
                 </template>
               </td>
               <td>
-                  <span v-if="plan.result.win_bet" :class="['box', 'result', 'expert-result-'+game.code, 'resultnum-'+plan.result.win_bet]">{{plan.result.win_bet}}</span>
-                  <span v-else-if="plan.result.status == '挂'" class="box miss">{{plan.result.status}}</span>
-                  <span v-else class="box">{{plan.result.status}}</span>
+                <span v-if="plan.result.win_bet" :class="['box', 'result', 'expert-result-'+game.code, 'resultnum-'+plan.result.win_bet]">{{plan.result.win_bet}}</span>
+                <span v-else-if="plan.result.status == '挂'" class="box miss">{{plan.result.status}}</span>
+                <span v-else class="box">{{plan.result.status}}</span>
               </td>
               <td class="btn">
                 <x-button

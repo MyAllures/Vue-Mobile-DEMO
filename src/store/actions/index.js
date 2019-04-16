@@ -12,7 +12,8 @@ import {
   getPromotions,
   fetchBanner,
   fetchUnreadCount,
-  fetchAnnouncements
+  fetchAnnouncements,
+  fetchJWTToken
 } from '../../api'
 import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
@@ -265,5 +266,14 @@ export default {
   },
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
+  },
+  fetchJWTToken: ({commit}, type) => {
+    return fetchJWTToken(type).then(token => {
+      commit(types.FETCH_JWT_TOKEN, {
+        type,
+        token
+      })
+      return token
+    })
   }
 }

@@ -1,12 +1,12 @@
 import axios from 'axios'
 import urls from './urls'
 import qs from 'qs'
-import Vue from 'vue'
 
 export const JWT = {
   venom: 'customer_service',
   raven: 'chat',
-  eider: 'message_broker'
+  eider: 'message_broker',
+  eagle: 'chatroom_betting'
 }
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -70,6 +70,18 @@ export function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId)
 
 export function fetchBetTrackRecord (option) {
   let url = `${urls.bettrack}?`
+  Object.keys(option).forEach(key => {
+    if (key === 'date') {
+      url += `&bet_date=${option[key]}`
+      return
+    }
+    url += `&${key}=${option[key]}`
+  })
+  return axiosGhost.get(url)
+}
+
+export function fetchNewBetTrackRecord (option) {
+  let url = `${urls.new_bettrack}?`
   Object.keys(option).forEach(key => {
     if (key === 'date') {
       url += `&bet_date=${option[key]}`
@@ -349,6 +361,16 @@ export function expertBetTrack (data) {
   return axiosGhost.post(urls.expert_bettrack, data)
 }
 
+export function fetchWinHistory () {
+  return axiosGhost.get(urls.win_history)
+}
+
+export function fetchJWTToken (type) {
+  return axiosGhost.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
+    return res[JWT[type] + '_token']
+  })
+}
+
 // raven
 export function fetchStickers (name) {
   return axiosGhost.get(urls.raven.stickers)
@@ -361,17 +383,6 @@ export function fetchChatUserInfo (username) {
 }
 export function fetchRoomInfo () {
   return axiosGhost.get(urls.raven.roomInfo)
-}
-
-export function fetchWinHistory () {
-  return axiosGhost.get(urls.win_history)
-}
-
-export function fetchEiderJWTToken () {
-  return axiosGhost.post(urls.get_jwt_token, {service_type: JWT.eider}).then((res) => {
-    Vue.cookie.set(JWT.eider + '_token', res[JWT.eider + '_token'])
-    return res
-  })
 }
 
 // eagle
@@ -390,5 +401,14 @@ export const eagle = {
    */
   controlChatMember (rommId, action, data) {
     return axiosEagle.post(`${urls.eagle.room}${rommId}/${action}/`, data)
+  },
+  /**
+   * 禁言名單
+   * @param {number} roomId
+   */
+  fetchBannedList (roomId) {
+    return axiosEagle.get(`${urls.eagle.room_banned_users}`, {params: {
+      room_id: roomId
+    }})
   }
 }

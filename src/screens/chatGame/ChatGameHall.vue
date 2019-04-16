@@ -116,7 +116,9 @@ export default {
             }
           }
           if (this.ws === null) {
-            this.ws = new EagleWebSocket(this.$cookie.get('access_token'), game.rooms[0].id)
+            this.$store.dispatch('fetchJWTToken', 'eagle').then(token => {
+              this.ws = new EagleWebSocket(token, game.rooms[0].id)
+            }).catch(() => {})
           } else if (game.code !== oldGame.code) {
             this.ws.joinRoom(game.rooms[0].id)
           }
@@ -145,7 +147,6 @@ export default {
     }
   },
   created () {
-    console.log(this.user)
     if (!this.$route.params.gameId) {
       if (this.games.length > 0) {
         this.chooseGame()
