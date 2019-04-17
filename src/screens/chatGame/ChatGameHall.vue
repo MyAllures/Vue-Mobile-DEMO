@@ -14,6 +14,38 @@
       </div>
       <template slot="right">
         <div class="right-ctrl">
+          <div
+            v-click-outside="onClickOutSideHelper"
+            class="helper"
+            slot="right">
+            <div class="helper-trigger" @click="toggleHelper">
+              <div class="icon"></div>
+              助手
+            </div>
+            <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
+              <li v-if="hasExpertPlan" class="helper-link" @click="showGameInfo('expertplan')">
+                专家计划
+              </li>
+              <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
+                路珠
+              </li>
+              <li class="helper-link" @click="showGameInfo('leaderboard')">
+                长龙排行榜
+              </li>
+              <li class="helper-link" @click="showGameInfo('history')">
+                历史开奖
+              </li>
+              <li v-if="hasTrendDiagram" class="helper-link" @click="showGameInfo('trend')" >
+                走势图表
+              </li>
+              <li class="helper-link" @click="showGameInfo('intro')">
+                游戏介绍
+              </li>
+              <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
+                聊天室
+              </li>
+            </ul>
+          </div>
           <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
         </div>
       </template>
@@ -36,7 +68,7 @@
       @click.native="isGameMenuVisible = !isGameMenuVisible"
       type="more"
     />
-    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 18px)'}">
+    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 12px)'}">
       <router-view :key="$route.params.gameId"/>
     </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
@@ -50,12 +82,14 @@ import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
-// import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
-// import {hasRoadBead} from '@/utils/roadBeadSetting'
+import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
+import {hasRoadBead} from '@/utils/roadBeadSetting'
+import {hasExpertPlan} from '@/utils/expertPlanSetting'
 import GameInfo from '@/screens/games/GameInfo'
 import { mapState } from 'vuex'
 import {EagleWebSocket} from '@/wsObj/eagle'
 import {eagle} from '@/api'
+import vClickOutside from 'v-click-outside'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -78,7 +112,8 @@ export default {
     GameMenuIcon
   },
   directives: {
-    TransferDom
+    TransferDom,
+    clickOutside: vClickOutside.directive
   },
   data () {
     return {
@@ -86,6 +121,7 @@ export default {
       contentType: '',
       isGameInfoVisible: false,
       isGameMenuVisible: false,
+      isHelperVisible: false,
       showNotifiyMsg: false,
       ws: null,
       hasFetchJWT: false
@@ -98,6 +134,24 @@ export default {
     ...mapState('eagle', {
       emojiMap: state => state.emojiMap
     }),
+    hasExpertPlan () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasExpertPlan(this.currentGame.code)
+    },
+    hasTrendDiagram () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasTrendDiagram(this.currentGame.code)
+    },
+    hasRoadBead () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasRoadBead(this.currentGame.code)
+    },
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
     }
@@ -192,6 +246,37 @@ export default {
         this.$router.push({ name: 'Home' })
       }
     },
+    toggleHelper () {
+      this.isHelperVisible = !this.isHelperVisible
+      this.isGameMenuVisible = false
+    },
+    onClickOutSideHelper () {
+      this.isHelperVisible = false
+    },
+    showGameInfo (type) {
+      this.sendHelperGa(type)
+      this.isGameInfoVisible = !!type
+      // show history from game hall
+      type = type === 'historyViaHall' ? 'history' : type
+      this.contentType = type
+    },
+    sendHelperGa (type) {
+      let mapping = {
+        plan: '人工计划',
+        roadbeads: '路珠',
+        leaderboard: '长龙排行榜',
+        history: '历史开奖',
+        historyViaHall: '历史开奖-游戏大厅',
+        intro: '游戏介绍',
+        chatroom: '聊天室',
+        trend: '走勢圖表'
+      }
+      this.sendGaEvent({
+        label: mapping[type],
+        category: '遊戲助手',
+        action: '点击'
+      })
+    },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
       this.showNotifiyMsg = false
@@ -211,6 +296,82 @@ export default {
 .chat-gamehall-container {
   height: 100%;
   background: #fff;
+  .helper {
+    position: relative;
+    height: 100%;
+    width: 50px;
+    color: #fff;
+    font-size: 15px;
+    .helper-trigger {
+      height: 100%;
+      width: 50px;
+      display: flex;
+      align-items: center;
+      .icon {
+        height: 16px;
+        width: 16px;
+        background: url('../../assets/helper.svg') no-repeat;
+        background-size: contain;
+      }
+    }
+    .helper-link-group {
+      position: absolute;
+      top: 40px;
+      right: -18px;
+      width: 140px;
+      border-radius: 4px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12);
+      list-style: none;
+      &::before {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(0, 0, 0, 0);
+        border-bottom-color: #fff;
+        border-width: 6px 5px;
+        margin-left: 14px;
+      }
+      .helper-link {
+        box-sizing: border-box;
+        width: 140px;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        text-align: center;
+        a {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          line-height: 40px;
+          margin: 0;
+          color: #333;
+          text-align: center;
+        }
+        .badage {
+          position: relative;
+          &:after {
+            position: absolute;
+            top: 14px;
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 12px;
+            margin-left: 5px;
+            background-image: url('../../assets/badge_new.svg');
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+        }
+      }
+    }
+  }
   .right-menu-btn {
     box-sizing: border-box;
     display: flex;

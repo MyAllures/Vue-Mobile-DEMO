@@ -91,7 +91,7 @@ export default {
     return {
       msgCnt: '',
       activeSeries: '1',
-      mode: 'typing',
+      mode: 'bet',
       isShowEmojiPanel: false
     }
   },
@@ -227,6 +227,8 @@ export default {
   flex: 0 0 auto;
   background: #fafafa;
   width: 100%;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
+  z-index: 1;
   .input-panel {
     box-sizing: border-box;
     position: relative;

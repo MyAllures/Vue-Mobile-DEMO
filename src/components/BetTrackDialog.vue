@@ -15,19 +15,19 @@
           <div>
             <div class="info-wrapper">
               <div class="row">
-                <span class="name">位置 :</span>
+                <div class="name">位置 :</div>
                 <span class="value">{{dialog.data.forDisplay.play_code_pattern}}</span>
               </div>
               <div class="row">
-                <span class="name">号码 :</span>
+                <div class="name">号码 :</div>
                 <span class="value">{{dialog.data.track_numbers.join(',')}}</span>
               </div>
               <div class="row">
-                <span class="name">单注 :</span>
+                <div class="name">单注 :</div>
                 <span class="value">￥{{dialog.data.bet_amount}}</span>
               </div>
               <div class="row">
-                <span class="name">期数 :</span>
+                <div class="name">期数 :</div>
                 <span class="value">
                   <span class="schedule-text" v-for="(s, i) in dialog.data.forDisplay.selectedSchedules" :key="i">{{s}}</span>{{dialog.data.forDisplay.type}}
                 </span>
@@ -191,7 +191,7 @@ export default {
 }
 
 .name {
-  display: inline-block;
+  flex: 0 0 auto;
   width: 50px;
   color: #999;
   line-height: 2;

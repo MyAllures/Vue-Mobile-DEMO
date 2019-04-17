@@ -134,7 +134,7 @@ export default {
     return {
       notNeedScroll: false,
       defaultAvatar,
-      isHelperVisible: false,
+      isHelperVisible: true,
       isToBottomBtnVisible: false,
       imgLoadCount: 0,
       selectedImage: '',
