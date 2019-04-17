@@ -87,7 +87,8 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       showNotifiyMsg: false,
-      ws: null
+      ws: null,
+      hasFetchJWT: false
     }
   },
   computed: {
@@ -116,9 +117,14 @@ export default {
             }
           }
           if (this.ws === null) {
-            this.$store.dispatch('fetchJWTToken', 'eagle').then(token => {
-              this.ws = new EagleWebSocket(token, game.rooms[0].id)
-            }).catch(() => {})
+            if (!this.hasFetchJWT) {
+              this.hasFetchJWT = true
+              this.$store.dispatch('fetchJWTToken', 'eagle').then(token => {
+                this.ws = new EagleWebSocket(token, game.rooms[0].id)
+              }).catch(() => {
+                this.hasFetchJWT = false
+              })
+            }
           } else if (game.code !== oldGame.code) {
             this.ws.joinRoom(game.rooms[0].id)
           }
@@ -190,7 +196,7 @@ export default {
       this.showNotifiyMsg = false
     },
     chooseGame () {
-      const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
+      const gameId = this.$store.state.lastGameData.lastGame || this.games[0].id
       this.$router.replace('/game/' + gameId)
     }
   },
