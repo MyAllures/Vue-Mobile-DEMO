@@ -455,14 +455,17 @@ export default {
           }
         })
       } else {
+        const state = {
+          visible: true,
+          bets: bets,
+          isSuccess: false
+        }
+        if (this.user.account_type) {
+          state.hasShared = true
+        }
         this.$store.dispatch('updateDialog', {
           name: 'bet',
-          state: {
-            visible: true,
-            bets: bets,
-            isSuccess: false,
-            hasShared: true
-          }
+          state
         })
       }
     },
@@ -565,6 +568,7 @@ export default {
 .data-section {
   z-index: 10;
   background: #fff;
+  box-shadow: 0 0 3px 3px rgba(0,0,0,.15);
   .wrapper {
     position: relative;
     .solid-triangle {

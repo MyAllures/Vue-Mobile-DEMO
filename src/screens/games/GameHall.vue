@@ -14,44 +14,42 @@
       </div>
       <template slot="right">
         <div class="right-ctrl">
-          <template>
-            <div
-              v-click-outside="onClickOutSideHelper"
-              v-if="!this.showChatRoom"
-              class="helper"
-              slot="right">
-              <div class="helper-trigger" @click="toggleHelper">
-                <div class="icon"></div>
-                助手
-              </div>
-              <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
-                <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
-                  <a target="_blank" class="badage" :href="seoWebsite">
-                    人工计划
-                  </a>
-                </li>
-                <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
-                  路珠
-                </li>
-                <li class="helper-link" @click="showGameInfo('leaderboard')">
-                  长龙排行榜
-                </li>
-                <li class="helper-link" @click="showGameInfo('history')">
-                  历史开奖
-                </li>
-                <li v-if="hasTrendDiagram" class="helper-link" @click="showGameInfo('trend')" >
-                  走势图表
-                </li>
-                <li class="helper-link" @click="showGameInfo('intro')">
-                  游戏介绍
-                </li>
-                <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
-                  聊天室
-                </li>
-              </ul>
+          <div
+            v-click-outside="onClickOutSideHelper"
+            v-if="!this.showChatRoom"
+            class="helper"
+            slot="right">
+            <div class="helper-trigger" @click="toggleHelper">
+              <div class="icon"></div>
+              助手
             </div>
-            <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
-          </template>
+            <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
+              <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
+                <a target="_blank" class="badage" :href="seoWebsite">
+                  人工计划
+                </a>
+              </li>
+              <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
+                路珠
+              </li>
+              <li class="helper-link" @click="showGameInfo('leaderboard')">
+                长龙排行榜
+              </li>
+              <li class="helper-link" @click="showGameInfo('history')">
+                历史开奖
+              </li>
+              <li v-if="hasTrendDiagram" class="helper-link" @click="showGameInfo('trend')" >
+                走势图表
+              </li>
+              <li class="helper-link" @click="showGameInfo('intro')">
+                游戏介绍
+              </li>
+              <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
+                聊天室
+              </li>
+            </ul>
+          </div>
+          <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
         </div>
       </template>
     </top-bar>
@@ -80,7 +78,7 @@
       @click.native="isGameMenuVisible = !isGameMenuVisible"
       type="more"
     />
-    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 18px)'}">
+    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 12px)'}">
       <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     </div>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>

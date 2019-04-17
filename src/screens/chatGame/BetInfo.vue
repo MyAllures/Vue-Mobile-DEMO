@@ -77,6 +77,7 @@ export default {
   .bet-info-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding-bottom: 5px;
     .game-name {
       font-weight: 500;
@@ -84,7 +85,9 @@ export default {
     .issue-number {
       color: #999;
     }
+
     /deep/ .weui-btn {
+      height: 30px;
       margin: 0;
     }
   }

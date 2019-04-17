@@ -15,21 +15,21 @@
           <div>
             <div class="info-wrapper">
               <div class="row">
-                <span class="name">位置 :</span>
+                <div class="name">位置 :</div>
                 <span class="value">{{currentSetting[dialogData.position-1]}}</span>
               </div>
               <div class="row">
-                <span class="name">号码 :</span>
+                <div class="name">号码 :</div>
                 <span class="value">{{dialogData.bet_numbers.join(',')}}</span>
               </div>
               <div class="row">
-                <span class="name">单注 :</span>
+                <div class="name">单注 :</div>
                 <div class="amount-input-wrapper">
                   <AmountInput class="amount-input" v-model="bettrack.bet_amount"/>
                 </div>
               </div>
               <div class="row">
-                <span class="name">期数 :</span>
+                <div class="name">期数 :</div>
                 <span class="value">
                   {{dialogData.issue_numbers.length | periodFilter}}
                   <span class="schedule-text" v-for="(s, i) in dialogData.issue_numbers" :key="i">{{s}}</span>
@@ -235,7 +235,7 @@ export default {
 }
 
 .name {
-  display: inline-block;
+  flex: 0 0 auto;
   width: 50px;
   color: #999;
   line-height: 2;
