@@ -111,7 +111,7 @@
                   v-model="bettrack.multiple"/>
               </div>
               <div class="col">
-                <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openBettrackDialog">投注</x-button>
+                <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openBettrackDialog">提交</x-button>
               </div>
             </div>
             <div v-if="(gameClosed&&closeCountDown)" class="gameclosed-mask">
@@ -716,7 +716,7 @@ export default {
   position: relative;
   flex: 0 0 auto;
   height: 90px;
-  background: #333;
+  background:rgba(0,0,0,.7);
   color: #fff;
   padding: 0 5px 0 10px;
   font-size: 14px;
