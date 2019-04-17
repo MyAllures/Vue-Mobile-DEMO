@@ -11,7 +11,7 @@
         <cell class="balance-info">
           <div slot="icon">
             <div class="user-section">
-              <div v-if="user.avatar" class="avatar" :style="{'background-image': `url('${user.avatar}')`}"></div>
+              <div class="avatar" :style="{'background-image': `url('${user.avatar?user.avatar:defaultAvatar}')`}"></div>
               <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
             </div>
             <p class="balance-text">余额</p>
@@ -95,8 +95,10 @@ import { Group, Cell, Confirm } from 'vux'
 export default {
   name: 'My',
   data () {
+    const defaultAvatar = require('../assets/avatar.png')
     return {
-      logoutDialogShow: false
+      logoutDialogShow: false,
+      defaultAvatar
     }
   },
   computed: {

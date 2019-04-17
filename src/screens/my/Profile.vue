@@ -186,12 +186,13 @@ export default {
     },
     init () {
       inputs.forEach(input => {
-        this.member[input] = this.user[input] || ''
-        this.origin[input] = this.user[input] || ''
+        if (input === 'avatar') {
+          this.previewImage = this.user[input]
+        } else {
+          this.member[input] = this.user[input] || ''
+          this.origin[input] = this.user[input] || ''
+        }
       })
-      if (this.member.avatar) {
-        this.previewImage = this.member.avatar
-      }
     },
     submit () {
       if (this.loading) {
