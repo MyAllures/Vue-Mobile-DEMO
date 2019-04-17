@@ -266,7 +266,7 @@ export default {
         this.$set(this, 'playReset', !this.playReset)
       }
     },
-    '$store.state.urgencySwitchedGame': function ({gameCode, issueNumber, closeLeft}) {
+    '$store.state.urgencySwitchedGame': function ({ gameCode, issueNumber, closeLeft }) {
       if (this.currentGame.code === gameCode && this.schedule.issue_number === issueNumber) {
         let closeTime = this.$moment().add(closeLeft, 's')
         this.schedule.schedule_close = closeTime
@@ -296,21 +296,26 @@ export default {
         to(scrollTop)
       }
     },
-    'result': function (result) {
-      getGameHistoryData({
-        offset: 1,
-        game_code: this.currentGame.code,
-        limit: 9
-      }).then(res => {
-        this.historyData = res.results.map(d => {
-          return {
+    'result': {
+      handler: function (result) {
+        if (result) {
+          getGameHistoryData({
+            offset: 1,
             game_code: this.currentGame.code,
-            result_str: d.result_str,
-            issue_number: d.issue_number,
-            status: d.result_status
-          }
-        })
-      })
+            limit: 9
+          }).then(res => {
+            this.historyData = res.results.map(d => {
+              return {
+                game_code: this.currentGame.code,
+                result_str: d.result_str,
+                issue_number: d.issue_number,
+                status: d.result_status
+              }
+            })
+          })
+        }
+      },
+      immediate: true
     }
   },
   created () {
@@ -375,7 +380,7 @@ export default {
         })
 
         this.startScheduleTimer()
-      }).catch(() => {})
+      }).catch(() => { })
     },
     startScheduleTimer () {
       clearInterval(this.scheduleInterval)
@@ -418,7 +423,7 @@ export default {
         return
       }
       const gameId = this.$route.params.gameId
-      this.$store.dispatch('saveLastCategory', {gameId, categoryId})
+      this.$store.dispatch('saveLastCategory', { gameId, categoryId })
       this.categoryId = categoryId
     },
     openDialog () {
@@ -600,170 +605,170 @@ export default {
   }
   .history-panel-mask {
     height: 100%;
-    background: rgba(0, 0, 0, 0.3)
+    background: rgba(0, 0, 0, 0.3);
   }
 }
 
 .header {
+  flex: 0 0 auto;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: #333;
+  font-size: 16px;
+}
+.bet-area {
+  display: flex;
+  flex: 1 1 auto;
+  .aside {
     flex: 0 0 auto;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    color: #333;
-    font-size: 16px;
+    width: 90px;
+    height: 100%;
+    overflow-y: scroll;
   }
-  .bet-area {
+  .category-menu {
+    flex: 0 0 auto;
+    position: relative;
     display: flex;
-    flex: 1 1 auto;
-    .aside {
-      flex: 0 0 auto;
-      width: 90px;
-      height: 100%;
-      overflow-y: scroll;
-    }
-    .category-menu {
-      flex: 0 0 auto;
+    flex-direction: column;
+    // overflow-y: scroll;
+    width: 90px;
+    color: #333;
+    .category-menu-item {
       position: relative;
       display: flex;
-      flex-direction: column;
-      // overflow-y: scroll;
-      width: 90px;
-      color: #333;
-      .category-menu-item {
-        position: relative;
-        display: flex;
-        line-height: 18px;
-        align-items: center;
-        padding: 8px 12px;
-        font-size: 15px;
-        &.active {
-          background: @azul;
-          color: #fff;
-        }
+      line-height: 18px;
+      align-items: center;
+      padding: 8px 12px;
+      font-size: 15px;
+      &.active {
+        background: @azul;
+        color: #fff;
       }
     }
   }
-  .main {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+}
+.main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.footer {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  height: 50px;
+  display: flex;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  padding: 5px;
+  .footer-item {
+    flex: 1;
   }
-  .footer {
-    box-sizing: border-box;
-    position: relative;
-    flex: 0 0 auto;
-    height: 50px;
-    display: flex;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    padding: 5px;
-    .footer-item {
-      flex: 1;
-    }
-    .text {
-      margin-right: 10px;
-    }
-    .count {
-      background: @red;
-      display: inline-block;
-      border-radius: 4px;
-      color: #fff;
-      text-align: center;
-      padding: 0 5px;
-    }
-    .balance {
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      font-size: 12px;
-    }
-    .playCount {
-      height: 20px;
-      line-height: 20px;
-      font-size: 12px;
-      text-align: center;
-    }
-    .content {
-      height: 200px;
-    }
-    /deep/ .weui-btn {
-      overflow: visible;
-      width: 90%;
-    }
-    .amount-input-wrapper {
-      box-sizing: border-box;
-      height: 40px;
-      padding: 0 5px;
-      .amount-input {
-        background: #fff;
-        border: 1px solid #f0f0f0;
-        border-radius: 5px;
-        height: 40px;
-        line-height: 40px;
-        color: #333;
-      }
-    }
+  .text {
+    margin-right: 10px;
   }
-  .bettrack-footer {
-    box-sizing: border-box;
-    position: relative;
-    flex: 0 0 auto;
-    height: 90px;
-    background: #333;
+  .count {
+    background: @red;
+    display: inline-block;
+    border-radius: 4px;
     color: #fff;
-    padding: 0 5px 0 10px;
-    font-size: 14px;
+    text-align: center;
+    padding: 0 5px;
+  }
+  .balance {
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .playCount {
+    height: 20px;
+    line-height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .content {
+    height: 200px;
+  }
+  /deep/ .weui-btn {
+    overflow: visible;
+    width: 90%;
+  }
+  .amount-input-wrapper {
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 5px;
     .amount-input {
       background: #fff;
       border: 1px solid #f0f0f0;
-      border-radius: 4px;
-      height: 25px;
-      width: 60px;
-      line-height: 25px;
+      border-radius: 5px;
+      height: 40px;
+      line-height: 40px;
       color: #333;
     }
-    .row1 {
-      display: flex;
-      align-items: center;
-      height: 40px;
-      .amount-input-wrapper {
-        margin-left: auto;
-        box-sizing: border-box;
-        height: 25px;
-      }
-    }
-    .row2 {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 50px;
-      .col {
-        display: flex;
-        align-items: center;
-      }
-      input {
-        box-sizing: border-box;
-        height: 25px;
-        line-height: 25px;
-        width: 60px;
-        padding: 0 5px;
-        border: 1px solid #f0f0f0;
-        border-radius: 4px;
-        outline: 0;
-        -webkit-appearance: none;
-        background-color: #fff;
-        font-size: inherit;
-        color: #333;
-      }
-    }
-    /deep/ .weui-btn {
-      font-size: 14px;
-      width: 80px;
-      height: 40px;
+  }
+}
+.bettrack-footer {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  height: 90px;
+  background: #333;
+  color: #fff;
+  padding: 0 5px 0 10px;
+  font-size: 14px;
+  .amount-input {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    height: 25px;
+    width: 60px;
+    line-height: 25px;
+    color: #333;
+  }
+  .row1 {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    .amount-input-wrapper {
+      margin-left: auto;
+      box-sizing: border-box;
+      height: 25px;
     }
   }
+  .row2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    .col {
+      display: flex;
+      align-items: center;
+    }
+    input {
+      box-sizing: border-box;
+      height: 25px;
+      line-height: 25px;
+      width: 60px;
+      padding: 0 5px;
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      outline: 0;
+      -webkit-appearance: none;
+      background-color: #fff;
+      font-size: inherit;
+      color: #333;
+    }
+  }
+  /deep/ .weui-btn {
+    font-size: 14px;
+    width: 80px;
+    height: 40px;
+  }
+}
 
 .bet-interface-popup /deep/ .cube-popup-content {
   height: 90%;
@@ -779,25 +784,27 @@ export default {
   -webkit-overflow-scrolling: touch;
   z-index: 1;
 }
-.bet-interface-fade-enter, .bet-interface-fade-leave-active{
+.bet-interface-fade-enter,
+.bet-interface-fade-leave-active {
   opacity: 0;
 }
 
 .bet-interface-fade-enter-active {
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .bet-interface-fade-leave-active {
-  transition: all .3s ease-in-out .3s;
+  transition: all 0.3s ease-in-out 0.3s;
 }
 
-.bet-interface-move-enter, .bet-interface-move-leave-active {
+.bet-interface-move-enter,
+.bet-interface-move-leave-active {
   transform: translate3d(0, 100%, 0);
 }
 .bet-interface-move-enter-active {
-  transition: transform .3s ease-in-out .3s;
+  transition: transform 0.3s ease-in-out 0.3s;
 }
 .bet-interface-move-leave-active {
-  transition: transform .3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 .gameclosed-mask {
@@ -810,7 +817,7 @@ export default {
     width: 100%;
     height: 100%;
     background-color: @azul;
-    opacity: .7;
+    opacity: 0.7;
   }
   .text {
     position: absolute;

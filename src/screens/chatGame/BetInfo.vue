@@ -61,8 +61,7 @@ export default {
         state: {
           visible: true,
           bets,
-          isSuccess: false,
-          hasShared: true
+          isSuccess: false
         }
       })
     }

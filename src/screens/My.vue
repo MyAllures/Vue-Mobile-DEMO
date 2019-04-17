@@ -10,9 +10,10 @@
       <group class="landing-info">
         <cell class="balance-info">
           <div slot="icon">
-            <p class="username">
+            <div class="user-section">
+              <div v-if="user.avatar" class="avatar" :style="{'background-image': `url('${user.avatar}')`}"></div>
               <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
-            </p>
+            </div>
             <p class="balance-text">余额</p>
             <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
           </div>
@@ -202,12 +203,23 @@ export default {
   }
 }
 
-.username {
+.user-section {
+  display: flex;
+  align-items: center;
   color: #333;
   font-size: 22px;
   font-weight: 700;
   margin-top: 10px;
   margin-bottom: 15px;
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    margin-right: 10px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }
 }
 
 .button {

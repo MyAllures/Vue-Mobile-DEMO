@@ -318,8 +318,8 @@ store.watch((state) => {
     setHeartBeatInterval()
     initData()
   } else {
-    if (this.store.state.ws.eider) {
-      this.ws.eider.closeConnect()
+    if (store.state.ws.eider) {
+      store.state.ws.eider.closeConnect()
     }
     clearInterval(heartBeatInterval)
   }
