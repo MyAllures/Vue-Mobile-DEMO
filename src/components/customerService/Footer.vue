@@ -36,7 +36,6 @@ export default {
         return
       }
       this.$store.state.ws.venom.send({action: EMITTED_ACTION.normal, parameter: {text: cleanValue}})
-      this.$emit('send')
     }
   }
 }

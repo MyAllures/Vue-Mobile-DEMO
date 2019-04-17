@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="body">
-      <Messages :userSend="userSend" @pulldown="userSend = false" />
+      <Messages />
     </div>
     <div class="footer">
-      <Footer @send="userSend = true" />
+      <Footer />
     </div>
   </div>
 </template>
@@ -19,11 +19,6 @@ export default {
   components: {
     Footer,
     Messages
-  },
-  data () {
-    return {
-      userSend: true
-    }
   },
   created () {
     if (!this.$store.state.ws.venom) {
