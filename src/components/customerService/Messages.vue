@@ -77,12 +77,6 @@ import { MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 import { mapState } from 'vuex'
 
 export default {
-  props: {
-    userSend: {
-      type: Boolean,
-      default: true
-    }
-  },
   data () {
     return {
       MSG_TYPE,
@@ -119,7 +113,6 @@ export default {
     },
     onPullingDown () {
       setTimeout(() => {
-        this.$emit('pulldown')
         this.showPullDownTip = false
         this.showFullHistory = true
       }, 500)
@@ -147,7 +140,7 @@ export default {
     handleScrollTop () {
       this.$nextTick(() => {
         this.$refs.scroll && this.$refs.scroll.refresh()
-        if (this.userSend) {
+        if (!this.showScrollToBottom) {
           this.scrollToLast()
         }
       })
