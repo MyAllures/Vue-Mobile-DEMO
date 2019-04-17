@@ -1,14 +1,15 @@
 <template>
-  <div class="bet-info-container">
+  <div :class="['bet-info-container',{self: isSelf}]" :style="{width}">
     <div class="bet-info-header">
       <div>
         <div class="game-name">{{info.display_name}}</div>
         <div class="issue-number">{{info.issue_number}}期</div>
       </div>
       <x-button
+        v-if="!isSelf"
         mini
         type="primary"
-        @click.native="bet">跟单
+        @click.native="openDialog">跟单
       </x-button>
     </div>
     <div class="bet-info-content">
@@ -27,17 +28,42 @@ import {XButton} from 'vux'
 export default {
   name: 'ChatGameBetInfo',
   props: {
-    info: Object
+    infoStr: String,
+    isSelf: Boolean
   },
   components: {
     XButton
   },
   data () {
-
+    return {
+      width: window.innerWidth * 0.7 + 'px'
+    }
+  },
+  computed: {
+    info () {
+      return JSON.parse(this.infoStr)
+    }
   },
   methods: {
-    bet () {
-
+    openDialog () {
+      let bets = this.info.bets.map(bet => {
+        return {
+          game_schedule: bet.game_schedule,
+          display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
+          bet_amount: bet.bet_amount,
+          play: bet.play.id,
+          bet_options: bet.betOptions,
+          odds: bet.play.odds
+        }
+      })
+      this.$store.dispatch('updateDialog', {
+        name: 'bet',
+        state: {
+          visible: true,
+          bets,
+          isSuccess: false
+        }
+      })
     }
   }
 }
@@ -64,7 +90,9 @@ export default {
   }
   .bet-info-content {
     width: 100%;
-    border-top: 2px dashed #ddd;
+    border-top: 1px dashed;
+    border-color: #ddd;
+    padding-top: 2px;
     .bet-group {
       width: 100%;
       .bet-group-item {
@@ -77,6 +105,17 @@ export default {
           width: 60px;
         }
       }
+    }
+  }
+  &.self {
+    color: #fff;
+    .bet-info-header {
+     .issue-number {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+    .bet-info-content {
+      border-color: rgba(255, 255, 255, 0.2);
     }
   }
 }

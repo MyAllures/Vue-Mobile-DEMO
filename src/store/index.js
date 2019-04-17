@@ -119,7 +119,13 @@ export default new Vuex.Store({
       }
     },
     latestResultMap: {},
-    lastGameData: getLastGameData()
+    lastGameData: getLastGameData(),
+    jwt_token: {
+      venom: '',
+      raven: '',
+      eider: '',
+      eagle: ''
+    }
   },
   actions,
   mutations,

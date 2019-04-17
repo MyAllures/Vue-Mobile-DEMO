@@ -181,5 +181,8 @@ export default {
   },
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
+  },
+  [types.FETCH_JWT_TOKEN]: (state, {token, type}) => {
+    state.jwt_token[type] = token
   }
 }

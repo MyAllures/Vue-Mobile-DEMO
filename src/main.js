@@ -18,6 +18,7 @@ import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
+import GhostSocketObj from './wsObj/eider.js'
 
 function initData () {
   store.dispatch('fetchGames')
@@ -310,10 +311,16 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    store.dispatch('fetchJWTToken', 'eider').then(token => {
+      store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+    }).catch(() => {})
     store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
   } else {
+    if (store.state.ws.eider) {
+      store.state.ws.eider.closeConnect()
+    }
     clearInterval(heartBeatInterval)
   }
 })

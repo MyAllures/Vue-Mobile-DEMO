@@ -36,12 +36,18 @@ export default {
   methods: {
     formatImg () {
       const img = this.$el
-      if (this.type === 'sticker') {
-        img.style.width = img.style.height = '120px'
-        return
-      }
       let w = img.clientWidth
       let h = img.clientHeight
+      if (this.type === 'sticker') {
+        if (w > h) {
+          img.style.width = '120px'
+          img.style.height = 'auto'
+        } else {
+          img.style.width = 'auto'
+          img.style.height = '120px'
+        }
+        return
+      }
       if (w > h) {
         if (w > 240) {
           img.style.width = '240px'

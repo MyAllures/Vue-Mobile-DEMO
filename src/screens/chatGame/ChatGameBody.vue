@@ -1,5 +1,8 @@
 <template>
   <div class="chat-game-body" ref="view" v-fix-scroll>
+    <div v-if="loading" class="loading">
+      <inline-loading></inline-loading>加载中
+    </div>
     <ul class="message-group">
       <li
         v-for="(msg, index) in messages"
@@ -22,7 +25,7 @@
               @imgLoad="imgLoadCount--"
               @click.native="previewImg(msg.content)"/>
             <div v-else class="content-wrapper">
-              <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
+              <bet-info :is-self="user.username === msg.sender.username" v-if="msg.type==='betrecord-sharing'" :info-str="msg.content"></bet-info>
               <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
@@ -37,7 +40,7 @@
             @imgLoad="imgLoadCount--"
             @click.native="previewImg(msg.content)"/>
           <div v-else class="content-wrapper">
-            <bet-info v-if="msg.type==='betrecord-sharing'" :info="msg.bet_info"></bet-info>
+            <bet-info :is-self="user.username === msg.sender.username" v-if="msg.type==='betrecord-sharing'" :info-str="msg.content"></bet-info>
             <div v-else class="text">{{msg.content}}</div>
           </div>
         </div>
@@ -98,7 +101,7 @@
 <script>
 import BetInfo from '@/screens/chatGame/BetInfo'
 import { mapState } from 'vuex'
-import { TransferDom, XDialog, XButton } from 'vux'
+import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
 import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import { hasRoadBead } from '@/utils/roadBeadSetting'
 import emitter from '@/mixins/emitter.js'
@@ -118,7 +121,8 @@ export default {
     BetInfo,
     ImgWrapper,
     XDialog,
-    XButton
+    XButton,
+    InlineLoading
   },
   directives: {
     FixScroll,
@@ -136,7 +140,8 @@ export default {
       selectedImage: '',
       previewImgVisible: false,
       chatManageDialogVisible: false,
-      selectedMember: null
+      selectedMember: null,
+      bannedList: []
     }
   },
   computed: {
@@ -146,7 +151,8 @@ export default {
     ...mapState('eagle', {
       messages: state => state.messages,
       isManager: state => state.isManager,
-      ws: state => state.ws
+      ws: state => state.ws,
+      loading: state => state.loading
     }),
     hasExpertPlan () {
       if (!this.game) {
@@ -206,6 +212,13 @@ export default {
             view.scrollTop = view.scrollHeight
           })
         }
+      }
+    },
+    'isManager': function (isManager) {
+      if (isManager) {
+        this.ws.fetchBannedList().then(res => {
+          this.bannedList = res
+        }).catch(() => {})
       }
     }
   },
@@ -272,7 +285,19 @@ export default {
   padding: 10px 12px;
   background: #eee;
   overflow-y: auto;
+  .loading {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    text-align: center;
+    .weui-loading {
+      height: 30px;
+      width: 30px;
+    }
+  }
   .message-group {
+    padding-bottom: 40px;
     .message-group-item {
       display: flex;
       margin-bottom: 10px;
@@ -289,21 +314,14 @@ export default {
 
       .other-message,
       .self-message {
-        &.bet-info {
-          width: 90%;
-          .content-wrapper {
-            padding: 5px 10px;
-          }
-          .right {
-            width: 100%;
-            .content-wrapper {
-              width: 100%;
-            }
-          }
-        }
-        &.text{
+        &.text {
           font-size: 14px;
         }
+      }
+      .content-wrapper {
+        position: relative;
+        border-radius: 10px;
+        padding: 5px 10px;
       }
       .other-message {
         display: flex;
@@ -320,15 +338,13 @@ export default {
           font-size: 12px;
         }
         .content-wrapper {
-          position: relative;
-          border-radius: 10px;
           border-top-left-radius: 0;
-          padding: 5px 10px;
         }
         &.text {
           max-width: 90%;
         }
-        &.text, &.bet-info {
+        &.text,
+        &.bet-info {
           .content-wrapper {
             background: #fff;
           }
@@ -345,15 +361,13 @@ export default {
       .self-message {
         margin-left: auto;
         .content-wrapper {
-          position: relative;
-          border-radius: 10px;
           border-top-right-radius: 0;
-          padding: 5px 10px;
         }
         &.text {
-          max-width: calc(~"90%" - 41px);
+          max-width: calc(~"90%" - 36px);
         }
-        &.text, &.bet-info {
+        &.text,
+        &.bet-info {
           .content-wrapper {
             background: @azul;
             color: #fff;
@@ -389,7 +403,7 @@ export default {
   height: 40px;
   border-radius: 50%;
   color: #fff;
-  background: url('../../assets/to_bottom.svg') no-repeat center;
+  background: url("../../assets/to_bottom.svg") no-repeat center;
   background-color: #fff;
   font-size: 12px;
   transition-duration: 0.2s;
