@@ -20,10 +20,10 @@
       <thead>
         <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
-          <th>游戏/追号期数</th>
-          <th>玩法</th>
-          <th>单注/翻倍</th>
-          <th>盈亏</th>
+          <th>{{$t('fin.game')}}</th>
+          <th>位置/号码</th>
+          <th>结果</th>
+          <th>单注/输赢</th>
         </tr>
       </thead>
       <tbody v-if="records.length">
