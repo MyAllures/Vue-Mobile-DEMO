@@ -1,5 +1,8 @@
 <template>
   <section class="rule-details">
+    <p>官网:
+      <a href="https://expressball7.com/" target="_blank">Express Ball</a>
+    </p>
     <p>{{gameName}}是以PK10游戏玩法为依据，开奖更快速，每分钟即时开奖，共1440期，全天候开奖不间断。</p>
     <h3>
       <span class="warn">1～10 两面：</span>指 单、双；大、小。</h3>
