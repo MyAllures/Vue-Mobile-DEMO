@@ -533,7 +533,7 @@ export default {
   flex: 1 1 auto;
   .aside {
     flex: 0 0 auto;
-    width: 88px;
+    width: 90px;
     height: 100%;
     overflow-y: scroll;
   }
@@ -542,7 +542,7 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 88px;
+    width: 90px;
     color: #333;
     .category-menu-item {
       position: relative;
