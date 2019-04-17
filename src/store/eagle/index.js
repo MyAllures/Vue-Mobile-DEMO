@@ -5,16 +5,24 @@ export default {
     messages: [],
     permission: null,
     emojiMap: null,
-    isManager: false
+    isManager: false,
+    loading: true
   },
   mutations: {
     setWs: (state, ws) => {
       state.ws = ws
     },
     init: (state, data) => {
+      state.loading = false
       state.messages = data.recent_messages
       state.permission = data.user.chat_permission
       state.isManager = data.user.is_manager
+    },
+    clear: (state, data) => {
+      state.loading = true
+      state.messages = []
+      state.permission = null
+      state.isManager = false
     },
     receiveMsg: (state, message) => {
       state.messages.push(message)
@@ -29,6 +37,9 @@ export default {
     },
     init: ({ commit }, data) => {
       commit('init', data)
+    },
+    clear: ({ commit }, data) => {
+      commit('clear', data)
     },
     receiveMsg: ({ commit }, message) => {
       commit('receiveMsg', message)

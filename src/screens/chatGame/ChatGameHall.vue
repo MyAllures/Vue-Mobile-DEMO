@@ -126,6 +126,7 @@ export default {
               })
             }
           } else if (game.code !== oldGame.code) {
+            this.$store.dispatch('eagle/clear')
             this.ws.joinRoom(game.rooms[0].id)
           }
         }

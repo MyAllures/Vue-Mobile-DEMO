@@ -1,5 +1,8 @@
 <template>
   <div class="chat-game-body" ref="view" v-fix-scroll>
+    <div v-if="loading" class="loading">
+      <inline-loading></inline-loading>加载中
+    </div>
     <ul class="message-group">
       <li
         v-for="(msg, index) in messages"
@@ -98,7 +101,7 @@
 <script>
 import BetInfo from '@/screens/chatGame/BetInfo'
 import { mapState } from 'vuex'
-import { TransferDom, XDialog, XButton } from 'vux'
+import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
 import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import { hasRoadBead } from '@/utils/roadBeadSetting'
 import emitter from '@/mixins/emitter.js'
@@ -118,7 +121,8 @@ export default {
     BetInfo,
     ImgWrapper,
     XDialog,
-    XButton
+    XButton,
+    InlineLoading
   },
   directives: {
     FixScroll,
@@ -147,7 +151,8 @@ export default {
     ...mapState('eagle', {
       messages: state => state.messages,
       isManager: state => state.isManager,
-      ws: state => state.ws
+      ws: state => state.ws,
+      loading: state => state.loading
     }),
     hasExpertPlan () {
       if (!this.game) {
@@ -280,7 +285,19 @@ export default {
   padding: 10px 12px;
   background: #eee;
   overflow-y: auto;
+  .loading {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    text-align: center;
+    .weui-loading {
+      height: 30px;
+      width: 30px;
+    }
+  }
   .message-group {
+    padding-bottom: 40px;
     .message-group-item {
       display: flex;
       margin-bottom: 10px;
