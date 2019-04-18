@@ -29,7 +29,11 @@
               @imgLoad="imgLoadCount--"
               @click.native="previewImg(msg.content)"/>
             <div v-else class="content-wrapper">
-              <bet-info :is-self="user.username === msg.sender.username" v-if="msg.type==='betrecord-sharing'" :info-str="msg.content"></bet-info>
+              <bet-info
+                :is-self="user.username === msg.sender.username"
+                v-if="msg.type==='betrecord-sharing'"
+                :info-str="msg.content"
+                :betableIssueNumber="betableIssueNumber"></bet-info>
               <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
@@ -44,7 +48,11 @@
             @imgLoad="imgLoadCount--"
             @click.native="previewImg(msg.content)"/>
           <div v-else class="content-wrapper">
-            <bet-info :is-self="user.username === msg.sender.username" v-if="msg.type==='betrecord-sharing'" :info-str="msg.content"></bet-info>
+            <bet-info
+              :is-self="user.username === msg.sender.username"
+              v-if="msg.type==='betrecord-sharing'"
+              :info-str="msg.content"
+              :betableIssueNumber="betableIssueNumber"></bet-info>
             <div v-else class="text">{{msg.content}}</div>
           </div>
         </div>
@@ -94,7 +102,10 @@
             :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
           <div class="nickname">{{selectedMember.nickname}}</div>
         </div>
-        <div class="buttons">
+        <div v-if="banLoading" class="loading">
+            <inline-loading></inline-loading>加载中
+          </div>
+        <div v-else class="buttons">
           <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
           <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
         </div>
@@ -119,7 +130,9 @@ export default {
     game: {
       required: true,
       type: Object
-    }
+    },
+    betableIssueNumber: String,
+    gameClosed: Boolean
   },
   components: {
     BetInfo,
@@ -145,7 +158,8 @@ export default {
       previewImgVisible: false,
       chatManageDialogVisible: false,
       selectedMember: null,
-      bannedList: []
+      bannedList: [],
+      banLoading: false
     }
   },
   computed: {
@@ -201,7 +215,8 @@ export default {
         })
       } else if ( // 1. user正在閱讀之前訊息 2. 是否為自己發的訊息
         view.scrollTop + view.clientHeight + 100 > view.scrollHeight ||
-        this.messages[newCount - 1].sender.username === this.user.username || this.messages[newCount - 1].type === 5) {
+        (this.messages[newCount - 1].sender && this.messages[newCount - 1].sender.username === this.user.username) ||
+        this.messages[newCount - 1].type === 5) {
         this.$nextTick(() => {
           view.scrollTop = view.scrollHeight
         })
@@ -217,13 +232,6 @@ export default {
             view.scrollTop = view.scrollHeight
           })
         }
-      }
-    },
-    'isManager': function (isManager) {
-      if (isManager) {
-        this.ws.fetchBannedList().then(res => {
-          this.bannedList = res
-        }).catch(() => {})
       }
     }
   },
@@ -273,7 +281,17 @@ export default {
       this.chatManageDialogVisible = true
     },
     banMember (duration) {
-      this.ws.banMember(this.selectedMember.username, duration)
+      this.banLoading = true
+      this.ws.banMember(this.selectedMember.username, duration).then(res => {
+        this.$vux.toast.show({
+          text: res.status,
+          type: 'success'
+        })
+      }).catch(() => {
+
+      }).finally(() => {
+        this.banLoading = false
+      })
     }
   },
   beforeDestroy () {
@@ -571,6 +589,18 @@ export default {
     .nickname {
       font-size: 16px;
       text-align: center;
+    }
+  }
+
+  .loading {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 18px;
+    text-align: center;
+    .weui-loading {
+      height: 30px;
+      width: 30px;
     }
   }
 

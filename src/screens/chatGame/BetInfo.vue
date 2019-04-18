@@ -6,7 +6,7 @@
         <div class="issue-number">{{info.issue_number}}期</div>
       </div>
       <x-button
-        v-if="!isSelf"
+        v-if="!isSelf&&info.issue_number===betableIssueNumber"
         mini
         type="primary"
         @click.native="openDialog">跟单
@@ -29,7 +29,8 @@ export default {
   name: 'ChatGameBetInfo',
   props: {
     infoStr: String,
-    isSelf: Boolean
+    isSelf: Boolean,
+    betableIssueNumber: String
   },
   components: {
     XButton

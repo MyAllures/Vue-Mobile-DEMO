@@ -62,7 +62,7 @@
     </div>
   </div>
   <div class="input-panel" v-else>
-    <div id="keyboard-btn" class="keyboard-btn" @click="switchToTypeMode">
+    <div id="keyboard-btn" v-if="user.account_type && isRoomExist" class="keyboard-btn" @click="mode = 'typing'">
     </div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bet')">下注</div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bettrack')">追号</div>
@@ -90,7 +90,7 @@ export default {
   data () {
     return {
       msgCnt: '',
-      activeSeries: '1',
+      activeSeries: undefined,
       mode: 'bet',
       isShowEmojiPanel: false
     }
@@ -128,6 +128,16 @@ export default {
       } else {
         return ''
       }
+    }
+  },
+  watch: {
+    'emojiSeries': {
+      handler: function (series) {
+        if (series.length > 0) {
+          this.activeSeries = Object.keys(this.emojiMap)[0]
+        }
+      },
+      immediate: true
     }
   },
   methods: {
@@ -218,12 +228,6 @@ export default {
       if (this.noPermission) {
         e.preventDefault()
       }
-    },
-    switchToTypeMode () {
-      if (!this.user.account_type || !this.isRoomExist) {
-        return
-      }
-      this.mode = 'typing'
     }
   }
 }

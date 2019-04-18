@@ -28,7 +28,7 @@
         <GameResult v-for="result in historyData" :key="result.issue_number" :result="result"/>
       </div>
     </div>
-    <chat-game-body :game="currentGame" :messages="messages"></chat-game-body>
+    <chat-game-body :game="currentGame" :betableIssueNumber="betableIssueNumber" ></chat-game-body>
     <chat-game-footer @openBetInterface="openBetInterface"></chat-game-footer>
     <popup
       :value="isBetInterfaceVisible"
@@ -38,8 +38,8 @@
       :zIndex="200">
         <div class="bet-interface-container">
           <div class="header">{{mode==='bet'?'下注':'追号'}}</div>
-          <div class="bet-area">
-            <div class="aside">
+          <div class="bet-area" :style="{height: mode==='bet'?'calc(100% - 90px)':'calc(100% - 130px)'}">
+            <div class="aside" v-fix-scroll>
               <div class="category-menu">
                 <template v-for="(category, index) in categories">
                   <div
@@ -52,7 +52,7 @@
                 </template>
               </div>
             </div>
-            <div class="main">
+            <div class="main" v-fix-scroll>
               <chat-game-category
                 v-if="currentCategory"
                 :category="currentCategory"
@@ -138,6 +138,7 @@ import ChatGameFooter from '@/screens/chatGame/ChatGameFooter'
 import ChatGameCategory from '@/screens/chatGame/ChatGameCategory'
 import AmountInput from '../../components/AmountInput'
 import { EagleWebSocket } from '@/wsObj/eagle'
+import FixScroll from '@/directive/fixscroll'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -161,7 +162,8 @@ export default {
     AmountInput
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll
   },
   data () {
     return {
@@ -242,6 +244,13 @@ export default {
     },
     newBetTrackDialog () {
       return this.$store.state.dialog.new_bettrack
+    },
+    betableIssueNumber () {
+      if (this.gameClosed) {
+        return ''
+      } else {
+        return this.schedule.issue_number
+      }
     }
   },
   watch: {
@@ -622,7 +631,7 @@ export default {
 
 .history-panel {
   position: absolute;
-  top: 30px;
+  top: 20px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -657,13 +666,18 @@ export default {
   font-size: 16px;
 }
 .bet-area {
+  height: calc(~"100%" - 90px);
   display: flex;
   flex: 1 1 auto;
   .aside {
     flex: 0 0 auto;
     width: 90px;
-    height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
+  }
+  .main {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .category-menu {
     flex: 0 0 auto;
@@ -686,11 +700,6 @@ export default {
       }
     }
   }
-}
-.main {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 .footer {
   box-sizing: border-box;

@@ -20,8 +20,11 @@ export default {
     state.user = {
       logined: false
     }
-    if (state.ws.raven) {
-      state.ws.raven.disconnect()
+    state.jwt_token = {
+      venom: '',
+      raven: '',
+      eider: '',
+      eagle: ''
     }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')

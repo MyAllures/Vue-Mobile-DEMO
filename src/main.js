@@ -322,6 +322,9 @@ store.watch((state) => {
     if (store.state.ws.eider) {
       store.state.ws.eider.closeConnect()
     }
+    if (store.state.ws.raven) {
+      store.state.ws.raven.closeConnect()
+    }
     clearInterval(heartBeatInterval)
   }
 })
