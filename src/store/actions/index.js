@@ -116,7 +116,7 @@ export default {
   },
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
-      const { gameGroups } = res.filter(group => group.group_tag && group.group_tag.rank <= 3)
+      const { gameGroups } = res.filter(group => group.group_tag)
         .sort((p, l) => p.group_tag.rank - l.group_tag.rank)
         .reduce((merged, g, index) => ({
           ...merged,

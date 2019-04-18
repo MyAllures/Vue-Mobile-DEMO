@@ -274,6 +274,10 @@ export default {
   'cqlf': cqlfTranslator,
   'gdklsf': cqlfTranslator,
   'gd11x5': gd11x5Translator,
+  'ah11x5': gd11x5Translator,
+  'bj11x5': gd11x5Translator,
+  'fh11x5': gd11x5Translator,
+  'gs11x5': gd11x5Translator,
   'bjkl8': bjkl8Translator,
   'auluck8': auluck8Translator,
   'pcdd': pcddTranslator,
@@ -283,5 +287,8 @@ export default {
   'jsk3': msk3Translator,
   'msk3': msk3Translator,
   'bjk3': msk3Translator,
+  'gxk3': msk3Translator,
+  'shk3': msk3Translator,
+  'hubk3': msk3Translator,
   'fc3d': fc3dTranslator
 }

@@ -87,6 +87,14 @@ export default {
         padding-left:20px;
         margin-right: auto;
       }
+      &.logo {
+        height: 100%;
+        width: 50%;
+        padding: 0;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: left center;
+      }
     }
   }
 }
