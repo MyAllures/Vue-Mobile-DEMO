@@ -3,7 +3,7 @@
     <div>
       <div class="profile-section">
         <small class="profile-hint">
-          如需修改真实姓名或手机号码请 <span v-if="$store.state.systemConfig.serviceAction" class="service-link" @click="$store.state.systemConfig.serviceAction()">联系客服</span>
+          如需修改手机号码请 <span v-if="$store.state.systemConfig.serviceAction" class="service-link" @click="$store.state.systemConfig.serviceAction()">联系客服</span>
         </small>
         <div class="profile-field">
            <p class="title">真实姓名</p>

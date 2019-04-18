@@ -10,7 +10,40 @@ body {
 a {
   margin-top: 6px;
 }
-
+.icon {
+  vertical-align: middle;
+}
+.txt {
+  display: inline-block;
+  vertical-align: middle;
+}
+.download {
+  width: 200px;
+  height: 52px;
+  line-height: 52px;
+  font-size: 20px;
+  background: #4086cd;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.ios-wp, .android-wp {
+  display: none;
+  text-align: center;
+}
+.ios .ios-wp, .android .android-wp, .desktop .ios-wp, .desktop .android-wp {
+  display: block;
+}
+.android-btn.download{
+  background: #94bc31;
+}
+.tip-btn {
+  background: #000;
+  color: #fff;
+  width: 200px;
+  padding: 15px 0;
+  border-radius: 4px;
+}
 #modal {
   background-color: rgba(0, 0, 0, 0.2);
   width: 100%;
@@ -60,6 +93,11 @@ a {
   align-items: center;
   height: 90%;
   justify-content: center;
+}
+
+.wrapper a {
+  display: block;
+  margin-bottom: 20px;
 }
 
 .subject {

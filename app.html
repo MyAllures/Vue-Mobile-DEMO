@@ -7,21 +7,28 @@
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.staticRoot%>app_index.css">
+    <script src="https://unpkg.com/current-device/umd/current-device.min.js"></script>
 </head>
 
 <body>
     <div id="container" class="wrapper">
         <div><img width="120" height="auto" src="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>_logo_256.png"></div>
         <div class="subject"><%= htmlWebpackPlugin.options.title%></div>
-        <a href="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.apk" download="">
-          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>android.png">
-      </a>
-        <a href="itms-services://?action=download-manifest&amp;url=<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.plist">
-          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>ios.png">
-      </a>
-        <a onclick="modalToggle(1)">
-          <img width="200" height="auto" src="<%= htmlWebpackPlugin.options.staticRoot%>ios_guide.png">
-      </a>
+        <div class="android-wp">
+          <a class="download android-btn" href="<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.apk">
+            <img class="icon" src="<%= htmlWebpackPlugin.options.staticRoot%>android.png" alt="安卓手机下载" width="48"/>
+            <span class="txt">安卓手机下载</span>
+          </a>
+        </div>
+        <div class="ios-wp">
+            <a class="download" href="itms-services://?action=download-manifest&amp;url=<%=htmlWebpackPlugin.options.appHost%><%=htmlWebpackPlugin.options.companyName%>.plist">
+                <img class="icon" src="<%= htmlWebpackPlugin.options.staticRoot%>apple.png" alt="苹果手机下载" width="48"/>
+                <span class="txt">苹果手机下载</span>
+            </a>
+            <a onclick="modalToggle(1)" class="tip-btn">
+                必看->苹果手机安装指南
+            </a>
+        </div>
     </div>
     <div id="modal" class="wrapper display-none">
         <div id="guide-modal" class="">

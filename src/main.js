@@ -12,7 +12,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchVenomJWTToken, fetchServiceUnread } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchServiceUnread, fetchEiderJWTToken, fetchVenomJWTToken } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
@@ -21,6 +21,9 @@ import sign from './utils/sign'
 import {checkJWTTokenAlive, JWT} from './utils/jwtToken'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
+import GhostSocketObj from './wsObj/eider'
+import VenomSocketObj from './wsObj/venom'
+
 const sendGaEvent = ({label, category, action}) => {
   if (store.state.systemConfig.gaTrackingId) {
     window.gtag('event', action, {'event_category': category, 'event_label': label})
@@ -68,6 +71,7 @@ function initData () {
         {
           process: 'fulfilled',
           homePageLogo: response.icon,
+          mobileLogo: response.mobile_logo,
           agentDashboardUrl: pref.agent_dashboard_url,
           global_preferences: pref,
           agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
@@ -339,6 +343,14 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
+  fetchVenomJWTToken().then(() => {
+    let token = Vue.cookie.get(`${JWT.venom}_token`)
+    this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+  })
+  fetchEiderJWTToken().then(() => {
+    let token = Vue.cookie.get(`${JWT.eider}_token`)
+    this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+  })
   store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
     if (store.state.systemConfig.process === 'pending') {
@@ -355,6 +367,7 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
   } else {

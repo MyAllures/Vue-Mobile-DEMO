@@ -1,7 +1,7 @@
 <template>
   <div :class="['balls-number', 'wrapper-' + gameType]">
     <div class="balls-frame">
-      <div v-if="gameType === 'jsk3'|| gameCode === 'msk3'|| gameCode === 'bjk3'" class="jsk3-loading">
+      <div v-if="gameType === 'jsk3'|| gameCode === 'msk3'|| gameCode === 'bjk3'|| gameCode ==='gxk3' || gameCode ==='shk3' || gameCode ==='hubk3'" class="jsk3-loading">
         <div class="camera">
           <div class="space space1">
               <div class="dice dice1"></div>
@@ -58,8 +58,8 @@
 import {HKL_GAMES} from '../config'
 const GameOnlyChange = ['jspk10', 'bcr', 'mlaft', 'er75ft', 'jsk3', 'cs60cr']
 const rand1to10 = ['jspk10', 'bcr', 'mlaft', 'er75ft']
-const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'csffc', 'pcdd', 'jnd28']
-const rand1to11 = ['gd11x5']
+const rand0to9 = ['jsssc', 'tjssc', 'xjssc', 'cqssc', 'ynssc', 'hjssc', 'csffc', 'pcdd', 'jnd28']
+const rand1to11 = ['gd11x5', 'ah11x5', 'bj11x5', 'fh11x5', 'gs11x5']
 const rand1to20 = ['cqlf', 'gdklsf', 'hkl']
 const rand1to49 = ['bjkl8', 'auluck8']
 const randomGeneratorFactory = (gameType) => {

@@ -14,6 +14,16 @@
         </tab-item>
       </tab>
     </div>
+    <div v-if="shawOptions.length" class="shaw-options">
+      <div class="wrapper vux-1px-b">
+        <check-icon
+          :key="option.name"
+          v-on:click.native="toggleShaw(option, $event)"
+          v-for="option in shawOptions"
+          :value.sync="option.selected"
+          >{{ option.name }}</check-icon>
+      </div>
+    </div>
     <div
       :class="['gameplays', !group.name ? 'no-title' : '']"
       v-if="!customPlayGroupsSetting"
@@ -27,7 +37,7 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')">
+            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3')">
               <div class="dice-container">
                 <span :class="`play result-${game.code} resultnum-${dice}`"
                   v-for="(dice, index) in play.display_name.split(',')"
@@ -49,7 +59,7 @@
               <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
                 <span class="num">{{play.display_name}}</span>
               </span>
-              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3')}]">{{play.odds}}</span>
+              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3')}]">{{play.odds}}</span>
             </template>
           </div>
         </grid-item>
@@ -211,10 +221,9 @@ export default {
             return 'play-name'
           }
           if (this.game.code === 'fc3d') {
-            if (play.display_name.length > 2) {
+            if (play.display_name.length > 1) {
               return `play result-${this.game.code} text-sm`
             }
-            return `play result-${this.game.code}`
           }
           return `play result-${this.game.code} resultnum-${num}`
         } else {

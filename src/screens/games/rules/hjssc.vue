@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p class="bold">十分时时彩开奖结果源自于10 Minutes Lottery，在意大利米兰是非常火红热门的游戏，以时时彩的游戏规则来游玩，从0:00 起每10分钟开奖一次，共144期，全天候皆开奖。<br/>10 Minutes Lottery 每颗球从0~9中随机开出，玩法简单，所以在当地是非常风靡的，我们衍生出更多不同的玩法，前三球、中三球和后三球等趣味规则，颠覆了单调的选数字玩法，欢迎您来体验。</p>
+    <p>该游戏的投注时间、开奖时间和开奖号码与黑龙江时时彩完全同步，北京时间（GMT+8）每天白天从上午08:42开到22:42,每20分钟开一次奖，每天开奖42期。</p>
     <h3>
       <span class="warn">1.第一球~第五球</span>
     </h3>
@@ -83,8 +83,3 @@
   </section>
 </template>
 
-<script>
-export default {
-  props: ['gameName']
-}
-</script>

@@ -3,7 +3,8 @@ import Vue from 'vue'
 
 export const JWT = {
   venom: 'customer_service',
-  raven: 'chat'
+  raven: 'chat',
+  eider: 'message_broker'
 }
 
 // type: customer_service_token for venom, chat_token for raven

@@ -93,7 +93,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchServiceUnread } from './api'
+import { getToken, fetchServiceUnread, fetchEiderJWTToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
@@ -105,7 +105,7 @@ import BetTrackDialog from './components/BetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-import GhostSocketObj from './wsObj/eider'
+
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -285,8 +285,6 @@ export default {
   watch: {
     'user.logined' (isLogin, old) {
       if (isLogin) {
-        let token = this.$cookie.get('access_token')
-        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
         this.serviceUnreadInterval = setInterval(() => {
           this.fetchServiceUnread()
         }, 5000)
@@ -332,6 +330,7 @@ export default {
       }
     },
     replaceToken () {
+      fetchEiderJWTToken()
       let refreshToken = this.$cookie.get('refresh_token')
       if (!refreshToken || !this.user.account_type) {
         return

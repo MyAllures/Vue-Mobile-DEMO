@@ -1,7 +1,15 @@
 <template>
   <div class="container">
     <top-bar>
-      <div v-if="!isGameMenuVisible" class="main-title left">{{ systemConfig.siteName }}</div>
+      <template v-if="!isGameMenuVisible">
+        <div
+          v-if="!systemConfig.mobileLogo"
+          class="main-title left">{{ systemConfig.siteName }}</div>
+        <div
+          v-else
+          class="main-title left logo"
+          :style="{'background-image': `url('${systemConfig.mobileLogo}')`}"></div>
+      </template>
       <div v-else class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
         游戏选单
       </div>
@@ -25,7 +33,7 @@
     </top-bar>
     <swiper
       class="banner-slider"
-      :aspect-ratio=".5"
+      :aspect-ratio=".4"
       dots-position="center"
       dots-class="banner">
       <swiper-item v-for="(banner,index) in banners" :key="index">
@@ -51,7 +59,7 @@
       <x-button type="primary" mini>立即注册</x-button>
     </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
-      <tab :style="{width: tags.length > 4 ? `${tags.length * 100 / 3.5}vw` : ''}"
+      <tab
           :bar-active-color="theme"
           :animate="false"
           :active-color="theme"
@@ -59,8 +67,8 @@
         <tab-item
           v-for="(tag,index) in tags"
           :key="index"
-          :style="{flex: tags.length > 4?0:1}"
           @on-item-click="switchTab"
+          :style="{flex: tags.length > 4 ? 0 : 1}"
           :selected="tag === currentTag">
           <span :class="{'ellipsis': tags.length > 4}">{{tag}}</span>
         </tab-item>
@@ -105,23 +113,9 @@
         </a>
       </template>
     </div>
-    <div v-if="promotions.length > 0" class="activity">
-      <div class="activity-title">
-        优惠活动
-      </div>
-      <div
-        class="activity-item"
-        v-for="(promotion, index) in promotions.slice(0,5)"
-        :key="index"
-        @click="handleClick(promotion)">
-        <div class="activity-item-title">{{promotion.name}}</div>
-        <div class="activity-item-img" v-lazy:background-image="promotion.image_mobile" :key="promotion.image_mobile"></div>
-      </div>
-      <div
-        class="activity-more"
-        v-if="promotions.length > 5"
-        @click="$router.push({name: 'Promotions'})">更多活动</div>
-    </div>
+
+    <win-history></win-history>
+
     <div class="pc-link" @click="openPClink">
         前往
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
@@ -156,6 +150,7 @@ import {
   Swiper,
   SwiperItem,
   Card,
+  GroupTitle,
   Grid,
   GridItem,
   XDialog,
@@ -177,6 +172,9 @@ import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
 import UnreadPoint from '@/components/UnreadPoint.vue'
+import WinHistory from '@/components/WinHistory'
+import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
+
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -207,6 +205,7 @@ export default {
     Masker,
     Alert,
     Card,
+    GroupTitle,
     Grid,
     GridItem,
     InlineLoading,
@@ -217,7 +216,9 @@ export default {
     Marquee,
     Tab,
     TabItem,
-    GameMenu
+    GameMenu,
+    ActivityEnvelopeDialog,
+    WinHistory
   },
   mixins: [freetrial],
   computed: {
@@ -246,6 +247,15 @@ export default {
       }
       const actions = []
       const config = this.systemConfig
+      if (this.promotions.length > 0) {
+        actions.push({
+          type: 'button',
+          className: 'promotion',
+          click: this.openPromotions,
+          text: '优惠活动'
+        })
+      }
+
       if (config.serviceAction) {
         actions.push({
           type: 'button',
@@ -306,6 +316,9 @@ export default {
     })
   },
   methods: {
+    openPromotions () {
+      this.$router.push({name: 'Promotions'})
+    },
     openPClink () {
       this.$cookie.set('desktop', 1)
       window.location.reload()
@@ -556,9 +569,9 @@ export default {
   width: 100%;
   overflow: scroll;
   .ellipsis {
+    padding: 0 12px;
     white-space: nowrap;
     display: block;
-    width: 100/3.5vw;
     text-overflow: ellipsis;
     overflow: hidden;
   }
@@ -566,7 +579,6 @@ export default {
     overflow-x: auto;
   }
 }
-
 .game-group {
   box-sizing: border-box;
   display: flex;
@@ -575,13 +587,16 @@ export default {
   background: @white;
   margin-bottom: 20px;
   .game-item {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     position: relative;
     box-sizing: border-box;
     width: calc(~"100%" / 3);
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     color: @grayscale6;
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
   }
   .game-label {
     box-sizing: border-box;
@@ -589,24 +604,21 @@ export default {
     justify-content: center;
     align-items: flex-end;
     width: 100%;
-    height: 30px;
+    height: 25px;
+    margin-bottom: 2px;
   }
   .game-label-text {
     display: inline-block;
-    height: 20px;
-    line-height: 20px;
     padding: 2px 5px;
     border-radius: 10px;
     background-color: lighten(@azul, 30%);
     color: darken(@azul, 30%);
-    font-size: 13px;
+    font-size: 12px;
   }
   .game-icon {
     box-sizing: border-box;
     display: block;
-    width: 100%;
-    min-height: 10vh;
-    padding: 5px 20% 8px 20%;
+    width: 70px;
   }
 }
 
@@ -647,6 +659,9 @@ export default {
     .download {
       background-image: url('../assets/download_app.svg')
     }
+    .promotion {
+      background-image: url('../assets/promotion.png')
+    }
     .icon {
       width: 24px;
       height: 24px;
@@ -663,6 +678,7 @@ export default {
 }
 
 .pc-link {
+  color: #999;
   height: 62px;
   line-height: 62px;
   width: 100px;

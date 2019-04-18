@@ -23,6 +23,9 @@ export default {
     if (state.ws.raven) {
       state.ws.raven.disconnect()
     }
+    Vue.cookie.delete('access_token')
+    Vue.cookie.delete('refresh_token')
+    Vue.cookie.delete('message_broker_token')
   },
   [types.UPDATE_LOADING]: (state, payload) => {
     state.isLoading = payload.isLoading
