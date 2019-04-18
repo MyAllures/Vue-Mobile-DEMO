@@ -6,7 +6,8 @@ export default {
     permission: null,
     emojiMap: null,
     isManager: false,
-    loading: true
+    loading: true,
+    isRoomExist: true
   },
   mutations: {
     setWs: (state, ws) => {
@@ -17,12 +18,16 @@ export default {
       state.messages = data.recent_messages
       state.permission = data.user.chat_permission
       state.isManager = data.user.is_manager
+      if (data.isRoomExist === false) {
+        state.isRoomExist = false
+      }
     },
     clear: (state, data) => {
       state.loading = true
       state.messages = []
       state.permission = null
       state.isManager = false
+      state.isRoomExist = true
     },
     receiveMsg: (state, message) => {
       state.messages.push(message)

@@ -1,7 +1,11 @@
 <template>
   <div class="chat-game-body" ref="view" v-fix-scroll>
-    <div v-if="loading" class="loading">
+    <div v-if="loading&&isRoomExist" class="loading">
       <inline-loading></inline-loading>加载中
+    </div>
+    <div v-if="!isRoomExist" class="room-disable">
+      <div class="image"></div>
+      <div class="text">聊天室暂不开放，推荐你去下注或追号吧！</div>
     </div>
     <ul class="message-group">
       <li
@@ -152,7 +156,8 @@ export default {
       messages: state => state.messages,
       isManager: state => state.isManager,
       ws: state => state.ws,
-      loading: state => state.loading
+      loading: state => state.loading,
+      isRoomExist: state => state.isRoomExist
     }),
     hasExpertPlan () {
       if (!this.game) {
@@ -296,6 +301,19 @@ export default {
       width: 30px;
     }
   }
+  .room-disable {
+    padding-top: 20px;
+    .image {
+      height: 200px;
+      background: url('../../assets/chatGame/room_disabled.png') no-repeat center;
+      background-size: contain;
+    }
+    .text {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+  }
   .message-group {
     padding-bottom: 40px;
     .message-group-item {
@@ -426,6 +444,7 @@ export default {
   justify-content: center;
   width: 40px;
   height: 40px;
+  line-height: 14px;
   border-radius: 50%;
   color: #fff;
   font-size: 12px;

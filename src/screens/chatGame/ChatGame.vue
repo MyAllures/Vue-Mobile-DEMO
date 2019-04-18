@@ -137,6 +137,7 @@ import ChatGameBody from '@/screens/chatGame/ChatGameBody'
 import ChatGameFooter from '@/screens/chatGame/ChatGameFooter'
 import ChatGameCategory from '@/screens/chatGame/ChatGameCategory'
 import AmountInput from '../../components/AmountInput'
+import { EagleWebSocket } from '@/wsObj/eagle'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -189,7 +190,8 @@ export default {
       },
       messages: [],
       historyData: [],
-      isHistoryVisible: false
+      isHistoryVisible: false,
+      isFetchingJWT: false
     }
   },
   computed: {
@@ -199,6 +201,12 @@ export default {
     ...mapState([
       'systemConfig', 'user', 'latestResultMap'
     ]),
+    ...mapState('eagle', {
+      ws: state => state.ws
+    }),
+    eagleToken () {
+      return this.$store.state.jwt_token.eagle
+    },
     result () {
       if (this.currentGame) {
         return this.latestResultMap[this.currentGame.code]
@@ -237,10 +245,36 @@ export default {
     }
   },
   watch: {
-    'currentGame': {
-      handler: function (currentGame) {
-        if (currentGame) {
+    'currentGame.code': {
+      handler: function (code) {
+        if (code) {
           this.fetchScheduleAndResult()
+          const game = this.currentGame
+          if (game.rooms.length === 0) {
+            this.$store.dispatch('eagle/init', {
+              recent_messages: [],
+              user: {
+                chat_permission: false
+              },
+              is_manager: false
+            })
+          } else {
+            if (!this.ws) {
+              if (this.eagleToken && this.eagleToken !== 'pending') {
+                this.$store.dispatch('eagle/setWs', new EagleWebSocket(this.eagleToken, game.rooms[0].id))
+              } else {
+                const unwatch = this.$watch('eagleToken', function (token) {
+                  if (token && token !== 'pending') {
+                    unwatch()
+                    this.$store.dispatch('eagle/setWs', new EagleWebSocket(token, game.rooms[0].id))
+                  }
+                })
+              }
+            } else {
+              this.$store.dispatch('eagle/clear')
+              this.ws.joinRoom(game.rooms[0].id)
+            }
+          }
         }
       },
       immediate: true
@@ -568,7 +602,7 @@ export default {
 .data-section {
   z-index: 10;
   background: #fff;
-  box-shadow: 0 0 3px 3px rgba(0,0,0,.15);
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   .wrapper {
     position: relative;
     .solid-triangle {
@@ -720,7 +754,7 @@ export default {
   position: relative;
   flex: 0 0 auto;
   height: 90px;
-  background:rgba(0,0,0,.7);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 0 5px 0 10px;
   font-size: 14px;

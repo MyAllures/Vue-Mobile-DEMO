@@ -268,8 +268,9 @@ export default {
     commit(types.HIDE_RIGHT_MENU)
   },
   fetchJWTToken: ({commit}, type) => {
+    commit(types.START_FETCH_JWT_TOKEN, type)
     return fetchJWTToken(type).then(token => {
-      commit(types.FETCH_JWT_TOKEN, {
+      commit(types.FULFILLED_FETCH_JWT_TOKEN, {
         type,
         token
       })
