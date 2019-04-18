@@ -1,7 +1,15 @@
 <template>
   <div class="container">
     <top-bar>
-      <div v-if="!isGameMenuVisible" class="main-title left">{{ systemConfig.siteName }}</div>
+      <template v-if="!isGameMenuVisible">
+        <div
+          v-if="!systemConfig.mobileLogo"
+          class="main-title left">{{ systemConfig.siteName }}</div>
+        <div
+          v-else
+          class="main-title left logo"
+          :style="{'background-image': `url('${systemConfig.mobileLogo}')`}"></div>
+      </template>
       <div v-else class="main-title" @click="isGameMenuVisible = !isGameMenuVisible">
         游戏选单
       </div>
@@ -25,7 +33,7 @@
     </top-bar>
     <swiper
       class="banner-slider"
-      :aspect-ratio=".5"
+      :aspect-ratio=".4"
       dots-position="center"
       dots-class="banner">
       <swiper-item v-for="(banner,index) in banners" :key="index">
@@ -51,7 +59,7 @@
       <x-button type="primary" mini>立即注册</x-button>
     </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
-      <tab :style="{width: tags.length > 4 ? `${tags.length * 100 / 3.5}vw` : ''}"
+      <tab
           :bar-active-color="theme"
           :animate="false"
           :active-color="theme"
@@ -59,8 +67,8 @@
         <tab-item
           v-for="(tag,index) in tags"
           :key="index"
-          :style="{flex: tags.length > 4?0:1}"
           @on-item-click="switchTab"
+          :style="{flex: tags.length > 4 ? 0 : 1}"
           :selected="tag === currentTag">
           <span :class="{'ellipsis': tags.length > 4}">{{tag}}</span>
         </tab-item>
@@ -606,9 +614,9 @@ export default {
   width: 100%;
   overflow: scroll;
   .ellipsis {
+    padding: 0 12px;
     white-space: nowrap;
     display: block;
-    width: 100/3.5vw;
     text-overflow: ellipsis;
     overflow: hidden;
   }
@@ -616,7 +624,6 @@ export default {
     overflow-x: auto;
   }
 }
-
 .game-group {
   box-sizing: border-box;
   display: flex;
@@ -625,13 +632,16 @@ export default {
   background: @white;
   margin-bottom: 20px;
   .game-item {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     position: relative;
     box-sizing: border-box;
     width: calc(~"100%" / 3);
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     color: @grayscale6;
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
   }
   .game-label {
     box-sizing: border-box;
@@ -639,24 +649,21 @@ export default {
     justify-content: center;
     align-items: flex-end;
     width: 100%;
-    height: 30px;
+    height: 25px;
+    margin-bottom: 2px;
   }
   .game-label-text {
     display: inline-block;
-    height: 20px;
-    line-height: 20px;
     padding: 2px 5px;
     border-radius: 10px;
     background-color: lighten(@azul, 30%);
     color: darken(@azul, 30%);
-    font-size: 13px;
+    font-size: 12px;
   }
   .game-icon {
     box-sizing: border-box;
     display: block;
-    width: 100%;
-    min-height: 10vh;
-    padding: 5px 20% 8px 20%;
+    width: 70px;
   }
 }
 

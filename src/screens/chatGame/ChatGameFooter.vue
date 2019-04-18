@@ -62,7 +62,7 @@
     </div>
   </div>
   <div class="input-panel" v-else>
-    <div id="keyboard-btn" class="keyboard-btn" @click="mode='typing'">
+    <div id="keyboard-btn" class="keyboard-btn" @click="switchToTypeMode">
     </div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bet')">下注</div>
     <div class="text-btn" @click="$emit('openBetInterface', 'bettrack')">追号</div>
@@ -103,7 +103,8 @@ export default {
       ws: state => state.ws,
       permission: state => state.permission,
       roomId: state => state.roomId,
-      emojiMap: state => state.emojiMap
+      emojiMap: state => state.emojiMap,
+      isRoomExist: state => state.isRoomExist
     }),
     noPermission () {
       return !this.permission || !this.permission.eligible
@@ -217,6 +218,12 @@ export default {
       if (this.noPermission) {
         e.preventDefault()
       }
+    },
+    switchToTypeMode () {
+      if (!this.user.account_type || !this.isRoomExist) {
+        return
+      }
+      this.mode = 'typing'
     }
   }
 }

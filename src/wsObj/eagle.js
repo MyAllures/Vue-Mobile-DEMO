@@ -31,7 +31,6 @@ export class EagleWebSocket {
     })
     this.ws.connect()
     this.roomId = roomId
-    store.dispatch('eagle/setWs', this)
   }
 
   sendMsg (message) {

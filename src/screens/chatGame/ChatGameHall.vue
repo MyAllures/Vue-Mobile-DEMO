@@ -82,13 +82,12 @@ import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
-import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
-import {hasRoadBead} from '@/utils/roadBeadSetting'
-import {hasExpertPlan} from '@/utils/expertPlanSetting'
+import { hasTrendDiagram } from '@/utils/trendDiagramSetting'
+import { hasRoadBead } from '@/utils/roadBeadSetting'
+import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import GameInfo from '@/screens/games/GameInfo'
 import { mapState } from 'vuex'
-import {EagleWebSocket} from '@/wsObj/eagle'
-import {eagle} from '@/api'
+import { eagle } from '@/api'
 import vClickOutside from 'v-click-outside'
 
 function to (scrollTop) {
@@ -122,9 +121,7 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: false,
-      ws: null,
-      hasFetchJWT: false
+      showNotifiyMsg: false
     }
   },
   computed: {
@@ -132,7 +129,8 @@ export default {
       'games', 'theme'
     ]),
     ...mapState('eagle', {
-      emojiMap: state => state.emojiMap
+      emojiMap: state => state.emojiMap,
+      ws: state => state.ws
     }),
     hasExpertPlan () {
       if (!this.currentGame) {
@@ -157,31 +155,16 @@ export default {
     }
   },
   watch: {
-    'currentGame': {
+    'games': {
       handler (game, oldGame) {
-        if (game) {
-          if (game.is_prompt) {
-            const checkDate = window.localStorage.getItem(game.display_name)
-            if (checkDate) {
-              if (+checkDate < +this.$moment().format('YYYYMMDD')) {
-                this.showNotifiyMsg = true
-              }
-            } else {
+        if (game && game.is_prompt) {
+          const checkDate = window.localStorage.getItem(game.display_name)
+          if (checkDate) {
+            if (+checkDate < +this.$moment().format('YYYYMMDD')) {
               this.showNotifiyMsg = true
             }
-          }
-          if (this.ws === null) {
-            if (!this.hasFetchJWT) {
-              this.hasFetchJWT = true
-              this.$store.dispatch('fetchJWTToken', 'eagle').then(token => {
-                this.ws = new EagleWebSocket(token, game.rooms[0].id)
-              }).catch(() => {
-                this.hasFetchJWT = false
-              })
-            }
-          } else if (game.code !== oldGame.code) {
-            this.$store.dispatch('eagle/clear')
-            this.ws.joinRoom(game.rooms[0].id)
+          } else {
+            this.showNotifiyMsg = true
           }
         }
       },
@@ -208,6 +191,9 @@ export default {
     }
   },
   created () {
+    if (!this.$store.state.jwt_token.eagle) {
+      this.$store.dispatch('fetchJWTToken', 'eagle')
+    }
     if (!this.$route.params.gameId) {
       if (this.games.length > 0) {
         this.chooseGame()
@@ -223,7 +209,7 @@ export default {
         this.$store.dispatch('eagle/initSticker', res)
         const emojiMap = {}
         res.forEach((series, index) => {
-          emojiMap[series.id] = {...series, order: index}
+          emojiMap[series.id] = { ...series, order: index }
         })
         this.$store.dispatch('eagle/initEmoji', emojiMap)
       }).catch(() => {
@@ -287,7 +273,9 @@ export default {
     }
   },
   beforeDestroy () {
-    this.ws.leaveRoom()
+    if (this.ws) {
+      this.ws.leaveRoom()
+    }
   }
 }
 </script>
@@ -310,7 +298,7 @@ export default {
       .icon {
         height: 16px;
         width: 16px;
-        background: url('../../assets/helper.svg') no-repeat;
+        background: url("../../assets/helper.svg") no-repeat;
         background-size: contain;
       }
     }
@@ -321,7 +309,8 @@ export default {
       width: 140px;
       border-radius: 4px;
       background-color: #ffffff;
-      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24),
+        0 0 4px 0 rgba(0, 0, 0, 0.12);
       list-style: none;
       &::before {
         bottom: 100%;
@@ -359,12 +348,12 @@ export default {
           &:after {
             position: absolute;
             top: 14px;
-            content: '';
+            content: "";
             display: inline-block;
             width: 24px;
             height: 12px;
             margin-left: 5px;
-            background-image: url('../../assets/badge_new.svg');
+            background-image: url("../../assets/badge_new.svg");
             background-repeat: no-repeat;
             background-size: contain;
           }

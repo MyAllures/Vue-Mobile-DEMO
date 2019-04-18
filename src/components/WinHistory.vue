@@ -33,7 +33,17 @@ export default {
       bottomItems: [],
       index: 0,
       timeout: null,
+      rollingInterval: setInterval(this.rolling, 50),
       filterHKL: true
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      if (to.name === 'Home') {
+        this.rollingInterval = setInterval(this.rolling, 50)
+      } else {
+        clearInterval(this.rollingInterval)
+      }
     }
   },
   created () {
@@ -42,11 +52,10 @@ export default {
     let hklEnd = this.$moment('9:45pm', 'h:mma')
     this.filterHKL = ![2, 4, 6].includes(now.day()) || now.isBefore(hklBegain) || now.isAfter(hklEnd)
 
-    this.fillWinHistory().then(() => {
-      this.$nextTick(() => {
-        setInterval(this.rolling, 50)
-      })
-    })
+    this.fillWinHistory()
+  },
+  beforeDestroy () {
+    clearInterval(this.rollingInterval)
   },
   methods: {
     refreshItems () {
@@ -81,7 +90,10 @@ export default {
     },
     rolling () {
       let wrapper = this.$refs.wrapper
-      let firstList = wrapper.children && wrapper.children[0]
+      if (!wrapper || !wrapper.children) {
+        return
+      }
+      let firstList = wrapper.children[0]
       if (wrapper.scrollTop >= firstList.scrollHeight) {
         wrapper.scrollTop = 0
         // 滚动到顶部的时候 两个 ul 换位

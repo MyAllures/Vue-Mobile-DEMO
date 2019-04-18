@@ -116,7 +116,7 @@ export default {
   },
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
-      const { gameGroups } = res.filter(group => group.group_tag && group.group_tag.rank <= 3)
+      const { gameGroups } = res.filter(group => group.group_tag)
         .sort((p, l) => p.group_tag.rank - l.group_tag.rank)
         .reduce((merged, g, index) => ({
           ...merged,
@@ -268,8 +268,9 @@ export default {
     commit(types.HIDE_RIGHT_MENU)
   },
   fetchJWTToken: ({commit}, type) => {
+    commit(types.START_FETCH_JWT_TOKEN, type)
     return fetchJWTToken(type).then(token => {
-      commit(types.FETCH_JWT_TOKEN, {
+      commit(types.FULFILLED_FETCH_JWT_TOKEN, {
         type,
         token
       })
