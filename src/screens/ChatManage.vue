@@ -16,10 +16,10 @@
             <tr class="row" v-for="member in bannedList" :key="member.username">
               <td class="first-col">{{member.username}}</td>
               <td>{{member.nickname}}</td>
-              <td>{{member.ban_duration}}</td>
-              <td>{{member.ban_remaining_time}}</td>
+              <td>{{member.ban_duration}}分钟</td>
+              <td>{{member.ban_remaining_time}}分钟</td>
               <td>
-                <a class="unban">解除</a>
+                <a class="unban" @click="unbanMember(member.username)">解除</a>
               </td>
             </tr>
           </tbody>
@@ -33,7 +33,8 @@ export default {
   name: 'ChatManage',
   data () {
     return {
-      bannedList: []
+      bannedList: [],
+      unbanLoading: false
     }
   },
   computed: {
@@ -42,21 +43,30 @@ export default {
       ws: state => state.ws
     })
   },
-  watch: {
-    'isManager': {
-      handler: function (isManager) {
-        if (isManager) {
-          this.ws.fetchBannedList().then(res => {
-            this.bannedList = res
-          }).catch(() => {})
-        }
-      },
-      immediate: true
-    }
+  created () {
+    this.ws.fetchBannedList().then(res => {
+      this.bannedList = res
+    }).catch(() => {})
   },
   methods: {
     unbanMember (username) {
+      if (this.unbanLoading) {
+        return
+      }
+      this.unbanLoading = true
+      this.ws.unbanMember(username).then(res => {
+        this.$vux.toast.show({
+          text: res.status,
+          type: 'success'
+        })
+        return this.ws.fetchBannedList()
+      }).then(res => {
+        this.bannedList = res
+      }).catch(() => {
 
+      }).finally(() => {
+        this.unbanLoading = false
+      })
     }
   }
 }
@@ -127,6 +137,9 @@ export default {
           font-size: 14px;
         }
       }
+    }
+    .unban {
+      color: @azul;
     }
   }
 }

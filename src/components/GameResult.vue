@@ -119,7 +119,7 @@ export default {
   flex:0 0 auto;
   display: flex;
   color: #999;
-  padding: 5px 0;
+  padding: 2px 0;
   .balls-text {
     font-size: 14px;
     flex: 1;

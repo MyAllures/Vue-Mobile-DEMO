@@ -58,9 +58,15 @@ export class EagleWebSocket {
   }
 
   banMember (username, duration) {
-    eagle.controlChatMember(this.roomId, 'ban_user', {
+    return eagle.controlChatMember(this.roomId, 'ban_user', {
       username,
       duration
+    })
+  }
+
+  unbanMember (username, duration) {
+    return eagle.controlChatMember(this.roomId, 'unban_user', {
+      username
     })
   }
 
