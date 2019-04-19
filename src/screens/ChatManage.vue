@@ -14,7 +14,7 @@
           </thead>
           <tbody>
             <tr class="row" v-for="member in bannedList" :key="member.username">
-              <td class="first-col">{{member.username}}</td>
+              <td class="first-col username">{{member.username}}</td>
               <td>{{member.nickname}}</td>
               <td>{{member.ban_duration}}分钟</td>
               <td>{{member.ban_remaining_time}}分钟</td>
@@ -103,6 +103,11 @@ export default {
     td {
       vertical-align: middle;
     }
+    .username {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
     th {
       box-sizing: border-box;
       height: 30px;
@@ -128,7 +133,7 @@ export default {
       text-align: center;
     }
     .first-col {
-      padding-left: 15px;
+      padding-left: 8px;
     }
     .prediction-result {
       span {

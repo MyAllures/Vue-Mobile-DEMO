@@ -21,13 +21,13 @@
         </div>
         <i :class="['solid-triangle', isHistoryVisible ? 'point-top' : 'point-down']"></i>
       </div>
-    </div>
-    <div :class="['history-panel', {visible: isHistoryVisible}]" v-if="historyData.length>0">
-      <div class="history-panel-mask" @click="isHistoryVisible = false"></div>
-      <div class="history-panel-content">
-        <GameResult v-for="result in historyData" :key="result.issue_number" :result="result"/>
+      <div :class="['history-panel', {visible: isHistoryVisible}]" v-if="historyData.length>0">
+        <div class="history-panel-content">
+          <GameResult v-for="result in historyData" :key="result.issue_number" :result="result"/>
+        </div>
       </div>
     </div>
+    <div :class="['history-panel-mask', {visible: isHistoryVisible}]" @click="isHistoryVisible = false"></div>
     <chat-game-body :game="currentGame" :betableIssueNumber="betableIssueNumber" ></chat-game-body>
     <chat-game-footer @openBetInterface="openBetInterface"></chat-game-footer>
     <popup
@@ -192,8 +192,7 @@ export default {
       },
       messages: [],
       historyData: [],
-      isHistoryVisible: false,
-      isFetchingJWT: false
+      isHistoryVisible: false
     }
   },
   computed: {
@@ -513,18 +512,35 @@ export default {
       }
     },
     openBettrackDialog () {
+      let play = this.validPlays[0]
+      let data = {
+        amount: this.amount,
+        multiple: this.bettrack.multiple,
+        period: this.bettrack.period,
+        issue_number: this.schedule.issue_number,
+        scheduleId: this.schedule.id,
+        play: this.validPlays[0]
+      }
+      let betOptions
+      if (play.activedOptions) {
+        let options = []
+        _.each(play.activedOptions, option => {
+          options.push(option.num)
+        })
+        betOptions = { options: options }
+      } else if (play.combinations) {
+        betOptions = { options: play.combinations }
+      }
+
+      if (betOptions) {
+        data.betOptions = betOptions
+      }
+
       this.$store.dispatch('updateDialog', {
         name: 'new_bettrack',
         state: {
           visible: true,
-          data: {
-            amount: this.amount,
-            multiple: this.bettrack.multiple,
-            period: this.bettrack.period,
-            issue_number: this.schedule.issue_number,
-            scheduleId: this.schedule.id,
-            play: this.validPlays[0]
-          }
+          data
         }
       })
     },
@@ -612,6 +628,7 @@ export default {
   z-index: 10;
   background: #fff;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
+  position: relative;
   .wrapper {
     position: relative;
     .solid-triangle {
@@ -631,14 +648,10 @@ export default {
 
 .history-panel {
   position: absolute;
-  top: 20px;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 1;
-  // transition: translate 1s;
-  // transform: translate(0, -89%);
-  // transform: translate(0, 11%);
   visibility: hidden;
   &.visible {
     visibility: visible;
@@ -646,13 +659,21 @@ export default {
   .history-panel-content {
     position: absolute;
     top: 0;
-    transform: translate(0, 11%);
     width: 100%;
     background: #fff;
   }
-  .history-panel-mask {
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+}
+.history-panel-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  visibility: hidden;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.3);
+  &.visible {
+    visibility: visible;
   }
 }
 
@@ -664,6 +685,8 @@ export default {
   padding: 0 10px;
   color: #333;
   font-size: 16px;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 .bet-area {
   height: calc(~"100%" - 90px);
@@ -673,6 +696,8 @@ export default {
     flex: 0 0 auto;
     width: 90px;
     overflow-y: auto;
+    z-index: 5;
+    box-shadow: 6px 0 3px -3px rgba(0, 0, 0, 0.15);
   }
   .main {
     flex: 1 1 auto;
@@ -711,6 +736,8 @@ export default {
   background: rgba(0, 0, 0, 0.7);
   border: none;
   padding: 5px;
+  z-index: 10;
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   .footer-item {
     flex: 1;
   }
@@ -767,6 +794,8 @@ export default {
   color: #fff;
   padding: 0 5px 0 10px;
   font-size: 14px;
+  z-index: 10;
+  box-shadow: 0 0px 3px 3px rgba(0, 0, 0, 0.15);
   .amount-input {
     background: #fff;
     border: 1px solid #f0f0f0;

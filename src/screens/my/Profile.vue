@@ -119,6 +119,15 @@ export default {
         callback()
       }
     }
+    const nicknameValidator = (rule, value, callback) => {
+      if (originUser.nickname === value) {
+        callback()
+      } else if (value.length > 10) {
+        callback(new Error('昵称限制10字元以下'))
+      } else {
+        callback()
+      }
+    }
     return {
       member: {
         phone: '',
@@ -147,7 +156,8 @@ export default {
         email: [{validator: emailValidator}],
         qq: [{validator: qqValidator}],
         wechat: [{validator: wechatValidator}],
-        phone: [{validator: phoneValidator}]
+        phone: [{validator: phoneValidator}],
+        nickname: [{validator: nicknameValidator}]
       }
     }
   },

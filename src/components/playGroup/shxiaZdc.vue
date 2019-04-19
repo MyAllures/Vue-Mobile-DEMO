@@ -32,7 +32,7 @@
 <script>
 import _ from 'lodash'
 export default {
-  name: 'shixaZdc',
+  name: 'shixaZdc', // 和肖
   props: {
     gameCode: {
       type: String
