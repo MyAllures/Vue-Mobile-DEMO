@@ -345,11 +345,11 @@ store.watch((state) => {
 }, (logined) => {
   fetchVenomJWTToken().then(() => {
     let token = Vue.cookie.get(`${JWT.venom}_token`)
-    this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+    store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
   })
   fetchEiderJWTToken().then(() => {
     let token = Vue.cookie.get(`${JWT.eider}_token`)
-    this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+    store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
   })
   store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
