@@ -1,5 +1,5 @@
 <template>
-  <div class="tracker-area vux-1px-l">
+  <div class="tracker-area">
     <div class="positions m-b-lg">
       <p class="title">追号位置</p>
       <div class="wrapper position-wrapper">

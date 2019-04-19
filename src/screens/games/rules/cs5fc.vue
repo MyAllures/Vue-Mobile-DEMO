@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>{{gameName}}是以重庆时时彩的游戏玩法为依据，从00:00起每5分钟开奖一次，共288期，全天候开奖不间断。</p>
+    <p>{{gameName}}是自主研发五分钟开奖一次的时时彩游戏，趣味更多。</p>
     <h3>
       <span class="warn">1.第一球~第五球</span>
     </h3>

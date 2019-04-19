@@ -22,11 +22,11 @@
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
           </template>
           <template v-else>
-            <div
-              class="balance fr"
+            <div class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥')}}
+              <span>{{ user.balance|currency('￥')}}</span>
             </div>
+            <UnreadPoint></UnreadPoint>
           </template>
         </div>
       </template>
@@ -121,7 +121,6 @@
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
     </div>
     <x-dialog
-      v-transfer-dom
       v-model="showDialog"
       :dialog-style="{
         width: '90vw',
@@ -143,12 +142,6 @@
     </x-dialog>
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
-    <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
-    <div
-      v-if="systemConfig.envelopeActivityId"
-      class="envelope-btn"
-      @click="showEnvelope">
-    </div>
   </div>
 </template>
 
@@ -170,8 +163,7 @@ import {
   Cell,
   XButton,
   Tab,
-  TabItem,
-  TransferDom
+  TabItem
 } from 'vux'
 import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
@@ -179,8 +171,10 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
+
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -197,14 +191,11 @@ export default {
       showpromoPopup: false,
       today: this.$moment(),
       currentTag: '',
-      isGameMenuVisible: false,
-      isEnvelopeVisible: false
+      isGameMenuVisible: false
     }
   },
-  directives: {
-    TransferDom
-  },
   components: {
+    UnreadPoint,
     TopBar,
     Swiper,
     SwiperItem,
@@ -264,11 +255,12 @@ export default {
           text: '优惠活动'
         })
       }
-      if (config.customerServiceUrl) {
+
+      if (config.serviceAction) {
         actions.push({
-          type: 'link',
+          type: 'button',
           className: 'service',
-          url: config.customerServiceUrl,
+          click: config.serviceAction,
           text: '联系客服'
         })
       }
@@ -299,23 +291,6 @@ export default {
         }
       }
     },
-    'isEnvelopeVisible': function (isEnvelopeVisible) {
-      if (isEnvelopeVisible) {
-        // 在弹出层显示之前，记录当前的滚动位置
-        scrollTop = getScrollTop()
-
-        // 使body脱离文档流
-        document.body.classList.add('dialog-open')
-
-        // 把脱离文档流的body拉上去，否则页面会回到顶部
-        document.body.style.top = -scrollTop + 'px'
-      } else {
-        // body又回到了文档流中
-        document.body.classList.remove('dialog-open')
-
-        to(scrollTop)
-      }
-    },
     'showDialog': function (showDialog) {
       if (showDialog) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -335,10 +310,8 @@ export default {
     }
   },
   created () {
-    const unwatch = this.$watch('announcements', function (announcements) {
-      if (announcements.length > 0) {
-        this.showDialog = true
-      }
+    const unwatch = this.$watch('announcements', function () {
+      this.showDialog = true
       unwatch()
     })
   },
@@ -367,14 +340,6 @@ export default {
     },
     switchTab (i) {
       this.currentTag = this.tags[i]
-    },
-    showEnvelope () {
-      this.isEnvelopeVisible = true
-      this.sendGaEvent({
-        label: '首页',
-        category: '紅包',
-        action: '查看红包活动'
-      })
     }
   }
 }
@@ -723,52 +688,5 @@ export default {
 
 .pc-link-btn {
   color: @azul;
-}
-.envelope-btn {
-  position: fixed;
-  right: 20px;
-  top: 70vh;
-  width: 40px;
-  height: 60px;
-  background: url('../assets/envelope_btn.svg') no-repeat;
-  background-size: contain;
-  animation-duration: 6s;
-  animation-timing-function: ease;
-  animation-delay: 0s;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
-  animation-name: shaking;
-  transform-origin: top center;
-  transform: rotate(15deg);
-}
-@keyframes shaking {
-  //start shaking
-  0% {
-    transform: translateX(0%) rotate(20deg);
-  }
-  2% {
-    transform: translateX(-5%) rotate(10deg);
-  }
-  4% {
-    transform: translateX(0%) rotate(20deg);
-  }
-  6% {
-    transform: translateX(-5%) rotate(10deg);
-  }
-  8% {
-    transform: translateX(0%) rotate(20deg);
-  }
-  10% {
-    transform: translateX(-5%) rotate(10deg);
-  }
-
-  // start staying
-  99% {
-    transform: translateX(-5%) rotate(10deg);
-  }
-
-  100% {
-    transform: translateX(0%) rotate(15deg);
-  }
 }
 </style>

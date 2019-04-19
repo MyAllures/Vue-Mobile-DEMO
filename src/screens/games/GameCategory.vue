@@ -1,10 +1,9 @@
 <template>
   <div>
-    <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector lower-tab">
+    <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
           :animate="false"
-          line-width="2"
           active-color="theme" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
@@ -17,7 +16,7 @@
     </div>
     <div v-if="shawOptions.length" class="shaw-options">
       <div class="wrapper vux-1px-b">
-        <check-icon 
+        <check-icon
           :key="option.name"
           v-on:click.native="toggleShaw(option, $event)"
           v-for="option in shawOptions"
@@ -119,13 +118,13 @@ export default {
     GridItem,
     Tab,
     TabItem,
-    CheckIcon,
     WithCode,
     gd11x5Seq,
     hk6Exl,
     shxiaZdc,
     fc3dIc,
-    fc3dCa2df
+    fc3dCa2df,
+    CheckIcon
   },
   data () {
     return {
@@ -176,10 +175,11 @@ export default {
     'activePlays': {
       handler: function (activePlays) {
         this.$emit('updatePlays', activePlays)
-        // select/unselect shaw option when any play is active/inactive
+
         let activeNums = activePlays.map(item => {
           return parseInt(item.display_name)
         })
+
         this.shawOptions.forEach(option => {
           let found = option.nums.every(r => activeNums.includes(r))
           this.$set(option, 'selected', found)
@@ -295,7 +295,6 @@ export default {
       if (!currentCategory) {
         return
       }
-      // check if it's needed to show shaw options
       this.categories.some(item => {
         // for HKL and '特码' only
         let existed = this.currentCategory.name === '特码' && item.name === '特肖' && item.extra_info && item.extra_info.shaw
@@ -314,7 +313,6 @@ export default {
         }
         return existed
       })
-
       const tabs = {}
       const plays = {}
       const tabKeys = []
@@ -372,11 +370,11 @@ export default {
 
 <style lang="less" scoped>
 .shaw-options {
-  overflow-x: scroll; 
-  .wrapper { 
+  overflow-x: scroll;
+  .wrapper {
     width: 600px;
   }
-  
+
   /deep/ .vux-check-icon {
     width: 50px;
     text-align: center;
@@ -401,18 +399,8 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  /deep/ .vux-tab-wrap {
-    padding-top: 34px;
-  }
-  /deep/ .vux-tab-container {
-    height: 34px;
-    .vux-tab {
-      height: 34px;
-      overflow-x: auto;
-    }
-  }
-  .vux-tab-item {
-    line-height: 34px;
+  .vux-tab {
+    overflow-x: auto;
   }
 }
 

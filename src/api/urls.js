@@ -7,9 +7,14 @@ const apiv2 = host + '/v2/member'
 const apiv1 = host + '/v1/member'
 const apiChat = env.chatApi.replace(/"/g, '')
 const wsEiderHost = env.eiderHost.replace(/"/g, '')
+const venomHost = env.venomHost.replace(/"/g, '')
+const wsVenomHost = env.venomSocket.replace(/"/g, '')
 
 export default {
   wsEiderHost,
+  venomHost,
+  wsVenomHost,
+  ravenHost: apiChat,
   domain: host,
   login: prefix + '/login/',
   register: apiv2 + '/register/',
@@ -17,7 +22,6 @@ export default {
   password: prefix + '/password/',
   withdraw_password: prefix + '/withdraw_password/',
   refresh_token: prefix + '/login/refresh/',
-  chat_token: host + '/get_chat_token/',
   verification: apiv2 + '/verification_code/',
   logout: host + '/logout/',
   games: apiv2 + '/game/',
@@ -51,18 +55,19 @@ export default {
   statistic: apiv2 + '/statistic/',
   chatEmoji: apiChat + '/v1/emoji/',
   sendImgToChat: host + '/v1/manage/attachment/',
-  chatRoomLogin: apiChat + '/chat/',
   playSetting: apiv2 + '/game/playset/',
   setCookie: host + '/set_cookie/',
   stickers: apiChat + '/v1/stickers/',
   envelope: apiv2 + '/red_envelope/',
-  envelope_activity: host + '/v2/red-envelope-activities/',
-  take_envelope_activity: host + '/v2/transactions/snatch-red-envelope/',
   chatinfo: apiChat + '/v1/user/',
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
   trend_chart: apiv2 + '/trend_chart/',
+  service_emoji: venomHost + '/chat/emoji/',
+  service_stickers: venomHost + '/chat/stickers/',
+  service_unread: venomHost + '/support/has_unread/',
+  service_image_attachment: venomHost + '/chat/attachment/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/'
 }
