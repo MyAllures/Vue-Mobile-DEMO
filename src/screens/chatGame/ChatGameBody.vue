@@ -352,6 +352,8 @@ export default {
       .self-message {
         &.text {
           font-size: 14px;
+          word-wrap: break-word;
+          word-break: break-all;
         }
       }
       .content-wrapper {

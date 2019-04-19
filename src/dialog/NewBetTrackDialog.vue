@@ -102,7 +102,12 @@ export default {
       this.loading = true
       let submitData = {...this.bettrack}
       submitData.bet_amount = parseFloat(submitData.bet_amount)
+      submitData.multiple = parseFloat(submitData.multiple)
+      submitData.type = parseFloat(submitData.type)
       submitData.stopping_tracking_type = this.ifStopTracking ? 'when_win_stop' : 'never_stop'
+      if (this.dialogData.betOptions) {
+        submitData.betOptions = this.dialogData.betOptions
+      }
       newBetTrack(submitData).then((res) => {
         this.sendGaEvent({
           label: this.gameInfo.display_name,

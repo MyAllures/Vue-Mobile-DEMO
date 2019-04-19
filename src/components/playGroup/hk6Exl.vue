@@ -24,7 +24,7 @@ import _ from 'lodash'
 import Combinatorics from 'js-combinatorics'
 import { tailMap } from '../../utils/hk6'
 export default {
-  name: 'hk6Exl',
+  name: 'hk6Exl', // 连肖连尾
   props: {
     gameCode: {
       type: String
@@ -43,7 +43,8 @@ export default {
     },
     zodiacMap: {
       type: Object
-    }
+    },
+    mode: String
   },
   data () {
     return {
@@ -132,6 +133,8 @@ export default {
           activePlay.combinations.push(_.map(options, option => option.display_name))
         })
         this.$emit('updateMultiCustomPlays', activePlays)
+      } else {
+        this.$emit('updateMultiCustomPlays', {})
       }
     },
     toggleActive (option) {
@@ -139,6 +142,12 @@ export default {
         return false
       }
       if (!option.active) {
+        if (this.mode === 'bettrack') {
+          let rules = this.plays[0].rules
+          if (rules && this.activedOptions.length >= rules.min_opts) {
+            return
+          }
+        }
         option.active = true
       } else {
         option.active = false
