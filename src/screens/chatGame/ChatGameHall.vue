@@ -50,25 +50,21 @@
         </div>
       </template>
     </top-bar>
-    <template v-if="games&&games.length&&theme">
-      <game-menu v-model="isGameMenuVisible" v-if="games.length"/>
-      <template v-if="currentGame">
-        <div class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
-          <div v-if="!isGameMenuVisible && showNotifiyMsg"
-            @click="isGameMenuVisible = !isGameMenuVisible"
-            class="notify-msg menu-center topbar" :style="{'background-color': theme}"
-          >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
-          </div>
-        </div>
-      </template>
-    </template>
+    <game-menu v-model="isGameMenuVisible" v-if="games&&games.length&&theme"/>
+    <div v-if="games&&games.length&&theme&&currentGame" class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
+      <div v-if="!isGameMenuVisible && showNotifiyMsg"
+        @click="isGameMenuVisible = !isGameMenuVisible"
+        class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
+      </div>
+    </div>
     <game-menu-icon
       class="menu-center"
       :style="{top: showNotifiyMsg ? '63px' : '39px'}"
       @click.native="isGameMenuVisible = !isGameMenuVisible"
       type="more"
     />
-    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 12px)'}">
+    <div :style="{height: showNotifiyMsg? `calc(100% - 37px)`:'calc(100% - 12px)'}">
       <router-view :key="$route.params.gameId"/>
     </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
@@ -155,7 +151,7 @@ export default {
     }
   },
   watch: {
-    'games': {
+    'currentGame': {
       handler (game, oldGame) {
         if (game && game.is_prompt) {
           const checkDate = window.localStorage.getItem(game.display_name)
@@ -397,6 +393,14 @@ export default {
     line-height: 25px;
     color: white;
     text-align: center;
+    .close-btn {
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      &::before, &::after {
+        height: 15px;
+      }
+    }
   }
 }
 </style>

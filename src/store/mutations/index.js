@@ -39,6 +39,9 @@ export default {
   [types.SET_CATEGORIES]: (state, {gameId, categories}) => {
     Vue.set(state.categories, gameId, categories)
   },
+  [types.SET_BETTRACK_POSITIONS]: (state, pos) => {
+    state.bettrackPositions = pos
+  },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
   },

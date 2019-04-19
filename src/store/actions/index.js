@@ -138,8 +138,13 @@ export default {
       })
       commit(types.TAG_TABLE, {...tagTable, ...gameGroups})
       fetchGamesDetail().then(gamesDetail => {
+        const totalBettrackPositions = {}
         gamesDetail.forEach(({id, categories, playpositions}) => {
           if (playpositions) {
+            totalBettrackPositions[id] = {
+              max_opts: playpositions.max_opts,
+              positions: playpositions.data
+            }
             categories.push({
               code: 'playpositions',
               id: 'playpositions',
@@ -152,6 +157,7 @@ export default {
             categories
           })
         })
+        commit(types.SET_BETTRACK_POSITIONS, totalBettrackPositions)
       })
       return Promise.resolve(res)
     })

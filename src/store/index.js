@@ -6,6 +6,7 @@ import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
 import eagle from './eagle'
+import game from './game'
 
 Vue.use(Vuex)
 
@@ -40,7 +41,8 @@ export default new Vuex.Store({
         minutes: 0,
         seconds: 0
       },
-      issue_number: ''
+      issue_number: '',
+      isClosed: false
     },
     notifications: [],
     notificationVisible: false,
@@ -121,6 +123,7 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
+    bettrackPositions: {},
     jwt_token: {
       venom: '',
       raven: '',
@@ -133,6 +136,7 @@ export default new Vuex.Store({
   getters,
   modules: {
     page,
-    eagle
+    eagle,
+    game
   }
 })

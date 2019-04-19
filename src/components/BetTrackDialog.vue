@@ -35,7 +35,7 @@
             </div>
             <div class="summary">
               <p>一期<span class="red"> {{dialog.data.track_numbers.length}} </span>注 总金额：<span class="red">￥{{dialog.data.track_numbers.length * dialog.data.bet_amount}}</span></p>
-              <p>如有一期中奖即停止追号</p>
+              <p v-if="dialog.data.forDisplay.selectedSchedules&&dialog.data.forDisplay.selectedSchedules.length>1">如有一期中奖即停止追号</p>
           </div>
           </div>
           <div v-if="loading"  class="loading">
@@ -83,7 +83,7 @@ export default {
       let submitData = pick(this.dialog.data, ['game_schedule', 'type', 'bet_amount', 'track_numbers', 'play_code_pattern'])
       betTrack(submitData).then((res) => {
         this.sendGaEvent({
-          label: this.gameInfo.display_name,
+          label: this.gameName,
           category: '遊戲追號',
           action: '投注'
         })
@@ -126,7 +126,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gameInfo']),
+    ...mapState('game', {
+      gameName: state => state.displayName
+    }),
     dialog () {
       return this.$store.state.dialog.bettrack
     }

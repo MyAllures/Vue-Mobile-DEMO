@@ -78,7 +78,7 @@
       @click.native="isGameMenuVisible = !isGameMenuVisible"
       type="more"
     />
-    <div :style="{height: showNotifiyMsg? `calc(100% - 43px)`:'calc(100% - 12px)'}">
+    <div :style="{height: showNotifiyMsg? `calc(100% - 37px)`:'calc(100% - 12px)'}">
       <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     </div>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
@@ -252,7 +252,6 @@ export default {
           const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
           this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
           this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
-          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '13px'})
         }
       },
       immediate: true
