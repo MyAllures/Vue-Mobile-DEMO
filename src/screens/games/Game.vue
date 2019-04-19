@@ -389,7 +389,6 @@ export default {
         if (this.bettrackData.type && this.bettrackData.play_code_pattern) {
           this.bettrackData.bet_amount = parseFloat(this.amount)
           this.bettrackData.game_schedule = this.schedules[0].id
-
           this.$store.dispatch('updateDialog', {
             name: 'bettrack',
             state: {

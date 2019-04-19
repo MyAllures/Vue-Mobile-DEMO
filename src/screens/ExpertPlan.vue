@@ -62,7 +62,7 @@
               <td class="btn">
                 <x-button
                   mini
-                  v-if="plan.result.status==='待开'"
+                  v-if="bettrackPositions&&plan.result.status==='待开'&&!gameInfo.isClosed&&plan.issue_numbers[0] === gameInfo.schedule.issueNumber"
                   type="primary"
                   @click.native="openBettrackDialog(plan)">追投
                 </x-button>
@@ -80,6 +80,7 @@ import { setting } from '@/utils/expertPlanSetting'
 import { fetchExpertPlan } from '@/api'
 import '@/styles/expertplan_resultsball.scss'
 import {XButton} from 'vux'
+import { mapState } from 'vuex'
 const schemeTypeList = [
   { type: 'FIVE_NUM_FOR_SINGLE', label: '單期5碼' },
   { type: 'SIX_NUM_FOR_SINGLE', label: '單期6碼' },
@@ -110,6 +111,12 @@ export default {
     }
   },
   computed: {
+    ...mapState('game', {
+      gameInfo: state => state
+    }),
+    bettrackPositions () {
+      return this.$store.state.bettrackPositions[this.$route.params.gameId]
+    },
     conditions () {
       const conditions = {
         game: this.game.code,
@@ -180,16 +187,35 @@ export default {
       this.selectedSchemeType = type
     },
     openBettrackDialog (data) {
+      let period = ''
+      switch (data.issue_numbers.length) {
+        case 1:
+          period = '单期'
+          break
+        case 2:
+          period = '两期'
+          break
+        case 3:
+          period = '三期'
+          break
+      }
       this.$store.dispatch('updateDialog', {
-        name: 'expert_bettrack',
+        name: 'bettrack',
         state: {
           visible: true,
           data: {
-            game: data.game,
-            issue_numbers: data.issue_numbers,
-            position: this.selectedPositionIdx,
-            bet_numbers: data.prediction
-          }
+            bet_amount: 10,
+            forDisplay: {
+              play_code_pattern: this.currentSetting[this.selectedPositionIdx - 1],
+              selectedSchedules: data.issue_numbers,
+              type: period
+            },
+            game_schedule: this.gameInfo.schedule.id,
+            play_code_pattern: this.bettrackPositions.positions[this.selectedPositionIdx - 1].play_code_pattern,
+            track_numbers: data.prediction,
+            type: this.selectedPositionIdx
+          },
+          isSuccess: false
         }
       })
     }

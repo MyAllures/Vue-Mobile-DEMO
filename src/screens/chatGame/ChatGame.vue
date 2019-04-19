@@ -256,6 +256,7 @@ export default {
     'currentGame.code': {
       handler: function (code) {
         if (code) {
+          this.$store.dispatch('game/init', this.currentGame)
           this.fetchScheduleAndResult()
           const game = this.currentGame
           if (game.rooms.length === 0) {
@@ -358,6 +359,12 @@ export default {
         }
       },
       immediate: true
+    },
+    'gameClosed': {
+      handler: function (isClosed) {
+        this.$store.dispatch('game/updateStatus', isClosed)
+      },
+      immediate: true
     }
   },
   created () {
@@ -415,12 +422,10 @@ export default {
           }
         }
 
-        this.$store.dispatch('updateGameInfo', {
-          display_name: this.currentGame.display_name,
-          issue_number: this.schedule.issue_number,
-          game_code: this.currentGame.code
+        this.$store.dispatch('game/updateIssueNumber', {
+          issueNumber: this.schedule.issue_number,
+          id: this.schedule.id
         })
-
         this.startScheduleTimer()
       }).catch(() => { })
     },

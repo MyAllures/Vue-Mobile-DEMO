@@ -110,7 +110,7 @@ export default {
       }
       newBetTrack(submitData).then((res) => {
         this.sendGaEvent({
-          label: this.gameInfo.display_name,
+          label: this.gameName,
           category: '遊戲追號',
           action: '投注'
         })
@@ -150,7 +150,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gameInfo']),
+    ...mapState('game', {
+      gameName: state => state.displayName
+    }),
     dialog () {
       return this.$store.state.dialog.new_bettrack
     },
