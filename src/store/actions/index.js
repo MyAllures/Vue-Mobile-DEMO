@@ -10,8 +10,8 @@ import {
   fetchCategories,
   getPromotions,
   fetchBanner,
-  fetchAnnouncements,
-  fetchVenomJWTToken
+  fetchUnreadCount,
+  fetchAnnouncements
 } from '@/api'
 import { JWT } from '@/utils/jwtToken'
 
@@ -41,9 +41,7 @@ const login = function ({ commit, state, dispatch }, { user }) {
         })
       }
     }
-    return fetchVenomJWTToken().then(() => {
-      return dispatch('fetchUser')
-    })
+    return dispatch('fetchUser')
   }, error => {
     return Promise.reject(error)
   })
@@ -123,7 +121,7 @@ export default {
   },
   fetchGames: ({ commit, state }) => {
     return fetchGames().then(res => {
-      const { gameGroups } = res.filter(group => group.group_tag && group.group_tag.rank <= 3)
+      const { gameGroups } = res.filter(group => group.group_tag)
         .sort((p, l) => p.group_tag.rank - l.group_tag.rank)
         .reduce((merged, g, index) => ({
           ...merged,
@@ -179,6 +177,11 @@ export default {
   },
   setUnread: ({commit}, count) => {
     commit(types.SET_UNREAD, count)
+  },
+  initUnread: ({commit}) => {
+    fetchUnreadCount().then(res => {
+      commit(types.ADD_UNREAD, res.message_count)
+    })
   },
   addUnread: ({commit}, count) => {
     commit(types.ADD_UNREAD, count)

@@ -1,52 +1,78 @@
 /*game latest result balls*/
 
 $gamesmap: (
-  sscgames: tjssc xjssc cqssc jsssc csffc pcdd bjkl8 auluck8 gd11x5 gdklsf fc3d jnd28 cqlf luckdd cs10fc cs5fc,
+  sscgames: tjssc xjssc cqssc jsssc ynssc hjssc csffc klsf fc3d cs10fc cs5fc,
   racinggames: jspk10 bcr mlaft er75ft cs60cr cs600cr,
-  k3games: jsk3 msk3 bjk3,
+  gdgames: gd11x5 gdklsf ah11x5 bj11x5 gs11x5 fh11x5,
+  k3games: jsk3 msk3 bjk3 gxk3 shk3 hubk3,
+  ddgames: pcdd jnd28 luckdd,
+  k8games: bjkl8 auluck8
 );
 /*specific: ssc type games, common: ball_2.png*/
 $results_ssc: map-get($gamesmap, sscgames);
 $ssc_length: length($results_ssc);
 
 %plain-ball {
-  border-radius: 100%;
-  background: radial-gradient(circle at 5px 5px, #fff, #ccc);
-  height: 22px;
-  width: 22px;
-  line-height: 22px;
-  text-align: center;
-  color: #333;
-  font-weight: normal;
-  font-size: 15px;
+    background: url("../assets/ball_2.png") no-repeat;
+    background-size: 100% 1000%;
+    width: 30px;
+    height: 30px;
+    text-indent: -999em;
 }
 
 @for $index from 1 through $ssc_length {
   .result-#{nth($results_ssc, $index)} {
     @extend %plain-ball;
+    @for $num from 0 through 9 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-30px * $num);
+      }
+    }
     &.play {
-      height: 35px;
-      line-height: 35px;
-      width: 35px;
+      $size: 35px;
+      height: $size;
+      width: $size;
       font-size: 20px;
       &.text-sm {
-        font-size: 16px;
+        white-space: nowrap;
+        font-size: 20px;
+        color: #444;
+        background: none;
+
+        .num {
+          line-height: 16px;
+        }
+      }
+      @for $num from 0 through 9 {
+        &.resultnum-#{$num} {
+          background-position: 0 (-$size * $num);
+        }
       }
     }
   }
   @media screen and (max-width: 320px) {
     .result-#{nth($results_ssc, $index)}.result {
-      height: 19px;
-      line-height: 19px;
-      width: 19px;
+      $size: 19px;
+      height: $size;
+      width: $size;
       font-size: 14px;
+      @for $num from 0 through 9 {
+        &.resultnum-#{$num} {
+          background-position: 0 (-$size * $num);
+        }
+      }
       &.play.small {
-        height: 30px;
-        line-height: 30px;
-        width: 30px;
+        $size: 30px;
+        height: $size;
+        width: $size;
         font-size: 18px;
         &.text-sm {
           font-size: 14px;
+        }
+        @for $num from 0 through 9 {
+          &.resultnum-#{$num} {
+            background-position: 0 (-$size * $num);
+          }
         }
       }
     }
@@ -87,6 +113,25 @@ $racing_length: length($results_racing);
         &.resultnum-#{$num}.result {
           background-position: 0 (-18px * ($num - 1));
         }
+      }
+    }
+  }
+}
+
+/*specific: guandong region games, common: ball_1.png*/
+$results_gd: map-get($gamesmap, gdgames);
+$gd_length: length($results_gd);
+
+@for $index from 1 through $gd_length {
+  .result-#{nth($results_gd, $index)} {
+    background: url("../assets/ball_1.png") no-repeat;
+    background-size: 100% 2000%;
+    width: 26px;
+    height: 26px;
+    text-indent: -999em;
+    @for $num from 1 through 20 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-26px * ($num - 1 ));
       }
     }
   }
@@ -159,3 +204,65 @@ $k3_length: length($results_k3);
   }
 }
 
+$results_dd: map-get($gamesmap, ddgames);
+$dd_length: length($results_dd);
+@for $index from 1 through $dd_length {
+  .result-#{nth($results_dd, $index)} {
+    background: url("../assets/ball_pcdd.png") no-repeat;
+    background-size: 100% 2800%;
+    width: 26px;
+    height: 26px;
+    text-indent: -999em;
+    @for $num from 0 through 27 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-26px * $num);
+      }
+    }
+  }
+}
+
+.result-cqlf {
+  background: url("../assets/ball_nc_top.png") no-repeat;
+  background-size: 100% 2000%;
+  $size: 24px;
+  width: $size;
+  height: $size;
+  text-indent: -999em;
+  @for $num from 1 through 20 {
+    &.resultnum-#{$num} {
+      background-position: 0 (-$size * ($num - 1 ));
+    }
+  }
+}
+
+$results_l8: map-get($gamesmap, k8games);
+$l8_length: length($results_l8);
+@for $index from 1 through $l8_length {
+  .result-#{nth($results_l8, $index)} {
+    $size: 22px;
+    background: url("../assets/ball_5_small.png") no-repeat;
+    background-size: 100% 8000%;
+    width: $size;
+    height: $size;
+    text-indent: -999em;
+    @for $num from 1 through 80 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-$size * ($num - 1 ));
+      }
+    }
+  }
+}
+@media screen and (max-width: 320px) {
+  @for $index from 1 through $l8_length {
+    .result-#{nth($results_l8, $index)}:not(.play) {
+      $size: 19px;
+      width: $size;
+      height: $size;
+      @for $num from 1 through 80 {
+        &.resultnum-#{$num} {
+          background-position: 0 (-$size * ($num - 1 ));
+        }
+      }
+    }
+  }
+}

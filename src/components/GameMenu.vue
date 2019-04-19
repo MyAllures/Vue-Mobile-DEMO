@@ -10,7 +10,6 @@
     <div class="popup-content">
       <div class="tab-selector">
         <tab
-          :style="{width: gameGroups.length > 3 ? `${gameGroups.length * 60}px` : ''}"
           :bar-active-color="theme"
           :animate="false"
           default-color="#666"
@@ -32,7 +31,7 @@
           <div class="classic-game">
             <div class="images-container">
               <template  v-for="(gameCode,index) in recommendatoryGames">
-                <div v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                <div v-if="gamePlay[gameCode]" class="grid-item text-center"
                   :style="{width: `${imageContainerWidth}px`}"
                   :key="index"
                   @click="switchGame(gamePlay[gameCode])"
@@ -53,7 +52,7 @@
           <div class="recommendatory-game">
             <div class="images-container">
               <template v-for="(gameCode,index) in classicGames">
-                <div  v-if="gamePlay[gameCode]" class="grid-item text-center" 
+                <div  v-if="gamePlay[gameCode]" class="grid-item text-center"
                   :style="{width: `${imageContainerWidth}px`}"
                   @click="switchGame(gamePlay[gameCode])"
                   :key="index"
@@ -145,9 +144,6 @@ export default {
     ...mapState([
       'theme'
     ]),
-    logoSrc () {
-      return this.$store.state.systemConfig.homePageLogo
-    },
     isGamePage () {
       return this.$route.name === 'GameDetail'
     },
@@ -236,7 +232,7 @@ export default {
   .ellipsis {
     white-space: nowrap;
     display: block;
-    width: 60px;
+    padding: 0 10px;
     text-overflow: ellipsis;
     overflow: hidden;
   }

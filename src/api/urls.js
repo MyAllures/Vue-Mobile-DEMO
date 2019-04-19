@@ -49,6 +49,7 @@ export default {
   remitpayee: apiv2 + '/remitpayee/',
   remit: apiv2 + '/remit_transaction/',
   readMessage: apiv2 + '/message/read/',
+  unreadMessage: apiv2 + '/message/count/',
   messages: apiv2 + '/messages/',
   gamehistory: apiv2 + '/history/',
   statistic: apiv2 + '/statistic/',
@@ -67,5 +68,6 @@ export default {
   service_stickers: venomHost + '/chat/stickers/',
   service_unread: venomHost + '/support/has_unread/',
   service_image_attachment: venomHost + '/chat/attachment/',
+  win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/'
 }

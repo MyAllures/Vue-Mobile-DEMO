@@ -290,7 +290,36 @@ function fetchVenomJWTToken () {
   })
 }
 
+function fetchEiderJWTToken () {
+  return axios.post(urls.get_jwt_token, {service_type: JWT.eider}).then((res) => {
+    Vue.cookie.set(JWT.eider + '_token', res[JWT.eider + '_token'])
+    return res
+  })
+}
+
+function fetchActivityEnvelope (envelopId) {
+  return axios.get(`${urls.envelope_activity}${envelopId}/?platform=mobile`)
+}
+
+function takeActivityEnvelope (data) {
+  return axios.post(urls.take_envelope_activity, data, {
+    'Content-Type': 'application/json'
+  })
+}
+
+function fetchWinHistory () {
+  return axios.get(urls.win_history)
+}
+
+function fetchUnreadCount () {
+  return axios.get(urls.unreadMessage)
+}
 export {
+  fetchUnreadCount,
+  fetchActivityEnvelope,
+  takeActivityEnvelope,
+  fetchWinHistory,
+  fetchEiderJWTToken,
   fetchVenomJWTToken,
   fetchRavenJWTToken,
   fetchTrendChart,

@@ -68,6 +68,7 @@ export default new Vuex.Store({
     systemConfig: {
       process: 'pending',
       agentDashboardUrl: '',
+      mobileLogo: '',
       homePageLogo: '',
       siteName: '',
       global_preferences: {
