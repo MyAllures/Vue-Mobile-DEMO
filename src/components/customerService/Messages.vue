@@ -30,8 +30,8 @@
                     <span class="bubble" v-if="msg.type === MSG_TYPE.normal">
                       {{msg.text}}
                     </span>
-                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" @load="handleScrollTop" @click="showImgAction(msg.text)" />
-                    <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" @load="handleScrollTop" />
+                    <img class="image bubble" v-if="msg.type === MSG_TYPE.image" :src="msg.text" alt="img" @load="handleScrollTop(!showFullHistory)" @click="showImgAction(msg.text)" />
+                    <img class="sticker-img" v-if="msg.type === MSG_TYPE.sticker" :src="msg.text" alt="sticker" @load="handleScrollTop(!showFullHistory)" />
                     <span class="date">{{$moment(msg.created_at).format('HH:mm:ss')}}</span>
                   </div>
                 </div>
@@ -137,10 +137,10 @@ export default {
         betterScroll.scrollTo(0, betterScroll.maxScrollY, 200)
       }
     },
-    handleScrollTop () {
+    handleScrollTop (force = false) {
       this.$nextTick(() => {
         this.$refs.scroll && this.$refs.scroll.refresh()
-        if (!this.showScrollToBottom) {
+        if (!this.showScrollToBottom || force) {
           this.scrollToLast()
         }
       })
