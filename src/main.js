@@ -34,6 +34,7 @@ function initData () {
         {
           process: 'fulfilled',
           homePageLogo: response.icon,
+          mobileLogo: response.mobile_logo,
           customerServiceUrl: pref.customer_service_url,
           agentDashboardUrl: pref.agent_dashboard_url,
           global_preferences: pref,
@@ -301,6 +302,7 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
   } else {

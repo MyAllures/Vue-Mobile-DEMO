@@ -93,7 +93,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken } from './api'
+import { getToken, fetchEiderJWTToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
@@ -283,13 +283,15 @@ export default {
   },
   watch: {
     'user.logined' (newStatus, old) {
-      let token = this.$cookie.get('access_token')
       if (!newStatus) {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
       } else {
-        this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        fetchEiderJWTToken().then(() => {
+          let token = this.$cookie.get('message_broker_token')
+          this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        })
       }
     },
     '$route' (to, from) {
@@ -324,6 +326,7 @@ export default {
       }
     },
     replaceToken () {
+      fetchEiderJWTToken()
       let refreshToken = this.$cookie.get('refresh_token')
       if (!refreshToken || !this.user.account_type) {
         return

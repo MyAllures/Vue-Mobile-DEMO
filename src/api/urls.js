@@ -45,6 +45,7 @@ export default {
   remitpayee: apiv2 + '/remitpayee/',
   remit: apiv2 + '/remit_transaction/',
   readMessage: apiv2 + '/message/read/',
+  unreadMessage: apiv2 + '/message/count/',
   messages: apiv2 + '/messages/',
   gamehistory: apiv2 + '/history/',
   statistic: apiv2 + '/statistic/',
@@ -61,5 +62,7 @@ export default {
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
-  trend_chart: apiv2 + '/trend_chart/'
+  trend_chart: apiv2 + '/trend_chart/',
+  win_history: host + '/members_win_histories?limit=20',
+  get_jwt_token: host + '/get_jwt_token/'
 }

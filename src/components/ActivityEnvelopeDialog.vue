@@ -54,7 +54,7 @@
                 <inline-loading></inline-loading>
               </div>
               <div v-else-if="status === 'available'" class="button" @click="takeActivityEnvelope">
-                抢红包
+                {{ messages[0] || '抢红包'}}
               </div>
               <div v-else-if="status === 'ineligible'" class="button disabled ineligible"  @click="$emit('on-close')">
                 未满足领取条件

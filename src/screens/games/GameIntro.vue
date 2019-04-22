@@ -16,15 +16,24 @@ const cs600hkl = (resolve) => require(['@/screens/games/rules/cs600hkl'], resolv
 const cs75hkl = (resolve) => require(['@/screens/games/rules/cs75hkl'], resolve)
 const csjndhkl = (resolve) => require(['@/screens/games/rules/csjndhkl'], resolve)
 const gd11x5 = (resolve) => require(['@/screens/games/rules/gd11x5'], resolve)
+const ah11x5 = (resolve) => require(['@/screens/games/rules/ah11x5'], resolve)
+const bj11x5 = (resolve) => require(['@/screens/games/rules/bj11x5'], resolve)
+const fh11x5 = (resolve) => require(['@/screens/games/rules/fh11x5'], resolve)
+const gs11x5 = (resolve) => require(['@/screens/games/rules/gs11x5'], resolve)
 const jsk3 = (resolve) => require(['@/screens/games/rules/jsk3'], resolve)
 const msk3 = (resolve) => require(['@/screens/games/rules/msk3'], resolve)
 const bjk3 = (resolve) => require(['@/screens/games/rules/bjk3'], resolve)
+const gxk3 = (resolve) => require(['@/screens/games/rules/gxk3'], resolve)
+const shk3 = (resolve) => require(['@/screens/games/rules/shk3'], resolve)
+const hubk3 = (resolve) => require(['@/screens/games/rules/hubk3'], resolve)
 const mlaft = (resolve) => require(['@/screens/games/rules/mlaft'], resolve)
 const gdklsf = (resolve) => require(['@/screens/games/rules/gdklsf'], resolve)
 const bcr = (resolve) => require(['@/screens/games/rules/bcr'], resolve)
 const jsssc = (resolve) => require(['@/screens/games/rules/jsssc'], resolve)
 const jspk10 = (resolve) => require(['@/screens/games/rules/jspk10'], resolve)
 const cqssc = (resolve) => require(['@/screens/games/rules/cqssc'], resolve)
+const ynssc = (resolve) => require(['@/screens/games/rules/ynssc'], resolve)
+const hjssc = (resolve) => require(['@/screens/games/rules/hjssc'], resolve)
 const pcdd = (resolve) => require(['@/screens/games/rules/pcdd'], resolve)
 const luckdd = (resolve) => require(['@/screens/games/rules/luckdd'], resolve)
 const hkl = (resolve) => require(['@/screens/games/rules/hkl'], resolve)
@@ -49,15 +58,24 @@ export default {
     cs600hkl,
     cqlf,
     gd11x5,
+    bj11x5,
+    ah11x5,
+    fh11x5,
+    gs11x5,
     jsk3,
     msk3,
     bjk3,
+    gxk3,
+    shk3,
+    hubk3,
     mlaft,
     gdklsf,
     bcr,
     jsssc,
     jspk10,
     cqssc,
+    ynssc,
+    hjssc,
     pcdd,
     luckdd,
     hkl,
