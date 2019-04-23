@@ -27,9 +27,9 @@
       </div>
     </div>
     <div class="action-area">
-      <div class="item" @click="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
+      <div class="item" @click="handleRouteChange('/fin/record/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
       <div class="item" @click="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</div>
-      <div class="item" @click="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
+      <div class="item" @click="handleRouteChange('/fin/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
     </div>
     <div class="logout" @click="logoutDialogShow = true">{{$t('misc.logout')}}</div>
     <div v-transfer-dom>

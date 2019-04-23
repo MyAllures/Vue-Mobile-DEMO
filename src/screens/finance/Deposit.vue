@@ -42,17 +42,9 @@
         </div>
       </group>
 
-      <router-view v-if="selectedPayee" :payee="selectedPayee"></router-view>
+      <router-view :payee="selectedPayee"></router-view>
     </div>
-    <div v-else class="unregistered-box">
-      <div class="unregistered-img"></div>
-      <div class="unregistered-text">需先注册才能充值</div>
-      <div class="unregistered-button">
-        <x-button type="primary" @click.native="$router.push('/register')">
-          立即注册
-        </x-button>
-      </div>
-    </div>
+    <register-tips v-else ></register-tips>
     <div v-transfer-dom>
       <x-dialog
         :show.sync="showDialog"
@@ -62,7 +54,7 @@
         <div class="dialog-title">{{selectedGroup&&selectedGroup.display_name}}充值</div>
         <div class="close-btn" @click="showDialog = false"></div>
         <form
-          v-show="$route.path==='/my/deposit'"
+          v-show="$route.path==='/fin/deposit'"
           @submit="submit"
           :action="paymentUrl"
           method="post"
@@ -99,6 +91,7 @@ import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
 import urls from '../../api/urls'
 import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
+import RegisterTips from '../../components/RegisterTips'
 
 export default {
   name: 'Deposit',
@@ -139,7 +132,8 @@ export default {
     XInput,
     GroupTitle,
     XDialog,
-    rowSkeleton
+    rowSkeleton,
+    RegisterTips
   },
   directives: {
     TransferDom
@@ -253,13 +247,13 @@ export default {
       if (payee.remit_type && payee.remit_type.id) {
         switch (payee.remit_type.id) {
           case 1:
-            this.$router.push({path: '/my/deposit/remit/bank'})
+            this.$router.push({path: '/fin/deposit/remit/bank'})
             break
           case 2:
-            this.$router.push({path: '/my/deposit/remit/wechat'})
+            this.$router.push({path: '/fin/deposit/remit/wechat'})
             break
           case 3:
-            this.$router.push({path: '/my/deposit/remit/alipay'})
+            this.$router.push({path: '/fin/deposit/remit/alipay'})
             break
         }
       } else {
@@ -323,8 +317,8 @@ export default {
           let next = '/login?next=' + this.$route.fullPath
           this.$router.push(next)
         }
-        this.$store.dispatch('setCustomTitle', '充值')
-        this.$router.push({path: '/my/deposit/submit_success'})
+        this.showDialog = false
+        this.$router.push({path: '/fin/deposit/submit_success'})
       } else {
         e.preventDefault()
       }
@@ -472,33 +466,7 @@ export default {
     }
   }
 }
-.unregistered-box {
-  box-sizing: border-box;
-  padding: 20px 30px 0 30px;
-  .unregistered-img {
-    width: 100%;
-    height: 200px;
-    background: url('../../assets/unregistered.png') no-repeat;
-    background-size: contain;
-    background-position: center center;
-  }
-  .unregistered-text {
-    width: 100%;
-    height: 60px;
-    line-height: 60px;
-    color: #666;
-    font-size: 14px;
-    text-align: center;
-  }
-  @media screen and (min-width: 321px) {
-    .unregistered-button {
-      position: absolute;
-      bottom: 100px;
-      left: 30px;
-      right: 30px;
-    }
-  }
-}
+
 .payee-icon {
   margin-right: 8px;
   width: 32px;

@@ -171,23 +171,6 @@ export default {
       route: 'Game',
       name: 'game'
     }, {
-      label: this.$t('deposit.process'),
-      iconImg: require('./assets/footer/top_up_normal.svg'),
-      iconImgActive: theme => `
-      <svg width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <title>icon_footer_top up_pressed</title>
-        <desc>Created with Sketch.</desc>
-        <defs></defs>
-        <g id="icon_footer_top-up_pressed" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <path d="M22.95,7 L4.05,7 C3.4704,7 3,7.384 3,7.85714286 L3,10 L24,10 L24,7.85714286 C24,7.384 23.5296,7 22.95,7" id="Fill-1" fill="${theme}"></path>
-            <path d="M5.80769231,14 L11.1923077,14 C11.6381538,14 12,14.448 12,15 C12,15.552 11.6381538,16 11.1923077,16 L5.80769231,16 C5.36184615,16 5,15.552 5,15 C5,14.448 5.36184615,14 5.80769231,14 Z M3,12.5294118 L3,19.9411765 C3,20.5256471 3.4704,21 4.05,21 L22.95,21 C23.5296,21 24,20.5256471 24,19.9411765 L24,12.5294118 L24,12 L3,12 L3,12.5294118 Z" id="Fill-3" fill="${theme}"></path>
-        </g>
-      </svg>
-      `,
-      link: '/my/deposit',
-      route: 'Deposit',
-      name: 'deposit'
-    }, {
       label: this.$t('fin.name'),
       iconImg: require('./assets/footer/finance_normal.svg'),
       iconImgActive: theme => `
@@ -200,7 +183,7 @@ export default {
         </g>
       </svg>
       `,
-      link: '/fin/bet_record',
+      link: '/fin/deposit',
       route: 'Fin',
       name: 'fin'
     }, {
@@ -260,9 +243,6 @@ export default {
       const path = this.$route.path
       if (path === '/') {
         return 'home'
-      }
-      if (this.$route.matched[0].path === '/my/deposit') {
-        return 'deposit'
       }
       return path.split('/')[1]
     },

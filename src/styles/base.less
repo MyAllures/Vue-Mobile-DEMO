@@ -166,7 +166,9 @@ html, body {
 .fr {
   float: right;
 }
-
+.vux-label {
+  color: #333;
+}
 .clearfix:after {
   content: "";
   display: table;
@@ -253,7 +255,6 @@ html, body {
 }
 
 .record-table.vux-table {
-  margin-top: 10px;
   background-color: @white;
   text-align: left;
   color: @grayscale6;
@@ -263,7 +264,7 @@ html, body {
   }
   td {
     text-align: left;
-    padding: 10px 0 10px 12px;
+    padding: 8px 0 8px 12px;
   }
   .record-thead {
     background-color: @grayscale1;
@@ -283,6 +284,7 @@ html, body {
     td {
       background: @grayscale1;
       text-align: center;
+      color: #999;
       &::before {
         display: none;
       }
