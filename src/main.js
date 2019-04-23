@@ -89,7 +89,8 @@ function initData () {
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
-          serviceAction
+          serviceAction,
+          appIcon: response.app_icon
         })
 
       const themeId = response.theme || 1
@@ -343,14 +344,6 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
-  fetchVenomJWTToken().then(() => {
-    let token = Vue.cookie.get(`${JWT.venom}_token`)
-    store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-  })
-  fetchEiderJWTToken().then(() => {
-    let token = Vue.cookie.get(`${JWT.eider}_token`)
-    store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
-  })
   store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
     if (store.state.systemConfig.process === 'pending') {
@@ -367,6 +360,14 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    fetchVenomJWTToken().then(() => {
+      let token = Vue.cookie.get(`${JWT.venom}_token`)
+      store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+    })
+    fetchEiderJWTToken().then(() => {
+      let token = Vue.cookie.get(`${JWT.eider}_token`)
+      store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+    })
     store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
