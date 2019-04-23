@@ -5,7 +5,7 @@
       <img :src="systemConfig.appIcon" alt="App" v-if="systemConfig.appIcon" class="icon" />
       <span>下载 app，游戏更尽兴</span>
     </div>
-    <x-button :href="systemConfig.appDownloadUrl" type="primary" mini class="download" target="_blank">前往下载</x-button>
+    <a class="weui-btn download weui-btn_mini weui-btn_primary" @click="closePrompt" :href="systemConfig.appDownloadUrl" target="_blank">前往下载</a>
   </div>
 </template>
 <script>
