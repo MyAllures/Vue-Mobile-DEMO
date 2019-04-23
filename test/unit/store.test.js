@@ -44,7 +44,7 @@ describe('store', () => {
   it('fetchGames', async () => {
     await store.dispatch('fetchGames')
     expect(store.state.games.length).toBe(30)
-    expect(store.state.tagTable['热门游戏'].length).toBe(17)
+    expect(store.state.tagTable['热门游戏'].length).toBe(15)
     expect(store.state.tagTable['PK10'].length).toBe(6)
     expect(store.state.tagTable['时时彩'].length).toBe(7)
     expect(store.state.categories).toEqual(expect.objectContaining({
