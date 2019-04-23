@@ -14,10 +14,7 @@ import {
   fetchAnnouncements
 } from '@/api'
 import { JWT } from '@/utils/jwtToken'
-
-import { HKL_GAMES } from '@/config'
 import { take, find } from 'lodash'
-
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -134,24 +131,10 @@ export default {
         gameGroups[d] = gameGroups[d].filter(gameCode => !!find(res, {code: gameCode})).map(gameCode => find(res, {code: gameCode}))
       })
 
-      const tagTable = {}
-      res.forEach(game => {
-        if (HKL_GAMES.includes(game.code)) {
-          game.type = 'hkl'
-        }
-        game.tag.forEach(t => {
-          if (t === '热门游戏') {
-            let gamesForTag
-            if (tagTable[t]) {
-              gamesForTag = tagTable[t]
-            } else {
-              gamesForTag = []
-              tagTable[t] = gamesForTag
-            }
-            gamesForTag.push(game)
-          }
-        })
-      })
+      const tagTable = {
+        '热门游戏': res.slice(0, 17)
+      }
+
       commit(types.SET_GAMES, {
         games: res
       })
