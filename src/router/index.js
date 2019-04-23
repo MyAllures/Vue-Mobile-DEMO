@@ -46,6 +46,57 @@ const baseRoutes = [
     }
   },
   {
+    path: '/game',
+    name: 'Game',
+    component: resolve => { require(['../screens/games/GameHall.vue'], resolve) },
+    meta: {
+      requiresAuth: true,
+      tabbarHidden: true
+    },
+    children: [
+      {
+        path: ':gameId',
+        component: resolve => { require(['../screens/games/Game.vue'], resolve) },
+        meta: {
+          tabbarHidden: true
+        },
+        children: [
+          {
+            path: 'playpositions',
+            name: 'PlayPositions',
+            component: resolve => { require(['../screens/games/TrackBet.vue'], resolve) },
+            meta: {
+              tabbarHidden: true
+            }
+          },
+          {
+            path: ':categoryId',
+            name: 'GameDetail',
+            component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
+            meta: {
+              tabbarHidden: true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    path: '/chatroom',
+    name: 'Chatroom',
+    component: resolve => { require(['../screens/chatroom/Chatroom.vue'], resolve) },
+    meta: {
+      title: '聊天室',
+      requiresAuth: true,
+      tabbarHidden: true,
+      leftCtrl: 'back',
+      backPage: {
+        text: '首页',
+        path: '/'
+      }
+    }
+  },
+  {
     path: '/fin',
     name: 'Fin',
     redirect: '/fin/deposit',
@@ -230,6 +281,16 @@ const baseRoutes = [
             component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
           },
           {
+            path: 'bettrack_record',
+            name: 'BetTrackRecord',
+            meta: {
+              title: '追号纪录',
+              gaTitle: '追号纪录',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
+          },
+          {
             path: 'personal_report',
             name: 'PersonalReport',
             meta: {
@@ -343,115 +404,6 @@ const baseRoutes = [
     redirect: '/'
   }
 ]
-const oldBetTrackRecord = {
-  path: 'bettrack',
-  name: 'BetTrackRecord',
-  meta: {
-    title: '追号纪录',
-    gaTitle: '追号纪录',
-    requiresAuth: true
-  },
-  component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
-}
 
-const newBetTrackRecord = {
-  path: 'bettrack',
-  name: 'BetTrackRecord',
-  meta: {
-    title: '追号纪录',
-    gaTitle: '追号纪录',
-    requiresAuth: true
-  },
-  component: resolve => { require(['../screens/finance/NewBetTrackRecord.vue'], resolve) }
-}
-
-const oldGame = {
-  path: '/game',
-  name: 'Game',
-  component: resolve => { require(['../screens/games/GameHall.vue'], resolve) },
-  meta: {
-    requiresAuth: true,
-    tabbarHidden: true
-  },
-  children: [
-    {
-      path: ':gameId',
-      component: resolve => { require(['../screens/games/Game.vue'], resolve) },
-      meta: {
-        tabbarHidden: true
-      },
-      children: [
-        {
-          path: 'playpositions',
-          name: 'PlayPositions',
-          component: resolve => { require(['../screens/games/TrackBet.vue'], resolve) },
-          meta: {
-            tabbarHidden: true
-          }
-        },
-        {
-          path: ':categoryId',
-          name: 'GameDetail',
-          component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
-          meta: {
-            tabbarHidden: true
-          }
-        }
-      ]
-    }
-  ]
-}
-
-const newGame = {
-  path: '/game',
-  name: 'Game',
-  component: resolve => { require(['../screens/chatGame/ChatGameHall.vue'], resolve) },
-  meta: {
-    requiresAuth: true,
-    tabbarHidden: true
-  },
-  children: [
-    {
-      path: ':gameId',
-      component: resolve => { require(['../screens/chatGame/ChatGame.vue'], resolve) },
-      meta: {
-        tabbarHidden: true
-      }
-    }
-  ]
-}
-
-let routes = createRoute(baseRoutes, 'new')
-router.addRoutes(routes)
+router.addRoutes(baseRoutes)
 export default router
-
-function createRoute (routes, version) {
-  let result = []
-  if (version === 'new') {
-    result.push(newGame)
-  } else {
-    result.push(oldGame)
-  }
-  routes.forEach(route => {
-    let copyRoute = { ...route }
-    if (copyRoute.children) {
-      copyRoute.children = createRoute(copyRoute.children, version)
-    }
-    if (copyRoute.path === '/fin') {
-      const targetChild = copyRoute.children.find(route => {
-        return route.name === 'FinanceRecord'
-      })
-      targetChild.children.push(version === 'new' ? newBetTrackRecord : oldBetTrackRecord)
-    }
-    result.push(copyRoute)
-  })
-  return result
-}
-
-export function switchRouter (version) {
-  const newRouter = new Router({ route: [] })
-
-  router.matcher = newRouter.matcher
-  let routes = createRoute(baseRoutes, version)
-  router.addRoutes(routes)
-}

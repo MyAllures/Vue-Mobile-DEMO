@@ -5,7 +5,7 @@ import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
-import eagle from './eagle'
+import chatroom from './chatroom'
 import game from './game'
 
 Vue.use(Vuex)
@@ -104,14 +104,10 @@ export default new Vuex.Store({
     keepAlivePage: ['Home'],
     promotions: [],
     ws: {
-      raven: null,
       eider: null
     },
-    roomId: undefined,
-    roomInfo: null,
     messages: [],
     announce: {
-      chatroom: [],
       homepage: []
     },
     banners: [],
@@ -136,7 +132,7 @@ export default new Vuex.Store({
   getters,
   modules: {
     page,
-    eagle,
+    chatroom,
     game
   }
 })

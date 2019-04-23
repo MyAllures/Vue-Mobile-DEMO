@@ -7,7 +7,6 @@ const apiv2 = host + '/v2'
 const v1Member = host + '/v1/member'
 const v2Member = host + '/v2/member'
 const apiv1 = host + '/v1'
-const ravenHost = env.chatApi.replace(/"/g, '')
 const wsEiderHost = env.eiderHost.replace(/"/g, '')
 const eagleHost = env.eagleHost.replace(/"/g, '')
 const wsEagleHost = env.wsEagleHost.replace(/"/g, '')
@@ -67,12 +66,6 @@ export default {
   expert_bettrack: host + '/betrecord/expert_plan_bets/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/',
-  raven: {
-    chatEmoji: ravenHost + '/v1/emoji/',
-    stickers: ravenHost + '/v1/stickers/',
-    chatinfo: ravenHost + '/v1/user/',
-    roomInfo: ravenHost + '/v1/member/room/'
-  },
   eagle: {
     host: eagleHost,
     ws_host: wsEagleHost,
@@ -80,6 +73,7 @@ export default {
     sendImg: eagleHost + '/v1/attachment/',
     stickers: eagleHost + '/v1/stickers/',
     room: eagleHost + '/v1/rooms/',
-    room_banned_users: eagleHost + '/v1/room-banned-users/'
+    room_banned_users: eagleHost + '/v1/room-banned-users/',
+    global_data: eagleHost + '/v1/global-data'
   }
 }

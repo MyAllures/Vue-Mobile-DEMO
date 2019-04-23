@@ -145,12 +145,6 @@ export default {
               max_opts: playpositions.max_opts,
               positions: playpositions.data
             }
-            categories.push({
-              code: 'playpositions',
-              id: 'playpositions',
-              name: '追号',
-              playpositions
-            })
           }
           commit(types.SET_CATEGORIES, {
             gameId: id,

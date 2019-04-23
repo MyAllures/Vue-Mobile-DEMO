@@ -11,7 +11,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
+import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, sendHeartBeat } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
@@ -24,6 +24,7 @@ function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
+  store.dispatch('chatroom/roomList')
 
   gethomePage().then(
     response => {
@@ -252,23 +253,6 @@ Vue.mixin({
   }
 })
 
-const setChatRoomSetting = (username) => {
-  if (store.state.systemConfig.chatroomEnabled) {
-    fetchChatUserInfo(store.state.user.username).then(res => {
-      store.dispatch('setUser', {
-        planMakerRoom: res.data.plan_maker_rooms || []
-      })
-    }).catch(() => {})
-    fetchRoomInfo().then(res => {
-      const roomInfo = {}
-      res.forEach(room => {
-        roomInfo[room.id] = {name: room.title, status: room.status}
-      })
-      store.commit(types.SET_ROOM_INFO, roomInfo)
-    }).catch(() => {})
-  }
-}
-
 // init data
 const token = Vue.cookie.get('access_token')
 if (token) {
@@ -303,12 +287,7 @@ store.watch((state) => {
         return state.systemConfig.process
       }, (configProcess) => {
         unwatch()
-        if (configProcess === 'fulfilled') {
-          setChatRoomSetting()
-        }
       })
-    } else {
-      setChatRoomSetting()
     }
   }
   if (logined) {
@@ -321,9 +300,6 @@ store.watch((state) => {
   } else {
     if (store.state.ws.eider) {
       store.state.ws.eider.closeConnect()
-    }
-    if (store.state.ws.raven) {
-      store.state.ws.raven.closeConnect()
     }
     clearInterval(heartBeatInterval)
   }

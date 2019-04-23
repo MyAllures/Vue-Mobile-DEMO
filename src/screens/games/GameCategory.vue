@@ -143,6 +143,9 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
+      if (this.categories.length === 0) {
+        return undefined
+      }
       let currentPlayGroup = _.find(this.categories, item => item.id + '' === this.$route.params.categoryId)
       let playGroupCode = currentPlayGroup.code
       return _.find(customPlayGroups, item => item.code.includes(playGroupCode))

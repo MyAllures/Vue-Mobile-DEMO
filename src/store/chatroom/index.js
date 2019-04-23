@@ -1,15 +1,22 @@
+import {eagle} from '@/api'
+
 export default {
   namespaced: true,
   state: {
     ws: null,
+    status: '',
     messages: [],
     permission: null,
     emojiMap: null,
     isManager: false,
     loading: true,
+    roomList: [63],
     isRoomExist: true
   },
   mutations: {
+    setStatus: (state, status) => {
+      state.status = status
+    },
     setWs: (state, ws) => {
       state.ws = ws
     },
@@ -18,16 +25,15 @@ export default {
       state.messages = data.recent_messages
       state.permission = data.user.chat_permission
       state.isManager = data.user.is_manager
-      if (data.isRoomExist === false) {
-        state.isRoomExist = false
-      }
+    },
+    roomList: (state, roomList) => {
+      state.roomList = roomList
     },
     clear: (state, data) => {
       state.loading = true
       state.messages = []
       state.permission = null
       state.isManager = false
-      state.isRoomExist = true
     },
     receiveMsg: (state, message) => {
       state.messages.push(message)
@@ -37,11 +43,20 @@ export default {
     }
   },
   actions: {
+    setStatus: ({ commit }, status) => {
+      commit('setStatus', status)
+    },
     setWs: ({ commit }, ws) => {
       commit('setWs', ws)
     },
     init: ({ commit }, data) => {
       commit('init', data)
+    },
+    roomList: ({ commit }) => {
+      return eagle.fetchGlobalData().then(res => {
+        commit('roomList', res.available_rooms)
+        return res.available_rooms
+      })
     },
     clear: ({ commit }, data) => {
       commit('clear', data)

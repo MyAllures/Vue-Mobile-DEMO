@@ -4,18 +4,16 @@ import qs from 'qs'
 
 export const JWT = {
   venom: 'customer_service',
-  raven: 'chat',
   eider: 'message_broker',
   eagle: 'chatroom_betting'
 }
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
-const axiosRaven = axios.create()
 const axiosGhost = axios.create()
 const axiosEagle = axios.create()
 
-export {urls, axiosRaven, axiosGhost, axiosEagle}
+export {urls, axiosGhost, axiosEagle}
 
 export function login (user) {
   return axiosGhost.post(urls.login, qs.stringify(user))
@@ -45,7 +43,7 @@ export function gethomePage () {
 }
 
 export function fetchGames () {
-  return axiosEagle.get(`${urls.eagle.games}?platform=1&extras=rooms`)
+  return axiosGhost.get(`${urls.games}?platform=1`)
 }
 
 export function fetchGamesDetail () {
@@ -371,20 +369,6 @@ export function fetchJWTToken (type) {
   })
 }
 
-// raven
-export function fetchStickers (name) {
-  return axiosGhost.get(urls.raven.stickers)
-}
-export function fetchChatEmoji () {
-  return axiosGhost.get(urls.raven.chatEmoji)
-}
-export function fetchChatUserInfo (username) {
-  return axiosRaven.get(`${urls.raven.chatinfo}${username}/`)
-}
-export function fetchRoomInfo () {
-  return axiosGhost.get(urls.raven.roomInfo)
-}
-
 // eagle
 export const eagle = {
   sendImg (data) {
@@ -410,5 +394,12 @@ export const eagle = {
     return axiosEagle.get(`${urls.eagle.room_banned_users}`, {params: {
       room_id: roomId
     }})
+  },
+  /**
+   * 取得全域資料
+   * @returns {array} elements in the array are `room_id`
+   */
+  fetchGlobalData () {
+    return axiosEagle.get(urls.eagle.global_data)
   }
 }

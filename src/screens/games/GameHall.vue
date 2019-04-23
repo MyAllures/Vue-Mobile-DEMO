@@ -16,7 +16,6 @@
         <div class="right-ctrl">
           <div
             v-click-outside="onClickOutSideHelper"
-            v-if="!this.showChatRoom"
             class="helper"
             slot="right">
             <div class="helper-trigger" @click="toggleHelper">
@@ -44,34 +43,20 @@
               <li class="helper-link" @click="showGameInfo('intro')">
                 游戏介绍
               </li>
-              <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
-                聊天室
-              </li>
             </ul>
           </div>
           <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
         </div>
       </template>
     </top-bar>
-    <template v-if="allGames&&allGames.length&&theme">
-      <game-menu v-model="isGameMenuVisible" v-if="allGames.length"/>
-      <template v-if="currentGame">
-        <div class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
-          <div v-if="!isGameMenuVisible && showNotifiyMsg"
-            @click="isGameMenuVisible = !isGameMenuVisible"
-            class="notify-msg menu-center topbar" :style="{'background-color': theme}"
-          >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
-          </div>
-        </div>
-      </template>
-      <div v-if="promotedGame && currentGame.is_prompt" class="bottom-prompt" :class="{ 'hidden' : !showBottomPrompt }">
-        <div class="inner topbar" :style="{'background-color': theme}">
-          <div class="close-btn small" @click="hideBottomPromot"></div>
-          <div class="txt">开奖太慢？推荐您体验{{promotedGame.period_descroption}}的{{promotedGame.display_name}}</div>
-          <x-button type="default" mini @click.native="forwardTo(promotedGame)">前往</x-button>
-        </div>
+    <game-menu v-model="isGameMenuVisible" v-if="games&&games.length&&theme"/>
+    <div v-if="games&&games.length&&theme&&currentGame" class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
+      <div v-if="!isGameMenuVisible && showNotifiyMsg"
+        @click="isGameMenuVisible = !isGameMenuVisible"
+        class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
       </div>
-    </template>
+    </div>
     <game-menu-icon
       class="menu-center"
       :style="{top: showNotifiyMsg ? '63px' : '39px'}"
@@ -79,18 +64,16 @@
       type="more"
     />
     <div :style="{height: showNotifiyMsg? `calc(100% - 37px)`:'calc(100% - 12px)'}">
-      <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
+      <router-view :key="$route.params.gameId"/>
     </div>
-    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
   </div>
 </template>
 <script>
 import { XHeader, Popup, XButton, TransferDom } from 'vux'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import GameInfo from './GameInfo'
 import { find } from 'lodash'
-import ChatRoom from '../../components/ChatRoom'
 import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
@@ -109,15 +92,9 @@ let scrollTop
 
 export default {
   name: 'GameHall',
-  props: {
-    showChatRoom: {
-      type: Boolean
-    }
-  },
   components: {
     Popup,
     XHeader,
-    ChatRoom,
     GameInfo,
     XButton,
     TopBar,
@@ -136,17 +113,16 @@ export default {
       isGameInfoVisible: false,
       isGameMenuVisible: false,
       isHelperVisible: false,
-      showNotifiyMsg: true,
-      showBottomPrompt: true
+      showNotifiyMsg: false
     }
   },
   computed: {
     recommMaps () {
-      if (!this.allGames || !this.allGames.length) {
+      if (!this.games || !this.games.length) {
         return {}
       }
       let map = {}
-      this.allGames.forEach(game => {
+      this.games.forEach(game => {
         if (game.prompt_game) {
           map[game.code] = game.prompt_game
         }
@@ -168,33 +144,9 @@ export default {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
-    ...mapGetters([
-      'allGames'
-    ]),
     ...mapState([
-      'roomInfo', 'roomId', 'systemConfig', 'theme'
+      'systemConfig', 'theme', 'games'
     ]),
-    chatroomEnabled () {
-      return this.systemConfig.chatroomEnabled
-    },
-    isShowChatroomIcon () {
-      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
-        return false
-      }
-      if (!this.$route.params.gameId || !this.roomInfo) {
-        return false
-      }
-      if (!this.roomInfo[this.$route.params.gameId].status && !this.roomInfo[100000].status) {
-        return false
-      }
-      return true
-    },
-    roomName () {
-      if (this.roomInfo && this.roomId) {
-        return this.roomInfo[this.roomId].name
-      }
-      return ''
-    },
     seoWebsite () {
       if (this.systemConfig.planSiteUrl && this.currentGame) {
         const code = this.currentGame.code
@@ -210,22 +162,13 @@ export default {
         return null
       }
       let code = this.recommMaps[this.currentGame.code]
-      return code ? find(this.allGames, game => {
+      return code ? find(this.games, game => {
         return game.code === code
       }) : null
     }
   },
   watch: {
     '$route': 'changeRoute',
-    'roomName': function (name) {
-      if (name) {
-        this.sendGaEvent({
-          label: name,
-          category: '聊天室',
-          action: '点击'
-        })
-      }
-    },
     'isGameInfoVisible': function (visible) {
       if (visible) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -245,13 +188,14 @@ export default {
         to(scrollTop)
       }
     },
-    'currentGame': {
-      handler (game) {
-        if (game) {
-          const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
-          const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
-          this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
-          this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
+    'currentGame.code': {
+      handler (code) {
+        if (code) {
+          const game = this.currentGame
+          if (game.is_prompt) {
+            const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
+            this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
+          }
         }
       },
       immediate: true
@@ -259,10 +203,10 @@ export default {
   },
   created () {
     if (!this.$route.params.gameId) {
-      if (this.allGames.length > 0) {
+      if (this.games.length > 0) {
         this.chooseGame()
       } else {
-        const unwatch = this.$watch('allGames', function (allGames) {
+        const unwatch = this.$watch('games', function (games) {
           this.chooseGame()
           unwatch()
         })
@@ -273,28 +217,6 @@ export default {
     })
   },
   methods: {
-    setBottomPromotFlag () {
-      window.localStorage.setItem(`bottom-promot-${this.currentGame.code}`, this.$moment().format('YYYY-MM-DD HH:mm:ss'))
-    },
-    hideBottomPromot () {
-      this.setBottomPromotFlag()
-      this.showBottomPrompt = false
-      this.sendGaEvent({
-        label: this.currentGame.display_name,
-        category: 'bottom-promot',
-        action: 'hide'
-      })
-    },
-    forwardTo (game) {
-      this.setBottomPromotFlag()
-      this.sendGaEvent({
-        label: game.name,
-        category: 'bottom-promot',
-        action: 'via-' + this.currentGame.display_name
-      })
-      this.$store.dispatch('saveLastGame', game.id)
-      this.$router.push({path: `/game/${game.id}/`})
-    },
     toggleGameMenu (trigger) {
       this.isGameMenuVisible = !this.isGameMenuVisible
       if (this.isGameMenuVisible) {
@@ -306,24 +228,13 @@ export default {
       }
     },
     changeRoute (to, from) {
-      this.showChatRoom = false
       if (to.path === '/game') {
         this.chooseGame()
       }
     },
     chooseGame () {
-      const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
+      const gameId = this.$store.state.lastGameData.lastGame || this.games[0].id
       this.$router.replace('/game/' + gameId)
-    },
-    closeChatRoom () {
-      this.showChatRoom = false
-      if (this.ws.raven && this.ws.raven.roomId) {
-        this.ws.raven.leaveRoom()
-      }
-    },
-    openChatRoom () {
-      this.sendHelperGa('chatroom')
-      this.showChatRoom = true
     },
     toHome () {
       if (this.$route.name !== 'Home') {
@@ -357,7 +268,6 @@ export default {
         history: '历史开奖',
         historyViaHall: '历史开奖-游戏大厅',
         intro: '游戏介绍',
-        chatroom: '聊天室',
         trend: '走勢圖表'
       }
       this.sendGaEvent({
@@ -499,68 +409,26 @@ export default {
 }
 
 .notify-msg-wrapper {
-  height: 25px;
-  transition-duration: .7s;
-  margin-top: 0;
-}
+    height: 25px;
+    transition-duration: 0.7s;
+    margin-top: 0;
+  }
 
 .notify-msg {
   position: relative;
   height: 25px;
   font-size: 13px;
-  line-height: 22px;
+  line-height: 25px;
   color: white;
   text-align: center;
-  top: 45.5px;
-  transition: top 1s;
-  &.hide {
-    top: 20px;
-  }
-
   .close-btn {
     position: absolute;
     right: -1px;
     top: -1px;
-    &::before, &::after {
+    &::before,
+    &::after {
       height: 15px;
     }
-  }
-}
-.bottom-prompt {
-  opacity: 0.9;
-  width: 100%;
-  position: absolute;
-  bottom: 55px;
-  transition: bottom 1s, opacity 1s;
-  z-index: 5;
-  justify-content: center;
-  align-items: center;
-  &.hidden {
-    bottom: 100%;
-    opacity: 0;
-  }
-  .inner {
-    border-radius: 4px;
-    display: flex;
-    color: #fff;
-    margin: 10px;
-    padding: 10px 5px;
-  }
-  .close-btn {
-    margin-left: 10px;
-    align-self: center;
-  }
-  .txt {
-    line-height: 1.2;
-    font-size: 13px;
-    align-self: center;
-    padding: 0 10px;
-  }
-
-  .weui-btn.weui-btn_default {
-    height: 32px;
-    width: 80px;
-    align-self: center;
   }
 }
 </style>
