@@ -249,7 +249,7 @@ export default {
                 _this.loading = false
                 _this.$store.dispatch('fetchUser')
                 setTimeout(() => {
-                  _this.$router.push({name: 'My'})
+                  _this.$router.back()
                 }, 2000)
               }).catch(errRes => {
                 _this.errorMsg = msgFormatter(errRes)

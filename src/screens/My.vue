@@ -17,7 +17,7 @@
             <p class="balance-text">余额</p>
             <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
           </div>
-          <div class="button" @click="sendGaEvent({label: '我的帳號',category: '充值',action: '充值'});$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
+          <div class="button" @click="sendGaEvent({label: '我的帳號',category: '充值',action: '充值'});$router.push('/fin/deposit')">{{$t('game.deposit')}}</div>
         </cell>
         <cell @click.native="sendGaEvent({label: '我的帳號',category: '站內消息',action: '檢視'});$router.push('/my/message')"
           :title="'站内消息'"
@@ -33,14 +33,6 @@
           is-link>
           <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
           <span v-if="isPrimaryInfoEmpty" class="warn-tip">未填写</span>
-        </cell>
-      </group>
-      <group>
-        <cell
-          is-link
-          :title="$t('withdraw.apply')"
-          @click.native="$router.push('/my/withdraw')">
-          <img class="svg-icon" src="../assets/my/withdraw.svg" slot="icon" alt="withdraw">
         </cell>
         <cell
           @click.native="$router.push('/my/bankinfo')"

@@ -41,7 +41,7 @@
           </v-form>
         </div>
       </div>
-      <div class="text-center m-b-lg">
+      <div class="text-center m-b-lg m-t">
         <div class="text-danger">{{errorMsg}}</div>
         <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -49,7 +49,7 @@
         </x-button>
       </div>
     </div>
-    <div v-else class="text-center m-t-lg">
+    <div v-else-if="user.account_type" class="text-center m-t-lg">
       <img src="../../assets/my/no_bankinfo.png" alt="尚未建立银行资讯" class="figure">
       <div class="figure-caption">
         <p class="sub">申请取款须先建立银行资讯</p>
@@ -60,6 +60,7 @@
         </x-button>
       </div>
     </div>
+    <register-tips v-else></register-tips>
   </div>
 </template>
 
@@ -71,6 +72,8 @@
   import { postWithdraw } from '../../api'
   import { msgFormatter } from '../../utils'
   import { mapState } from 'vuex'
+  import RegisterTips from '../../components/RegisterTips'
+
   export default {
     data () {
       const amountValidator = (rule, value, callback) => {
@@ -174,7 +177,8 @@
       Alert,
       VForm,
       VFormItem,
-      VInput
+      VInput,
+      RegisterTips
     }
   }
 </script>

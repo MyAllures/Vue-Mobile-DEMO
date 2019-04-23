@@ -79,7 +79,7 @@ export default {
         category: '遊戲大廳充值',
         action: '充值提示'
       })
-      this.$router.push({path: '/my/deposit'})
+      this.$router.push({path: '/fin/deposit'})
     }
   }
 }

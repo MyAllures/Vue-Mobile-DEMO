@@ -1,9 +1,9 @@
 <template>
-  <div class="success-box">
-    <div class="success-img"></div>
-    <div class="success-text">提交成功，请等待交易状态更新</div>
-    <div class="success-button">
-      <x-button type="primary" @click.native="$router.push('/my/deposit')">
+  <div class="box">
+    <div class="img"></div>
+    <div class="text">提交成功，请等待交易状态更新</div>
+    <div class="button">
+      <x-button type="primary" @click.native="$router.push('/fin/deposit')">
         继续充值
       </x-button>
       <x-button type="primary" plain @click.native="toRecord">
@@ -27,24 +27,24 @@ export default {
         category: '查看充值纪录',
         action: '点击'
       })
-      this.$router.push('/fin/payment_record')
+      this.$router.push('/fin/record/deposit')
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.success-box {
+.box {
   box-sizing: border-box;
   padding: 20px 30px 0 30px;
-  .success-img {
+  .img {
     width: 100%;
     height: 200px;
     background: url('../../assets/submit_success.png') no-repeat;
     background-size: contain;
     background-position: center center;
   }
-  .success-text {
+  .text {
     width: 100%;
     height: 60px;
     line-height: 60px;
@@ -53,7 +53,7 @@ export default {
     text-align: center;
   }
   @media screen and (min-width: 321px) {
-    .success-button {
+    .button {
       position: absolute;
       bottom: 100px;
       left: 30px;

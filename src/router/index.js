@@ -48,6 +48,7 @@ const baseRoutes = [
   {
     path: '/fin',
     name: 'Fin',
+    redirect: '/fin/deposit',
     meta: {
       title: '财务',
       requiresAuth: true
@@ -55,82 +56,191 @@ const baseRoutes = [
     component: resolve => { require(['../screens/Fin.vue'], resolve) },
     children: [
       {
-        path: 'payment_record',
-        name: 'PaymentRecord',
+        path: 'deposit',
+        name: 'Deposit',
         meta: {
-          title: '财务纪录',
-          gaTitle: '充值纪录',
-          requiresAuth: true
-        },
-        component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
-      },
-      {
-        path: 'withdraw_record',
-        name: 'WithdrawRecord',
-        meta: {
-          title: '财务纪录',
-          gaTitle: '取款纪录',
-          requiresAuth: true
-        },
-        component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
-      },
-      {
-        path: 'promotion_record',
-        name: 'PromotionRecord',
-        meta: {
-          title: '财务纪录',
-          gaTitle: '优惠和红包纪录',
-          requiresAuth: true
-        },
-        component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
-      },
-      {
-        path: 'return_record',
-        name: 'ReturnRecord',
-        meta: {
-          title: '财务纪录',
-          gaTitle: '反水纪录',
-          requiresAuth: true
-        },
-        component: resolve => { require(['../screens/finance/ReturnRecord.vue'], resolve) }
-      },
-      {
-        path: 'bet_record/:date',
-        name: 'DetailBetRecord',
-        meta: {
-          title: '财务纪录',
-          gaTitle: '投注记录',
+          title: '充值',
           requiresAuth: true,
-          tabbarHidden: true,
-          leftCtrl: 'back'
+          rightCtrl: 'info',
+          showBack: false
         },
-        component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
-      },
-      {
-        path: 'bet_record',
-        name: 'BetRecord',
-        meta: {
-          title: '财务纪录',
-          gaTitle: '投注记录',
-          requiresAuth: true
-        },
-        beforeEnter: (to, from, next) => {
-          if (from.name !== 'DetailBetRecord') {
-            store.dispatch('removeKeepAlive', 'BetRecord')
+        component: resolve => { require(['../screens/finance/deposit.vue'], resolve) },
+        children: [
+          {
+            path: 'submit_success',
+            name: 'SubmitSuccess',
+            component: resolve => { require(['../screens/finance/SubmitSuccess.vue'], resolve) },
+            meta: {
+              title: '充值已提交',
+              gaTitle: '充值申请提交',
+              leftCtrl: 'back',
+              tabbarHidden: true,
+              rightCtrl: 'info',
+              showBack: false
+            }
+          },
+          {
+            path: 'remit',
+            component: resolve => { require(['../screens/finance/remit/Remit.vue'], resolve) },
+            children: [
+              {
+                path: '',
+                name: 'Remit',
+                redirect: '/fin/deposit'
+              },
+              {
+                path: 'bank',
+                name: 'Bank',
+                meta: {
+                  title: '银行转帐',
+                  leftCtrl: 'back',
+                  tabbarHidden: true
+                },
+                component: resolve => { require(['../screens/finance/remit/Bank.vue'], resolve) }
+              },
+              {
+                path: 'wechat',
+                name: 'Wechat',
+                meta: {
+                  title: '微信转帐',
+                  leftCtrl: 'back',
+                  tabbarHidden: true
+                },
+                component: resolve => { require(['../screens/finance/remit/ThirdParty.vue'], resolve) }
+              },
+              {
+                path: 'alipay',
+                name: 'Alipay',
+                meta: {
+                  title: '支付宝转帐',
+                  leftCtrl: 'back',
+                  tabbarHidden: true
+                },
+                component: resolve => { require(['../screens/finance/remit/ThirdParty.vue'], resolve) }
+              }
+            ]
           }
-          next()
-        },
-        component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
+        ]
       },
       {
-        path: 'personal_report',
-        name: 'PersonalReport',
+        path: 'withdraw',
+        name: 'Withdrawal',
         meta: {
-          title: '个人报表',
-          gaTitle: '个人报表',
+          title: '申请取款',
+          rightCtrl: 'info',
           requiresAuth: true
         },
-        component: resolve => { require(['../screens/finance/PersonalReport.vue'], resolve) }
+        component: resolve => { require(['../screens/finance/Withdraw.vue'], resolve) },
+        children: [
+          {
+            path: 'withdraw_success',
+            name: 'WithdrawSuccess',
+            component: resolve => { require(['../screens/finance/WithdrawSuccess.vue'], resolve) },
+            meta: {
+              title: '申請取款',
+              gaTitle: '取款申请提交',
+              leftCtrl: 'back'
+            }
+          }
+        ]
+      },
+      {
+        path: 'record',
+        name: 'FinanceRecord',
+        redirect: '/fin/record/personal_report',
+        meta: {
+          title: '财务记录',
+          rightCtrl: 'info',
+          requiresAuth: true
+        },
+        component: resolve => { require(['../screens/finance/FinanceRecord.vue'], resolve) },
+        children: [
+          {
+            path: 'bet_record',
+            name: 'BetRecord',
+            meta: {
+              title: '投注记录',
+              gaTitle: '投注记录',
+              rightCtrl: 'info',
+              requiresAuth: true
+            },
+            beforeEnter: (to, from, next) => {
+              if (from.name !== 'DetailBetRecord') {
+                store.dispatch('removeKeepAlive', 'BetRecord')
+              }
+              next()
+            },
+            component: resolve => { require(['../screens/finance/BetRecord.vue'], resolve) }
+          },
+          {
+            path: 'deposit',
+            name: 'DepositRecord',
+            meta: {
+              title: '充值记录',
+              gaTitle: '充值纪录',
+              rightCtrl: 'info',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+          },
+          {
+            path: 'withdraw',
+            name: 'WithdrawRecord',
+            meta: {
+              title: '取款记录',
+              gaTitle: '取款纪录',
+              rightCtrl: 'info',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+          },
+          {
+            path: 'promotion',
+            name: 'PromotionRecord',
+            meta: {
+              title: '优惠和红包',
+              gaTitle: '优惠和红包纪录',
+              rightCtrl: 'info',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/TransactionRecord.vue'], resolve) }
+          },
+          {
+            path: 'return',
+            name: 'ReturnRecord',
+            meta: {
+              title: '反水记录',
+              gaTitle: '反水纪录',
+              rightCtrl: 'info',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/ReturnRecord.vue'], resolve) }
+          },
+          {
+            path: 'bet_record/:date',
+            name: 'DetailBetRecord',
+            meta: {
+              title: '投注记录',
+              gaTitle: '投注记录',
+              rightCtrl: 'info',
+              requiresAuth: true,
+              tabbarHidden: true,
+              leftCtrl: 'back'
+            },
+            component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
+          },
+          {
+            path: 'personal_report',
+            name: 'PersonalReport',
+            meta: {
+              title: '个人报表',
+              rightCtrl: 'info',
+              gaTitle: '个人报表',
+              requiresAuth: true
+            },
+            component: resolve => { require(['../screens/finance/PersonalReport.vue'], resolve) }
+          }
+        ]
       }
     ]
   },
@@ -142,79 +252,6 @@ const baseRoutes = [
       requiresAuth: true
     },
     component: resolve => { require(['../screens/My.vue'], resolve) }
-  },
-  {
-    path: '/my/deposit/submit_success',
-    name: 'SubmitSuccess',
-    component: resolve => { require(['../screens/my/SubmitSuccess.vue'], resolve) },
-    meta: {
-      title: 'custom',
-      gaTitle: '充值申请提交',
-      showBack: false
-    }
-  },
-  {
-    path: '/my/deposit/withdraw_success',
-    name: 'WithdrawSuccess',
-    component: resolve => { require(['../screens/my/WithdrawSuccess.vue'], resolve) },
-    meta: {
-      title: '申請取款',
-      gaTitle: '取款申请提交',
-      leftCtrl: 'back'
-    }
-  },
-  {
-    path: '/my/deposit',
-    name: 'Deposit',
-    meta: {
-      title: '充值',
-      requiresAuth: true,
-      showBack: false
-    },
-    component: resolve => { require(['../screens/my/Deposit.vue'], resolve) },
-    children: [
-      {
-        path: 'remit',
-        component: resolve => { require(['../screens/my/remit/Remit.vue'], resolve) },
-        children: [
-          {
-            path: '',
-            name: 'Remit',
-            redirect: '/my/deposit'
-          },
-          {
-            path: 'bank',
-            name: 'Bank',
-            meta: {
-              title: '银行转帐',
-              leftCtrl: 'back',
-              tabbarHidden: true
-            },
-            component: resolve => { require(['../screens/my/remit/Bank.vue'], resolve) }
-          },
-          {
-            path: 'wechat',
-            name: 'Wechat',
-            meta: {
-              title: '微信转帐',
-              leftCtrl: 'back',
-              tabbarHidden: true
-            },
-            component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
-          },
-          {
-            path: 'alipay',
-            name: 'Alipay',
-            meta: {
-              title: '支付宝转帐',
-              leftCtrl: 'back',
-              tabbarHidden: true
-            },
-            component: resolve => { require(['../screens/my/remit/ThirdParty.vue'], resolve) }
-          }
-        ]
-      }
-    ]
   },
   {
     path: '/my/password',
@@ -249,17 +286,6 @@ const baseRoutes = [
       tabbarHidden: true
     },
     component: resolve => { require(['../screens/my/Bankinfo.vue'], resolve) }
-  },
-  {
-    path: '/my/withdraw',
-    name: 'withdraw',
-    meta: {
-      title: '申请取款',
-      leftCtrl: 'back',
-      requiresAuth: true,
-      tabbarHidden: true
-    },
-    component: resolve => { require(['../screens/my/Withdraw.vue'], resolve) }
   },
   {
     path: '/my/wpassword',
@@ -318,7 +344,7 @@ const baseRoutes = [
   }
 ]
 const oldBetTrackRecord = {
-  path: 'bettrack_record',
+  path: 'bettrack',
   name: 'BetTrackRecord',
   meta: {
     title: '追号纪录',
@@ -329,7 +355,7 @@ const oldBetTrackRecord = {
 }
 
 const newBetTrackRecord = {
-  path: 'bettrack_record',
+  path: 'bettrack',
   name: 'BetTrackRecord',
   meta: {
     title: '追号纪录',
@@ -412,11 +438,10 @@ function createRoute (routes, version) {
       copyRoute.children = createRoute(copyRoute.children, version)
     }
     if (copyRoute.path === '/fin') {
-      if (version === 'new') {
-        copyRoute.children.push(newBetTrackRecord)
-      } else {
-        copyRoute.children.push(oldBetTrackRecord)
-      }
+      const targetChild = copyRoute.children.find(route => {
+        return route.name === 'FinanceRecord'
+      })
+      targetChild.children.push(version === 'new' ? newBetTrackRecord : oldBetTrackRecord)
     }
     result.push(copyRoute)
   })

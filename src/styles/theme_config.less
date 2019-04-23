@@ -151,7 +151,7 @@
   }
 
   .fin-tabs .tab-view {
-    background-image: @gradient;;
+    background-image: @gradient;
     .tab-item.selected .tab-item-text {
       color: @main;
     }
@@ -186,6 +186,9 @@
       }
     }
   }
+  .fin-tabs .vux-tab .vux-tab-item.vux-tab-selected {
+    background: lighten(@main, 30%);
+  }
 }
 
 .theme0 { // processing
@@ -205,6 +208,9 @@
   .game-label .game-label-text {
     background-color: #d0e2f7;
     color: #113f7c;
+  }
+  .fin-tabs .vux-tab .vux-tab-item.vux-tab-selected {
+    background: lighten(@azul, 30%);
   }
 }
 
