@@ -70,21 +70,7 @@
                 </tr>
               </tbody>
             </table>
-            <div class="line-panel" :style="{width: `${svgPanelWidth}px`, top: `${svgH/2}px`}">
-              <svg width="100%" :height="`${tableHeight}px`">
-                <template v-for="(res, idx) in resultList">
-                  <line v-if="resultList[idx+1]!==undefined" :key="idx" :x1="colWidth/2+res[0]*colWidth" :y1="svgH*idx" :x2="colWidth/2+resultList[idx+1][0]*colWidth" :y2="svgH*(idx+1)" style="stroke: #156fd8;stroke-width: 1px"/>
-                </template>
-              </svg>
-            </div>
-            <div class="circle-panel" :style="{width: `${svgPanelWidth}px`}">
-              <svg width="100%" :height="`${tableHeight}px`">
-                <template v-for="(res, idx) in resultList">
-                  <circle :key="`circle${idx}`" :cx="colWidth/2+res[0]*colWidth" :cy="svgH/2+svgH*idx" r="10" fill="#156fd8" />
-                  <text :key="`text${idx}`" :x="colWidth/2+res[0]*colWidth" :y="svgH/2+svgH*idx" dominant-baseline="central" text-anchor="middle" style="fill:#fff;font-size:14px;">{{res[1]}}</text>
-                </template>
-              </svg>
-            </div>
+            <canvas class="canvas" ref="line"></canvas>
           </div>
         </div>
       </div>
@@ -133,27 +119,11 @@
             <tbody>
               <tr v-for="(rec, recIdx) in records" :key="recIdx">
                 <td :style="{width: firstColWidth+'px'}" class="first-col col">{{rec.issue_number}}</td>
-                <td :style="{width: colWidth+'px'}" class="col" v-for="(num, index) in rec.numbers" :key="index">
-                  {{num}}
-                </td>
+                <td :style="{width: colWidth+'px'}" class="col" v-for="(num, index) in rec.numbers" :key="index">{{num}}</td>
               </tr>
             </tbody>
           </table>
-          <div class="line-panel" :style="{width: `${svgPanelWidth}px`, top: `${svgH/2}px`}">
-            <svg width="100%" :height="`${tableHeight}px`">
-              <template v-for="(res, idx) in resultList">
-                <line v-if="resultList[idx+1]!==undefined" :key="idx" :x1="colWidth/2+res[0]*colWidth" :y1="svgH*idx" :x2="colWidth/2+resultList[idx+1][0]*colWidth" :y2="svgH*(idx+1)" style="stroke: #156fd8;stroke-width: 1px"/>
-              </template>
-            </svg>
-          </div>
-          <div class="circle-panel" :style="{width: `${svgPanelWidth}px`}">
-            <svg width="100%" :height="`${tableHeight}px`">
-              <template v-for="(res, idx) in resultList">
-                <circle :key="`circle${idx}`" :cx="colWidth/2+res[0]*colWidth" :cy="svgH/2+svgH*idx" r="10" fill="#156fd8" />
-                <text :key="`text${idx}`" :x="colWidth/2+res[0]*colWidth" :y="svgH/2+svgH*idx" dominant-baseline="central" text-anchor="middle" style="fill:#fff;font-size:14px;">{{res[1]}}</text>
-              </template>
-            </svg>
-          </div>
+          <canvas class="canvas" ref="line"></canvas>
           <template  v-if="!loading">
             <div class="foot" v-if="records.length<total_count">
               <x-button
@@ -177,6 +147,7 @@
 <script>
 import { settings } from '@/utils/trendDiagramSetting'
 import { fetchTrendChart } from '@/api'
+import { throttle } from 'lodash'
 import { XButton, InlineLoading } from 'vux'
 
 export default {
@@ -201,6 +172,11 @@ export default {
       isCalendarVisible: false,
       records: [],
       cumulation: [],
+      ctx: null,
+      ratio: 1,
+      canvas: null,
+      canvasWidth: 0,
+      canvasHeight: 0,
       colWidth: 0,
       firstColWidth: 100,
       total_count: 0,
@@ -209,10 +185,7 @@ export default {
       addMoreLoading: false,
       noMoreData: false,
       footAreaBottomVisible: false,
-      isTableAtRight: true,
-      resultList: [],
-      svgH: 0,
-      tableHeight: 0
+      isTableAtRight: true
     }
   },
   computed: {
@@ -226,12 +199,9 @@ export default {
         limit: 30
       }
       if (this.selectedTabIdx !== undefined) {
-        conditions.target = this.selectedTabIdx + 1
+        conditions.target = this.selectedTabIdx
       }
       return conditions
-    },
-    svgPanelWidth () {
-      return this.colWidth * this.selectedSetting.cumulationNames.length
     }
   },
   watch: {
@@ -270,6 +240,21 @@ export default {
         }
       }, { passive: true })
     }
+
+    const ctx = this.$refs.line.getContext('2d')
+    this.ctx = ctx
+    this.canvas = this.$refs.line
+    // 屏幕的设备像素比
+    let devicePixelRatio = window.devicePixelRatio || 1
+    // 浏览器在渲染canvas之前存储画布信息的像素比
+    let backingStoreRatio = ctx.webkitBackingStorePixelRatio ||
+                        ctx.mozBackingStorePixelRatio ||
+                        ctx.msBackingStorePixelRatio ||
+                        ctx.oBackingStorePixelRatio ||
+                        ctx.backingStorePixelRatio || 1
+    // canvas的实际渲染倍率
+    this.ratio = devicePixelRatio / backingStoreRatio
+    window.addEventListener('resize', this.reDraw)
   },
   methods: {
     chooseSetting (setting) {
@@ -296,7 +281,7 @@ export default {
           this.records = this.records.concat(res.results)
           this.next_cursor = res.next_cursor
           this.$nextTick(() => {
-            this.saveLineInfo()
+            this.initCanvas()
           })
         })
         .catch(() => {})
@@ -319,39 +304,73 @@ export default {
           this.records = res.results
           this.next_cursor = res.next_cursor
           this.$nextTick(() => {
+            this.initCanvas()
             if (this.selectedSetting.hotArea) {
               const rcBody = this.$refs.rcBody
               const rcHead = this.$refs.rcHead
               rcBody.scrollLeft = this.colWidth * this.selectedSetting.hotArea
               rcHead.scrollLeft = this.colWidth * this.selectedSetting.hotArea
             }
-            this.saveLineInfo()
           })
         })
         .catch(() => {
           this.loading = false
         })
     },
-    saveLineInfo () {
-      let tableWidth
-      let tableHeight
+    reDraw: throttle(function (e) {
+      this.colWidth = (window.innerWidth - this.firstColWidth) / (this.selectedSetting.cumulationNames.length)
+      this.initCanvas()
+    }, 200),
+    initCanvas () {
+      let canvasStyleWidth
+      let canvasStyleHeight
       if (this.selectedSetting.cumulationNames.length > 10) {
-        tableWidth = this.$refs['restRecordTable'].clientWidth
-        tableHeight = this.$refs['restRecordTable'].clientHeight
+        canvasStyleWidth = this.canvasWidth = this.$refs['restRecordTable'].clientWidth
+        canvasStyleHeight = this.canvasHeight = this.$refs['restRecordTable'].clientHeight
       } else {
-        tableWidth = window.innerWidth - this.firstColWidth
-        tableHeight = this.$refs['recordTable'].clientHeight
+        canvasStyleWidth = this.canvasWidth = window.innerWidth - this.firstColWidth
+        canvasStyleHeight = this.canvasHeight = this.$refs['recordTable'].clientHeight
       }
-      this.svgW = tableWidth / (this.selectedSetting.cumulationNames.length)
-      this.svgH = tableHeight / this.records.length
-      this.tableHeight = tableHeight
 
-      const resultList = []
+      this.canvas.style.width = canvasStyleWidth + 'px'
+      this.canvas.style.height = canvasStyleHeight + 'px'
+      this.canvas.width = canvasStyleWidth * this.ratio
+      this.canvas.height = canvasStyleHeight * this.ratio
+      this.drawLine()
+    },
+    drawLine () {
+      const ratio = this.ratio
+      const ctx = this.ctx
+      let w = this.canvasWidth / (this.selectedSetting.cumulationNames.length) * ratio
+      let h = this.canvasHeight / this.records.length * ratio
+      const hitList = []
+      const axis = []
       this.records.forEach((rec, i) => {
         let xIdx = rec.numbers.indexOf(0)
-        resultList.push([xIdx, this.selectedSetting.cumulationNames[xIdx]])
+        hitList.push(xIdx)
+        axis.push([xIdx * w + w / 2, i * h + h / 2])
       })
-      this.resultList = resultList
+      ctx.beginPath()
+      ctx.lineWidth = 1 * this.ratio
+      axis.forEach(xy => {
+        ctx.lineTo(xy[0], xy[1])
+      })
+      ctx.strokeStyle = '#166fd8'
+      ctx.stroke()
+      ctx.closePath()
+
+      ctx.font = `${14 * this.ratio}px Avenir,Helvetica,Arial,sans-serif`
+      ctx.textBaseline = 'middle'
+      ctx.textAlign = 'center'
+      axis.forEach((xy, i) => {
+        ctx.beginPath()
+        ctx.fillStyle = '#166fd8'
+        ctx.arc(xy[0], xy[1], 10 * this.ratio, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.fillStyle = '#fff'
+        ctx.fillText(this.selectedSetting.cumulationNames[hitList[i]], xy[0], xy[1] + 1 * this.ratio)
+        ctx.closePath()
+      })
     },
     showDatePicker () {
       if (this.loading || this.addMoreLoading) {
@@ -372,6 +391,9 @@ export default {
         onSelect: (date) => { this.selectedDate = date }
       }).show()
     }
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.reDraw)
   }
 }
 </script>
@@ -489,25 +511,11 @@ export default {
     }
   }
   .record-section {
-    .line-panel{
+    .canvas {
       position: absolute;
       top: 0;
       left: 0;
       right: auto;
-      line-height: 1;
-      svg {
-        display: block
-      }
-    }
-    .circle-panel{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: auto;
-      line-height: 0;
-      svg {
-        display: block
-      }
     }
   }
 }
@@ -525,23 +533,10 @@ export default {
   background: #f5f5f5;
   box-shadow: 0 5px 10px -5px rgba(0,0,0,.12) inset;
   overflow: auto;
-  .line-panel{
+  .canvas {
     position: absolute;
     top: 0;
     right: 0;
-    line-height: 1;
-    svg {
-      display: block
-    }
-  }
-  .circle-panel{
-    position: absolute;
-    top: 0;
-    right: 0;
-    line-height: 0;
-    svg {
-      display: block
-    }
   }
 }
 .table-wrapper {

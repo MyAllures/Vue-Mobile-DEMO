@@ -54,6 +54,7 @@ import {Flexbox, FlexboxItem, XDialog, XInput, CheckIcon, XButton, TransferDom, 
 import FixScroll from '../directive/fixscroll'
 import AmountInput from './AmountInput'
 const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
+
 export default {
   name: 'BetDialog',
   components: {
