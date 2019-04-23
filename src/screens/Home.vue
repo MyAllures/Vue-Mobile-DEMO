@@ -142,6 +142,12 @@
     </x-dialog>
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
+    <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
+    <div
+      v-if="systemConfig.envelopeActivityId"
+      class="envelope-btn"
+      @click="showEnvelope">
+    </div>
   </div>
 </template>
 
@@ -191,7 +197,8 @@ export default {
       showpromoPopup: false,
       today: this.$moment(),
       currentTag: '',
-      isGameMenuVisible: false
+      isGameMenuVisible: false,
+      isEnvelopeVisible: false
     }
   },
   components: {
@@ -291,6 +298,23 @@ export default {
         }
       }
     },
+    'isEnvelopeVisible': function (isEnvelopeVisible) {
+      if (isEnvelopeVisible) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
+      }
+    },
     'showDialog': function (showDialog) {
       if (showDialog) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -317,7 +341,7 @@ export default {
   },
   methods: {
     openPromotions () {
-      this.$router.push({name: 'Promotions'})
+      this.$router.push({ name: 'Promotions' })
     },
     openPClink () {
       this.$cookie.set('desktop', 1)
@@ -340,6 +364,14 @@ export default {
     },
     switchTab (i) {
       this.currentTag = this.tags[i]
+    },
+    showEnvelope () {
+      this.isEnvelopeVisible = true
+      this.sendGaEvent({
+        label: '首页',
+        category: '紅包',
+        action: '查看红包活动'
+      })
     }
   }
 }
@@ -366,7 +398,11 @@ export default {
   bottom: 0;
   width: 100%;
   height: 40px;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.2)
+  );
 }
 
 .announcement {
@@ -393,7 +429,7 @@ export default {
     color: #666;
     font-size: 14px;
   }
-  +.tab-selector{
+  + .tab-selector {
     margin-top: 20px;
   }
 }
@@ -408,7 +444,8 @@ export default {
     position: absolute;
     top: 8px;
     right: 8px;
-    &::before,&::after{
+    &::before,
+    &::after {
       background-color: #999;
     }
   }
@@ -428,7 +465,7 @@ export default {
   }
 }
 .weui-grids {
-  &:after{
+  &:after {
     border: none;
   }
   background: #fff;
@@ -461,7 +498,7 @@ export default {
   .icon {
     width: 40px;
     height: 40px;
-    background: url('../assets/present.png') no-repeat;
+    background: url("../assets/present.png") no-repeat;
     background-size: contain;
     margin-right: 4px;
   }
@@ -526,7 +563,7 @@ export default {
     text-align: right;
     color: #333;
     &::after {
-      content: '';
+      content: "";
       display: inline-block;
       height: 6px;
       width: 6px;
@@ -651,16 +688,16 @@ export default {
       transform: scaleX(0.5);
     }
     .service {
-      background-image: url('../assets/service.png')
+      background-image: url("../assets/service.png");
     }
     .trail {
-      background-image: url('../assets/trail.svg')
+      background-image: url("../assets/trail.svg");
     }
     .download {
-      background-image: url('../assets/download_app.svg')
+      background-image: url("../assets/download_app.svg");
     }
     .promotion {
-      background-image: url('../assets/promotion.png')
+      background-image: url("../assets/promotion.png");
     }
     .icon {
       width: 24px;
@@ -688,5 +725,52 @@ export default {
 
 .pc-link-btn {
   color: @azul;
+}
+.envelope-btn {
+  position: fixed;
+  right: 20px;
+  top: 70vh;
+  width: 40px;
+  height: 60px;
+  background: url("../assets/envelope_btn.svg") no-repeat;
+  background-size: contain;
+  animation-duration: 6s;
+  animation-timing-function: ease;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-name: shaking;
+  transform-origin: top center;
+  transform: rotate(15deg);
+}
+@keyframes shaking {
+  //start shaking
+  0% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  2% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+  4% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  6% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+  8% {
+    transform: translateX(0%) rotate(20deg);
+  }
+  10% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+
+  // start staying
+  99% {
+    transform: translateX(-5%) rotate(10deg);
+  }
+
+  100% {
+    transform: translateX(0%) rotate(15deg);
+  }
 }
 </style>

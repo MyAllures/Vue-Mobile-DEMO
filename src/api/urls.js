@@ -59,6 +59,8 @@ export default {
   setCookie: host + '/set_cookie/',
   stickers: apiChat + '/v1/stickers/',
   envelope: apiv2 + '/red_envelope/',
+  envelope_activity: host + '/v2/red-envelope-activities/',
+  take_envelope_activity: host + '/v2/transactions/snatch-red-envelope/',
   chatinfo: apiChat + '/v1/user/',
   roomInfo: apiChat + '/v1/member/room/',
   smscode: apiv2 + '/sms_verification/',
