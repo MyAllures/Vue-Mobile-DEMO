@@ -93,7 +93,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchEiderJWTToken } from './api'
+import { getToken, fetchServiceUnread, fetchEiderJWTToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
@@ -232,7 +232,8 @@ export default {
       noBackRoute: !window.history.state,
       indicator: null,
       tabbarHidden: true,
-      isHelperVisible: false
+      isHelperVisible: false,
+      serviceUnreadInterval: null
     }
   },
   mixins: [freetrial],
@@ -287,7 +288,14 @@ export default {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
+        if (this.ws.venom) {
+          this.ws.venom.closeConnect()
+        }
+        clearInterval(this.serviceUnreadInterval)
       } else {
+        this.serviceUnreadInterval = setInterval(() => {
+          this.fetchServiceUnread()
+        }, 5000)
         fetchEiderJWTToken().then(() => {
           let token = this.$cookie.get('message_broker_token')
           this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
@@ -345,6 +353,13 @@ export default {
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
+    },
+    fetchServiceUnread () {
+      fetchServiceUnread().then((res) => {
+        this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
+      }).catch((e) => {
+        clearInterval(this.serviceUnreadInterval)
+      })
     }
   },
   created () {
@@ -373,6 +388,7 @@ export default {
   },
   beforeDestroy () {
     window.clearTimeout(this.refreshTokenTimer)
+    clearInterval(this.serviceUnreadInterval)
   }
 }
 </script>

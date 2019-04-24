@@ -13,6 +13,7 @@ import {
   fetchUnreadCount,
   fetchAnnouncements
 } from '../../api'
+import { JWT } from '@/utils/jwtToken'
 import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
@@ -45,10 +46,15 @@ const login = function ({ commit, state, dispatch }, { user }) {
 
 export default {
   login: login,
-  logout: ({ commit, state }) => {
+  logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
+        Vue.cookie.delete('access_token')
+        Vue.cookie.delete('refresh_token')
+        Vue.cookie.delete(`${JWT.venom}_token`)
         commit(types.RESET_USER)
+        dispatch('customerService/clearMessage')
+        dispatch('customerService/setServiceUnread', false)
       },
       errRes => Promise.reject(errRes)
     )

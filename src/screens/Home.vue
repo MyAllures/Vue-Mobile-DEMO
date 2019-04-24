@@ -25,8 +25,9 @@
             <div
               class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥')}}
+              <span>{{ user.balance|currency('￥')}}</span>
             </div>
+            <UnreadPoint></UnreadPoint>
           </template>
         </div>
       </template>
@@ -179,8 +180,10 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
+
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -205,6 +208,7 @@ export default {
     TransferDom
   },
   components: {
+    UnreadPoint,
     TopBar,
     Swiper,
     SwiperItem,
@@ -264,11 +268,12 @@ export default {
           text: '优惠活动'
         })
       }
-      if (config.customerServiceUrl) {
+
+      if (config.serviceAction) {
         actions.push({
-          type: 'link',
+          type: 'button',
           className: 'service',
-          url: config.customerServiceUrl,
+          click: config.serviceAction,
           text: '联系客服'
         })
       }

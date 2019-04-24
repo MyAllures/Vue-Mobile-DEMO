@@ -52,6 +52,7 @@
             </div>
             <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
           </template>
+          <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
@@ -98,6 +99,7 @@ import TopBar from '@/components/TopBar'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -108,12 +110,8 @@ let scrollTop
 
 export default {
   name: 'GameHall',
-  props: {
-    showChatRoom: {
-      type: Boolean
-    }
-  },
   components: {
+    UnreadPoint,
     Popup,
     XHeader,
     ChatRoom,
@@ -136,6 +134,7 @@ export default {
       isGameMenuVisible: false,
       isHelperVisible: false,
       showNotifiyMsg: true,
+      showChatRoom: false,
       showBottomPrompt: true
     }
   },
@@ -177,7 +176,7 @@ export default {
       return this.systemConfig.chatroomEnabled
     },
     isShowChatroomIcon () {
-      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
+      if (!this.systemConfig.chatroomEnabled) {
         return false
       }
       if (!this.$route.params.gameId || !this.roomInfo) {
@@ -553,7 +552,7 @@ export default {
     align-self: center;
     padding: 0 10px;
   }
-  
+
   .weui-btn.weui-btn_default {
     height: 32px;
     width: 80px;

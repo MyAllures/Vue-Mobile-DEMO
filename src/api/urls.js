@@ -7,9 +7,14 @@ const apiv2 = host + '/v2/member'
 const apiv1 = host + '/v1/member'
 const apiChat = env.chatApi.replace(/"/g, '')
 const wsEiderHost = env.eiderHost.replace(/"/g, '')
+const venomHost = env.venomHost.replace(/"/g, '')
+const wsVenomHost = env.venomSocket.replace(/"/g, '')
 
 export default {
   wsEiderHost,
+  venomHost,
+  wsVenomHost,
+  ravenHost: apiChat,
   domain: host,
   login: prefix + '/login/',
   register: apiv2 + '/register/',
@@ -63,6 +68,10 @@ export default {
   smscode: apiv2 + '/sms_verification/',
   onine_heartbeat: apiv2 + '/heart_beat/',
   trend_chart: apiv2 + '/trend_chart/',
+  service_emoji: venomHost + '/chat/emoji/',
+  service_stickers: venomHost + '/chat/stickers/',
+  service_unread: venomHost + '/support/has_unread/',
+  service_image_attachment: venomHost + '/chat/attachment/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/'
 }
