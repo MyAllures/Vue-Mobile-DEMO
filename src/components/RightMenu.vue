@@ -51,6 +51,7 @@
   import { mapGetters } from 'vuex'
   import FixScroll from '../directive/fixscroll'
   import UnreadPoint from '@/components/UnreadPoint.vue'
+
   export default {
     props: {
       value: {
@@ -210,11 +211,10 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      height: 64px;
+      height: 46px;
       color: #fff;
       background-color: @azul;
       .text {
-        font-size: 20px;
         color: #fff;
       }
       .arrow-right {
@@ -253,7 +253,6 @@
       border-bottom: 1px solid #eee;
       background: #fff;
       text-align: center;
-      font-size: 18px;
       color: #333;
     }
   }

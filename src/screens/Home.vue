@@ -22,7 +22,8 @@
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
           </template>
           <template v-else>
-            <div class="balance fr"
+            <div
+              class="balance fr"
               @click="$store.dispatch('showRightMenu')">
               <span>{{ user.balance|currency('￥')}}</span>
             </div>
@@ -121,6 +122,7 @@
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
     </div>
     <x-dialog
+      v-transfer-dom
       v-model="showDialog"
       :dialog-style="{
         width: '90vw',
@@ -170,7 +172,8 @@ import {
   Cell,
   XButton,
   Tab,
-  TabItem
+  TabItem,
+  TransferDom
 } from 'vux'
 import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
@@ -202,6 +205,9 @@ export default {
       isGameMenuVisible: false,
       isEnvelopeVisible: false
     }
+  },
+  directives: {
+    TransferDom
   },
   components: {
     UnreadPoint,
@@ -337,8 +343,10 @@ export default {
     }
   },
   created () {
-    const unwatch = this.$watch('announcements', function () {
-      this.showDialog = true
+    const unwatch = this.$watch('announcements', function (announcements) {
+      if (announcements.length > 0) {
+        this.showDialog = true
+      }
       unwatch()
     })
   },
@@ -729,10 +737,10 @@ export default {
 .envelope-btn {
   position: fixed;
   right: 20px;
-  top: 70vh;
+  top: 55vh;
   width: 40px;
   height: 60px;
-  background: url("../assets/envelope_btn.svg") no-repeat;
+  background: url('../assets/envelope_btn.svg') no-repeat;
   background-size: contain;
   animation-duration: 6s;
   animation-timing-function: ease;

@@ -82,6 +82,7 @@ export default new Vuex.Store({
       smsValidationEnabled: false,
       appDownloadUrl: '',
       planSiteUrl: '',
+      envelopeActivityId: '',
       serviceAction: null
     },
     envelope: {},
@@ -111,7 +112,7 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '10px'},
+    dataSectionStyle: {'padding-top': '5px'},
     serviceUnread: 0
   },
   actions,
@@ -120,6 +121,5 @@ export default new Vuex.Store({
   modules: {
     page,
     customerService
-
   }
 })

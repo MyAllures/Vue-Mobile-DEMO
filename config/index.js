@@ -7,16 +7,15 @@ module.exports = {
     env: require('./dev.env'),
     assetsSubDirectory: 'mobile/static',
     assetsPublicPath: '/',
-    proxyTable: {},
-    // proxyTable: {
-    //   '/api': {
-    //     target: 'https://staging-api.h9339.com',
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       '^/api': ''
-    //     }
-    //   }
-    // },
+    proxyTable: {
+      '/api': {
+        target: 'http://staging-api.h9339.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    },
     host: '0.0.0.0',
     port: 8080,
     autoOpenBrowser: false,

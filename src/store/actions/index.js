@@ -12,9 +12,9 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements
-} from '@/api'
+} from '../../api'
 import { JWT } from '@/utils/jwtToken'
-import { take, find } from 'lodash'
+import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -95,7 +95,8 @@ export default {
         })
       }
       commit(types.SET_ANNOUNCE, {page: 'homepage', announce: datas.map(data => data.announcement)})
-    })
+    }
+    )
   },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
@@ -203,9 +204,6 @@ export default {
   },
   setWs: ({commit}, {ws, type}) => {
     commit(types.SET_WS, {ws, type})
-  },
-  closeWs: ({commit}, {ws, type}) => {
-    commit(types.CLOSE_WS, {ws, type})
   },
   initMessage: ({ commit }, messages) => {
     commit(types.INIT_MESSAGE, messages)
