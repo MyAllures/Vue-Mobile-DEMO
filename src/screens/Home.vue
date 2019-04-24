@@ -22,11 +22,11 @@
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
           </template>
           <template v-else>
-            <div class="balance fr"
+            <div
+              class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              <span>{{ user.balance|currency('￥')}}</span>
+              {{ user.balance|currency('￥')}}
             </div>
-            <UnreadPoint></UnreadPoint>
           </template>
         </div>
       </template>
@@ -121,6 +121,7 @@
         <a class="pc-link-btn" href="javascript:;">电脑版</a>
     </div>
     <x-dialog
+      v-transfer-dom
       v-model="showDialog"
       :dialog-style="{
         width: '90vw',
@@ -169,7 +170,8 @@ import {
   Cell,
   XButton,
   Tab,
-  TabItem
+  TabItem,
+  TransferDom
 } from 'vux'
 import { mapState } from 'vuex'
 import TryplayPopup from '../components/TryplayPopup'
@@ -177,10 +179,8 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
-import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
-
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -201,8 +201,10 @@ export default {
       isEnvelopeVisible: false
     }
   },
+  directives: {
+    TransferDom
+  },
   components: {
-    UnreadPoint,
     TopBar,
     Swiper,
     SwiperItem,
@@ -262,12 +264,11 @@ export default {
           text: '优惠活动'
         })
       }
-
-      if (config.serviceAction) {
+      if (config.customerServiceUrl) {
         actions.push({
-          type: 'button',
+          type: 'link',
           className: 'service',
-          click: config.serviceAction,
+          url: config.customerServiceUrl,
           text: '联系客服'
         })
       }
@@ -334,8 +335,10 @@ export default {
     }
   },
   created () {
-    const unwatch = this.$watch('announcements', function () {
-      this.showDialog = true
+    const unwatch = this.$watch('announcements', function (announcements) {
+      if (announcements.length > 0) {
+        this.showDialog = true
+      }
       unwatch()
     })
   },
@@ -732,7 +735,7 @@ export default {
   top: 70vh;
   width: 40px;
   height: 60px;
-  background: url("../assets/envelope_btn.svg") no-repeat;
+  background: url('../assets/envelope_btn.svg') no-repeat;
   background-size: contain;
   animation-duration: 6s;
   animation-timing-function: ease;

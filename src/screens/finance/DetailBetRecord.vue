@@ -20,7 +20,6 @@
             @click="$store.dispatch('showRightMenu')">
             {{ user.balance|currency('￥')}}
           </div>
-          <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
@@ -98,7 +97,7 @@ import { msgFormatter } from '../../utils'
 import infiniteScroll from 'vue-infinite-scroll'
 import TopBar from '@/components/TopBar'
 import Calendar from '@/components/Calendar'
-import UnreadPoint from '@/components/UnreadPoint.vue'
+
 export default {
   name: 'DetailBetRecord',
   filters: {
@@ -113,7 +112,6 @@ export default {
     }
   },
   components: {
-    UnreadPoint,
     TopBar,
     XTable,
     dateFormat,
