@@ -334,7 +334,6 @@ export default {
       }
     },
     replaceToken () {
-      fetchEiderJWTToken()
       let refreshToken = this.$cookie.get('refresh_token')
       if (!refreshToken || !this.user.account_type) {
         return
@@ -349,6 +348,7 @@ export default {
           expires: expires
         })
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
+        fetchEiderJWTToken()
       }).catch(() => {})
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
