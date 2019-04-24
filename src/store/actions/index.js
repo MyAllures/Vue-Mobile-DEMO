@@ -14,7 +14,7 @@ import {
   fetchAnnouncements
 } from '../../api'
 import { JWT } from '@/utils/jwtToken'
-import {take, find} from 'lodash'
+import { take, find } from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -133,7 +133,7 @@ export default {
       })
 
       const tagTable = {
-        '热门游戏': res.slice(0, 17)
+        '热门游戏': res.slice(0, 15)
       }
 
       commit(types.SET_GAMES, {

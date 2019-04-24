@@ -350,6 +350,7 @@ export default {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
         fetchEiderJWTToken()
       }).catch(() => {})
+
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
