@@ -737,7 +737,7 @@ export default {
 .envelope-btn {
   position: fixed;
   right: 20px;
-  top: 70vh;
+  top: 65vh;
   width: 40px;
   height: 60px;
   background: url('../assets/envelope_btn.svg') no-repeat;
