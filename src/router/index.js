@@ -115,7 +115,7 @@ const baseRoutes = [
           rightCtrl: 'info',
           showBack: false
         },
-        component: resolve => { require(['../screens/finance/deposit.vue'], resolve) },
+        component: resolve => { require(['../screens/finance/Deposit.vue'], resolve) },
         children: [
           {
             path: 'submit_success',
