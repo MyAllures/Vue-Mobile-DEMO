@@ -72,6 +72,7 @@ function initData () {
           process: 'fulfilled',
           homePageLogo: response.icon,
           mobileLogo: response.mobile_logo,
+          customerServiceUrl: pref.customer_service_url,
           agentDashboardUrl: pref.agent_dashboard_url,
           global_preferences: pref,
           agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
@@ -190,6 +191,7 @@ const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   const fromVenom = res.config.url.includes(urls.venomHost)
   const fromRaven = res.config.url.includes(urls.ravenHost)
+
   let responseData = res.data
   if (fromVenom) {
     return responseData
@@ -289,7 +291,9 @@ Vue.mixin({
       toLogin(this.$router)
     },
     sendGaEvent ({label, category, action}) {
-      sendGaEvent({label, category, action})
+      if (store.state.systemConfig.gaTrackingId) {
+        window.gtag('event', action, {'event_category': category, 'event_label': label})
+      }
     }
   }
 })
@@ -320,9 +324,7 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
   store.dispatch('fetchUser').then(() => {
     checkJWTTokenAlive(JWT.venom + '_token', fetchServiceUnread, fetchVenomJWTToken)
-  }).catch(() => {
-    initData()
-  })
+  }).catch(() => { initData() })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')

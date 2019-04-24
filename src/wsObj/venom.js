@@ -5,11 +5,12 @@ import urls from '@/api/urls'
 import { JWT } from '@/utils/jwtToken'
 import { RECEIVED_ACTION, EMITTED_ACTION, MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 
+const DEBUG = false
 const JWT_TYPE = 'venom'
 const RETRY_COUNT = 3
 
 function wsDebug (...args) {
-  if (process.env.NODE_ENV !== 'development') return
+  if (process.env.NODE_ENV !== 'development' || !DEBUG) return
   console.warn('[Venom]', ...args)
 }
 
