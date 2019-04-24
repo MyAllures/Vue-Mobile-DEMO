@@ -1,6 +1,6 @@
 <template>
   <section class="rule-details">
-    <p>官网:
+    <p v-if="company===2">官网:
       <a href="https://expressball7.com/" target="_blank">Express Ball</a>
     </p>
     <p>依据Express 7/49为开奖结果，是澳洲维多利亚省最多人游玩的彩种之一，搭配上六合彩的丰富玩法，从 00:00 起每1分钟开奖一次，共1440期，全天候不间断！<br/>1996年强力球在澳大利亚推出，依据非常成功的美国彩票，在当地很快成为家喻户晓的彩票，它的标语是“一球可以改变这一切！<br/>2013年3月，澳大利亚强力球乐透更新它的规则，为了能够提升游戏的趣味度，结合了7/49的丰富玩法，再利用更高的开奖频率，创造出更多的中彩者，所开发出来的Express 7/49。<br/>像美国强力球彩票的游戏在2012年1月进行的调整一样，Express 7/49进行了一系列的变化是为了同一目标，就是能利用更多样的玩法来吸引更多的玩家。</p>
@@ -297,6 +297,11 @@
 
 <script>
 export default {
-  props: ['gameName']
+  props: ['gameName'],
+  data () {
+    return {
+      company: window.company
+    }
+  }
 }
 </script>

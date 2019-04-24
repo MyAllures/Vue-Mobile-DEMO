@@ -353,57 +353,6 @@ export default {
   }
 }
 
-
-.history-table {
-  box-sizing: border-box;
-  padding-bottom: 60px;
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-collapse: collapse;
-  .condition {
-    display: inline-block;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
-    &.loading {
-      border: none;
-      padding-top: 20px;
-    }
-  }
-  .row {
-    display: flex;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-  }
-}
-
-.show-time {
-  box-sizing: border-box;
-  flex: 0 0 100px;
-  width: auto;
-  padding: 0px 5px;
-  border-right: 1px solid #dcd9d9;
-  .periods-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50%;
-    width: 100%;
-    font-size: 14px;
-
-  }
-  .periods-time {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50%;
-    width: 100%;
-    font-size: 13px;
-  }
-}
 .issue-number {
   align-items: center;
   font-size: 14px;
