@@ -137,7 +137,6 @@ import ChatGameBody from '@/screens/chatGame/ChatGameBody'
 import ChatGameFooter from '@/screens/chatGame/ChatGameFooter'
 import ChatGameCategory from '@/screens/chatGame/ChatGameCategory'
 import AmountInput from '../../components/AmountInput'
-import { EagleWebSocket } from '@/wsObj/eagle'
 import FixScroll from '@/directive/fixscroll'
 
 function to (scrollTop) {
@@ -202,7 +201,7 @@ export default {
     ...mapState([
       'systemConfig', 'user', 'latestResultMap'
     ]),
-    ...mapState('eagle', {
+    ...mapState('chatroom', {
       ws: state => state.ws
     }),
     eagleToken () {
@@ -258,32 +257,6 @@ export default {
         if (code) {
           this.$store.dispatch('game/init', this.currentGame)
           this.fetchScheduleAndResult()
-          const game = this.currentGame
-          if (game.rooms.length === 0) {
-            this.$store.dispatch('eagle/init', {
-              recent_messages: [],
-              user: {
-                chat_permission: false
-              },
-              is_manager: false
-            })
-          } else {
-            if (!this.ws) {
-              if (this.eagleToken && this.eagleToken !== 'pending') {
-                this.$store.dispatch('eagle/setWs', new EagleWebSocket(this.eagleToken, game.rooms[0].id))
-              } else {
-                const unwatch = this.$watch('eagleToken', function (token) {
-                  if (token && token !== 'pending') {
-                    unwatch()
-                    this.$store.dispatch('eagle/setWs', new EagleWebSocket(token, game.rooms[0].id))
-                  }
-                })
-              }
-            } else {
-              this.$store.dispatch('eagle/clear')
-              this.ws.joinRoom(game.rooms[0].id)
-            }
-          }
         }
       },
       immediate: true

@@ -1,5 +1,5 @@
 <template>
-<div class="chat-game-footer">
+<div class="chatroom-footer">
   <div v-if="isShowEmojiPanel" class="emoji-panel" v-click-outside="hidePanel">
     <div class="select-panel">
       <swiper
@@ -33,8 +33,8 @@
       </ul>
     </div>
   </div>
-  <div class="input-panel" v-if="mode==='typing'" id="typing" @click="handTriggerPanel">
-    <div id="switch-btn" class="switch-btn" @click="mode='bet'">
+  <div class="input-panel" id="typing" @click="handTriggerPanel">
+    <div id="envelope-btn" class="envelope-btn" @click="openEnvelopeDialog">
     </div>
     <label class="image-btn">
       <input @change="sendImg"
@@ -61,12 +61,7 @@
       <div class="icon"></div>
     </div>
   </div>
-  <div class="input-panel" v-else>
-    <div id="keyboard-btn" v-if="user.account_type && isRoomExist" class="keyboard-btn" @click="mode = 'typing'">
-    </div>
-    <div class="text-btn" @click="$emit('openBetInterface', 'bet')">下注</div>
-    <div class="text-btn" @click="$emit('openBetInterface', 'bettrack')">追号</div>
-  </div>
+  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" @hidePanel="hidePanel"/>
 </div>
 </template>
 
@@ -78,11 +73,13 @@ import { Swiper, SwiperItem } from 'vux'
 import { eagle } from '@/api'
 import lrz from 'lrz'
 import vClickOutside from 'v-click-outside'
+import EnvelopeDialog from '@/components/EnvelopeDialog'
 export default {
   name: 'ChatFooter',
   components: {
     Swiper,
-    SwiperItem
+    SwiperItem,
+    EnvelopeDialog
   },
   directives: {
     clickOutside: vClickOutside.directive
@@ -91,8 +88,8 @@ export default {
     return {
       msgCnt: '',
       activeSeries: undefined,
-      mode: 'bet',
-      isShowEmojiPanel: false
+      isShowEmojiPanel: false,
+      isShowEnvelopeDialog: false
     }
   },
   computed: {
@@ -103,8 +100,7 @@ export default {
       ws: state => state.ws,
       permission: state => state.permission,
       roomId: state => state.roomId,
-      emojiMap: state => state.emojiMap,
-      isRoomExist: state => state.isRoomExist
+      emojiMap: state => state.emojiMap
     }),
     noPermission () {
       return !this.permission || !this.permission.eligible
@@ -145,7 +141,7 @@ export default {
       let target = e.target
       let id = target.id
       while (id !== 'typing') {
-        if (id === 'switch-btn') {
+        if (id === 'envelope-btn') {
           this.isShowEmojiPanel = false
           break
         } else if (id === 'emoji-btn') {
@@ -228,17 +224,22 @@ export default {
       if (this.noPermission) {
         e.preventDefault()
       }
+    },
+    openEnvelopeDialog () {
+      if (this.noPermission) {
+        return
+      }
+      this.isShowEnvelopeDialog = true
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.chat-game-footer {
+.chatroom-footer {
   flex: 0 0 auto;
   background: #fafafa;
   width: 100%;
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 1;
   .input-panel {
     box-sizing: border-box;
@@ -270,7 +271,7 @@ export default {
       color: #fff;
     }
   }
-  .switch-btn,
+  .envelope-btn,
   .keyboard-btn {
     flex: 0 0 auto;
     box-sizing: border-box;
@@ -283,8 +284,8 @@ export default {
     background: url("../../assets/chatroom/keyboard.svg") no-repeat center
       center;
   }
-  .switch-btn {
-    background: url("../../assets/chatroom/switch.svg") no-repeat center center;
+  .envelope-btn {
+    background: url("../../assets/chatroom/envelope.svg") no-repeat center center;
   }
   .image-btn {
     flex: 0 0 auto;

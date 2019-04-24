@@ -124,12 +124,6 @@ export default {
   [types.UPDATE_GAME_INFO]: (state, info) => {
     state.gameInfo = {...state.gameInfo, ...info}
   },
-  [types.SET_ROOM_INFO]: (state, info) => {
-    state.roomInfo = info
-  },
-  [types.SET_ROOM_ID]: (state, id) => {
-    state.roomId = id
-  },
   [types.UPDATE_DIALOG]: (state, option) => {
     state.dialog[option.name] = option.state
   },

@@ -65,7 +65,7 @@
       type="more"
     />
     <div :style="{height: showNotifiyMsg? `calc(100% - 37px)`:'calc(100% - 12px)'}">
-      <router-view :key="$route.params.gameId"/>
+      <router-view v-if="currentGame" :key="$route.params.gameId"/>
     </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
   </div>
@@ -85,6 +85,7 @@ import GameInfo from '@/screens/games/GameInfo'
 import { mapState } from 'vuex'
 import { eagle } from '@/api'
 import vClickOutside from 'v-click-outside'
+import { EagleWebSocket } from '@/wsObj/eagle'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -124,9 +125,10 @@ export default {
     ...mapState([
       'games', 'theme'
     ]),
-    ...mapState('eagle', {
+    ...mapState('chatroom', {
       emojiMap: state => state.emojiMap,
-      ws: state => state.ws
+      ws: state => state.ws,
+      wsStatus: state => state.status
     }),
     hasExpertPlan () {
       if (!this.currentGame) {
@@ -151,16 +153,19 @@ export default {
     }
   },
   watch: {
-    'currentGame': {
-      handler (game, oldGame) {
-        if (game && game.is_prompt) {
-          const checkDate = window.localStorage.getItem(game.display_name)
-          if (checkDate) {
-            if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+    'currentGame.code': {
+      handler (code) {
+        if (code) {
+          const game = this.currentGame
+          if (game.is_prompt) {
+            const checkDate = window.localStorage.getItem(game.display_name)
+            if (checkDate) {
+              if (+checkDate < +this.$moment().format('YYYYMMDD')) {
+                this.showNotifiyMsg = true
+              }
+            } else {
               this.showNotifiyMsg = true
             }
-          } else {
-            this.showNotifiyMsg = true
           }
         }
       },
@@ -187,9 +192,48 @@ export default {
     }
   },
   created () {
+    let tokenPromise
     if (!this.$store.state.jwt_token.eagle) {
-      this.$store.dispatch('fetchJWTToken', 'eagle')
+      tokenPromise = this.$store.dispatch('fetchJWTToken', 'eagle')
+    } else {
+      tokenPromise = Promise.resolve(this.$store.state.jwt_token.eagle)
     }
+
+    let currentGamePromise
+    if (this.currentGame) {
+      currentGamePromise = Promise.resolve(this.currentGame)
+    } else {
+      currentGamePromise = new Promise((resolve) => {
+        const unwatch = this.$watch('games', function (games) {
+          unwatch()
+          resolve(games.find(game => game.id + '' === this.$route.params.gameId))
+        })
+      })
+    }
+    this.$watch('currentGame', function (currentGame) {
+      this.ws.joinRoom(currentGame.rooms[0].id)
+    })
+    tokenPromise.then(token => {
+      let roomId
+      if (this.currentGame && this.currentGame.rooms.length > 0) {
+        roomId = this.currentGame.rooms[0].id
+      }
+      this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, roomId))
+      currentGamePromise.then((game) => {
+        if (game.rooms.length > 0) {
+          this.ws.joinRoom(game.rooms[0].id)
+        } else {
+          this.$store.dispatch('chatroom/init', {
+            recent_messages: [],
+            user: {
+              chat_permission: false
+            },
+            is_manager: false
+          })
+        }
+      })
+    })
+
     if (!this.$route.params.gameId) {
       if (this.games.length > 0) {
         this.chooseGame()
@@ -200,14 +244,15 @@ export default {
         })
       }
     }
+
     if (this.emojiMap === null) {
       eagle.fetchStickers().then(res => {
-        this.$store.dispatch('eagle/initSticker', res)
+        this.$store.dispatch('chatroom/initSticker', res)
         const emojiMap = {}
         res.forEach((series, index) => {
           emojiMap[series.id] = { ...series, order: index }
         })
-        this.$store.dispatch('eagle/initEmoji', emojiMap)
+        this.$store.dispatch('chatroom/initEmoji', emojiMap)
       }).catch(() => {
 
       })
@@ -397,7 +442,8 @@ export default {
       position: absolute;
       right: -1px;
       top: -1px;
-      &::before, &::after {
+      &::before,
+      &::after {
         height: 15px;
       }
     }

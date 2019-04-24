@@ -38,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('eagle', {
+    ...mapState('chatroom', {
       isManager: state => state.isManager,
       ws: state => state.ws
     })

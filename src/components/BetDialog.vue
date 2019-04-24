@@ -27,9 +27,6 @@
             总金额：
             <span class="amount">{{totalAmount | currency('￥')}}</span>
           </div>
-          <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
-            将此笔注单分享至聊天室开放跟单
-          </check-icon>
           <cube-checkbox v-model="isShared" v-if="betDialog.hasShared">
             分享我的注单
           </cube-checkbox>
@@ -66,7 +63,6 @@ export default {
     return {
       dialogVisible: false,
       loading: false,
-      hasPlan: true,
       betAmounts: null,
       currentFocusInput: null,
       isShared: true
@@ -81,9 +77,6 @@ export default {
     },
     gameId () {
       return this.$route.params.gameId
-    },
-    hasPlanCheck () {
-      return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
     },
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
@@ -126,9 +119,6 @@ export default {
       this.loading = false
       this.dialogVisible = visible
       if (visible) {
-        if (this.hasPlanCheck) {
-          this.hasPlan = false
-        }
         const betAmounts = []
         this.betDialog.bets.forEach(bet => {
           betAmounts.push(bet.bet_amount + '')
@@ -173,7 +163,7 @@ export default {
           bet_amount: parseFloat(this.betAmounts[i])
         }
       })
-      const betData = {send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet}
+      const betData = {bets: formatBet}
       if (this.betDialog.hasShared) {
         betData.share_bet_info = this.isShared
       }

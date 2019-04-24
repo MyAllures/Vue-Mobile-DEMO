@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-game-body" ref="view" v-fix-scroll>
+  <div class="chatroom-body" ref="view" v-fix-scroll>
     <div v-if="loading&&isRoomExist" class="loading">
       <inline-loading></inline-loading>加载中
     </div>
@@ -32,8 +32,7 @@
               <bet-info
                 :is-self="user.username === msg.sender.username"
                 v-if="msg.type==='betrecord-sharing'"
-                :info-str="msg.content"
-                :betableIssueNumber="betableIssueNumber"></bet-info>
+                :info-str="msg.content"></bet-info>
               <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
@@ -51,26 +50,13 @@
             <bet-info
               :is-self="user.username === msg.sender.username"
               v-if="msg.type==='betrecord-sharing'"
-              :info-str="msg.content"
-              :betableIssueNumber="betableIssueNumber"></bet-info>
+              :info-str="msg.content"></bet-info>
             <div v-else class="text">{{msg.content}}</div>
           </div>
         </div>
       </li>
     </ul>
     <div :class="['to-bottom-btn', {visible: isToBottomBtnVisible}]" @click="toBottom"></div>
-    <div :class="['helper-btn-group', {visible: isHelperVisible}]">
-      <div
-        v-for="(item, index) in helperGroup"
-        :key="index"
-        :class="['helper-btn', item.key, `order${helperGroup.length - index}`]" @click="dispatch('ChatGameHall', 'gameHall.showGameInfo', item.key)" v-html="item.content"></div>
-    </div>
-    <div :class="['helper-btn fold', {visible: isHelperVisible}]" @click="isHelperVisible = !isHelperVisible">
-      <template v-if="!isHelperVisible">
-        展开
-      </template>
-      <div v-else class="close-btn"></div>
-    </div>
     <cube-popup
       v-transfer-dom
       class="preview-image-popup"
@@ -114,25 +100,24 @@
   </div>
 </template>
 <script>
+import BetInfo from './BetInfo'
 import { mapState } from 'vuex'
 import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
-import { hasExpertPlan } from '@/utils/expertPlanSetting'
-import { hasRoadBead } from '@/utils/roadBeadSetting'
-import emitter from '@/mixins/emitter.js'
 import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
+import ImgWrapper from './ImgWrapper'
 
 export default {
-  name: 'ChatGameBody',
+  name: 'ChatroomBody',
   props: {
     game: {
       required: true,
       type: Object
-    },
-    betableIssueNumber: String,
-    gameClosed: Boolean
+    }
   },
   components: {
+    BetInfo,
+    ImgWrapper,
     XDialog,
     XButton,
     InlineLoading
@@ -141,7 +126,6 @@ export default {
     FixScroll,
     TransferDom
   },
-  mixins: [emitter],
   data () {
     const defaultAvatar = require('../../assets/avatar.png')
     return {
@@ -168,35 +152,7 @@ export default {
       ws: state => state.ws,
       loading: state => state.loading,
       isRoomExist: state => state.isRoomExist
-    }),
-    hasExpertPlan () {
-      if (!this.game) {
-        return false
-      }
-      return hasExpertPlan(this.game.code)
-    },
-    helperGroup () {
-      const expertConfig = { key: 'expertplan', content: '<p>专家</p><p>计划</p>' }
-      const roadBeadConfig = { key: 'roadbeads', content: '路珠' }
-      const leaderBoardConfig = { key: 'leaderboard', content: '长龙' }
-      const chatManageConfig = { key: 'chatmanage', content: '<p>禁言</p><p>管理</p>' }
-      const group = []
-      if (!this.game) {
-        return []
-      }
-      if (this.isManager) {
-        group.push(chatManageConfig)
-      }
-      let code = this.game.code
-      group.push(leaderBoardConfig)
-      if (hasRoadBead(code)) {
-        group.push(roadBeadConfig)
-      }
-      if (hasExpertPlan(code)) {
-        group.push(expertConfig)
-      }
-      return group
-    }
+    })
   },
   watch: {
     'messages.length': function (newCount, oldCount) {
@@ -297,7 +253,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.chat-game-body {
+.chatroom-body {
   box-sizing: border-box;
   position: relative;
   flex: 1 1 auto;

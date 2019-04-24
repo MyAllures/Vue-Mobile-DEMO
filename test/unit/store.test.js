@@ -5,7 +5,6 @@ Vue.use(VueCookie)
 
 jest.mock('@/api', () => {
   return {
-    axiosRaven: {defaults: {headers: {common: {}}}},
     axiosGhost: {defaults: {headers: {common: {}}}},
     axiosEagle: {defaults: {headers: {common: {}}}},
     login: () => Promise.resolve({'access_token': '8d3f5a64dbaaaeb4d71e63bdc075bd00', 'token_type': 'Bearer', 'expires_in': '2018-08-21 11:44:07', 'refresh_token': '62e98c8196a80a5db5ef1e6cfb88a5f3', 'type': 'member'}),
