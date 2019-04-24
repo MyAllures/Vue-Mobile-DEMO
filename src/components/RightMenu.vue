@@ -28,9 +28,7 @@
     </div>
     <div class="action-area">
       <div class="item" @click="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
-      <div class="item" v-if="systemConfig.serviceAction" @click="handleServiceBtnClick">
-        <span>{{$t('misc.need_help')}}<UnreadPoint :inRightMenu="true"></UnreadPoint></span>
-      </div>
+      <div class="item" @click="handleRouteChange(systemConfig.customerServiceUrl, $t('misc.need_help'))">{{$t('misc.need_help')}}</div>
       <div class="item" @click="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
     </div>
     <div class="logout" @click="logoutDialogShow = true">{{$t('misc.logout')}}</div>
@@ -50,7 +48,6 @@
   import { TransferDom, Popup, Confirm } from 'vux'
   import { mapGetters } from 'vuex'
   import FixScroll from '../directive/fixscroll'
-  import UnreadPoint from '@/components/UnreadPoint.vue'
   export default {
     props: {
       value: {
@@ -87,8 +84,7 @@
     },
     components: {
       Popup,
-      Confirm,
-      UnreadPoint
+      Confirm
     },
     computed: {
       ...mapGetters([
@@ -112,11 +108,6 @@
       }
     },
     methods: {
-      handleServiceBtnClick () {
-        this.sendGaEvent({label: '右側菜單', category: this.$t('misc.need_help'), action: '点击'})
-        this.closeRightMenu()
-        this.systemConfig.serviceAction()
-      },
       toMy () {
         if (this.$route.path !== '/my') {
           this.closeRightMenu()
@@ -210,11 +201,10 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      height: 64px;
+      height: 46px;
       color: #fff;
       background-color: @azul;
       .text {
-        font-size: 20px;
         color: #fff;
       }
       .arrow-right {
@@ -253,7 +243,6 @@
       border-bottom: 1px solid #eee;
       background: #fff;
       text-align: center;
-      font-size: 18px;
       color: #333;
     }
   }

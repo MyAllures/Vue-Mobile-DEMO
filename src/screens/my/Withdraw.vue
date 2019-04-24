@@ -43,7 +43,6 @@
       </div>
       <div class="text-center m-b-lg">
         <div class="text-danger">{{errorMsg}}</div>
-        <p class="text">请核对收款人信息<span v-if="systemConfig.serviceAction" @click="systemConfig.serviceAction">如需更改收款人请 <span class="service-link">联系客服</span></span></p>
         <x-button class="submit-btn" type="primary" :disabled="!inputCompleted" @click.native="submit">
           <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
           <span v-else>{{$t('withdraw.submit')}}</span>

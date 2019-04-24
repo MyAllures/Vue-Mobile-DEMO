@@ -52,13 +52,12 @@
             </div>
             <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
           </template>
-          <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
     <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
     <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
-     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
+    <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
     <template v-if="allGames&&allGames.length&&theme">
       <game-menu v-model="isGameMenuVisible" v-if="allGames.length" :currentGame="currentGame"/>
       <div v-if="currentGame">
@@ -99,7 +98,6 @@ import TopBar from '@/components/TopBar'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
-import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -110,8 +108,12 @@ let scrollTop
 
 export default {
   name: 'GameHall',
+  props: {
+    showChatRoom: {
+      type: Boolean
+    }
+  },
   components: {
-    UnreadPoint,
     Popup,
     XHeader,
     ChatRoom,
@@ -134,7 +136,6 @@ export default {
       isGameMenuVisible: false,
       isHelperVisible: false,
       showNotifiyMsg: true,
-      showChatRoom: false,
       showBottomPrompt: true
     }
   },
@@ -176,7 +177,7 @@ export default {
       return this.systemConfig.chatroomEnabled
     },
     isShowChatroomIcon () {
-      if (!this.systemConfig.chatroomEnabled) {
+      if (!this.systemConfig.chatroomEnabled || !this.isGameHall || this.showChatRoom) {
         return false
       }
       if (!this.$route.params.gameId || !this.roomInfo) {
@@ -267,6 +268,9 @@ export default {
         })
       }
     }
+    this.$root.bus.$on('showGameHistory', () => {
+      this.showGameInfo('historyViaHall')
+    })
   },
   methods: {
     setBottomPromotFlag () {
@@ -341,6 +345,8 @@ export default {
     showGameInfo (type) {
       this.sendHelperGa(type)
       this.isGameInfoVisible = !!type
+      // show history from game hall
+      type = type === 'historyViaHall' ? 'history' : type
       this.contentType = type
     },
     sendHelperGa (type) {
@@ -349,6 +355,7 @@ export default {
         roadbeads: '路珠',
         leaderboard: '长龙排行榜',
         history: '历史开奖',
+        historyViaHall: '历史开奖-游戏大厅',
         intro: '游戏介绍',
         chatroom: '聊天室',
         trend: '走勢圖表'
@@ -361,6 +368,7 @@ export default {
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
+      this.$store.dispatch('setDataSectionStyle', {'padding-top': '13px'})
       this.showNotifiyMsg = false
     }
   }
@@ -415,7 +423,6 @@ export default {
     width: 140px;
     border-radius: 4px;
     background-color: #ffffff;
-    font-size: 14px;
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.24), 0 0 4px 0 rgba(0, 0, 0, 0.12);
     list-style: none;
     &::before {
@@ -486,6 +493,7 @@ export default {
 }
 
 .menu-center {
+  transition: top 1s;
   display: block;
   margin: 0 auto;
   position: fixed;
@@ -497,7 +505,7 @@ export default {
 .notify-msg {
   height: 25px;
   font-size: 13px;
-  line-height: 25px;
+  line-height: 22px;
   color: white;
   text-align: center;
   top: 45.5px;
@@ -545,7 +553,7 @@ export default {
     align-self: center;
     padding: 0 10px;
   }
-
+  
   .weui-btn.weui-btn_default {
     height: 32px;
     width: 80px;

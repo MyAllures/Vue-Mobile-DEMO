@@ -20,7 +20,7 @@
 <script>
 import Vue from 'vue'
 import { mapState } from 'vuex'
-import { fetchChatEmoji, fetchStickers, fetchRavenJWTToken } from '../api'
+import { fetchChatEmoji, fetchStickers, fetchChatToken } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
@@ -69,7 +69,7 @@ export default {
         return this.$router.push('/login?next=' + this.$route.path)
       }
 
-      fetchRavenJWTToken().then((res) => {
+      fetchChatToken().then((res) => {
         this.$store.dispatch('setWs', {
           ws: new WebSocketObj(res.chat_token, this.RECEIVER),
           type: 'raven'

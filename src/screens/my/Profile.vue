@@ -3,7 +3,7 @@
     <div>
       <div class="profile-section">
         <small class="profile-hint">
-          如需修改手机号码请 <span v-if="$store.state.systemConfig.serviceAction" class="service-link" @click="$store.state.systemConfig.serviceAction()">联系客服</span>
+          如需修改手机号码请 <a class="service-link" :href="customerServiceUrl" target="_blank">联系客服</a>
         </small>
         <div class="profile-field">
            <p class="title">真实姓名</p>
@@ -134,6 +134,9 @@ export default {
     ...mapState([
       'systemConfig'
     ]),
+    customerServiceUrl () {
+      return this.systemConfig.customer_service_url
+    },
     hasChange () {
       return inputs.some((key) => this.origin[key] !== this.member[key])
     }

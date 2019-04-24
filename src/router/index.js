@@ -358,17 +358,6 @@ export default new Router({
       ]
     },
     {
-      path: '/CustomerSerivce',
-      name: 'CustomerSerivce',
-      meta: {
-        title: '联系客服',
-        leftCtrl: 'back',
-        requiresAuth: true,
-        tabbarHidden: true
-      },
-      component: resolve => { require(['../screens/CustomerService.vue'], resolve) }
-    },
-    {
       path: '*',
       redirect: '/'
     }
