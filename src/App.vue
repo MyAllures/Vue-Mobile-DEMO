@@ -98,14 +98,14 @@ import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
-import freetrial from './mixins/freetrial'
+import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-
+import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -283,12 +283,8 @@ export default {
     }
   },
   watch: {
-    'user.logined' (isLogin, old) {
-      if (isLogin) {
-        this.serviceUnreadInterval = setInterval(() => {
-          this.fetchServiceUnread()
-        }, 5000)
-      } else {
+    'user.logined' (newStatus, old) {
+      if (!newStatus) {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
@@ -296,6 +292,14 @@ export default {
           this.ws.venom.closeConnect()
         }
         clearInterval(this.serviceUnreadInterval)
+      } else {
+        this.serviceUnreadInterval = setInterval(() => {
+          this.fetchServiceUnread()
+        }, 5000)
+        fetchEiderJWTToken().then(() => {
+          let token = this.$cookie.get('message_broker_token')
+          this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+        })
       }
     },
     '$route' (to, from) {
@@ -383,7 +387,7 @@ export default {
     })
   },
   beforeDestroy () {
-    clearTimeout(this.refreshTokenTimer)
+    window.clearTimeout(this.refreshTokenTimer)
     clearInterval(this.serviceUnreadInterval)
   }
 }
@@ -392,6 +396,7 @@ export default {
 @import '~vux/src/styles/reset.less';
 @import './styles/base.less';
 @import './styles/theme_config.less';
+@import '~vux/src/styles/1px.less';
 </style>
 <style lang="less" scoped>
 

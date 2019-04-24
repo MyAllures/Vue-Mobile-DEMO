@@ -12,12 +12,9 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements
-} from '@/api'
+} from '../../api'
 import { JWT } from '@/utils/jwtToken'
-
-import { HKL_GAMES } from '@/config'
-import { take, find } from 'lodash'
-
+import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -98,7 +95,8 @@ export default {
         })
       }
       commit(types.SET_ANNOUNCE, {page: 'homepage', announce: datas.map(data => data.announcement)})
-    })
+    }
+    )
   },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
@@ -134,24 +132,10 @@ export default {
         gameGroups[d] = gameGroups[d].filter(gameCode => !!find(res, {code: gameCode})).map(gameCode => find(res, {code: gameCode}))
       })
 
-      const tagTable = {}
-      res.forEach(game => {
-        if (HKL_GAMES.includes(game.code)) {
-          game.type = 'hkl'
-        }
-        game.tag.forEach(t => {
-          if (t === '热门游戏') {
-            let gamesForTag
-            if (tagTable[t]) {
-              gamesForTag = tagTable[t]
-            } else {
-              gamesForTag = []
-              tagTable[t] = gamesForTag
-            }
-            gamesForTag.push(game)
-          }
-        })
-      })
+      const tagTable = {
+        '热门游戏': res.slice(0, 17)
+      }
+
       commit(types.SET_GAMES, {
         games: res
       })
@@ -220,9 +204,6 @@ export default {
   },
   setWs: ({commit}, {ws, type}) => {
     commit(types.SET_WS, {ws, type})
-  },
-  closeWs: ({commit}, {ws, type}) => {
-    commit(types.CLOSE_WS, {ws, type})
   },
   initMessage: ({ commit }, messages) => {
     commit(types.INIT_MESSAGE, messages)

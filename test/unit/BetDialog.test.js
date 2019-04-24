@@ -14,6 +14,12 @@ jest.mock('vux', () => {
   }
 })
 
+jest.mock('@/api', () => {
+  return {
+    placeBet: Promise.resolve()
+  }
+})
+
 const localVue = createLocalVue()
 localVue.use(Vuex)
 localVue.filter('currency', () => 0)

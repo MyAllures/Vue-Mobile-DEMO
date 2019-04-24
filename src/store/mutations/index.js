@@ -84,9 +84,6 @@ export default {
   [types.SET_WS]: (state, {ws, type}) => {
     state.ws[type] = ws
   },
-  [types.CLOSE_WS]: (state, type) => {
-    state.ws[type] && state.ws[type].closeConnect()
-  },
   [types.INIT_PERSONAL_SETTING]: (state, setting) => {
     state.personal_setting = setting
   },

@@ -6,22 +6,25 @@ export const JWT = {
   raven: 'chat',
   eider: 'message_broker'
 }
-
+function wsDebug (...args) {
+  if (process.env.NODE_ENV !== 'development') return
+  console.warn('[Venom]', ...args)
+}
 // type: customer_service_token for venom, chat_token for raven
 
 export const checkJWTTokenAlive = (tokenType, checkFunc, fetchTokenFunc) => {
   const token = Vue.cookie.get(tokenType)
   if (token) {
-    console.log('has token in checkJWTTokenAlive')
+    wsDebug('has token in checkJWTTokenAlive')
     checkFunc().then(() => {
-      console.log('check token in checkJWTTokenAlive')
+      wsDebug('check token in checkJWTTokenAlive')
       return Promise.resolve()
     }).catch(() => {
-      console.log('no token in checkJWTTokenAlive inside')
+      wsDebug('no token in checkJWTTokenAlive inside')
       fetchTokenFunc()
     })
   } else {
-    console.log('no token in checkJWTTokenAlive')
+    wsDebug('no token in checkJWTTokenAlive')
     fetchTokenFunc()
   }
 }
