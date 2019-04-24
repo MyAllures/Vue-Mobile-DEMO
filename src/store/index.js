@@ -5,6 +5,7 @@ import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
+import customerService from './customerService'
 
 Vue.use(Vuex)
 
@@ -66,7 +67,6 @@ export default new Vuex.Store({
     categories: {},
     systemConfig: {
       process: 'pending',
-      customerServiceUrl: '',
       agentDashboardUrl: '',
       mobileLogo: '',
       homePageLogo: '',
@@ -82,7 +82,7 @@ export default new Vuex.Store({
       smsValidationEnabled: false,
       appDownloadUrl: '',
       planSiteUrl: '',
-      envelopeActivityId: ''
+      serviceAction: null
     },
     envelope: {},
     urgencySwitchedGame: null,
@@ -92,7 +92,8 @@ export default new Vuex.Store({
     promotions: [],
     ws: {
       raven: null,
-      eider: null
+      eider: null,
+      venom: null
     },
     roomId: undefined,
     roomInfo: null,
@@ -110,12 +111,15 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '5px'}
+    dataSectionStyle: {'padding-top': '10px'},
+    serviceUnread: 0
   },
   actions,
   mutations,
   getters,
   modules: {
-    page
+    page,
+    customerService
+
   }
 })

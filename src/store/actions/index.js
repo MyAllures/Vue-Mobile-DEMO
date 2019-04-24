@@ -12,8 +12,9 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements
-} from '../../api'
-import {take, find} from 'lodash'
+} from '@/api'
+import { JWT } from '@/utils/jwtToken'
+import { take, find } from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -45,10 +46,15 @@ const login = function ({ commit, state, dispatch }, { user }) {
 
 export default {
   login: login,
-  logout: ({ commit, state }) => {
+  logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
+        Vue.cookie.delete('access_token')
+        Vue.cookie.delete('refresh_token')
+        Vue.cookie.delete(`${JWT.venom}_token`)
         commit(types.RESET_USER)
+        dispatch('customerService/clearMessage')
+        dispatch('customerService/setServiceUnread', false)
       },
       errRes => Promise.reject(errRes)
     )
@@ -89,8 +95,7 @@ export default {
         })
       }
       commit(types.SET_ANNOUNCE, {page: 'homepage', announce: datas.map(data => data.announcement)})
-    }
-    )
+    })
   },
   fetchUser: ({ commit, state }) => {
     return fetchUser().then(res => {
@@ -127,7 +132,7 @@ export default {
       })
 
       const tagTable = {
-        '热门游戏': res.slice(0, 17)
+        '热门游戏': res.slice(0, 15)
       }
 
       commit(types.SET_GAMES, {
@@ -198,6 +203,9 @@ export default {
   },
   setWs: ({commit}, {ws, type}) => {
     commit(types.SET_WS, {ws, type})
+  },
+  closeWs: ({commit}, {ws, type}) => {
+    commit(types.CLOSE_WS, {ws, type})
   },
   initMessage: ({ commit }, messages) => {
     commit(types.INIT_MESSAGE, messages)

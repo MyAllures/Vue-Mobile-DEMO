@@ -8,9 +8,7 @@
       <div :class="['info-content', type]">
         <component :is="showing" :game="game">
         </component>
-        <div class="btn-wrapper vux-1px-t">
-          <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回游戏</x-button>
-        </div>
+        <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回游戏</x-button>
       </div>
   </popup>
 </template>
@@ -64,6 +62,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '~vux/src/styles/1px.less';
 .title {
   display: flex;
   align-items: center;
@@ -114,18 +113,14 @@ export default {
   }
 }
 
-.btn-wrapper {
-  background: #fff;
-  width: 100%;
+.button-close {
   position: fixed;
-  bottom: 0;
-  padding: 10px 0;
+  bottom: 10px;
+  margin: 0 auto;
+  width: 90%;
   height: 40px;
-  left: 0;
+  left: 60%;
+  margin-left: -55%;
   z-index: 2;
-  button {
-    width: 90%;
-    margin: auto;
-  }
 }
 </style>

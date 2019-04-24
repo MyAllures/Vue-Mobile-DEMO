@@ -12,15 +12,23 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchServiceUnread, fetchEiderJWTToken, fetchVenomJWTToken } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
+import {checkJWTTokenAlive, JWT} from './utils/jwtToken'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
+import GhostSocketObj from './wsObj/eider'
+import VenomSocketObj from './wsObj/venom'
 
+const sendGaEvent = ({label, category, action}) => {
+  if (store.state.systemConfig.gaTrackingId) {
+    window.gtag('event', action, {'event_category': category, 'event_label': label})
+  }
+}
 function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
@@ -30,12 +38,40 @@ function initData () {
     response => {
       let pref = response.global_preferences || {}
       const chatroomEnabled = pref.chatroom_enabled === 'true'
+
+      const customerServiceUrl = pref.customer_service_url
+      const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
+      let serviceAction = null
+      if (enableBuiltInCustomerService) {
+        if (store.state.user.account_type) {
+          serviceAction = () => {
+            sendGaEvent({
+              label: '我的',
+              category: '點擊/進入客服',
+              action: '點擊'
+            })
+            router.push({path: '/CustomerSerivce'})
+          }
+        } else {
+          serviceAction = () => {
+            Vue.$vux.toast.show({
+              text: '请先登入会员，如未有会员帐号请先注册',
+              type: 'warn'
+            })
+          }
+        }
+      } else {
+        if (customerServiceUrl) {
+          serviceAction = () => { window.open(customerServiceUrl) }
+        } else {
+          serviceAction = null
+        }
+      }
       store.dispatch('setSystemConfig',
         {
           process: 'fulfilled',
           homePageLogo: response.icon,
           mobileLogo: response.mobile_logo,
-          customerServiceUrl: pref.customer_service_url,
           agentDashboardUrl: pref.agent_dashboard_url,
           global_preferences: pref,
           agentBusinessConsultingQQ: pref.agent_business_consulting_qq,
@@ -53,7 +89,9 @@ function initData () {
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
-          envelopeActivityId: response.envelope_activity_id
+          appIcon: response.app_icon,
+          envelopeActivityId: response.envelope_activity_id,
+          serviceAction
         })
 
       const themeId = response.theme || 1
@@ -131,6 +169,14 @@ const i18n = new VueI18n({
 })
 
 axios.interceptors.request.use((config) => {
+  const fromVenom = config.url.includes(urls.venomHost)
+  const fromRaven = config.url.includes(urls.ravenHost)
+  if (fromVenom) {
+    config.headers['Authorization'] = `JWT ${Vue.cookie.get(JWT.venom + '_token')}`
+  }
+  if (fromRaven) {
+    config.headers['Authorization'] = `JWT ${Vue.cookie.get(JWT.raven + '_token')}`
+  }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
     config.headers.common['x-sign'] = sign.ink(t)
@@ -143,7 +189,15 @@ axios.interceptors.request.use((config) => {
 
 const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
+  const fromVenom = res.config.url.includes(urls.venomHost)
+  const fromRaven = res.config.url.includes(urls.ravenHost)
   let responseData = res.data
+  if (fromVenom) {
+    return responseData
+  }
+  if (fromRaven) {
+    return responseData
+  }
   if (responseData.code === 2000) {
     return responseData.data
   } else if (responseData.code === 9001) {
@@ -236,9 +290,7 @@ Vue.mixin({
       toLogin(this.$router)
     },
     sendGaEvent ({label, category, action}) {
-      if (store.state.systemConfig.gaTrackingId) {
-        window.gtag('event', action, {'event_category': category, 'event_label': label})
-      }
+      sendGaEvent({label, category, action})
     }
   }
 })
@@ -251,8 +303,11 @@ const setChatRoomSetting = (username) => {
       })
     }).catch(() => {})
     fetchRoomInfo().then(res => {
+      if (!res) {
+        return
+      }
       const roomInfo = {}
-      res.forEach(room => {
+      res.data.data.forEach(room => {
         roomInfo[room.id] = {name: room.title, status: room.status}
       })
       store.commit(types.SET_ROOM_INFO, roomInfo)
@@ -264,7 +319,11 @@ const setChatRoomSetting = (username) => {
 const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').then(() => {}).catch(() => { initData() })
+  store.dispatch('fetchUser').then(() => {
+    checkJWTTokenAlive(JWT.venom + '_token', fetchServiceUnread, fetchVenomJWTToken)
+  }).catch(() => {
+    initData()
+  })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
@@ -302,6 +361,14 @@ store.watch((state) => {
     }
   }
   if (logined) {
+    fetchVenomJWTToken().then(() => {
+      let token = Vue.cookie.get(`${JWT.venom}_token`)
+      store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+    })
+    fetchEiderJWTToken().then(() => {
+      let token = Vue.cookie.get(`${JWT.eider}_token`)
+      store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+    })
     store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()

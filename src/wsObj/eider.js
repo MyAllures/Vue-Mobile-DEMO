@@ -94,7 +94,7 @@ GhostSocketObj.prototype.initWs = function (token) {
             setTimeout(() => {
               latestResult.loading = false
               store.dispatch('updateLatestResultMap', {gameCode, latestResult})
-            }, 2000)
+            }, 3000)
             break
           case 'close-time-update':
             store.dispatch('urgencySwitchGame', {
