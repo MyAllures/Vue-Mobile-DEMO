@@ -29,7 +29,7 @@ function fetchAnnouncements () {
 }
 
 function gethomePage () {
-  return axios.get(urls.homePage)
+  return axios.get(`${urls.homePage}?platform=mobile`)
 }
 
 function fetchGames () {
