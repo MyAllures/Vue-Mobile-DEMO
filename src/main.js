@@ -90,6 +90,7 @@ function initData () {
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
+          appIcon: response.app_icon,
           envelopeActivityId: response.envelope_activity_id,
           serviceAction
         })

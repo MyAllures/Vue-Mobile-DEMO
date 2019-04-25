@@ -81,11 +81,11 @@
         v-for="game in currentGames"
         :key="game.id"
         @click="chooseGame(game)">
-        <div class="game-label">
-          <span v-if="game.label" class="game-label-text">{{game.label}}</span>
-        </div>
-        <img class="game-icon" v-lazy="game.icon" />
+        <img class="game-icon" v-lazy="game.icon" width="56" height="56"/>
         <div>{{ game.display_name }}</div>
+        <div class="game-label" v-if="game.label" >
+          <span class="game-label-text">{{game.label}}</span>
+        </div>
       </div>
       <div v-if="currentTag==='热门游戏'" class="game-item" @click="isGameMenuVisible = true">
         <div class="game-label"></div>
@@ -144,6 +144,7 @@
     </x-dialog>
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
+    <app-prompt v-if="systemConfig.appDownloadUrl"></app-prompt>
     <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
     <div
       v-if="systemConfig.envelopeActivityId"
@@ -182,6 +183,7 @@ import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
 import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
+import AppPrompt from '@/components/AppPrompt'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
 
 function to (scrollTop) {
@@ -231,7 +233,8 @@ export default {
     TabItem,
     GameMenu,
     ActivityEnvelopeDialog,
-    WinHistory
+    WinHistory,
+    AppPrompt
   },
   mixins: [freetrial],
   computed: {
@@ -637,8 +640,8 @@ export default {
     flex-direction: column;
     position: relative;
     box-sizing: border-box;
-    width: calc(~"100%" / 3);
-    padding-bottom: 5px;
+    width: calc(~"100%" / 4);
+    padding: 8px 0;
     color: @grayscale6;
     text-align: center;
     font-size: 14px;
@@ -649,21 +652,18 @@ export default {
     justify-content: center;
     align-items: flex-end;
     width: 100%;
-    height: 25px;
     margin-bottom: 2px;
   }
   .game-label-text {
     display: inline-block;
-    padding: 2px 5px;
+    padding: 0 5px;
     border-radius: 10px;
-    background-color: lighten(@azul, 30%);
-    color: darken(@azul, 30%);
-    font-size: 12px;
+    font-size: 11px;
   }
   .game-icon {
+    width: 56px;
     box-sizing: border-box;
     display: block;
-    width: 70px;
   }
 }
 
