@@ -2,6 +2,7 @@
   <div class="chatroom-container">
     <chatroom-body></chatroom-body>
     <chatroom-footer></chatroom-footer>
+    <game-info :type="contentType" :visible.sync="isGameInfoVisible"/>
   </div>
 </template>
 
@@ -10,12 +11,21 @@ import ChatroomBody from './ChatroomBody'
 import ChatroomFooter from './ChatroomFooter'
 import { mapState } from 'vuex'
 import { EagleWebSocket } from '@/wsObj/eagle'
-import { eagle } from '@/api'
+import GameInfo from '@/screens/games/GameInfo'
+const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 export default {
   name: 'Chatroom',
+  componentName: 'Chatroom',
   components: {
     ChatroomBody,
-    ChatroomFooter
+    ChatroomFooter,
+    GameInfo
+  },
+  data () {
+    return {
+      contentType: '',
+      isGameInfoVisible: false
+    }
   },
   computed: {
     ...mapState('chatroom', {
@@ -23,7 +33,13 @@ export default {
       ws: state => state.ws,
       wsStatus: state => state.status,
       roomList: state => state.roomList
-    })
+    }),
+    showing () {
+      switch (this.contentType) {
+        case 'chatmanage':
+          return ChatManage
+      }
+    }
   },
   created () {
     let tokenPromise
@@ -36,16 +52,15 @@ export default {
       this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
     })
     if (this.emojiMap === null) {
-      eagle.fetchStickers().then(res => {
-        const emojiMap = {}
-        res.forEach((series, index) => {
-          emojiMap[series.id] = { ...series, order: index }
-        })
-        this.$store.dispatch('chatroom/initEmoji', emojiMap)
-      }).catch(() => {
-
-      })
+      this.$store.dispatch('chatroom/initEmoji')
     }
+    this.$on('showPopup', (type) => {
+      this.isGameInfoVisible = true
+      this.contentType = type
+    })
+  },
+  beforeDestroy () {
+    this.ws.leaveRoom()
   }
 }
 </script>

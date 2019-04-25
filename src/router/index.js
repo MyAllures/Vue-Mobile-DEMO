@@ -90,6 +90,7 @@ const baseRoutes = [
       requiresAuth: true,
       tabbarHidden: true,
       leftCtrl: 'back',
+      rightCtrl: 'info',
       backPage: {
         text: '首页',
         path: '/'
@@ -329,13 +330,25 @@ const baseRoutes = [
     path: '/my/profile',
     name: 'profile',
     meta: {
-      title: '基本資料',
+      title: '基本资料',
       gaTitle: '基本资料',
       leftCtrl: 'back',
       requiresAuth: true,
       tabbarHidden: true
     },
     component: resolve => { require(['../screens/my/Profile.vue'], resolve) }
+  },
+  {
+    path: '/my/follow',
+    name: 'follow',
+    meta: {
+      title: '我的关注',
+      gaTitle: '我的关注',
+      leftCtrl: 'back',
+      requiresAuth: true,
+      tabbarHidden: true
+    },
+    component: resolve => { require(['../screens/my/Follow.vue'], resolve) }
   },
   {
     path: '/my/bankinfo',

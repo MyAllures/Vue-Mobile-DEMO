@@ -48,6 +48,7 @@ export default new Vuex.Store({
     notificationVisible: false,
     dialog: {
       bet: {
+        gameName: '',
         visible: false,
         bets: [],
         isSuccess: false

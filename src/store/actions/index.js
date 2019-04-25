@@ -13,7 +13,8 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements,
-  fetchJWTToken
+  fetchJWTToken,
+  eagle
 } from '../../api'
 import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
@@ -275,6 +276,22 @@ export default {
         token
       })
       return token
+    })
+  },
+  fetchChatRoomUserInfo: ({commit, state}) => {
+    Promise.all([eagle.fetchChatRoomUserInfo(state.user.username), eagle.fetchFolloweeList().catch(() => [])]).then(([user, followeeList]) => {
+      commit(types.SET_USER, {
+        followeeList,
+        can_follow: user.can_follow
+      })
+    }).catch(e => {
+
+    })
+  },
+  toggleFollowee: ({commit}, followee) => {
+    return eagle.toggleFollowee(followee.username).then(res => {
+      commit(types.TOGGLE_FOLLOWEE, followee)
+      return res
     })
   }
 }

@@ -74,6 +74,9 @@ export default {
     stickers: eagleHost + '/v1/stickers/',
     room: eagleHost + '/v1/rooms/',
     room_banned_users: eagleHost + '/v1/room-banned-users/',
-    global_data: eagleHost + '/v1/global-data'
+    global_data: eagleHost + '/v1/global-data/',
+    followee_list: eagleHost + '/v1/users/followee-list/',
+    toggle_follow: eagleHost + '/v1/users/toggle-follow/',
+    user: eagleHost + '/v1/users/'
   }
 }

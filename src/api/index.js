@@ -401,5 +401,30 @@ export const eagle = {
    */
   fetchGlobalData () {
     return axiosEagle.get(urls.eagle.global_data)
+  },
+  /**
+   * 取得聊天室會員資料
+   */
+  fetchChatRoomUserInfo (username) {
+    return axiosEagle.get(`${urls.eagle.user}${username}/`)
+  },
+  /**
+   * 修改聊天室會員資料
+   */
+  updateChatRoomUserInfo (username, data) {
+    return axiosEagle.patch(`${urls.eagle.user}${username}/`, data)
+  },
+  /**
+   * 顯示關注會員名單
+   */
+  fetchFolloweeList () {
+    return axiosEagle.get(urls.eagle.followee_list)
+  },
+  /**
+   * 關注/取消關注會員
+   * @param {*} username
+   */
+  toggleFollowee (username) {
+    return axiosEagle.post(urls.eagle.toggle_follow, {followee: username})
   }
 }

@@ -23,10 +23,8 @@
               助手
             </div>
             <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
-              <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
-                <a target="_blank" class="badage" :href="seoWebsite">
-                  人工计划
-                </a>
+              <li v-if="hasExpertPlan" class="helper-link" @click="showGameInfo('expertplan')">
+                专家计划
               </li>
               <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
                 路珠
@@ -79,6 +77,7 @@ import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
+import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
@@ -128,6 +127,12 @@ export default {
         }
       })
       return map
+    },
+    hasExpertPlan () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasExpertPlan(this.currentGame.code)
     },
     hasTrendDiagram () {
       if (!this.currentGame) {

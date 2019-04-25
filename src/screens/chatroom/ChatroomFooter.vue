@@ -180,14 +180,7 @@ export default {
         return false
       }
 
-      lrz(file).then(rst => {
-        if (rst.fileLen > 1024 * 1024) {
-          this.$vux.toast.show({
-            text: '图片尺寸太大，请选择较小尺寸的图片',
-            type: 'warn'
-          })
-          return
-        }
+      lrz(file, {width: 600}).then(rst => {
         let formData = new FormData()
         formData.append('receiver', this.ws.roomId)
         formData.append('image', rst.file)

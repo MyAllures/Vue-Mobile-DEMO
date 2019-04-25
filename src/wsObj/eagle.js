@@ -47,6 +47,8 @@ export class EagleWebSocket {
       url += `&room_id=${roomId}`
     }
     this.originRoomId = roomId
+    this.roomId = roomId
+
     this.ws = new WebSocketBuilder(url)
     this.ws.subscribe({
       onmessage,
@@ -107,10 +109,12 @@ export class EagleWebSocket {
   }
 
   leaveRoom () {
-    this.ws.send({
-      'command': 'leave',
-      'receiver': this.roomId
-    })
+    if (this.ws.wsState === WebSocket.OPEN) {
+      this.ws.send({
+        'command': 'leave',
+        'receiver': this.roomId
+      })
+    }
     this.ws.disconnect()
     store.dispatch('chatroom/initMsg', [])
     store.dispatch('chatroom/setWs', null)

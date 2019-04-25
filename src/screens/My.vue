@@ -35,6 +35,20 @@
           <span v-if="isPrimaryInfoEmpty" class="warn-tip">未填写</span>
         </cell>
         <cell
+          title="我的关注"
+          @click.native="sendGaEvent({label: '我的关注',category: '基本資料',action: '檢視'});$router.push('/my/follow')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/follow.svg" slot="icon" alt="profile">
+        </cell>
+      </group>
+      <group>
+        <cell
+          @click.native="$router.push('/fin/withdraw')"
+          title="申请取款"
+          is-link>
+          <img class="svg-icon" src="../assets/my/withdraw.svg" slot="icon" alt="withdraw">
+        </cell>
+        <cell
           @click.native="$router.push('/my/bankinfo')"
           :title="$t('misc.bank')"
           is-link>

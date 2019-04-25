@@ -187,5 +187,16 @@ export default {
   },
   [types.FULFILLED_FETCH_JWT_TOKEN]: (state, {token, type}) => {
     state.jwt_token[type] = token
+  },
+  [types.FULFILLED_FETCH_JWT_TOKEN]: (state, {token, type}) => {
+    state.jwt_token[type] = token
+  },
+  [types.TOGGLE_FOLLOWEE]: (state, followee) => {
+    let idx = state.user.followeeList.findIndex((user) => user.username === followee.username)
+    if (idx >= 0) {
+      state.user.followeeList.splice(idx, 1)
+    } else {
+      state.user.followeeList.push(followee)
+    }
   }
 }

@@ -75,12 +75,6 @@ export default {
     betDialog () {
       return this.$store.state.dialog.bet
     },
-    gameId () {
-      return this.$route.params.gameId
-    },
-    currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId)
-    },
     totalCount () {
       if (this.betDialog.bets.length === 0) {
         return 0
@@ -131,6 +125,7 @@ export default {
         this.$store.dispatch('updateDialog', {
           name: 'bet',
           state: {
+            gameName: '',
             visible: false,
             bets: []
           }
@@ -169,7 +164,7 @@ export default {
       }
       placeBet(betData)
         .then(res => {
-          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
+          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.betDialog.gameName})
           if (res && res[0].member) {
             this.$vux.toast.show({
               text: '成功下单',
@@ -178,6 +173,7 @@ export default {
             this.$store.dispatch('updateDialog', {
               name: 'bet',
               state: {
+                gameName: '',
                 visible: false,
                 bets: [],
                 isSuccess: true

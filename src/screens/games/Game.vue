@@ -36,8 +36,8 @@
         :class="['mode-tab-item', {active: mode==='bettrack'}]"
         @click="mode = 'bettrack'">追号</div>
     </div>
-    <div class="bet-area">
-      <div class="aside">
+    <div :class="['bet-area', mode]">
+      <div class="aside" v-fix-scroll>
         <div class="category-menu">
           <div
             v-for="(category, index) in categories"
@@ -48,7 +48,7 @@
           </div>
         </div>
       </div>
-      <div class="main">
+      <div class="main" v-fix-scroll>
         <router-view
           v-if="activeCategory"
           :activeCategory="activeCategory"
@@ -147,6 +147,7 @@ import GameResult from '../../components/GameResult'
 import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
 import AmountInput from '../../components/AmountInput'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
+import FixScroll from '@/directive/fixscroll'
 
 export default {
   name: 'Game',
@@ -169,7 +170,8 @@ export default {
     AmountInput
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll
   },
   data () {
     return {
@@ -344,6 +346,7 @@ export default {
         this.$store.dispatch('updateDialog', {
           name: 'bet',
           state: {
+            gameName: '',
             visible: false,
             bets: []
           }
@@ -514,13 +517,18 @@ export default {
           }
         })
       } else {
+        const state = {
+          gameName: this.currentGame.display_name,
+          visible: true,
+          bets: bets,
+          isSuccess: false
+        }
+        if (this.user.account_type) {
+          state.hasShared = true
+        }
         this.$store.dispatch('updateDialog', {
           name: 'bet',
-          state: {
-            visible: true,
-            bets: bets,
-            isSuccess: false
-          }
+          state
         })
       }
     },
@@ -720,13 +728,23 @@ export default {
   overflow: auto;
   display: flex;
   flex: 1 1 auto;
+  &.bet {
+    height: calc(~"100%" - 90px);
+  }
+  &.bettrack {
+    height: calc(~"100%" - 130px);
+  }
   .aside {
     flex: 0 0 auto;
     width: 90px;
-    height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     box-shadow: 6px 0 3px -3px rgba(0, 0, 0, 0.15);
     z-index: @aside-zindex;
+  }
+  .main {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .category-menu {
     flex: 0 0 auto;
@@ -748,11 +766,6 @@ export default {
       }
     }
   }
-}
-.main {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .bottom-prompt {
@@ -961,8 +974,6 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 55px;
-  line-height: 55px;
   .mask {
     width: 100%;
     height: 100%;
@@ -971,6 +982,9 @@ export default {
   }
   .text {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #fff;
     width: 100%;
     height: 100%;
