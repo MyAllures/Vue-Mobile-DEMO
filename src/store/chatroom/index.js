@@ -10,7 +10,7 @@ export default {
     emojiMap: null,
     isManager: false,
     loading: true,
-    roomList: [63],
+    roomList: [],
     isRoomExist: true
   },
   mutations: {
@@ -64,8 +64,16 @@ export default {
     receiveMsg: ({ commit }, message) => {
       commit('receiveMsg', message)
     },
-    initEmoji: ({commit}, emojiMap) => {
-      commit('initEmoji', emojiMap)
+    initEmoji: ({commit}) => {
+      eagle.fetchStickers().then(res => {
+        const emojiMap = {}
+        res.forEach((series, index) => {
+          emojiMap[series.id] = { ...series, order: index }
+        })
+        commit('initEmoji', emojiMap)
+      }).catch(() => {
+
+      })
     }
   }
 }

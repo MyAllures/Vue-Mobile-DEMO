@@ -184,7 +184,7 @@ axiosEagle.interceptors.response.use(res => {
     type: HTTP_ERROR,
     error
   })
-  return Promise.reject(error)
+  return Promise.reject(error.response)
 })
 
 Vue.config.productionTip = false
@@ -291,7 +291,18 @@ store.watch((state) => {
     }
   }
   if (logined) {
-    store.dispatch('fetchJWTToken', 'eider').then(token => {
+    store.dispatch('fetchChatRoomUserInfo')
+    let eiderTokenPromise
+    let eiderToken = localStorage.getItem('eider_token')
+    if (eiderToken) {
+      eiderTokenPromise = Promise.resolve(eiderToken)
+    } else {
+      eiderTokenPromise = store.dispatch('fetchJWTToken', 'eider').then(token => {
+        localStorage.setItem('eider_token', token)
+        return token
+      })
+    }
+    eiderTokenPromise.then(token => {
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
     }).catch(() => {})
     store.dispatch('initUnread')

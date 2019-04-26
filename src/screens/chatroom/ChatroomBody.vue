@@ -57,6 +57,10 @@
       </li>
     </ul>
     <div :class="['to-bottom-btn', {visible: isToBottomBtnVisible}]" @click="toBottom"></div>
+    <div v-if="isManager" class="manage-btn" @click="dispatch('Chatroom', 'showPopup', 'chatmanage')">
+      <p>禁言</p>
+      <p>管理</p>
+    </div>
     <cube-popup
       v-transfer-dom
       class="preview-image-popup"
@@ -88,12 +92,22 @@
             :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
           <div class="nickname">{{selectedMember.nickname}}</div>
         </div>
-        <div v-if="banLoading" class="loading">
+        <div class="buttons single">
+          <div v-if="!user.followeeList||followLoading" class="loading">
             <inline-loading></inline-loading>加载中
           </div>
-        <div v-else class="buttons">
-          <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
-          <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
+          <x-button v-else-if="!selectedMember.can_follow" type="default" disabled>未开放关注</x-button>
+          <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
+          <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
+        </div>
+        <div v-if="isManager" class="buttons">
+          <div v-if="banLoading" class="loading">
+            <inline-loading></inline-loading>加载中
+          </div>
+          <template v-else>
+            <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
+            <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
+          </template>
         </div>
       </div>
     </x-dialog>
@@ -103,6 +117,7 @@
 import BetInfo from './BetInfo'
 import { mapState } from 'vuex'
 import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
+import emitter from '@/mixins/emitter.js'
 import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
 import ImgWrapper from './ImgWrapper'
@@ -126,6 +141,7 @@ export default {
     FixScroll,
     TransferDom
   },
+  mixins: [emitter],
   data () {
     const defaultAvatar = require('../../assets/avatar.png')
     return {
@@ -139,7 +155,8 @@ export default {
       chatManageDialogVisible: false,
       selectedMember: null,
       bannedList: [],
-      banLoading: false
+      banLoading: false,
+      followLoading: false
     }
   },
   computed: {
@@ -226,9 +243,6 @@ export default {
       this.$refs['image-popup'].hide()
     },
     handleMember (member) {
-      if (!this.isManager) {
-        return
-      }
       this.selectedMember = member
       this.chatManageDialogVisible = true
     },
@@ -243,6 +257,22 @@ export default {
 
       }).finally(() => {
         this.banLoading = false
+      })
+    },
+    toggleFollowee () {
+      this.followLoading = true
+      this.$store.dispatch('toggleFollowee', this.selectedMember).then(res => {
+        this.$vux.toast.show({
+          text: res.messages[0],
+          type: 'success'
+        })
+      }).catch(errRes => {
+        this.$vux.toast.show({
+          text: errRes.data.messages[0],
+          type: 'warn'
+        })
+      }).finally(() => {
+        this.followLoading = false
       })
     }
   },
@@ -379,6 +409,24 @@ export default {
   &::after {
     height: 15px;
   }
+}
+.manage-btn {
+  box-sizing: border-box;
+  position: fixed;
+  right: 10px;
+  bottom: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  line-height: 14px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  border: 2px solid #e29348;
+  background: #f5a623;
 }
 .to-bottom-btn {
   box-sizing: border-box;
@@ -548,8 +596,8 @@ export default {
 
   .loading {
     width: 100%;
-    height: 50px;
-    line-height: 50px;
+    height: 40px;
+    line-height: 40px;
     font-size: 18px;
     text-align: center;
     .weui-loading {
@@ -559,11 +607,16 @@ export default {
   }
 
   .buttons {
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    height: 40px;
-    width: 270px;
-    margin: 15px auto;
+    margin: 0 auto;
+    padding: 0 15px 15px 15px;
+    &.single {
+      justify-content: center;
+    }
+    height: 55px;
+    width: 300px;
     /deep/ .weui-btn {
       margin: 0;
       width: 130px;

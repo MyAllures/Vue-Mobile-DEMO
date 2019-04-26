@@ -38,7 +38,7 @@
       :zIndex="200">
         <div class="bet-interface-container">
           <div class="header">{{mode==='bet'?'下注':'追号'}}</div>
-          <div class="bet-area" :style="{height: mode==='bet'?'calc(100% - 90px)':'calc(100% - 130px)'}">
+          <div :class="['bet-area', mode]">
             <div class="aside" v-fix-scroll>
               <div class="category-menu">
                 <template v-for="(category, index) in categories">
@@ -350,6 +350,7 @@ export default {
         this.$store.dispatch('updateDialog', {
           name: 'bet',
           state: {
+            gameName: '',
             visible: false,
             bets: [],
             hasShared: true
@@ -476,6 +477,7 @@ export default {
         })
       } else {
         const state = {
+          gameName: this.currentGame.display_name,
           visible: true,
           bets: bets,
           isSuccess: false
@@ -666,8 +668,14 @@ export default {
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 10;
 }
+
 .bet-area {
-  height: calc(~"100%" - 90px);
+  &.bet {
+    height: calc(~"100%" - 90px);
+  }
+  &.bettrack {
+    height: calc(~"100%" - 130px);
+  }
   display: flex;
   flex: 1 1 auto;
   .aside {

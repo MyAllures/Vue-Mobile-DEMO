@@ -8,6 +8,7 @@ import {
   Style,
   // form
   Checkbox,
+  Switch,
   // popup
   Popup,
   Picker,
@@ -18,6 +19,7 @@ import {
 } from 'cube-ui'
 
 Vue.use(Checkbox)
+Vue.use(Switch)
 Vue.use(Popup)
 Vue.use(Picker)
 Vue.use(DatePicker)

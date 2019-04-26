@@ -6,7 +6,7 @@
         <div class="issue-number">{{info.issue_number}}期</div>
       </div>
       <x-button
-        v-if="!isSelf&&info.issue_number===betableIssueNumber"
+        v-if="!isSelf"
         mini
         type="primary"
         @click.native="openDialog">跟单
@@ -29,8 +29,7 @@ export default {
   name: 'ChatGameBetInfo',
   props: {
     infoStr: String,
-    isSelf: Boolean,
-    betableIssueNumber: String
+    isSelf: Boolean
   },
   components: {
     XButton
@@ -53,13 +52,15 @@ export default {
           display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
           bet_amount: bet.bet_amount,
           play: bet.play.id,
-          bet_options: bet.betOptions,
-          odds: bet.play.odds
+          bet_options: bet.bet_options,
+          odds: bet.play.odds,
+          opts_combos_count: bet.bet_options.opts_combos_count
         }
       })
       this.$store.dispatch('updateDialog', {
         name: 'bet',
         state: {
+          gameName: this.info.display_name,
           visible: true,
           bets,
           isSuccess: false
