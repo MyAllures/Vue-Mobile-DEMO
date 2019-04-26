@@ -133,7 +133,7 @@ export default {
       })
 
       const tagTable = {
-        '热门游戏': res.slice(0, 15)
+        '热门游戏': res.slice(0, 23)
       }
 
       commit(types.SET_GAMES, {
