@@ -1,7 +1,6 @@
 import axios from 'axios'
 import urls from './urls'
 import qs from 'qs'
-import Vue from 'vue'
 import {JWT} from '@/utils/jwtToken'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -276,24 +275,9 @@ function fetchTrendChart (params) {
   return axios.get(urls.trend_chart, {params})
 }
 
-function fetchRavenJWTToken () {
-  return axios.post(urls.get_jwt_token, {service_type: JWT.raven}).then((res) => {
-    Vue.cookie.set(JWT.raven + '_token', res[JWT.raven + '_token'])
-    return res
-  })
-}
-
-function fetchVenomJWTToken () {
-  return axios.post(urls.get_jwt_token, {service_type: JWT.venom}).then((res) => {
-    Vue.cookie.set(JWT.venom + '_token', res[JWT.venom + '_token'])
-    return res
-  })
-}
-
-function fetchEiderJWTToken () {
-  return axios.post(urls.get_jwt_token, {service_type: JWT.eider}).then((res) => {
-    Vue.cookie.set(JWT.eider + '_token', res[JWT.eider + '_token'])
-    return res
+function fetchJWTToken (type) {
+  return axios.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
+    return res[JWT[type] + '_token']
   })
 }
 
@@ -319,9 +303,7 @@ export {
   fetchActivityEnvelope,
   takeActivityEnvelope,
   fetchWinHistory,
-  fetchEiderJWTToken,
-  fetchVenomJWTToken,
-  fetchRavenJWTToken,
+  fetchJWTToken,
   fetchTrendChart,
   sendHeartBeat,
   sendSMSCode,
