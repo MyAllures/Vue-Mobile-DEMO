@@ -12,21 +12,11 @@
 <script>
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
-import VenomSocketObj from '@/wsObj/venom'
-import { JWT } from '@/utils/jwtToken'
 
 export default {
   components: {
     Footer,
     Messages
-  },
-  created () {
-    if (!this.$store.state.ws.venom) {
-      let token = this.$cookie.get(`${JWT.venom}_token`)
-      if (token) {
-        this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-      }
-    }
   }
 }
 </script>

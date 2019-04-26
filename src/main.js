@@ -12,13 +12,12 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchServiceUnread, fetchEiderJWTToken, fetchVenomJWTToken } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
-import {checkJWTTokenAlive, JWT} from './utils/jwtToken'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
@@ -173,10 +172,10 @@ axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
   const fromRaven = config.url.includes(urls.ravenHost)
   if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${Vue.cookie.get(JWT.venom + '_token')}`
+    config.headers['Authorization'] = `JWT ${localStorage.getItem('venom_token')}`
   }
   if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${Vue.cookie.get(JWT.raven + '_token')}`
+    config.headers['Authorization'] = `JWT ${localStorage.getItem('raven_token')}`
   }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
@@ -323,9 +322,7 @@ const setChatRoomSetting = (username) => {
 const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').then(() => {
-    checkJWTTokenAlive(JWT.venom + '_token', fetchServiceUnread, fetchVenomJWTToken)
-  }).catch(() => { initData() })
+  store.dispatch('fetchUser').catch(() => { initData() })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
@@ -363,14 +360,30 @@ store.watch((state) => {
     }
   }
   if (logined) {
-    fetchVenomJWTToken().then(() => {
-      let token = Vue.cookie.get(`${JWT.venom}_token`)
+    let venomTokenPromise
+    let venomToken = localStorage.getItem('venom_token')
+    if (venomToken) {
+      venomTokenPromise = Promise.resolve(venomToken)
+    } else {
+      venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+    }
+    venomTokenPromise.then(token => {
+      localStorage.setItem('venom_token', token)
       store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-    })
-    fetchEiderJWTToken().then(() => {
-      let token = Vue.cookie.get(`${JWT.eider}_token`)
+    }).catch(() => {})
+
+    let eiderTokenPromise
+    let eidereToken = localStorage.getItem('eider_token')
+    if (eidereToken) {
+      eiderTokenPromise = Promise.resolve(eidereToken)
+    } else {
+      eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
+    }
+    eiderTokenPromise.then(token => {
+      localStorage.setItem('eider_token', token)
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
-    })
+    }).catch(() => {})
+
     store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
