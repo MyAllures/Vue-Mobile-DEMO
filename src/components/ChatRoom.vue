@@ -18,9 +18,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapState } from 'vuex'
-import { fetchChatEmoji, fetchStickers, fetchRavenJWTToken } from '../api'
+import { fetchChatEmoji, fetchStickers, fetchJWTToken } from '../api'
 import { TransferDom, Tab, TabItem, AlertModule, Popup } from 'vux'
 import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
@@ -64,17 +63,17 @@ export default {
     if (this.ws.raven) {
       this.ws.raven.joinRoom(this.RECEIVER)
     } else {
-      let token = Vue.cookie.get('access_token')
-      if (!token) {
-        return this.$router.push('/login?next=' + this.$route.path)
+      let ravenTokenPromise
+      let ravenToken = localStorage.getItem('raven_token')
+      if (ravenToken) {
+        ravenTokenPromise = Promise.resolve(ravenToken)
+      } else {
+        ravenTokenPromise = fetchJWTToken('raven').catch(() => {})
       }
-
-      fetchRavenJWTToken().then((res) => {
-        this.$store.dispatch('setWs', {
-          ws: new WebSocketObj(res.chat_token, this.RECEIVER),
-          type: 'raven'
-        })
-      }).catch(() => {})
+      ravenTokenPromise.then(token => {
+        localStorage.setItem('raven_token', token)
+        this.$store.dispatch('setWs', { ws: new WebSocketObj(token, this.RECEIVER), type: 'raven' })
+      })
     }
     if (!this.$store.state.emojis) {
       Promise.all([fetchChatEmoji(), fetchStickers()]).then(resArr => {
