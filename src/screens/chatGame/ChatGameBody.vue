@@ -80,7 +80,7 @@
       :z-index="1000">
       <div class="preview-image-popup-content" @click="hidePreviewImg">
         <div class="close-btn"></div>
-        <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
+        <div class="preview-image" :style="{'background-image': `url('${selectedImage}')`}"></div>
       </div>
     </cube-popup>
     <x-dialog

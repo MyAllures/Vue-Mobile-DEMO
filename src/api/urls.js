@@ -26,6 +26,7 @@ export default {
   games: v2Member + '/game/',
   bettrack: v2Member + '/bettrackrecord/',
   new_bettrack: v2Member + '/bettrackrecordv2/',
+  bettrack_record: v2Member + '/bettrackrecord_general/',
   category: v2Member + '/game/category/',
   playgroup: v2Member + '/game/playgroup/',
   schedule: v2Member + '/game/schedule/',

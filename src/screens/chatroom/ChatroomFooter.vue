@@ -230,6 +230,8 @@ export default {
 
 <style lang="less" scoped>
 .chatroom-footer {
+  position: absolute;
+  bottom: 0;
   flex: 0 0 auto;
   background: #fafafa;
   width: 100%;
