@@ -3,8 +3,8 @@
     <group>
       <cell title="允许他人关注">
         <cube-switch
-          :value="user.can_follow"
-          :disabled="user.can_follow===undefined||switchLoading"
+          :value="user.followable"
+          :disabled="user.followable===undefined||switchLoading"
           @input="switchFollowStatus"></cube-switch>
       </cell>
     </group>
@@ -55,10 +55,10 @@ export default {
     switchFollowStatus (val) {
       this.switchLoading = true
       eagle.updateChatRoomUserInfo(this.user.username, {
-        can_follow: val
+        followable: val
       }).then(() => {
         this.$store.dispatch('setUser', {
-          can_follow: val
+          followable: val
         })
       }).catch(() => {
 

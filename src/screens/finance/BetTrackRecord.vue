@@ -62,7 +62,7 @@
         </tr>
       </tbody>
     </x-table>
-    <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
+    <!-- <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast> -->
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
   <div v-else class="tip">

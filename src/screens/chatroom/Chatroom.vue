@@ -11,7 +11,9 @@ import ChatroomBody from './ChatroomBody'
 import ChatroomFooter from './ChatroomFooter'
 import { mapState } from 'vuex'
 import { EagleWebSocket } from '@/wsObj/eagle'
+import {fetchJWTToken} from '@/api'
 import GameInfo from '@/screens/games/GameInfo'
+import {makeCancelable} from '@/utils'
 const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 export default {
   name: 'Chatroom',
@@ -24,7 +26,8 @@ export default {
   data () {
     return {
       contentType: '',
-      isGameInfoVisible: false
+      isGameInfoVisible: false,
+      tokenCancelablePromise: null
     }
   },
   computed: {
@@ -43,13 +46,20 @@ export default {
   },
   created () {
     let tokenPromise
-    if (!this.$store.state.jwt_token.eagle) {
-      tokenPromise = this.$store.dispatch('fetchJWTToken', 'eagle')
+    // let token = localStorage.getItem('eagle_token')
+    let token = '' // TODO 後端尚在調整
+    if (!token) {
+      tokenPromise = fetchJWTToken('eagle')
     } else {
-      tokenPromise = Promise.resolve(this.$store.state.jwt_token.eagle)
+      tokenPromise = Promise.resolve(token)
     }
-    tokenPromise.then(token => {
+    const tokenCancelablePromise = makeCancelable(tokenPromise)
+    this.tokenCancelablePromise = tokenCancelablePromise
+    tokenCancelablePromise.promise.then(token => {
+      localStorage.setItem('eagle_token', token)
       this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+    }).catch(() => {
+
     })
     if (this.emojiMap === null) {
       this.$store.dispatch('chatroom/initEmoji')
@@ -60,7 +70,13 @@ export default {
     })
   },
   beforeDestroy () {
-    this.ws.leaveRoom()
+    if (this.tokenCancelablePromise) {
+      // 避免組件銷毀後異步建立連線
+      this.tokenCancelablePromise.cancel()
+    }
+    if (this.ws) {
+      this.ws.leaveRoom()
+    }
   }
 }
 </script>

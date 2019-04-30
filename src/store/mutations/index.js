@@ -20,12 +20,8 @@ export default {
     state.user = {
       logined: false
     }
-    state.jwt_token = {
-      venom: '',
-      raven: '',
-      eider: '',
-      eagle: ''
-    }
+    localStorage.removeItem('eider_token')
+    localStorage.removeItem('eagle_token')
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
     Vue.cookie.delete('message_broker_token')
@@ -181,15 +177,6 @@ export default {
   },
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
-  },
-  [types.START_FETCH_JWT_TOKEN]: (state, type) => {
-    state.jwt_token[type] = 'pending'
-  },
-  [types.FULFILLED_FETCH_JWT_TOKEN]: (state, {token, type}) => {
-    state.jwt_token[type] = token
-  },
-  [types.FULFILLED_FETCH_JWT_TOKEN]: (state, {token, type}) => {
-    state.jwt_token[type] = token
   },
   [types.TOGGLE_FOLLOWEE]: (state, followee) => {
     let idx = state.user.followeeList.findIndex((user) => user.username === followee.username)

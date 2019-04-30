@@ -120,13 +120,7 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    bettrackPositions: {},
-    jwt_token: {
-      venom: '',
-      raven: '',
-      eider: '',
-      eagle: ''
-    }
+    bettrackPositions: {}
   },
   actions,
   mutations,

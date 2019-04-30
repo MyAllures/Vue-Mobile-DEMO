@@ -13,7 +13,6 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements,
-  fetchJWTToken,
   eagle
 } from '../../api'
 import {take, find} from 'lodash'
@@ -268,21 +267,11 @@ export default {
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
   },
-  fetchJWTToken: ({commit}, type) => {
-    commit(types.START_FETCH_JWT_TOKEN, type)
-    return fetchJWTToken(type).then(token => {
-      commit(types.FULFILLED_FETCH_JWT_TOKEN, {
-        type,
-        token
-      })
-      return token
-    })
-  },
   fetchChatRoomUserInfo: ({commit, state}) => {
     Promise.all([eagle.fetchChatRoomUserInfo(state.user.username), eagle.fetchFolloweeList().catch(() => [])]).then(([user, followeeList]) => {
       commit(types.SET_USER, {
         followeeList,
-        can_follow: user.can_follow
+        followable: user.followable
       })
     }).catch(e => {
 

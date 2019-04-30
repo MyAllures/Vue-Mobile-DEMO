@@ -184,15 +184,15 @@ const baseFirseLevelPages = [{
 
 const chatroomPage = {
   label: '聊天室',
-  iconImg: require('./assets/footer/top_up_normal.svg'),
+  iconImg: require('./assets/footer/chatroom.svg'),
   iconImgActive: theme => `
-  <svg width="27px" height="27px" viewBox="0 0 27 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>icon_footer_top up_pressed</title>
+  <svg width="27px" height="27px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_footer_chatroom_normal</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="icon_footer_top-up_pressed" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M22.95,7 L4.05,7 C3.4704,7 3,7.384 3,7.85714286 L3,10 L24,10 L24,7.85714286 C24,7.384 23.5296,7 22.95,7" id="Fill-1" fill="${theme}"></path>
-        <path d="M5.80769231,14 L11.1923077,14 C11.6381538,14 12,14.448 12,15 C12,15.552 11.6381538,16 11.1923077,16 L5.80769231,16 C5.36184615,16 5,15.552 5,15 C5,14.448 5.36184615,14 5.80769231,14 Z M3,12.5294118 L3,19.9411765 C3,20.5256471 3.4704,21 4.05,21 L22.95,21 C23.5296,21 24,20.5256471 24,19.9411765 L24,12.5294118 L24,12 L3,12 L3,12.5294118 Z" id="Fill-3" fill="${theme}"></path>
+    <g id="icon_footer_chatroom_normal" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M12,9.25 C11.241,9.25 10.625,9.866 10.625,10.625 C10.625,11.384 11.241,12 12,12 C12.759,12 13.375,11.384 13.375,10.625 C13.375,9.866 12.759,9.25 12,9.25 M6.5,9.25 C5.741,9.25 5.125,9.866 5.125,10.625 C5.125,11.384 5.741,12 6.5,12 C7.259,12 7.875,11.384 7.875,10.625 C7.875,9.866 7.259,9.25 6.5,9.25 M12,1 C5.925,1 1,5.31 1,10.625 C1,13.663 2.612,16.368 5.125,18.132 L5.125,23 L9.944,20.076 C10.61,20.187 11.297,20.25 12,20.25 C18.075,20.25 23,15.94 23,10.625 C23,5.31 18.075,1 12,1 M12,18.875 C11.197,18.875 10.421,18.781 9.676,18.623 L6.439,20.568 L6.483,17.379 C4.001,15.887 2.375,13.42 2.375,10.625 C2.375,6.069 6.684,2.375 12,2.375 C17.315,2.375 21.625,6.069 21.625,10.625 C21.625,15.182 17.315,18.875 12,18.875 M17.5,9.25 C16.741,9.25 16.125,9.866 16.125,10.625 C16.125,11.384 16.741,12 17.5,12 C18.259,12 18.875,11.384 18.875,10.625 C18.875,9.866 18.259,9.25 17.5,9.25" id="Page-1" fill="${theme}"></path>
     </g>
   </svg>
   `,

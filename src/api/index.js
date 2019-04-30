@@ -70,7 +70,7 @@ export function fetchBetTrackRecord (option) {
   let url = `${urls.bettrack_record}?`
   Object.keys(option).forEach(key => {
     if (key === 'date') {
-      url += `&bet_date=${option[key]}`
+      url += `&start_date=${option[key]}&end_date=${option[key]}`
       return
     }
     url += `&${key}=${option[key]}`
@@ -395,6 +395,14 @@ export const eagle = {
    */
   fetchChatRoomUserInfo (username) {
     return axiosEagle.get(`${urls.eagle.user}${username}/`)
+  },
+  /**
+   * 使用者詳情
+   * @param {string} username
+   * @param {number} roomId
+   */
+  fetchUserDetail (username, roomId) {
+    return axiosEagle.get(`${urls.eagle.user}${username}/details/?room_id=${roomId}`)
   },
   /**
    * 修改聊天室會員資料
