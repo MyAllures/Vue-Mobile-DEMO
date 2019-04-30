@@ -6,60 +6,60 @@
       :hide-on-blur="true"
       @on-hide="reset"
       :dialog-style="dialogStyle">
-      <div class="close-btn" @click="$emit('update:isShowEnvelopeDialog', false)"></div>
-      <div class="envelope-avatar">
-        <div class="money"></div>
+      <div class="envelope-header">
+        <div class="ellipse"></div>
+        <div class="rectangle"></div>
       </div>
-      <div class="text-field">
-        拼手气红包
-      </div>
-      <div class="balance-field">
-        <span>我的余额</span>
-        <span class="balance">{{user.balance | currency('￥')}}</span>
-      </div>
-      <group label-width="120px" label-align="left" label-margin-right="10px">
-        <x-input
-          autocapitalize="off"
-          title="红包金额"
-          placeholder="请输入红包金额"
-          placeholder-align="right"
-          v-model="envelope.pack_amount"
-          @on-change="inputnum($event, 'pack_amount')"
-          keyboard="number">
-        </x-input>
-        <div class="input-validate">
-          最高金额 {{systemConfig.envelopeSettings.max_amount | currency('￥')}}
-          &nbsp;
-          最低金额 {{systemConfig.envelopeSettings.min_amount | currency('￥')}}
+      <!-- <div class="close-btn" @click="$emit('update:isShowEnvelopeDialog', false)"></div> -->
+      <div class="envelope-content">
+        <div class="balance-field">
+          <span>我的余额</span>
+          <span class="balance">{{user.balance | currency('￥')}}</span>
         </div>
-        <x-input
-          autocapitalize="off"
-          title="红包个数"
-          placeholder="请输入红包个数"
-          placeholder-align="right"
-          v-model="envelope.pack_nums"
-          @on-change="inputnum($event, 'pack_nums')"
-          keyboard="number">
-        </x-input>
-        <div class="input-validate">
-          最多个数 {{systemConfig.envelopeSettings.per_max_count}}
+        <group label-width="120px" label-align="left" label-margin-right="10px">
+          <x-input
+            autocapitalize="off"
+            title="红包金额"
+            placeholder="请输入红包金额"
+            placeholder-align="right"
+            v-model="envelope.pack_amount"
+            @on-change="inputnum($event, 'pack_amount')"
+            keyboard="number">
+          </x-input>
+          <div class="input-validate">
+            最高金额 {{systemConfig.envelopeSettings.max_amount | currency('￥')}}
+            &nbsp;
+            最低金额 {{systemConfig.envelopeSettings.min_amount | currency('￥')}}
+          </div>
+          <x-input
+            autocapitalize="off"
+            title="红包个数"
+            placeholder="请输入红包个数"
+            placeholder-align="right"
+            v-model="envelope.pack_nums"
+            @on-change="inputnum($event, 'pack_nums')"
+            keyboard="number">
+          </x-input>
+          <div class="input-validate">
+            最多个数 {{systemConfig.envelopeSettings.per_max_count}}
+          </div>
+          <x-textarea
+            title=""
+            placeholder="恭喜发财，大吉大利"
+            :height="50"
+            :max="20"
+            v-model="envelope.content"></x-textarea>
+        </group>
+        <div class="footer">
+          <div class="error">{{error}}</div>
+          <x-button
+            type="primary"
+            action-type ="button"
+            :show-loading="loading"
+            :disabled="false"
+            @click.native="submit">确认发出
+          </x-button>
         </div>
-        <x-textarea
-          title=""
-          placeholder="恭喜发财，大吉大利"
-          :height="50"
-          :max="20"
-          v-model="envelope.content"></x-textarea>
-      </group>
-      <div class="footer">
-        <div class="error">{{error}}</div>
-        <x-button
-          type="primary"
-          action-type ="button"
-          :show-loading="loading"
-          :disabled="false"
-          @click.native="submit">确认发出
-        </x-button>
       </div>
     </x-dialog>
   </div>
@@ -89,16 +89,16 @@ export default {
     }
   },
   data () {
-    const width = window.innerWidth <= 320 ? window.innerWidth + 'px' : '355px'
+    const width = `${window.innerWidth - 40}px`
     const dialogStyle = {
       'max-width': width,
       width: width,
+      'height': '415px',
       'box-sizing': 'border-box',
-      'padding': '15px 10px 10px 10px',
-      'background-image': `url('${require('../assets/envelop-top.png')}'), linear-gradient(to right, #de5547, #de5547)`,
-      'background-size': 'contain, cover',
-      'background-position': 'top, center',
-      'background-repeat': 'no-repeat, no-repeat'
+      'background-image': `url('${require('../assets/envelope/flower_l.png')}'), url('${require('../assets/envelope/flower_r.png')}'), linear-gradient(to bottom, #e76953, #ee513d)`,
+      'background-size': 'auto, auto, cover',
+      'background-position': 'left 90%, right center, center',
+      'background-repeat': 'no-repeat, no-repeat, no-repeat'
     }
     return {
       isShowDialog: false,
@@ -224,20 +224,26 @@ export default {
     top: 8px;
     right: 8px;
   }
-  .envelope-avatar {
-    height: 60px;
+  .envelope-header {
+    position: relative;
+    height: 80px;
     width: 100%;
-    .money {
-      height: 60px;
-      width: 60px;
-      margin: 0 auto;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      border-radius: 50%;
-      box-shadow: 0 2px 1px 0 rgba(149, 8, 8, 0.5);
-      background-image: url('../assets/money.png')
+    .rectangle {
+      position: absolute;
+      top: 0;
+      height: 30px;
+      width: 100%;
+      background-image: linear-gradient(to bottom, #e76953, #d85b47);
     }
+    .ellipse {
+      height: 60px;
+      width: 100%;
+      background-image: linear-gradient(to bottom, #e76953, #ca4e3b);
+      clip-path: ellipse(50% 40% at 50% 50%);
+    }
+  }
+  .envelope-content {
+    padding: 0 15px;
   }
   .text-field {
     width: 100%;

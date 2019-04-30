@@ -1,25 +1,44 @@
 <template>
-  <div class="chatroom-body" ref="view" v-fix-scroll>
-    <div v-if="loading&&isRoomExist" class="loading">
+  <div class="chatroom-body-wrapper">
+    <div v-if="loading&&isRoomExist" class="room-loading">
       <inline-loading></inline-loading>加载中
     </div>
-    <div v-if="!isRoomExist" class="room-disable">
-      <div class="image"></div>
-      <div class="text">聊天室暂不开放，推荐你去下注或追号吧！</div>
-    </div>
-    <ul class="message-group">
-      <li
-        v-for="(msg, index) in messages"
-        :key="index"
-        class="message-group-item">
-        <div v-if="msg.type==='system'" class="system-message">{{msg.content}}</div>
-        <div v-else-if="user.username !== msg.sender.username" :class="['other-message', chatContentType(msg.type)]">
-          <div
-            class="avatar"
-            :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"
-            @click="handleMember(msg.sender)"></div>
-          <div class="right">
-            <div class="nickname">{{msg.sender.nickname}}</div>
+    <div class="chatroom-body" v-fix-scroll ref="view">
+      <div v-if="!isRoomExist" class="room-disable">
+        <div class="image"></div>
+        <div class="text">聊天室暂不开放，推荐你去下注或追号吧！</div>
+      </div>
+      <ul class="message-group">
+        <li
+          v-for="(msg, index) in messagesForDisplay"
+          :key="index"
+          class="message-group-item">
+          <div v-if="msg.type==='system'" class="system-message">{{msg.content}}</div>
+          <div v-else-if="user.username !== msg.sender.username" :class="['other-message', chatContentType(msg.type)]">
+            <div
+              class="avatar"
+              :style="{'background-image': msg.sender.avatar_url?`url('${msg.sender.avatar_url}')`:`url('${defaultAvatar}')`}"
+              @click="handleMember(msg.sender)"></div>
+            <div class="right">
+              <div class="nickname">{{msg.sender.nickname}}</div>
+              <img-wrapper
+                class="image"
+                v-if="msg.type==='image'||msg.type==='sticker'"
+                :src="msg.content"
+                :type="msg.type"
+                @imgStart="imgLoadCount++"
+                @imgLoad="imgLoadCount--"
+                @click.native="previewImg(msg.content)"/>
+              <div v-else class="content-wrapper">
+                <bet-info
+                  :is-self="user.username === msg.sender.username"
+                  v-if="msg.type==='betrecord-sharing'"
+                  :info-str="msg.content"></bet-info>
+                <div v-else class="text">{{msg.content}}</div>
+              </div>
+            </div>
+          </div>
+          <div v-else :class="['self-message', chatContentType(msg.type)]">
             <img-wrapper
               class="image"
               v-if="msg.type==='image'||msg.type==='sticker'"
@@ -36,81 +55,73 @@
               <div v-else class="text">{{msg.content}}</div>
             </div>
           </div>
+        </li>
+      </ul>
+      <div :class="['to-bottom-btn', {visible: isToBottomBtnVisible}]" @click="toBottom"></div>
+      <div v-if="isManager" class="manage-btn" @click="dispatch('Chatroom', 'showPopup', 'chatmanage')">
+        <p>禁言</p>
+        <p>管理</p>
+      </div>
+      <cube-popup
+        v-transfer-dom
+        class="preview-image-popup"
+        type="extend-popup"
+        ref="image-popup"
+        :maskClosable="true"
+        :z-index="1000">
+        <div class="preview-image-popup-content" @click="hidePreviewImg">
+          <div class="close-btn"></div>
+          <div class="preview-image" :style="{'background-image': `url('${selectedImage}')`}"></div>
         </div>
-        <div v-else :class="['self-message', chatContentType(msg.type)]">
-          <img-wrapper
-            class="image"
-            v-if="msg.type==='image'||msg.type==='sticker'"
-            :src="msg.content"
-            :type="msg.type"
-            @imgStart="imgLoadCount++"
-            @imgLoad="imgLoadCount--"
-            @click.native="previewImg(msg.content)"/>
-          <div v-else class="content-wrapper">
-            <bet-info
-              :is-self="user.username === msg.sender.username"
-              v-if="msg.type==='betrecord-sharing'"
-              :info-str="msg.content"></bet-info>
-            <div v-else class="text">{{msg.content}}</div>
+      </cube-popup>
+      <x-dialog
+        v-transfer-dom
+        :show.sync="chatManageDialogVisible"
+        :hide-on-blur="true"
+        :dialog-style="{
+          width: '90%',
+          'max-width': '90%'
+        }"
+        @touchmove.native.prevent>
+        <div class="dialog-wrapper" v-if="selectedMember">
+          <div class="header">
+            <div class="title">会员</div>
+          </div>
+          <div class="content">
+            <div
+              class="avatar"
+              :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
+            <div class="nickname">{{selectedMember.nickname}}</div>
+          </div>
+          <div class="buttons single">
+            <div v-if="!user.followeeList||followLoading" class="loading">
+              <inline-loading></inline-loading>加载中
+            </div>
+            <x-button v-else-if="!selectedMember.can_follow" type="default" disabled>未开放关注</x-button>
+            <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
+            <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
+          </div>
+          <div v-if="isManager" class="buttons">
+            <div v-if="banLoading" class="loading">
+              <inline-loading></inline-loading>加载中
+            </div>
+            <template v-else>
+              <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
+              <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
+            </template>
           </div>
         </div>
-      </li>
-    </ul>
-    <div :class="['to-bottom-btn', {visible: isToBottomBtnVisible}]" @click="toBottom"></div>
-    <div v-if="isManager" class="manage-btn" @click="dispatch('Chatroom', 'showPopup', 'chatmanage')">
-      <p>禁言</p>
-      <p>管理</p>
+      </x-dialog>
     </div>
-    <cube-popup
-      v-transfer-dom
-      class="preview-image-popup"
-      type="extend-popup"
-      ref="image-popup"
-      :maskClosable="true"
-      :z-index="1000">
-      <div class="preview-image-popup-content" @click="hidePreviewImg">
-        <div class="close-btn"></div>
-        <div class="preview-image" :style="{'background-image': `url('${this.selectedImage}')`}"></div>
+    <template v-if="!loading">
+      <div class="followee-filter filter">
+        <div :class="['followee-filter-item', {active: !followeeOnly}]" @click="followeeOnly=false">全部</div>
+        <div :class="['followee-filter-item', {active: followeeOnly}]" @click="followeeOnly=true">关注</div>
       </div>
-    </cube-popup>
-    <x-dialog
-      v-transfer-dom
-      :show.sync="chatManageDialogVisible"
-      :hide-on-blur="true"
-      :dialog-style="{
-        width: '90%',
-        'max-width': '90%'
-      }"
-      @touchmove.native.prevent>
-      <div class="dialog-wrapper" v-if="selectedMember">
-        <div class="header">
-          <div class="title">会员</div>
-        </div>
-        <div class="content">
-          <div
-            class="avatar"
-            :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
-          <div class="nickname">{{selectedMember.nickname}}</div>
-        </div>
-        <div class="buttons single">
-          <div v-if="!user.followeeList||followLoading" class="loading">
-            <inline-loading></inline-loading>加载中
-          </div>
-          <x-button v-else-if="!selectedMember.can_follow" type="default" disabled>未开放关注</x-button>
-          <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
-          <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
-        </div>
-        <div v-if="isManager" class="buttons">
-          <div v-if="banLoading" class="loading">
-            <inline-loading></inline-loading>加载中
-          </div>
-          <template v-else>
-            <x-button type="default" @click.native="banMember(15)">禁言15分钟</x-button>
-            <x-button type="default" @click.native="banMember(30)">禁言30分钟</x-button>
-          </template>
-        </div>
+      <div :class="['bet-filter filter', {active: withoutBet}]" @click="withoutBet = !withoutBet">
+        <filter-icon/>不看投注
       </div>
-    </x-dialog>
+    </template>
   </div>
 </template>
 <script>
@@ -121,6 +132,7 @@ import emitter from '@/mixins/emitter.js'
 import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
 import ImgWrapper from './ImgWrapper'
+import FilterIcon from '@/components/icon/Filter'
 
 export default {
   name: 'ChatroomBody',
@@ -135,7 +147,8 @@ export default {
     ImgWrapper,
     XDialog,
     XButton,
-    InlineLoading
+    InlineLoading,
+    FilterIcon
   },
   directives: {
     FixScroll,
@@ -156,7 +169,9 @@ export default {
       selectedMember: null,
       bannedList: [],
       banLoading: false,
-      followLoading: false
+      followLoading: false,
+      followeeOnly: false,
+      withoutBet: false
     }
   },
   computed: {
@@ -169,24 +184,39 @@ export default {
       ws: state => state.ws,
       loading: state => state.loading,
       isRoomExist: state => state.isRoomExist
-    })
+    }),
+    messagesForDisplay () {
+      let result = this.messages
+      if (this.followeeOnly === true) {
+        const hash = {}
+        this.user.followeeList.forEach(followee => {
+          hash[followee.username] = true
+        })
+        result = result.filter(msg => !!msg.sender && !!msg.sender.username && hash[msg.sender.username])
+      }
+      if (this.withoutBet) {
+        result = result.filter(msg => msg.type !== 'betrecord-sharing')
+      }
+      return result
+    }
   },
   watch: {
-    'messages.length': function (newCount, oldCount) {
+    'messagesForDisplay.length': function (newCount, oldCount) {
       if (newCount === 0) {
         return
       }
       this.notNeedScroll = false
-      const view = this.$refs.view
+      let view = this.$refs.view
       if (oldCount === 0) { // 初始
         this.$nextTick(() => {
+          view = this.$refs.view
           view.scrollTop = view.scrollHeight
         })
       } else if ( // 1. user正在閱讀之前訊息 2. 是否為自己發的訊息
         view.scrollTop + view.clientHeight + 100 > view.scrollHeight ||
-        (this.messages[newCount - 1].sender && this.messages[newCount - 1].sender.username === this.user.username) ||
-        this.messages[newCount - 1].type === 5) {
+        (this.messagesForDisplay[newCount - 1].sender && this.messagesForDisplay[newCount - 1].sender.username === this.user.username)) {
         this.$nextTick(() => {
+          view = this.$refs.view
           view.scrollTop = view.scrollHeight
         })
       } else {
@@ -207,7 +237,9 @@ export default {
   mounted () {
     this.notNeedScroll = false
     const view = this.$refs.view
-    view.scrollTop = view.scrollHeight
+    this.$nextTick(() => {
+      view.scrollTop = view.scrollHeight
+    })
     view.addEventListener('scroll', this.showToBottomBtn)
   },
   methods: {
@@ -283,24 +315,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.chatroom-body-wrapper {
+  position: relative;
+  height: calc(~"100%" - 50px);
+  flex-direction: column;
+  box-sizing: border-box;
+  padding-top: 40px;
+}
+
+.room-loading {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  text-align: center;
+  .weui-loading {
+    height: 30px;
+    width: 30px;
+  }
+}
+
 .chatroom-body {
   box-sizing: border-box;
   position: relative;
-  flex: 1 1 auto;
-  padding: 10px 12px;
+  padding: 0 12px 10px 12px;
   background: #eee;
   overflow-y: auto;
-  .loading {
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    font-size: 18px;
-    text-align: center;
-    .weui-loading {
-      height: 30px;
-      width: 30px;
-    }
-  }
+  height: 100%;
+  width: 100%;
   .room-disable {
     padding-top: 20px;
     .image {
@@ -401,6 +445,42 @@ export default {
     }
   }
 }
+.filter {
+  box-sizing: border-box;
+  position: absolute;
+  top: 10px;
+  display: flex;
+  height: 20px;
+  background: #ddd;
+  border-radius: 4px;
+  padding: 2px;
+  color: #666;
+  font-size: 12px;
+}
+.followee-filter {
+  left: 10px;
+  .followee-filter-item {
+    border-radius: 4px;
+    width: 45px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.active {
+      color: #333;
+      background: #fff;
+    }
+  }
+}
+.bet-filter {
+  right: 10px;
+  &.active {
+    background: @azul;
+    color: #fff;
+  }
+}
+
+
 .close-btn {
   position: absolute;
   right: -1px;

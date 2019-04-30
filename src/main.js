@@ -24,7 +24,7 @@ function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
-  store.dispatch('chatroom/roomList')
+  store.dispatch('chatroom/roomList').catch(() => {})
 
   gethomePage().then(
     response => {
