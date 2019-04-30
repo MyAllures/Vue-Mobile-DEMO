@@ -290,14 +290,16 @@ export default {
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
+        this.$store.commit('actv2/clearCount')
         clearInterval(this.serviceUnreadInterval)
       } else {
+        this.$store.dispatch('actv2/fetchActReCount')
         this.serviceUnreadInterval = setInterval(() => {
           this.fetchServiceUnread()
         }, 5000)
       }
     },
-    '$route' (to, from) {
+    $route (to, from) {
       this.tabbarHidden = to.meta.tabbarHidden
       this.noBackRoute = !window.history.state
 

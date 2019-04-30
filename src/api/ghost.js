@@ -298,6 +298,38 @@ function fetchWinHistory () {
 function fetchUnreadCount () {
   return axios.get(urls.unreadMessage)
 }
+
+function fetchActV2All () {
+  return axios.get(urls.actv2_activity)
+}
+
+function fetchActV2 (type) {
+  return axios.get(`${urls.actv2_activity}${type}/`)
+}
+
+function fetchActBoost () {
+  return axios.get(urls.actv2_boost_get)
+}
+
+function fetchActRefCode () {
+  return axios.get(urls.actv2_referral_code)
+}
+
+function fetchActRefList () {
+  return axios.get(urls.actv2_referral_list)
+}
+
+function openActRe (type, id = '') {
+  return axios.post(urls.actv2_re_open, {
+    type: type,
+    referral_detail_id: id
+  })
+}
+
+function fetchActReCount () {
+  return axios.get(urls.actv2_re_count)
+}
+
 export {
   fetchUnreadCount,
   fetchActivityEnvelope,
@@ -354,5 +386,12 @@ export {
   updateUser,
   fetchUser,
   logout,
-  login
+  login,
+  fetchActV2All,
+  fetchActV2,
+  fetchActBoost,
+  fetchActRefCode,
+  fetchActRefList,
+  openActRe,
+  fetchActReCount
 }

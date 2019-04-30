@@ -73,5 +73,11 @@ export default {
   service_unread: venomHost + '/support/has_unread/',
   service_image_attachment: venomHost + '/chat/attachment/',
   win_history: host + '/members_win_histories?limit=20',
-  get_jwt_token: host + '/get_jwt_token/'
+  get_jwt_token: host + '/get_jwt_token/',
+  actv2_activity: host + '/v2/activity-v2/',
+  actv2_boost_get: host + '/v2/member-engagement-boost/engagement_boost/',
+  actv2_referral_code: apiv2 + '/referral-code/',
+  actv2_referral_list: host + '/v2/referral_details/',
+  actv2_re_open: host + '/v2/receive-envelope/',
+  actv2_re_count: host + '/v2/remain-envelope-count/'
 }

@@ -12,7 +12,14 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken } from './api'
+import {
+  gethomePage,
+  setCookie,
+  fetchChatUserInfo,
+  fetchRoomInfo,
+  sendHeartBeat,
+  fetchJWTToken
+} from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
@@ -32,6 +39,7 @@ function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
+  store.dispatch('actv2/fetchActV2')
 
   gethomePage().then(
     response => {
@@ -145,7 +153,11 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
     window.location.replace(url.replace(/http:/, 'https:'))
   }
 }
-let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
+const search = window.location.search.slice(1, window.location.search.length)
+if (search) {
+  window.history.replaceState({}, document.title, '/')
+}
+const params = qs.parse(search)
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
   axios.defaults.headers.common['x-r'] = params.r
@@ -167,6 +179,10 @@ const i18n = new VueI18n({
   locale: 'cn',
   messages: locales
 })
+
+if (params.f) {
+  Vue.cookie.set('referral_id', params.f)
+}
 
 axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
@@ -191,7 +207,6 @@ const pollingApi = [urls.unread, urls.game_result]
 axios.interceptors.response.use(res => {
   const fromVenom = res.config.url.includes(urls.venomHost)
   const fromRaven = res.config.url.includes(urls.ravenHost)
-
   let responseData = res.data
   if (fromVenom) {
     return responseData

@@ -329,6 +329,37 @@ export default new Router({
       component: resolve => { require(['../screens/my/Message.vue'], resolve) }
     },
     {
+      path: '/my/red_envelopes',
+      name: 'red_envelopes',
+      meta: {
+        title: '返利红包',
+        leftCtrl: 'back',
+        rightCtrl: 'info',
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/my/RedEnvelopes.vue'], resolve) }
+    },
+    {
+      path: '/my/referral_link',
+      name: 'referral_link',
+      meta: {
+        title: '推荐链结',
+        leftCtrl: 'back',
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/my/ReferralLink.vue'], resolve) }
+    },
+    {
+      path: '/my/referrals',
+      name: 'referrals',
+      meta: {
+        title: '我的推荐',
+        leftCtrl: 'back',
+        requiresAuth: true
+      },
+      component: resolve => { require(['../screens/my/Referrals.vue'], resolve) }
+    },
+    {
       path: '/depositSuccess',
       name: 'depositSuccess',
       meta: {

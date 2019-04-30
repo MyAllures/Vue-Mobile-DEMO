@@ -313,6 +313,10 @@ export default {
               userInfo[key] = value
             }
           })
+          const referralId = this.$cookie.get('referral_id')
+          if (referralId) {
+            userInfo['referral_code'] = referralId
+          }
           register(userInfo).then(result => {
             window.gtag('event', '註冊', {'event_category': '會員註冊'})
             this.loading = false
@@ -323,6 +327,7 @@ export default {
               })
             }
 
+            this.$cookie.delete('referral_id')
             return this.$store.dispatch('login', {
               user: {
                 username: this.user.username,

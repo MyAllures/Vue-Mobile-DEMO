@@ -116,6 +116,19 @@ GhostSocketObj.prototype.initWs = function (token) {
               issueNumber: data.issue_number,
               closeLeft: data.close_left
             })
+            break
+          case 'engagement_boost':
+            store.commit('actv2/setCount', {
+              type: 'boost',
+              count: data.remain_engagement_boost_envelope_count
+            })
+            break
+          case 'referral':
+            store.commit('actv2/setCount', {
+              type: 'referral',
+              count: data.remain_referral_envelope_count
+            })
+            break
         }
 
         if (data['ping']) {
