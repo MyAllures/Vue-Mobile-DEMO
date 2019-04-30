@@ -11,7 +11,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, sendHeartBeat } from './api'
+import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
@@ -293,11 +293,12 @@ store.watch((state) => {
   if (logined) {
     store.dispatch('fetchChatRoomUserInfo')
     let eiderTokenPromise
-    let eiderToken = localStorage.getItem('eider_token')
+    // let eiderToken = localStorage.getItem('eider_token')
+    let eiderToken = '' // TODO 後端尚在調整
     if (eiderToken) {
       eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
-      eiderTokenPromise = store.dispatch('fetchJWTToken', 'eider').then(token => {
+      eiderTokenPromise = fetchJWTToken('eider').then(token => {
         localStorage.setItem('eider_token', token)
         return token
       })
