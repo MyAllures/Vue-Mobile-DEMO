@@ -50,15 +50,20 @@ export default {
           promises.push(fetchActV2('referral'))
         }
         Promise.all(promises).then(response => {
-          commit('setAct', {
-            type: 'boost',
-            enabled: true,
-            detail: response[0]
-          })
-          commit('setAct', {
-            type: 'referral',
-            enabled: true,
-            detail: response[1]
+          response.forEach(act => {
+            if (act.type === 'engagement_boost') {
+              commit('setAct', {
+                type: 'boost',
+                enabled: true,
+                detail: act
+              })
+            } else if (act.type === 'referral') {
+              commit('setAct', {
+                type: 'referral',
+                enabled: true,
+                detail: act
+              })
+            }
           })
         })
       })
