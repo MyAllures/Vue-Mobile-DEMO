@@ -41,25 +41,26 @@ export default {
   },
   actions: {
     fetchActV2: ({ commit }) => {
-      fetchActV2All().then(async response => {
+      fetchActV2All().then(response => {
+        const promises = []
         if (response.indexOf('engagement_boost') > -1) {
-          await fetchActV2('engagement_boost').then(response => {
-            commit('setAct', {
-              type: 'boost',
-              enabled: true,
-              detail: response
-            })
-          })
+          promises.push(fetchActV2('engagement_boost'))
         }
         if (response.indexOf('referral') > -1) {
-          await fetchActV2('referral').then(response => {
-            commit('setAct', {
-              type: 'referral',
-              enabled: true,
-              detail: response
-            })
-          })
+          promises.push(fetchActV2('referral'))
         }
+        Promise.all(promises).then(response => {
+          commit('setAct', {
+            type: 'boost',
+            enabled: true,
+            detail: response[0]
+          })
+          commit('setAct', {
+            type: 'referral',
+            enabled: true,
+            detail: response[1]
+          })
+        })
       })
     },
     fetchActReCount: ({ commit }) => {
