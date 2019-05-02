@@ -15,7 +15,8 @@ import {
   Upload,
   Loading,
   TabBar,
-  TabPanels
+  TabPanels,
+  Toast
 } from 'cube-ui'
 
 Vue.use(Picker)
@@ -27,3 +28,4 @@ Vue.use(Upload)
 Vue.use(Loading)
 Vue.use(TabBar)
 Vue.use(TabPanels)
+Vue.use(Toast)

@@ -6,6 +6,7 @@ import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
 import customerService from './customerService'
+import actv2 from './actv2'
 
 Vue.use(Vuex)
 
@@ -120,6 +121,7 @@ export default new Vuex.Store({
   getters,
   modules: {
     page,
-    customerService
+    customerService,
+    actv2
   }
 })
