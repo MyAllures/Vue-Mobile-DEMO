@@ -61,7 +61,7 @@
             </flexbox-item>
             <flexbox-item class="activity-info">
               <div class="activity-title">立即注册送彩金</div>
-              <div class="activity-desc">注册立领￥10</div>
+              <div class="activity-desc">注册立领 ¥{{ systemConfig.regPresentAmount }}</div>
             </flexbox-item>
           </flexbox>
         </router-link>
