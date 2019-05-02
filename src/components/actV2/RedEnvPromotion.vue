@@ -14,7 +14,7 @@
           <div class="section">
             <div class="section-title">活動內容</div>
             <div class="section-content">
-              <table v-if="this.type === 'boost'">
+              <table v-if="type === 'boost'">
                 <thead>
                   <tr>
                     <td>每日充值金额</td>
@@ -23,14 +23,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(level, i) in act.levels">
+                  <tr :key="i" v-for="(level, i) in act.levels">
                     <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
                     <td>{{ level.bet_amount_min }}</td>
                     <td>{{ level.count }}</td>
                   </tr>
                 </tbody>
               </table>
-              <table v-else-if="this.type === 'referral'">
+              <table v-else-if="type === 'referral'">
                 <thead>
                   <tr>
                     <td>推荐人数</td>
@@ -38,7 +38,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(level, i) in act.levels">
+                  <tr :key="i" v-for="(level, i) in act.levels">
                     <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
                     <td v-else>{{ level.referral_min }} 以上</td>
                     <td>{{ level.count }}</td>
@@ -51,15 +51,15 @@
       </div>
       <div class="footer">
         <template v-if="user.account_type">
-          <button @click="goto('/my/red_envelopes')" v-if="this.type === 'boost'">查看我的返利紅包</button>
-          <button @click="goto('/my/referral_link')" v-else-if="this.type === 'referral'">立即推荐好友</button>
+          <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
+          <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
         </template>
         <template v-else>
-          <div class="login">
+          <div class="f-col login">
            <p>已有帐号</p>
            <button @click="goto('/login')">立即登录</button>
          </div>
-         <div class="register">
+         <div class="f-col register">
            <p>尚未注册</p>
            <button @click="goto('/register')">免费注册</button>
          </div>
@@ -216,7 +216,7 @@ export default {
   display: flex;
   justify-content: center;
 
-  > * {
+  .f-col {
     flex: 1;
   }
   div {

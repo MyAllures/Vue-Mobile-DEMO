@@ -43,7 +43,7 @@
       </template>
     </div>
     <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
-    <RedEnvDialog :data="reData" :remain="myData && myData.remain_envelope_count" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
+    <RedEnvDialog :data="redEnvData" :remain="myData && myData.remain_envelope_count" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
   </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
     isLoading: true,
     myData: null,
     reLoading: false,
-    reData: {},
+    redEnvData: {},
     showReDialog: false,
     actDialogType: ''
   }),
@@ -93,7 +93,7 @@ export default {
         if (response.amount) {
           this.myData.remain_envelope_count--
         }
-        this.reData = response
+        this.redEnvData = response
         this.showReDialog = true
         this.reLoading = false
       })

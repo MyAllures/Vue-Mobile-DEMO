@@ -106,12 +106,6 @@ export default {
   top: 120px;
   width: 100%;
 
-  .icon {
-
-    img {
-      
-    }
-  }
   .desc {
     width: 140px;
     margin: 0 auto;

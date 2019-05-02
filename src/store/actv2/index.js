@@ -34,7 +34,7 @@ export default {
         state[type].count = count
       }
     },
-    clearCount: (state) => {
+    clearCount: state => {
       state.boost.count = 0
       state.referral.count = 0
     }
@@ -73,6 +73,9 @@ export default {
           count: response.remain_referral_envelope_count
         })
       })
+    },
+    clearCount: ({ commit }) => {
+      commit('clearCount')
     }
   }
 }

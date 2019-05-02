@@ -290,7 +290,7 @@ export default {
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
-        this.$store.commit('actv2/clearCount')
+        this.$store.dispatch('actv2/clearCount')
         clearInterval(this.serviceUnreadInterval)
       } else {
         this.$store.dispatch('actv2/fetchActReCount')
