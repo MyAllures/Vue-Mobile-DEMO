@@ -12,7 +12,7 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
@@ -28,10 +28,28 @@ const sendGaEvent = ({label, category, action}) => {
     window.gtag('event', action, {'event_category': category, 'event_label': label})
   }
 }
+
+let serviceUnreadInterval = null
+
+const pollServiceUnread = () => {
+  const getUnread = () => {
+    fetchServiceUnread().then((res) => {
+      store.dispatch('customerService/setServiceUnread', res.has_unread)
+    }).catch((e) => {
+      clearInterval(serviceUnreadInterval)
+    })
+  }
+  serviceUnreadInterval = setInterval(() => {
+    getUnread()
+  }, 5000)
+}
+
 function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
+
+  store.dispatch('setSystemConfig', {...store.state.systemConfig, state: 'pending'})
 
   gethomePage().then(
     response => {
@@ -91,7 +109,8 @@ function initData () {
           planSiteUrl: pref.plan_site_url,
           appIcon: response.app_icon,
           envelopeActivityId: response.envelope_activity_id,
-          serviceAction
+          serviceAction,
+          enableBuiltInCustomerService: pref.enable_built_in_customer_service === 'true'
         })
 
       const themeId = response.theme || 1
@@ -344,34 +363,34 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
-  store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
-    if (store.state.systemConfig.process === 'pending') {
-      const unwatch = store.watch((state) => {
-        return state.systemConfig.process
-      }, (configProcess) => {
+    const unwatch = store.watch((state) => {
+      return state.systemConfig.process
+    }, (configProcess) => {
+      if (configProcess === 'fulfilled') {
         unwatch()
-        if (configProcess === 'fulfilled') {
-          setChatRoomSetting()
-        }
-      })
-    } else {
-      setChatRoomSetting()
-    }
-  }
-  if (logined) {
-    let venomTokenPromise
-    let venomToken = localStorage.getItem('venom_token')
-    if (venomToken) {
-      venomTokenPromise = Promise.resolve(venomToken)
-    } else {
-      venomTokenPromise = fetchJWTToken('venom').catch(() => {})
-    }
-    venomTokenPromise.then(token => {
-      localStorage.setItem('venom_token', token)
-      store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-    }).catch(() => {})
+        if (store.state.systemConfig.enableBuiltInCustomerService) {
+          let venomTokenPromise
+          let venomToken = localStorage.getItem('venom_token')
+          if (venomToken) {
+            venomTokenPromise = Promise.resolve(venomToken)
+          } else if (!venomToken) {
+            venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+          }
 
+          venomTokenPromise.then(token => {
+            localStorage.setItem('venom_token', token)
+            store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+            pollServiceUnread()
+          }).catch(() => {})
+        }
+
+        setChatRoomSetting()
+      }
+    })
+  }
+
+  if (logined) {
     let eiderTokenPromise
     let eidereToken = localStorage.getItem('eider_token')
     if (eidereToken) {
@@ -379,6 +398,7 @@ store.watch((state) => {
     } else {
       eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
     }
+
     eiderTokenPromise.then(token => {
       localStorage.setItem('eider_token', token)
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
@@ -388,7 +408,12 @@ store.watch((state) => {
     setHeartBeatInterval()
     initData()
   } else {
+    clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
+
+    localStorage.removeItem(`venom_token`)
+    localStorage.removeItem(`raven_token`)
+    localStorage.removeItem(`eider_token`)
   }
 })
 
