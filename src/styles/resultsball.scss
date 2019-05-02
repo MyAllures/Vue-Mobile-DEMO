@@ -174,32 +174,66 @@ $k3_length: length($results_k3);
 .result-cs75hkl,
 .result-luckl,
 .result-hkl {
-  background: url("../assets/ball_hk6.png") no-repeat;
-  background-size: 100% 4900%;
-  height: 28px;
-  width: 28px;
+  &.view {
+    // for animation
+    height: 24px;
+    width: 24px;
+  }
   .num {
-    display: none;
+    background: url("../assets/ball_hk6.png") no-repeat;
+    background-size: 100% 4900%;
+    height: 24px;
+    width: 24px;
+    text-indent: -9999px;
+    display: inline-block;
   }
 
   @for $num from 1 through 49 {
-    &.resultnum-#{$num} {
-      background-position: 0 (-28px * ($num - 1));
+    &.resultnum-#{$num} .num{
+      background-position: 0 (-24px * ($num - 1));
+    }
+  }
+}
+
+// for game plays
+.gameplays {
+  .result-cs75hkl,
+  .result-cshkl,
+  .result-cs600hkl,
+  .result-csjndhkl,
+  .result-luckl,
+  .result-hkl {
+    background: url("../assets/ball_hk6.png") no-repeat;
+    background-size: 100% 4900%;
+    height: 30px;
+    width: 30px;
+    .num {
+      display: none;
+    }
+
+    @for $num from 1 through 49 {
+      &.resultnum-#{$num} {
+        background-position: 0 (-30px * ($num - 1));
+      }
     }
   }
 }
 
 @media screen and (max-width: 320px) {
-  .result-cshkl,
-  .result-luckl,
-  .result-cs600hkl,
   .result-cs75hkl,
+  .result-cshkl,
+  .result-cs600hkl,
+  .result-csjndhkl,
+  .result-cs75hkl,
+  .result-luckl,
   .result-hkl {
-    height: 24px;
-    width: 24px;
-    @for $num from 1 through 49 {
-      &.resultnum-#{$num} {
-        background-position: 0 (-24px * ($num - 1));
+    .num {
+      height: 24px;
+      width: 24px;
+      @for $num from 1 through 49 {
+        &.resultnum-#{$num} {
+          background-position: 0 (-24px * ($num - 1));
+        }
       }
     }
   }

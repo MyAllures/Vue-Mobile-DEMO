@@ -1,7 +1,9 @@
 import store from '../store'
 import urls from '../api/urls'
 import Vue from 'vue'
+import { fetchJWTToken } from '@/api'
 
+const JWT_TYPE = 'eider'
 let wsLivingCount = 0
 function GhostSocketObj (token) {
   this.initWs(token)
@@ -24,6 +26,18 @@ GhostSocketObj.prototype.initWs = function (token) {
         }
       }
     }, 3000)
+  }
+
+  this.ws.onclose = e => {
+    if (e.code === 1006) {
+      localStorage.removeItem(JWT_TYPE + '_token')
+      fetchJWTToken(JWT_TYPE).then(token => {
+        localStorage.setItem(JWT_TYPE + '_token', token)
+        store.dispatch('setWs', { ws: new GhostSocketObj(token), type: JWT_TYPE })
+      }).catch(() => {
+
+      })
+    }
   }
 
   this.ws.onmessage = (response) => {
@@ -94,7 +108,7 @@ GhostSocketObj.prototype.initWs = function (token) {
             setTimeout(() => {
               latestResult.loading = false
               store.dispatch('updateLatestResultMap', {gameCode, latestResult})
-            }, 3000)
+            }, 2000)
             break
           case 'close-time-update':
             store.dispatch('urgencySwitchGame', {
@@ -134,14 +148,14 @@ GhostSocketObj.prototype.closeConnect = function () {
   clearInterval(this.checkWsLivingInterval)
   store.dispatch('setWs', {
     ws: null,
-    type: 'eider'
+    type: JWT_TYPE
   })
 }
 
 GhostSocketObj.prototype.reconnect = function () {
   clearInterval(this.checkWsLivingInterval)
 
-  let token = Vue.cookie.get('access_token')
+  let token = localStorage.getItem(JWT_TYPE + '_token')
   if (token) this.initWs(token)
 }
 

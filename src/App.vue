@@ -93,19 +93,18 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchServiceUnread, fetchEiderJWTToken } from './api'
+import { getToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
-import freetrial from './mixins/freetrial'
+import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -232,8 +231,7 @@ export default {
       noBackRoute: !window.history.state,
       indicator: null,
       tabbarHidden: true,
-      isHelperVisible: false,
-      serviceUnreadInterval: null
+      isHelperVisible: false
     }
   },
   mixins: [freetrial],
@@ -283,19 +281,14 @@ export default {
     }
   },
   watch: {
-    'user.logined' (isLogin, old) {
-      if (isLogin) {
-        this.serviceUnreadInterval = setInterval(() => {
-          this.fetchServiceUnread()
-        }, 5000)
-      } else {
+    'user.logined' (newStatus, old) {
+      if (!newStatus) {
         if (this.ws.eider) {
           this.ws.eider.closeConnect()
         }
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
-        clearInterval(this.serviceUnreadInterval)
       }
     },
     '$route' (to, from) {
@@ -344,19 +337,11 @@ export default {
           expires: expires
         })
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-        fetchEiderJWTToken()
       }).catch(() => {})
 
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
-    },
-    fetchServiceUnread () {
-      fetchServiceUnread().then((res) => {
-        this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
-      }).catch((e) => {
-        clearInterval(this.serviceUnreadInterval)
-      })
     }
   },
   created () {
@@ -384,8 +369,7 @@ export default {
     })
   },
   beforeDestroy () {
-    clearTimeout(this.refreshTokenTimer)
-    clearInterval(this.serviceUnreadInterval)
+    window.clearTimeout(this.refreshTokenTimer)
   }
 }
 </script>
@@ -393,6 +377,7 @@ export default {
 @import '~vux/src/styles/reset.less';
 @import './styles/base.less';
 @import './styles/theme_config.less';
+@import '~vux/src/styles/1px.less';
 </style>
 <style lang="less" scoped>
 
