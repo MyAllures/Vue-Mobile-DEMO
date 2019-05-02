@@ -6,6 +6,7 @@ import Vue from 'vue'
 import {
   /* eslint-disable no-unused-vars */
   Style,
+  Textarea,
   Picker,
   ActionSheet,
   DatePicker,
@@ -15,10 +16,12 @@ import {
   Upload,
   Loading,
   TabBar,
-  TabPanels
+  TabPanels,
+  Toast
 } from 'cube-ui'
 
 Vue.use(Picker)
+Vue.use(Textarea)
 Vue.use(ActionSheet)
 Vue.use(DatePicker)
 Vue.use(Scroll)
@@ -27,3 +30,4 @@ Vue.use(Upload)
 Vue.use(Loading)
 Vue.use(TabBar)
 Vue.use(TabPanels)
+Vue.use(Toast)
