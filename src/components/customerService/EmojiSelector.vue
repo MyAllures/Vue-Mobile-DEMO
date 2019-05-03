@@ -40,7 +40,7 @@ export default {
       showEmojiMenu: false
     }
   },
-  created () {
+  mounted () {
     this.fetchEmojis()
   },
   methods: {
@@ -48,7 +48,7 @@ export default {
       fetchServiceEmoji().then(response => {
         this.emojis = response
         this.selectedLabel = this.emojiCategories[0].label
-      })
+      }).catch(() => { })
     },
     handleSelect (emoji) {
       this.$emit('emojiSelected', emoji)
