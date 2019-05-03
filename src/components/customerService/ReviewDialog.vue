@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="comment">
-            <cube-textarea placeholder="请填写评价内容(选填)" maxlength="100" autoExpand="true" :disabled="processing" v-model="comment" />
+            <cube-textarea placeholder="请填写评价内容(选填)" :maxlength="commentLimit" :autoExpand="true" :disabled="processing" v-model="comment" @keyup.native="handleComment" />
           </div>
           <div class="submit">
             <XButton type="primary" text="提交" :show-loading="processing" :disabled="processing" @click.native="submit" />
@@ -24,7 +24,7 @@
         </div>
       </transition>
       <transition name="fade-in">
-        <div class="review-mask" v-if="show" @click="close"></div>
+        <div class="review-mask" v-if="show"></div>
       </transition>
     </div>
   </transition>
@@ -47,12 +47,18 @@ export default {
     RATINGS,
     rating: 0,
     comment: '',
-    processing: false
+    processing: false,
+    commentLimit: 100
   }),
   methods: {
     ...mapActions('customerService', [
       'showReviewDialog'
     ]),
+    handleComment () {
+      if (this.comment.length >= this.commentLimit) {
+        this.comment = this.comment.substring(0, this.commentLimit)
+      }
+    },
     submit () {
       if (this.rating === 0) {
         this.$createToast({
@@ -65,6 +71,7 @@ export default {
       }
       this.processing = true
       const session = this.session || this.lastSession
+      this.handleComment()
       sendServiceReview({
         session: session,
         rating: this.rating,
