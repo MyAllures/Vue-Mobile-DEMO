@@ -18,6 +18,7 @@ import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
+import {getJWTToken} from './utils'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
@@ -190,10 +191,10 @@ axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
   const fromRaven = config.url.includes(urls.ravenHost)
   if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('venom_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('venom')}`
   }
   if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('raven_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('raven')}`
   }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
@@ -370,16 +371,15 @@ store.watch((state) => {
       if (configProcess === 'fulfilled') {
         if (store.state.systemConfig.enableBuiltInCustomerService) {
           let venomTokenPromise
-          let venomToken = localStorage.getItem('venom_token')
+          let venomToken = getJWTToken('venom')
 
           if (venomToken) {
             venomTokenPromise = Promise.resolve(venomToken)
           } else if (!venomToken) {
             venomTokenPromise = fetchJWTToken('venom').catch(() => {})
           }
-          venomTokenPromise.then(token => {
-            localStorage.setItem('venom_token', token)
-
+          venomTokenPromise.then(setting => {
+            localStorage.setItem('venom_setting', JSON.stringify(setting))
             pollServiceUnread()
           }).catch(() => {})
         }
@@ -392,16 +392,16 @@ store.watch((state) => {
 
   if (logined) {
     let eiderTokenPromise
-    let eidereToken = localStorage.getItem('eider_token')
-    if (eidereToken) {
-      eiderTokenPromise = Promise.resolve(eidereToken)
+    let eiderToken = getJWTToken('eider')
+    if (eiderToken) {
+      eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
       eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
     }
 
-    eiderTokenPromise.then(token => {
-      localStorage.setItem('eider_token', token)
-      store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
+    eiderTokenPromise.then(setting => {
+      localStorage.setItem('eider_setting', JSON.stringify(setting))
+      store.dispatch('setWs', { ws: new GhostSocketObj(setting.token), type: 'eider' })
     }).catch(() => {})
 
     store.dispatch('initUnread')
@@ -411,9 +411,9 @@ store.watch((state) => {
     clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
 
-    localStorage.removeItem(`venom_token`)
-    localStorage.removeItem(`raven_token`)
-    localStorage.removeItem(`eider_token`)
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`raven_setting`)
+    localStorage.removeItem(`eider_setting`)
   }
 })
 
