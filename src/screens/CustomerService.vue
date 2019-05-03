@@ -39,7 +39,7 @@ export default {
   },
   watch: {
     showReview (show) {
-      if (show && !this.session && !this.lastSession) {
+      if (show && (!this.session || !this.lastSession)) {
         this.$createToast({
           type: 'warn',
           txt: '先别急着评，先跟客服聊聊再说'
