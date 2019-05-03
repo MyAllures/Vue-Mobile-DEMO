@@ -21,7 +21,7 @@ import Messages from '@/components/customerService/Messages'
 import {mapState} from 'vuex'
 import VenomSocketObj from '@/wsObj/venom'
 import {fetchJWTToken} from '@/api'
-
+import {getJWTToken} from '@/utils'
 export default {
   components: {
     Footer,
@@ -39,7 +39,7 @@ export default {
     'systemConfig.enableBuiltInCustomerService': {
       handler (enabled) {
         let venomTokenPromise
-        let venomToken = localStorage.getItem('venom_token')
+        let venomToken = getJWTToken('venom')
         if (venomToken) {
           venomTokenPromise = Promise.resolve(venomToken)
         } else {

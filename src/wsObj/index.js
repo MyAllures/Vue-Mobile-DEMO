@@ -2,7 +2,6 @@ import store from '../store'
 import config from '../../config'
 import {AlertModule} from 'vux'
 import Vue from 'vue'
-import { fetchJWTToken } from '@/api'
 
 const JWT_TYPE = 'raven'
 const DEFAULT_ROOM_ID = 100000
@@ -12,16 +11,6 @@ function WebSocketObj (token, roomId) {
     this.joinRoom(roomId)
   }
   this.ws.onclose = (e) => {
-    if (e.code === 1006) {
-      let roomId = store.state.roomId
-      localStorage.removeItem(JWT_TYPE + '_token')
-      fetchJWTToken(JWT_TYPE).then(token => {
-        localStorage.setItem(JWT_TYPE + '_token', token)
-        store.dispatch('setWs', { ws: new WebSocket(token, roomId), type: JWT_TYPE })
-      }).catch(() => {
-
-      })
-    }
     store.dispatch('setWs', {
       ws: null,
       type: JWT_TYPE
