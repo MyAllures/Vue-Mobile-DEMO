@@ -1,10 +1,16 @@
 <template>
   <div class="container">
-    <div class="body">
-      <Messages />
-    </div>
-    <div class="footer">
-      <Footer />
+    <template v-if="ready">
+      <div class="body">
+        <Messages />
+      </div>
+      <div class="footer">
+        <Footer />
+      </div>
+    </template>
+    <div class="container loading" v-else>
+      <div class="body"><cube-loading :size="40"></cube-loading></div>
+      <div class="footer"></div>
     </div>
   </div>
 </template>
@@ -20,6 +26,11 @@ export default {
   components: {
     Footer,
     Messages
+  },
+  data () {
+    return {
+      ready: false
+    }
   },
   computed: {
     ...mapState(['systemConfig', 'ws'])
@@ -38,6 +49,7 @@ export default {
         venomTokenPromise.then(token => {
           if (enabled && !this.ws.venom) {
             this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+            this.ready = true
           }
         })
       },
@@ -50,6 +62,12 @@ export default {
 <style lang="scss" scoped>
 .container {
   height: 100%;
+  &.loading .body {
+    box-sizing: border-box;
+    padding-top: 40px;
+    display: flex;
+    justify-content: center;
+  }
 }
 .body {
   height: calc(100% - 50px);
