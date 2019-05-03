@@ -31,7 +31,8 @@ const baseRoutes = [
     path: '/',
     name: 'Home',
     meta: {
-      rightCtrl: 'info'
+      rightCtrl: 'info',
+      customHeader: true
     },
     component: resolve => { require(['../screens/Home.vue'], resolve) }
   },
@@ -74,7 +75,8 @@ const baseRoutes = [
             name: 'GameDetail',
             component: resolve => { require(['../screens/games/GameCategory.vue'], resolve) },
             meta: {
-              tabbarHidden: true
+              tabbarHidden: true,
+              customHeader: true
             }
           }
         ]
@@ -277,7 +279,8 @@ const baseRoutes = [
               rightCtrl: 'info',
               requiresAuth: true,
               tabbarHidden: true,
-              leftCtrl: 'back'
+              leftCtrl: 'back',
+              customHeader: true
             },
             component: resolve => { require(['../screens/finance/DetailBetRecord.vue'], resolve) }
           },
@@ -411,6 +414,18 @@ const baseRoutes = [
         component: resolve => { require(['../screens/PromoDetail.vue'], resolve) }
       }
     ]
+  },
+  {
+    path: '/red_envelope/:id',
+    name: 'RedEnvelopeDetail',
+    meta: {
+      title: '红包领取详情',
+      leftCtrl: 'back',
+      requiresAuth: true,
+      tabbarHidden: true,
+      customHeader: true
+    },
+    component: resolve => { require(['../screens/chatroom/RedEnvelopeDetail.vue'], resolve) }
   },
   {
     path: '*',

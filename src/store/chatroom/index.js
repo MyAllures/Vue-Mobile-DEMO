@@ -1,4 +1,5 @@
 import {eagle} from '@/api'
+import Vue from 'vue'
 
 export default {
   namespaced: true,
@@ -11,7 +12,8 @@ export default {
     isManager: false,
     loading: true,
     roomList: [],
-    isRoomExist: true
+    isRoomExist: true,
+    redEnvelopeStatus: {}
   },
   mutations: {
     setStatus: (state, status) => {
@@ -25,6 +27,7 @@ export default {
       state.messages = data.recent_messages
       state.permission = data.user.chat_permission
       state.isManager = data.user.is_manager
+      state.redEnvelopeStatus = data.red_envelopes || {}
     },
     roomList: (state, roomList) => {
       state.roomList = roomList
@@ -40,6 +43,9 @@ export default {
     },
     initEmoji: (state, emojiMap) => {
       state.emojiMap = emojiMap
+    },
+    updateRedEnvelopeStatus: (state, {id, status}) => {
+      Vue.set(state.redEnvelopeStatus, id, status)
     }
   },
   actions: {
@@ -74,6 +80,9 @@ export default {
       }).catch(() => {
 
       })
+    },
+    updateRedEnvelopeStatus: ({commit}, data) => {
+      commit('updateRedEnvelopeStatus', data)
     }
   }
 }

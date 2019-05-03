@@ -14,7 +14,7 @@ import { sync } from 'vuex-router-sync'
 import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
-import { ToastPlugin, ConfirmPlugin } from 'vux'
+import { ToastPlugin, ConfirmPlugin, LoadingPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
@@ -49,7 +49,7 @@ function initData () {
           regPresentAmount: response.reg_present_amount,
           needBankinfo: response.need_bankinfo,
           stickerGroups: response.sticker_groups || [],
-          envelopeSettings: pref.red_envelope_settings || {},
+          chatroomEnvelopeSettings: pref.chatroom_red_envelope_eagle || {},
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
@@ -119,6 +119,7 @@ Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 Vue.use(ConfirmPlugin)
+Vue.use(LoadingPlugin)
 Vue.use(VueLazyload, {
   error: require('./assets/error.png'),
   loading: require('./assets/loading.gif'),
