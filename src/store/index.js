@@ -91,7 +91,7 @@ export default new Vuex.Store({
       chatroomEnabled: false,
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
-      envelopeSettings: {},
+      chatroomEnvelopeSettings: {},
       stickerGroups: [],
       smsValidationEnabled: false,
       appDownloadUrl: '',

@@ -57,7 +57,7 @@ export default {
   sendImgToChat: apiv1 + '/manage/attachment/',
   playSetting: v2Member + '/game/playset/',
   setCookie: host + '/set_cookie/',
-  envelope: v2Member + '/red_envelope/',
+  red_envelope: v2Member + '/red_envelope/',
   envelope_activity: apiv2 + '/red-envelope-activities/',
   take_envelope_activity: apiv2 + '/transactions/snatch-red-envelope/',
   smscode: v2Member + '/sms_verification/',

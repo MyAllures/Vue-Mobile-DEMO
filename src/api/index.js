@@ -280,18 +280,20 @@ export function setCookie (cookie) {
   return axiosGhost.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
 }
 
-export function sendEnvelope (data) {
-  return axiosGhost.post(urls.envelope, data, {
+export function sendRedEnvelope (data) {
+  return axiosGhost.post(urls.red_envelope, data, {
     'Content-Type': 'application/json'
   })
 }
 
-export function takeEnvelope (envelopId, userId) {
-  return axiosGhost.put(`${urls.envelope}${envelopId}/`, {
-    receiver_id: userId
-  }, {
+export function takeRedEnvelope (envelopId) {
+  return axiosGhost.put(`${urls.red_envelope}${envelopId}/`, {
     'Content-Type': 'application/json'
   })
+}
+
+export function fetchRedEnvelopeDetail (id) {
+  return axiosGhost.get(`${urls.red_envelope}${id}/`)
 }
 
 export function fetchActivityEnvelope (envelopId) {

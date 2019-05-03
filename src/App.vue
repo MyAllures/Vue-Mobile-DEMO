@@ -1,6 +1,6 @@
 <template>
   <ViewArea>
-    <top-bar v-if="$route.name!=='GameDetail' && $route.name!=='Home' && $route.name !== 'DetailBetRecord' && $route.name !== 'ChatGameHall'">
+    <top-bar v-if="!pageSetting.customHeader">
       <template slot="left" v-if="pageSetting.leftCtrl">
         <div
           v-if="pageSetting.leftCtrl === 'back'"

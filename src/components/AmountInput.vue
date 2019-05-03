@@ -16,7 +16,11 @@ export default {
   props: {
     maxlength: Number,
     placeholder: String,
-    value: [String, Number]
+    value: [String, Number],
+    match: {
+      type: RegExp,
+      default: /^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/
+    }
   },
   data () {
     return {
@@ -54,7 +58,7 @@ export default {
     },
     filter (value) {
       let formattedValue = ''
-      const match = value.match(/^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/)
+      const match = value.match(this.match)
       if (match) {
         formattedValue = match[1]
       }

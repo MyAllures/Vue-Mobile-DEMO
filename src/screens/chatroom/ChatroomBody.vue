@@ -18,9 +18,13 @@
               @click="handleMember(msg.sender)"></div>
             <div class="right">
               <div class="nickname">{{msg.sender.nickname}}</div>
+              <red-envelope
+                v-if="msg.type==='red-envelope'"
+                :red-envelope-str="msg.content"
+                @take-envelope="handleEnvelope"/>
               <img-wrapper
                 class="image"
-                v-if="msg.type==='image'||msg.type==='sticker'"
+                v-else-if="msg.type==='image'||msg.type==='sticker'"
                 :src="msg.content"
                 :type="msg.type"
                 @imgStart="imgLoadCount++"
@@ -36,9 +40,13 @@
             </div>
           </div>
           <div v-else :class="['self-message', chatContentType(msg.type)]">
+            <red-envelope
+              v-if="msg.type==='red-envelope'"
+              :red-envelope-str="msg.content"
+              @take-envelope="handleEnvelope"/>
             <img-wrapper
               class="image"
-              v-if="msg.type==='image'||msg.type==='sticker'"
+              v-else-if="msg.type==='image'||msg.type==='sticker'"
               :src="msg.content"
               :type="msg.type"
               @imgStart="imgLoadCount++"
@@ -92,7 +100,7 @@
             width: '100%'
           }"
           @touchmove.native.prevent>
-          <div class="dialog-wrapper">
+          <div class="chat-manage-dialog-wrapper">
             <div class="header">
               <div class="title">会员</div>
             </div>
@@ -122,6 +130,50 @@
           </div>
         </x-dialog>
       </div>
+      <div v-transfer-dom>
+        <x-dialog
+          :show.sync="takingRedEnvelopeDialogVisible"
+          :hide-on-blur="true"
+          :dialog-style="{
+            width: '220px',
+            height: '395px',
+            background: 'rgba(0, 0, 0, 0)'
+          }"
+          @touchmove.native.prevent>
+          <div class="taking-envelope-dialog-wrapper">
+            <div class="paper" v-if="selectedRedEnvelope.status==='success'">
+              <div class="text">领取成功</div>
+              <div class="amount">{{selectedRedEnvelope.amount|currency('￥')}}</div>
+            </div>
+            <div class="paper" v-else-if="selectedRedEnvelope.status==='error'">
+              <div class="text">领取失败</div>
+            </div>
+            <div :class="['status-icon', selectedRedEnvelope.status]"></div>
+            <div class="msg">{{selectedRedEnvelope.message}}</div>
+            <div class="detail-button">
+              <x-button
+                v-if="selectedRedEnvelope.status==='error'"
+                type="primary"
+                action-type="button"
+                :disabled="false"
+                @click.native="takingRedEnvelopeDialogVisible=false">确认
+            </x-button>
+            <x-button
+                v-else
+                type="primary"
+                action-type="button"
+                :disabled="false"
+                @click.native="$router.push({path: `/red_envelope/${selectedRedEnvelope.id}`})">查看领取详情
+            </x-button>
+            </div>
+          </div>
+          <div class="close-area" @click="takingRedEnvelopeDialogVisible = false">
+            <div class="icon">
+              <cross-icon></cross-icon>
+            </div>
+          </div>
+        </x-dialog>
+      </div>
   </div>
 </template>
 <script>
@@ -133,7 +185,9 @@ import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
 import ImgWrapper from './ImgWrapper'
 import FilterIcon from '@/components/icon/Filter'
+import RedEnvelope from '@/screens/chatroom/RedEnvelope'
 import {eagle} from '@/api'
+import CrossIcon from '@/components/icon/Cross'
 
 export default {
   name: 'ChatroomBody',
@@ -149,7 +203,9 @@ export default {
     XDialog,
     XButton,
     InlineLoading,
-    FilterIcon
+    FilterIcon,
+    RedEnvelope,
+    CrossIcon
   },
   directives: {
     FixScroll,
@@ -167,7 +223,9 @@ export default {
       selectedImage: '',
       previewImgVisible: false,
       chatManageDialogVisible: false,
+      takingRedEnvelopeDialogVisible: false,
       selectedMember: {},
+      selectedRedEnvelope: {},
       bannedList: [],
       banLoading: false,
       followLoading: false,
@@ -285,6 +343,7 @@ export default {
     banMember (duration) {
       this.banLoading = true
       this.ws.banMember(this.selectedMember.username, duration).then(res => {
+        this.selectedMember.banned = true
         this.$vux.toast.show({
           text: res.status,
           type: 'success'
@@ -310,6 +369,10 @@ export default {
       }).finally(() => {
         this.followLoading = false
       })
+    },
+    handleEnvelope (data) {
+      this.selectedRedEnvelope = data
+      this.takingRedEnvelopeDialogVisible = true
     }
   },
   beforeDestroy () {
@@ -639,7 +702,7 @@ export default {
   }
 }
 
-.dialog-wrapper {
+.chat-manage-dialog-wrapper {
   box-sizing: border-box;
   position: relative;
   width: 100%;
@@ -708,6 +771,110 @@ export default {
     /deep/ .weui-btn + .weui-btn {
       margin: 0;
     }
+  }
+}
+
+.taking-envelope-dialog-wrapper {
+  box-sizing: border-box;
+  position: relative;
+  width: 220px;
+  height: 315px;
+  padding-top: 120px;
+  background: url('../../assets/envelope/dialog.png') no-repeat center 11px;
+  background-size: contain;
+  .paper {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 89px;
+    padding-top: 8px;
+    margin: 0 auto;
+    background: #fff4df;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    clip-path: polygon(100% 0%, 100% 84%, 50% 100%, 50% 100%, 0% 84%, 0 0);
+    .text {
+      width: 160px;
+      background-image: radial-gradient(circle at 50% 50%, #e66551, rgba(239, 108, 85, 0.92) 15%, rgba(255, 244, 223, 0.5) 80%, rgba(255, 244, 223, 0.5));
+      color: #fff4df;
+    }
+    .amount {
+      font-size: 32px;
+      color: #e66551;
+    }
+  }
+  .status-icon {
+    width: 50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    margin: 0 auto;
+    &.success {
+      background-image: url('../../assets/envelope/success.svg');
+    }
+    &.fail {
+      background-image: url('../../assets/envelope/fail.svg');
+    }
+    &.error {
+      background-image: url('../../assets/envelope/error.svg');
+    }
+  }
+  .msg {
+    padding-top: 13px;
+    font-size: 14px;
+    color: #fdebc5;
+    line-height: 20px;
+    width: 140px;
+    word-wrap: break-word;
+    margin: 0 auto;
+  }
+
+  .detail-button {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 190px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    background: transparent;
+    margin: 0 auto;
+    & /deep/ .weui-btn.weui-btn_primary {
+      color: #e76953;
+      background: #ffd264;
+    }
+  }
+}
+.close-area {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 56px;
+  height: 80px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  .icon {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
   }
 }
 </style>

@@ -31,6 +31,7 @@ function onmessage (response) {
       case 'image':
       case 'sticker':
       case 'system':
+      case 'red-envelope':
         store.dispatch('chatroom/receiveMsg', data)
         break
       case 'betrecord-sharing':

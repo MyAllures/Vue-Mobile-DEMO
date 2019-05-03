@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="input-panel" id="typing" @click="handTriggerPanel">
-    <div id="envelope-btn" class="envelope-btn" @click="openEnvelopeDialog">
+    <div v-if="envelopeSetting.enabled===true" id="envelope-btn" class="envelope-btn" @click="openRedEnvelopeDialog">
     </div>
     <label class="image-btn">
       <input @change="sendImg"
@@ -61,7 +61,7 @@
       <div class="icon"></div>
     </div>
   </div>
-  <envelope-dialog :isShowEnvelopeDialog.sync="isShowEnvelopeDialog" @hidePanel="hidePanel"/>
+  <red-envelope-dialog :isShowRedEnvelopeDialog.sync="isShowRedEnvelopeDialog" @hidePanel="hidePanel"/>
 </div>
 </template>
 
@@ -73,13 +73,13 @@ import { Swiper, SwiperItem } from 'vux'
 import { eagle } from '@/api'
 import lrz from 'lrz'
 import vClickOutside from 'v-click-outside'
-import EnvelopeDialog from '@/components/EnvelopeDialog'
+import RedEnvelopeDialog from './RedEnvelopeDialog'
 export default {
   name: 'ChatFooter',
   components: {
     Swiper,
     SwiperItem,
-    EnvelopeDialog
+    RedEnvelopeDialog
   },
   directives: {
     clickOutside: vClickOutside.directive
@@ -89,7 +89,7 @@ export default {
       msgCnt: '',
       activeSeries: undefined,
       isShowEmojiPanel: false,
-      isShowEnvelopeDialog: false
+      isShowRedEnvelopeDialog: false
     }
   },
   computed: {
@@ -102,6 +102,9 @@ export default {
       roomId: state => state.roomId,
       emojiMap: state => state.emojiMap
     }),
+    envelopeSetting () {
+      return this.$store.state.systemConfig.chatroomEnvelopeSettings
+    },
     noPermission () {
       return !this.permission || !this.permission.eligible
     },
@@ -218,11 +221,11 @@ export default {
         e.preventDefault()
       }
     },
-    openEnvelopeDialog () {
+    openRedEnvelopeDialog () {
       if (this.noPermission) {
         return
       }
-      this.isShowEnvelopeDialog = true
+      this.isShowRedEnvelopeDialog = true
     }
   }
 }
