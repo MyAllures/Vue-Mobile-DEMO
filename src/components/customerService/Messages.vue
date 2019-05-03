@@ -344,7 +344,7 @@ body {
       font-size: 12px;
       color: #999;
       margin-top: 2px;
-      word-break: break-all;
+      word-break: break-word;
     }
   }
 
