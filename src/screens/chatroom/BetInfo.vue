@@ -47,6 +47,9 @@ export default {
   methods: {
     openDialog () {
       let bets = this.info.bets.map(bet => {
+        bet.bet_options = bet.bet_options || {
+          opts_combos_count: ''
+        }
         return {
           game_schedule: bet.game_schedule,
           display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
@@ -61,6 +64,7 @@ export default {
         name: 'bet',
         state: {
           gameName: this.info.display_name,
+          showGameName: true,
           visible: true,
           bets,
           isSuccess: false

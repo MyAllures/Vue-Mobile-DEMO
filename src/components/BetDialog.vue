@@ -9,7 +9,8 @@
           'max-width': '95%'
         }">
         <div class="bet-content">
-          <div class="title">确认注单</div>
+          <div class="title vux-1px-b">确认注单</div>
+          <div class="game" v-if="betDialog.showGameName">{{betDialog.gameName}}</div>
           <ul class="bet-items" ref="bets" v-fix-scroll>
             <li
               class="bet-item"
@@ -216,6 +217,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.game {
+  text-align: center;
+  margin-top: 5px;
+}
 .bet-content {
   width: 100%;
   text-align: left;
@@ -231,7 +236,7 @@ export default {
     min-height: 150px;
     max-height: 300px;
     overflow-y: auto;
-    border-top: 1px solid #f0f0f0;
+    border-top: none;
     border-bottom: 1px solid #f0f0f0;
     color: #333;
     padding: 10px 0;
