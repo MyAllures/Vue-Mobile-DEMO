@@ -12,9 +12,18 @@ export default {
       error: [],
       thank: ''
     },
+    showReview: false,
     lastArchive: 0
   },
   getters: {
+    lastSession (state) {
+      const length = state.received.history.length
+      if (length) {
+        const latest = state.received.history[length - 1]
+        return latest.date_tag ? state.received.history[length - 2].session : latest.session
+      }
+      return false
+    },
     currentSession (state) {
       const length = state.received.common.length
       return length ? state.received.common[length - 1].session : false
@@ -43,6 +52,9 @@ export default {
       state.received.common = []
       state.messages = []
     },
+    showReviewDialog: (state, bool) => {
+      state.showReview = bool
+    },
     deleteReview: (state, id) => {
       const index = state.received.common.findIndex(msg => msg.id === id)
       const msg = state.received.common[index + 1]
@@ -69,6 +81,9 @@ export default {
     },
     clearMessage: ({ commit }) => {
       commit('clearMessage')
+    },
+    showReviewDialog: ({ commit }, bool = true) => {
+      commit('showReviewDialog', bool)
     },
     deleteReview: ({ commit }, id) => {
       commit('deleteReview', id)

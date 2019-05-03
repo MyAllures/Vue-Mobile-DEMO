@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { XButton } from 'vux'
 import { sendServiceReview } from '@/api'
 import { MSG_TYPE, MSG_CAT, RATINGS } from '@/utils/CustomerService'
@@ -50,6 +50,9 @@ export default {
     processing: false
   }),
   methods: {
+    ...mapActions('customerService', [
+      'showReviewDialog'
+    ]),
     submit () {
       if (this.rating === 0) {
         this.$createToast({
@@ -61,8 +64,9 @@ export default {
         return
       }
       this.processing = true
+      const session = this.session || this.lastSession
       sendServiceReview({
-        session: this.session,
+        session: session,
         rating: this.rating,
         comment: this.comment
       }).then(response => {
@@ -100,7 +104,7 @@ export default {
     close () {
       this.rating = 0
       this.comment = ''
-      this.$emit('close')
+      this.showReviewDialog(false)
     }
   },
   computed: {
@@ -108,6 +112,7 @@ export default {
       thankMessage: state => state.received.thank
     }),
     ...mapGetters('customerService', {
+      lastSession: 'lastSession',
       session: 'currentSession'
     })
   }

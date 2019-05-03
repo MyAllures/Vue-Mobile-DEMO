@@ -165,7 +165,7 @@ export default {
       const item = RATINGS.find(r => r.value === rating)
       return item.color
     },
-    clearReview (id, session) {
+    clearReview (id) {
       deleteServiceReview(id).then(() => {
         this.$store.dispatch('customerService/deleteReview', id)
       })

@@ -16,11 +16,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import lrz from 'lrz'
 import { uploadImgToService } from '@/api'
 import { msgFormatter } from '@/utils'
+
 export default {
   methods: {
+    ...mapActions('customerService', [
+      'showReviewDialog'
+    ]),
     sendMsgImg (e) {
       let fileInp = this.$refs.fileImgSend
       let file = fileInp.files[0]
@@ -56,7 +61,7 @@ export default {
       })
     },
     showReview () {
-      this.$parent.$parent.showReview = true
+      this.showReviewDialog()
     }
   }
 }

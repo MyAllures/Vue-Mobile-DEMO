@@ -6,12 +6,12 @@
     <div class="footer">
       <Footer />
     </div>
-    <ReviewDialog :show="showReview" @close="showReview = false" />
+    <ReviewDialog :show="showReview" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
 import ReviewDialog from '@/components/customerService/ReviewDialog'
@@ -22,30 +22,33 @@ export default {
     Messages,
     ReviewDialog
   },
-  data: () => ({
-    showReview: false
-  }),
+  methods: {
+    ...mapActions('customerService', [
+      'showReviewDialog'
+    ])
+  },
   computed: {
     ...mapState('customerService', {
+      showReview: state => state.showReview,
       lastArchive: state => state.lastArchive
     }),
     ...mapGetters('customerService', {
+      lastSession: 'lastSession',
       session: 'currentSession'
     })
   },
   watch: {
     showReview (show) {
-      if (show && !this.session) {
+      if (show && !this.session && !this.lastSession) {
         this.$createToast({
           type: 'warn',
-          txt: '先别急着评，先跟客服聊聊再说',
-          time: 1600
+          txt: '先别急着评，先跟客服聊聊再说'
         }).show()
-        this.showReview = false
+        this.showReviewDialog(false)
       }
     },
     lastArchive () {
-      this.showReview = true
+      this.showReviewDialog()
     }
   }
 }
