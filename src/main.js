@@ -211,6 +211,7 @@ axios.interceptors.response.use(res => {
   const fromRaven = res.config.url.includes(urls.ravenHost)
 
   let responseData = res.data
+
   if (fromVenom) {
     return responseData
   }
@@ -367,7 +368,6 @@ store.watch((state) => {
       return state.systemConfig.process
     }, (configProcess) => {
       if (configProcess === 'fulfilled') {
-        unwatch()
         if (store.state.systemConfig.enableBuiltInCustomerService) {
           let venomTokenPromise
           let venomToken = localStorage.getItem('venom_token')
@@ -377,14 +377,15 @@ store.watch((state) => {
           } else if (!venomToken) {
             venomTokenPromise = fetchJWTToken('venom').catch(() => {})
           }
-
           venomTokenPromise.then(token => {
             localStorage.setItem('venom_token', token)
+
             pollServiceUnread()
           }).catch(() => {})
         }
 
         setChatRoomSetting()
+        unwatch()
       }
     })
   }

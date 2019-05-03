@@ -14,6 +14,7 @@ import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
 import {mapState} from 'vuex'
 import VenomSocketObj from '@/wsObj/venom'
+import {fetchJWTToken} from '@/api'
 
 export default {
   components: {
@@ -26,10 +27,19 @@ export default {
   watch: {
     'systemConfig.enableBuiltInCustomerService': {
       handler (enabled) {
+        let venomTokenPromise
         let venomToken = localStorage.getItem('venom_token')
-        if (enabled && venomToken && !this.ws.venom) {
-          this.$store.dispatch('setWs', { ws: new VenomSocketObj(venomToken), type: 'venom' })
+        if (venomToken) {
+          venomTokenPromise = Promise.resolve(venomToken)
+        } else {
+          venomTokenPromise = fetchJWTToken('venom').catch(() => {})
         }
+
+        venomTokenPromise.then(token => {
+          if (enabled && !this.ws.venom) {
+            this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+          }
+        })
       },
       immediate: true
     }
