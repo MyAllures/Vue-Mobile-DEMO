@@ -93,7 +93,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchServiceUnread, fetchEiderJWTToken } from './api'
+import { getToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
@@ -105,7 +105,6 @@ import BetTrackDialog from './components/BetTrackDialog'
 import Notification from './components/Notification'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
-import GhostSocketObj from './wsObj/eider.js'
 import { Indicator } from './utils'
 import vClickOutside from 'v-click-outside'
 
@@ -232,8 +231,7 @@ export default {
       noBackRoute: !window.history.state,
       indicator: null,
       tabbarHidden: true,
-      isHelperVisible: false,
-      serviceUnreadInterval: null
+      isHelperVisible: false
     }
   },
   mixins: [freetrial],
@@ -291,15 +289,6 @@ export default {
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
-        clearInterval(this.serviceUnreadInterval)
-      } else {
-        this.serviceUnreadInterval = setInterval(() => {
-          this.fetchServiceUnread()
-        }, 5000)
-        fetchEiderJWTToken().then(() => {
-          let token = this.$cookie.get('message_broker_token')
-          this.$store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
-        })
       }
     },
     '$route' (to, from) {
@@ -348,19 +337,11 @@ export default {
           expires: expires
         })
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-        fetchEiderJWTToken()
       }).catch(() => {})
 
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
-    },
-    fetchServiceUnread () {
-      fetchServiceUnread().then((res) => {
-        this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
-      }).catch((e) => {
-        clearInterval(this.serviceUnreadInterval)
-      })
     }
   },
   created () {
@@ -389,7 +370,6 @@ export default {
   },
   beforeDestroy () {
     window.clearTimeout(this.refreshTokenTimer)
-    clearInterval(this.serviceUnreadInterval)
   }
 }
 </script>

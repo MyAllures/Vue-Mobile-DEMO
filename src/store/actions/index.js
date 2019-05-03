@@ -13,8 +13,7 @@ import {
   fetchUnreadCount,
   fetchAnnouncements
 } from '../../api'
-import { JWT } from '@/utils/jwtToken'
-import { take, find } from 'lodash'
+import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
@@ -51,7 +50,6 @@ export default {
       res => {
         Vue.cookie.delete('access_token')
         Vue.cookie.delete('refresh_token')
-        Vue.cookie.delete(`${JWT.venom}_token`)
         commit(types.RESET_USER)
         dispatch('customerService/clearMessage')
         dispatch('customerService/setServiceUnread', false)
@@ -133,7 +131,7 @@ export default {
       })
 
       const tagTable = {
-        '热门游戏': res.slice(0, 15)
+        '热门游戏': res.slice(0, 23)
       }
 
       commit(types.SET_GAMES, {
