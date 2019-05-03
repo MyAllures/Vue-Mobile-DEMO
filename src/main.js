@@ -21,7 +21,6 @@ import sign from './utils/sign'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
-import VenomSocketObj from './wsObj/venom'
 
 const sendGaEvent = ({label, category, action}) => {
   if (store.state.systemConfig.gaTrackingId) {
@@ -372,6 +371,7 @@ store.watch((state) => {
         if (store.state.systemConfig.enableBuiltInCustomerService) {
           let venomTokenPromise
           let venomToken = localStorage.getItem('venom_token')
+
           if (venomToken) {
             venomTokenPromise = Promise.resolve(venomToken)
           } else if (!venomToken) {
@@ -380,7 +380,6 @@ store.watch((state) => {
 
           venomTokenPromise.then(token => {
             localStorage.setItem('venom_token', token)
-            store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
             pollServiceUnread()
           }).catch(() => {})
         }
