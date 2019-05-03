@@ -12,11 +12,27 @@
 <script>
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
+import {mapState} from 'vuex'
+import VenomSocketObj from '@/wsObj/venom'
 
 export default {
   components: {
     Footer,
     Messages
+  },
+  computed: {
+    ...mapState(['systemConfig', 'ws'])
+  },
+  watch: {
+    'systemConfig.enableBuiltInCustomerService': {
+      handler (enabled) {
+        let venomToken = localStorage.getItem('venom_token')
+        if (enabled && venomToken && !this.ws.venom) {
+          this.$store.dispatch('setWs', { ws: new VenomSocketObj(venomToken), type: 'venom' })
+        }
+      },
+      immediate: true
+    }
   }
 }
 </script>
