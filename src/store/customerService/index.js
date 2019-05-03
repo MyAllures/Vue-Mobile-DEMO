@@ -18,7 +18,7 @@ export default {
   getters: {
     lastSession (state) {
       const length = state.received.history.length
-      if (length) {
+      if (length > 1) {
         const latest = state.received.history[length - 1]
         return latest.date_tag ? state.received.history[length - 2].session : latest.session
       }
