@@ -6,50 +6,17 @@
     <div class="footer">
       <Footer />
     </div>
-    <ReviewDialog :show="showReview" />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
-import ReviewDialog from '@/components/customerService/ReviewDialog'
 
 export default {
   components: {
     Footer,
-    Messages,
-    ReviewDialog
-  },
-  methods: {
-    ...mapActions('customerService', [
-      'showReviewDialog'
-    ])
-  },
-  computed: {
-    ...mapState('customerService', {
-      showReview: state => state.showReview,
-      lastArchive: state => state.lastArchive
-    }),
-    ...mapGetters('customerService', {
-      lastSession: 'lastSession',
-      session: 'currentSession'
-    })
-  },
-  watch: {
-    showReview (show) {
-      if (show && !this.session && !this.lastSession) {
-        this.$createToast({
-          type: 'warn',
-          txt: '先别急着评，先跟客服聊聊再说'
-        }).show()
-        this.showReviewDialog(false)
-      }
-    },
-    lastArchive () {
-      this.showReviewDialog()
-    }
+    Messages
   }
 }
 </script>

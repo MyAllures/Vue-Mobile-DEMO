@@ -61,16 +61,12 @@ VenomSocketObj.prototype.initWs = function (token) {
       let data = JSON.parse(response.data)
       switch (data.action) {
         case RECEIVED_ACTION.welcome_message:
-          const welcomeMsg = {
-            type: MSG_TYPE.welcome_message,
-            cat: MSG_CAT.welcome,
-            text: data.message.text['default-welcome-message']
-          }
+          data.message.type = MSG_TYPE.welcome_message
+          data.message.cat = MSG_CAT.welcome
           store.dispatch('customerService/receiveMessages', {
             category: MSG_CAT.welcome,
-            messages: [welcomeMsg]
+            messages: [data.message]
           })
-          store.dispatch('customerService/setThankMessage', data.message.text['thanks-comment-words'])
           break
         case RECEIVED_ACTION.offline_message:
           data.message.forEach(msg => {
@@ -130,11 +126,6 @@ VenomSocketObj.prototype.initWs = function (token) {
                 message_id: data.message.id
               }
             })
-          }
-          break
-        case RECEIVED_ACTION.archive_session:
-          if (data.message.session_achieved === 'solved') {
-            store.dispatch('customerService/archiveSession')
           }
           break
         case 'ping':

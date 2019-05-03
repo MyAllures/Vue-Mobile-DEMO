@@ -4,8 +4,7 @@ const RECEIVED_ACTION = {
   history_message: 'history_message',
   normal: 'normal',
   image: 'image',
-  sticker: 'sticker',
-  archive_session: 'archive_session'
+  sticker: 'sticker'
 }
 
 const EMITTED_ACTION = {
@@ -24,10 +23,7 @@ const MSG_TYPE = {
   // custom types
   datetag: 101,
   welcome_message: 102,
-  error: 103,
-  review: 104,
-  reviewThank: 105,
-  reviewCancel: 106
+  error: 103
 }
 
 const MSG_CAT = {
@@ -38,28 +34,9 @@ const MSG_CAT = {
   error: 'error'
 }
 
-const RATINGS = [
-  {
-    desc: '差评',
-    value: 1,
-    color: '#eb5d48'
-  },
-  {
-    desc: '中评',
-    value: 2,
-    color: '#f5ce23'
-  },
-  {
-    desc: '好评',
-    value: 3,
-    color: '#6bc23a'
-  }
-]
-
 export {
   RECEIVED_ACTION,
   EMITTED_ACTION,
   MSG_TYPE,
-  MSG_CAT,
-  RATINGS
+  MSG_CAT
 }
