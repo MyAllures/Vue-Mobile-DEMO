@@ -43,7 +43,10 @@ export default {
         if (venomToken) {
           venomTokenPromise = Promise.resolve(venomToken)
         } else {
-          venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+          venomTokenPromise = fetchJWTToken('venom').then(setting => {
+            localStorage.setItem('venom_setting', JSON.stringify(setting))
+            return setting.token
+          })
         }
 
         venomTokenPromise.then(token => {

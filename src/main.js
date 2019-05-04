@@ -376,10 +376,12 @@ store.watch((state) => {
           if (venomToken) {
             venomTokenPromise = Promise.resolve(venomToken)
           } else if (!venomToken) {
-            venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+            venomTokenPromise = fetchJWTToken('venom').then(setting => {
+              localStorage.setItem('venom_setting', JSON.stringify(setting))
+              return setting.token
+            }).catch(() => {})
           }
-          venomTokenPromise.then(setting => {
-            localStorage.setItem('venom_setting', JSON.stringify(setting))
+          venomTokenPromise.then(() => {
             pollServiceUnread()
           }).catch(() => {})
         }
@@ -396,12 +398,14 @@ store.watch((state) => {
     if (eiderToken) {
       eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
-      eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
+      eiderTokenPromise = fetchJWTToken('eider').then(setting => {
+        localStorage.setItem('eider_setting', JSON.stringify(setting))
+        return setting.token
+      }).catch(() => {})
     }
 
-    eiderTokenPromise.then(setting => {
-      localStorage.setItem('eider_setting', JSON.stringify(setting))
-      store.dispatch('setWs', { ws: new GhostSocketObj(setting.token), type: 'eider' })
+    eiderTokenPromise.then(token => {
+      store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
     }).catch(() => {})
 
     store.dispatch('initUnread')
