@@ -65,15 +65,17 @@ export default {
       this.ws.raven.joinRoom(this.RECEIVER)
     } else {
       let ravenTokenPromise
-      let ravenToken = getJWTToken('raven_token')
+      let ravenToken = getJWTToken('raven')
       if (ravenToken) {
         ravenTokenPromise = Promise.resolve(ravenToken)
       } else {
-        ravenTokenPromise = fetchJWTToken('raven').catch(() => {})
+        ravenTokenPromise = fetchJWTToken('raven').then(setting => {
+          localStorage.setItem('raven_setting', JSON.stringify(setting))
+          return setting.token
+        }).catch(() => {})
       }
-      ravenTokenPromise.then(setting => {
-        localStorage.setItem('raven_setting', JSON.stringify(setting))
-        this.$store.dispatch('setWs', { ws: new WebSocketObj(setting.token, this.RECEIVER), type: 'raven' })
+      ravenTokenPromise.then(token => {
+        this.$store.dispatch('setWs', { ws: new WebSocketObj(token, this.RECEIVER), type: 'raven' })
       })
     }
     if (!this.$store.state.emojis) {

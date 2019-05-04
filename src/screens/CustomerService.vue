@@ -43,12 +43,15 @@ export default {
         if (venomToken) {
           venomTokenPromise = Promise.resolve(venomToken)
         } else {
-          venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+          venomTokenPromise = fetchJWTToken('venom').then(setting => {
+            localStorage.setItem('venom_setting', JSON.stringify(setting))
+            return setting.token
+          })
         }
 
-        venomTokenPromise.then(setting => {
+        venomTokenPromise.then(token => {
           if (enabled && !this.ws.venom) {
-            this.$store.dispatch('setWs', { ws: new VenomSocketObj(setting.token), type: 'venom' })
+            this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
             this.ready = true
           }
         })
