@@ -2,7 +2,6 @@ import Vue from 'vue'
 import store from '@/store'
 import router from '@/router'
 import urls from '@/api/urls'
-import { fetchJWTToken } from '@/api'
 import { RECEIVED_ACTION, EMITTED_ACTION, MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 
 const DEBUG = false
@@ -27,18 +26,6 @@ function VenomSocketObj (token) {
 
 VenomSocketObj.prototype.initWs = function (token) {
   this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${token}`)
-
-  this.ws.onclose = e => {
-    if (e.code === 1006) {
-      localStorage.removeItem(JWT_TYPE + '_token')
-      fetchJWTToken(JWT_TYPE).then(token => {
-        localStorage.setItem(JWT_TYPE + '_token', token)
-        store.dispatch('setWs', { ws: new VenomSocketObj(token), type: JWT_TYPE })
-      }).catch(() => {
-
-      })
-    }
-  }
 
   this.ws.onopen = e => {
     wsDebug('ws onopen')

@@ -93,7 +93,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, fetchServiceUnread } from './api'
+import { getToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
@@ -231,8 +231,7 @@ export default {
       noBackRoute: !window.history.state,
       indicator: null,
       tabbarHidden: true,
-      isHelperVisible: false,
-      serviceUnreadInterval: null
+      isHelperVisible: false
     }
   },
   mixins: [freetrial],
@@ -290,13 +289,6 @@ export default {
         if (this.ws.venom) {
           this.ws.venom.closeConnect()
         }
-        clearInterval(this.serviceUnreadInterval)
-      } else {
-        if (this.systemConfig.enableBuiltInCustomerService) {
-          this.serviceUnreadInterval = setInterval(() => {
-            this.fetchServiceUnread()
-          }, 5000)
-        }
       }
     },
     '$route' (to, from) {
@@ -350,13 +342,6 @@ export default {
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)
-    },
-    fetchServiceUnread () {
-      fetchServiceUnread().then((res) => {
-        this.$store.dispatch('customerService/setServiceUnread', res.has_unread)
-      }).catch((e) => {
-        clearInterval(this.serviceUnreadInterval)
-      })
     }
   },
   created () {
@@ -385,7 +370,6 @@ export default {
   },
   beforeDestroy () {
     window.clearTimeout(this.refreshTokenTimer)
-    clearInterval(this.serviceUnreadInterval)
   }
 }
 </script>
