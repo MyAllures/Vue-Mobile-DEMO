@@ -1,7 +1,7 @@
 import store from '../store'
 import urls from '../api/urls'
 import Vue from 'vue'
-import { fetchJWTToken } from '@/api'
+// import { fetchJWTToken } from '@/api'
 
 const JWT_TYPE = 'eider'
 let wsLivingCount = 0
@@ -28,17 +28,17 @@ GhostSocketObj.prototype.initWs = function (token) {
     }, 3000)
   }
 
-  this.ws.onclose = e => {
-    if (e.code === 1006) {
-      localStorage.removeItem(JWT_TYPE + '_token')
-      fetchJWTToken(JWT_TYPE).then(token => {
-        localStorage.setItem(JWT_TYPE + '_token', token)
-        store.dispatch('setWs', { ws: new GhostSocketObj(token), type: JWT_TYPE })
-      }).catch(() => {
+  // this.ws.onclose = e => {
+  //   if (e.code === 1006) {
+  //     localStorage.removeItem(JWT_TYPE + '_token')
+  //     fetchJWTToken(JWT_TYPE).then(token => {
+  //       localStorage.setItem(JWT_TYPE + '_token', token)
+  //       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: JWT_TYPE })
+  //     }).catch(() => {
 
-      })
-    }
-  }
+  //     })
+  //   }
+  // }
 
   this.ws.onmessage = (response) => {
     let data
