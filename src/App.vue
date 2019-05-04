@@ -292,9 +292,11 @@ export default {
         }
         clearInterval(this.serviceUnreadInterval)
       } else {
-        this.serviceUnreadInterval = setInterval(() => {
-          this.fetchServiceUnread()
-        }, 5000)
+        if (this.systemConfig.enableBuiltInCustomerService) {
+          this.serviceUnreadInterval = setInterval(() => {
+            this.fetchServiceUnread()
+          }, 5000)
+        }
       }
     },
     '$route' (to, from) {

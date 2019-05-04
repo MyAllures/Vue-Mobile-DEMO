@@ -91,7 +91,8 @@ function initData () {
           planSiteUrl: pref.plan_site_url,
           appIcon: response.app_icon,
           envelopeActivityId: response.envelope_activity_id,
-          serviceAction
+          serviceAction,
+          enableBuiltInCustomerService
         })
 
       const themeId = response.theme || 1
@@ -360,17 +361,19 @@ store.watch((state) => {
     }
   }
   if (logined) {
-    let venomTokenPromise
-    let venomToken = localStorage.getItem('venom_token')
-    if (venomToken) {
-      venomTokenPromise = Promise.resolve(venomToken)
-    } else {
-      venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+    if (store.state.systemConfig.enableBuiltInCustomerService) {
+      let venomTokenPromise
+      let venomToken = localStorage.getItem('venom_token')
+      if (venomToken) {
+        venomTokenPromise = Promise.resolve(venomToken)
+      } else {
+        venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+      }
+      venomTokenPromise.then(token => {
+        localStorage.setItem('venom_token', token)
+        store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+      }).catch(() => {})
     }
-    venomTokenPromise.then(token => {
-      localStorage.setItem('venom_token', token)
-      store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-    }).catch(() => {})
 
     let eiderTokenPromise
     let eidereToken = localStorage.getItem('eider_token')
