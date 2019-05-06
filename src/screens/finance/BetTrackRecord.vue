@@ -20,10 +20,10 @@
       <thead>
         <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
-          <th>{{$t('fin.game')}}</th>
-          <th>位置/号码</th>
-          <th>结果</th>
-          <th>单注/输赢</th>
+          <th>游戏/追号期数</th>
+          <th>玩法</th>
+          <th>单注/翻倍</th>
+          <th>盈亏</th>
         </tr>
       </thead>
       <tbody v-if="records.length">
@@ -34,21 +34,23 @@
           </td>
           <td>
             <p>{{record.game.display_name}}</p>
-            <span :class="['item', {win: num === record.winning_schedule}]" v-for="(num, index) in record.issue_numbers" :key="index">{{num.slice(-3)}}</span>
+            <span v-if="record.issue_numbers.length<=1" class="item">{{record.issue_numbers[0].slice(-3)}}期</span>
+            <span v-else class="item">
+              {{`${record.issue_numbers.length}期(${record.issue_numbers[0].slice(-3)}-${record.issue_numbers[record.issue_numbers.length-1].slice(-3)}期)`}}
+            </span>
           </td>
           <td>
             <p>{{record.play_position }}</p>
             <span :class="['item', {win: num === record.winning_number}]" v-for="(num, index) in record.track_numbers" :key="index">{{num}}</span>
           </td>
           <td>
-            <span :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
-            <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
+            <p>{{record.bet_amount| currency('￥')}}</p>
           </td>
           <td>
-            <p>{{record.bet_amount| currency('￥')}}</p>
-            <p :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
-              <template v-if="record.profit">{{record.profit | currency('￥')}}</template>
-              <template v-else>-</template>
+            <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
+            <span v-else-if="record.status === 'pending'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
+            <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
+              {{record.profit | currency('￥')}}
             </p>
           </td>
         </tr>
@@ -353,12 +355,5 @@ export default {
 .item {
   color: #999;
   font-size: 12px;
-  &.win {
-    color: red;
-  }
-  &:not(:last-child):after {
-    content: ', ';
-    color: #999;
-  }
 }
 </style>

@@ -53,6 +53,7 @@
           v-if="activeCategory"
           :activeCategory="activeCategory"
           :key="$route.params.categoryId"
+          :mode="mode"
           :game="currentGame"
           :gameClosed="gameClosed"
           :playReset="playReset"

@@ -69,6 +69,8 @@
       </div>
     </template>
     <component v-else
+      :key="category.id"
+      :mode="mode"
       :is="customPlayGroupsSetting.component"
       :gameCode="game.code"
       :playReset="playReset"
@@ -108,9 +110,7 @@ export default {
       type: Boolean,
       default: false
     },
-    activeCategory: {
-      type: String
-    }
+    mode: String
   },
   components: {
     Tab,
@@ -352,7 +352,18 @@ export default {
       if (this.gameClosed) {
         return
       }
-      this.$set(play, 'active', !play.active)
+      if (play.active) {
+        this.$set(play, 'active', false)
+      } else {
+        if (this.mode === 'bettrack') {
+          _.each(this.plays, play => {
+            if (play.active) {
+              this.$set(play, 'active', false)
+            }
+          })
+        }
+        this.$set(play, 'active', true)
+      }
     },
     switchTab (key) {
       this.groups = this.tabs[key]
