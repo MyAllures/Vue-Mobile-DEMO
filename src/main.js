@@ -11,14 +11,36 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { axiosGhost, axiosEagle, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken } from './api'
+import { axiosGhost, axiosEagle, axiosVenom, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin, LoadingPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
+import {getJWTToken} from './utils'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
-import GhostSocketObj from './wsObj/eider.js'
+import GhostSocketObj from './wsObj/eider'
+
+const sendGaEvent = ({label, category, action}) => {
+  if (store.state.systemConfig.gaTrackingId) {
+    window.gtag('event', action, {'event_category': category, 'event_label': label})
+  }
+}
+
+let serviceUnreadInterval = null
+
+const pollServiceUnread = () => {
+  const getUnread = () => {
+    fetchServiceUnread().then((res) => {
+      store.dispatch('customerService/setServiceUnread', res.has_unread)
+    }).catch((e) => {
+      clearInterval(serviceUnreadInterval)
+    })
+  }
+  serviceUnreadInterval = setInterval(() => {
+    getUnread()
+  }, 5000)
+}
 
 function initData () {
   store.dispatch('fetchGames')
@@ -26,10 +48,41 @@ function initData () {
   store.dispatch('fetchBanner')
   store.dispatch('chatroom/roomList').catch(() => {})
 
+  store.dispatch('setSystemConfig', {...store.state.systemConfig, state: 'pending'})
+
   gethomePage().then(
     response => {
       let pref = response.global_preferences || {}
       const chatroomEnabled = pref.chatroom_enabled === 'true'
+
+      const customerServiceUrl = pref.customer_service_url
+      const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
+      let serviceAction = null
+      if (enableBuiltInCustomerService) {
+        if (store.state.user.account_type) {
+          serviceAction = () => {
+            sendGaEvent({
+              label: '我的',
+              category: '點擊/進入客服',
+              action: '點擊'
+            })
+            router.push({path: '/CustomerSerivce'})
+          }
+        } else {
+          serviceAction = () => {
+            Vue.$vux.toast.show({
+              text: '请先登入会员，如未有会员帐号请先注册',
+              type: 'warn'
+            })
+          }
+        }
+      } else {
+        if (customerServiceUrl) {
+          serviceAction = () => { window.open(customerServiceUrl) }
+        } else {
+          serviceAction = null
+        }
+      }
       store.dispatch('setSystemConfig',
         {
           process: 'fulfilled',
@@ -53,7 +106,10 @@ function initData () {
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
-          envelopeActivityId: response.envelope_activity_id
+          appIcon: response.app_icon,
+          envelopeActivityId: response.envelope_activity_id,
+          serviceAction,
+          enableBuiltInCustomerService: pref.enable_built_in_customer_service === 'true'
         })
 
       const themeId = response.theme || 1
@@ -145,6 +201,7 @@ axiosGhost.interceptors.request.use((config) => {
 const pollingApi = [urls.unread, urls.game_result]
 axiosGhost.interceptors.response.use(res => {
   let responseData = res.data
+
   if (responseData.code === 2000) {
     return responseData.data
   } else if (responseData.code === 9001) {
@@ -179,6 +236,16 @@ axiosGhost.interceptors.response.use(res => {
 })
 
 axiosEagle.interceptors.response.use(res => {
+  return res.data
+}, (error) => {
+  report({
+    type: HTTP_ERROR,
+    error
+  })
+  return Promise.reject(error.response)
+})
+
+axiosVenom.interceptors.response.use(res => {
   return res.data
 }, (error) => {
   report({
@@ -281,32 +348,50 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
-  store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
-    if (store.state.systemConfig.process === 'pending') {
-      const unwatch = store.watch((state) => {
-        return state.systemConfig.process
-      }, (configProcess) => {
+    const unwatch = store.watch((state) => {
+      return state.systemConfig.process
+    }, (configProcess) => {
+      if (configProcess === 'fulfilled') {
+        if (store.state.systemConfig.enableBuiltInCustomerService) {
+          let venomTokenPromise
+          let venomToken = getJWTToken('venom')
+
+          if (venomToken) {
+            venomTokenPromise = Promise.resolve(venomToken)
+          } else if (!venomToken) {
+            venomTokenPromise = fetchJWTToken('venom').then(setting => {
+              localStorage.setItem('venom_setting', JSON.stringify(setting))
+              return setting.token
+            }).catch(() => {})
+          }
+          venomTokenPromise.then(token => {
+            axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
+            pollServiceUnread()
+          }).catch(() => {})
+        }
         unwatch()
-      })
-    }
+      }
+    })
   }
+
   if (logined) {
     store.dispatch('fetchChatRoomUserInfo')
     let eiderTokenPromise
-    // let eiderToken = localStorage.getItem('eider_token')
-    let eiderToken = '' // TODO 後端尚在調整
+    let eiderToken = getJWTToken('eider')
     if (eiderToken) {
       eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
-      eiderTokenPromise = fetchJWTToken('eider').then(token => {
-        localStorage.setItem('eider_token', token)
-        return token
+      eiderTokenPromise = fetchJWTToken('eider').then(setting => {
+        localStorage.setItem('eider_setting', JSON.stringify(setting))
+        return setting.token
       })
     }
+
     eiderTokenPromise.then(token => {
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
     }).catch(() => {})
+
     store.dispatch('initUnread')
     setHeartBeatInterval()
     initData()
@@ -314,7 +399,15 @@ store.watch((state) => {
     if (store.state.ws.eider) {
       store.state.ws.eider.closeConnect()
     }
+    if (store.state.ws.venom) {
+      store.state.ws.venom.closeConnect()
+    }
+    clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
+
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`eagle_setting`)
+    localStorage.removeItem(`eider_setting`)
   }
 })
 

@@ -9,5 +9,7 @@ module.exports = {
   eiderHost: '"' + process.env.eiderHost + '"',
   eagleHost: '"' + process.env.eagleHost + '"',
   wsEagleHost: '"' + process.env.wsEagleHost + '"',
+  venomHost: '"' + process.env.venomHost + '"',
+  venomSocket: '"' + process.env.venomSocket + '"',
   company: '"' + process.env.company + '"'
 }

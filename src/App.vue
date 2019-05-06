@@ -347,6 +347,7 @@ export default {
         axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
         axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       }).catch(() => {})
+
       this.refreshTokenTimer = setTimeout(() => {
         this.replaceToken()
       }, 20 * 60 * 1000)

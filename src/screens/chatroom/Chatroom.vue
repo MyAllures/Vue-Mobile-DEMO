@@ -13,7 +13,7 @@ import { mapState } from 'vuex'
 import { EagleWebSocket } from '@/wsObj/eagle'
 import {fetchJWTToken} from '@/api'
 import GameInfo from '@/screens/games/GameInfo'
-import {makeCancelable} from '@/utils'
+import {makeCancelable, getJWTToken} from '@/utils'
 const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -53,17 +53,18 @@ export default {
   },
   created () {
     let tokenPromise
-    // let token = localStorage.getItem('eagle_token')
-    let token = '' // TODO 後端尚在調整
-    if (!token) {
-      tokenPromise = fetchJWTToken('eagle')
-    } else {
+    let token = getJWTToken('eagle')
+    if (token) {
       tokenPromise = Promise.resolve(token)
+    } else {
+      tokenPromise = fetchJWTToken('eagle').then(setting => {
+        localStorage.setItem('eagle_setting', JSON.stringify(setting))
+        return setting.token
+      })
     }
     const tokenCancelablePromise = makeCancelable(tokenPromise)
     this.tokenCancelablePromise = tokenCancelablePromise
     tokenCancelablePromise.promise.then(token => {
-      localStorage.setItem('eagle_token', token)
       this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
     }).catch(() => {
 

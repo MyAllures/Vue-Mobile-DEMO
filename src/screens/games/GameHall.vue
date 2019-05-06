@@ -44,6 +44,7 @@
             </ul>
           </div>
           <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
+          <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
@@ -81,6 +82,7 @@ import { hasExpertPlan } from '@/utils/expertPlanSetting'
 import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
 import {hasRoadBead} from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -92,6 +94,7 @@ let scrollTop
 export default {
   name: 'GameHall',
   components: {
+    UnreadPoint,
     Popup,
     XHeader,
     GameInfo,

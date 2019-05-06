@@ -25,8 +25,9 @@
             <div
               class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥')}}
+              <span>{{ user.balance|currency('￥')}}</span>
             </div>
+            <UnreadPoint></UnreadPoint>
           </template>
         </div>
       </template>
@@ -80,11 +81,11 @@
         v-for="game in currentGames"
         :key="game.id"
         @click="chooseGame(game)">
-        <div class="game-label">
-          <span v-if="game.label" class="game-label-text">{{game.label}}</span>
-        </div>
-        <img class="game-icon" v-lazy="game.icon" />
+        <img class="game-icon" v-lazy="game.icon" width="56" height="56"/>
         <div>{{ game.display_name }}</div>
+        <div class="game-label" v-if="game.label" >
+          <span class="game-label-text">{{game.label}}</span>
+        </div>
       </div>
       <div v-if="currentTag==='热门游戏'" class="game-item" @click="isGameMenuVisible = true">
         <div class="game-label"></div>
@@ -143,6 +144,7 @@
     </x-dialog>
     <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
+    <app-prompt v-if="systemConfig.appDownloadUrl"></app-prompt>
     <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
     <div
       v-if="systemConfig.envelopeActivityId"
@@ -179,8 +181,11 @@ import Marquee from '../components/Marquee'
 import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
+import AppPrompt from '@/components/AppPrompt'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
+
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
 }
@@ -206,6 +211,7 @@ export default {
     TransferDom
   },
   components: {
+    UnreadPoint,
     TopBar,
     Swiper,
     SwiperItem,
@@ -228,7 +234,8 @@ export default {
     TabItem,
     GameMenu,
     ActivityEnvelopeDialog,
-    WinHistory
+    WinHistory,
+    AppPrompt
   },
   mixins: [freetrial],
   computed: {
@@ -265,11 +272,12 @@ export default {
           text: '优惠活动'
         })
       }
-      if (config.customerServiceUrl) {
+
+      if (config.serviceAction) {
         actions.push({
-          type: 'link',
+          type: 'button',
           className: 'service',
-          url: config.customerServiceUrl,
+          click: config.serviceAction,
           text: '联系客服'
         })
       }
@@ -345,7 +353,7 @@ export default {
   },
   methods: {
     openPromotions () {
-      this.$router.push({name: 'Promotions'})
+      this.$router.push({ name: 'Promotions' })
     },
     openPClink () {
       this.$cookie.set('desktop', 1)
@@ -402,7 +410,11 @@ export default {
   bottom: 0;
   width: 100%;
   height: 40px;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.2)
+  );
 }
 
 .announcement {
@@ -429,7 +441,7 @@ export default {
     color: #666;
     font-size: 14px;
   }
-  +.tab-selector{
+  + .tab-selector {
     margin-top: 20px;
   }
 }
@@ -444,7 +456,8 @@ export default {
     position: absolute;
     top: 8px;
     right: 8px;
-    &::before,&::after{
+    &::before,
+    &::after {
       background-color: #999;
     }
   }
@@ -464,7 +477,7 @@ export default {
   }
 }
 .weui-grids {
-  &:after{
+  &:after {
     border: none;
   }
   background: #fff;
@@ -497,7 +510,7 @@ export default {
   .icon {
     width: 40px;
     height: 40px;
-    background: url('../assets/present.png') no-repeat;
+    background: url("../assets/present.png") no-repeat;
     background-size: contain;
     margin-right: 4px;
   }
@@ -562,7 +575,7 @@ export default {
     text-align: right;
     color: #333;
     &::after {
-      content: '';
+      content: "";
       display: inline-block;
       height: 6px;
       width: 6px;
@@ -628,8 +641,8 @@ export default {
     flex-direction: column;
     position: relative;
     box-sizing: border-box;
-    width: calc(~"100%" / 3);
-    padding-bottom: 5px;
+    width: calc(~"100%" / 4);
+    padding: 8px 0;
     color: @grayscale6;
     text-align: center;
     font-size: 14px;
@@ -640,21 +653,18 @@ export default {
     justify-content: center;
     align-items: flex-end;
     width: 100%;
-    height: 25px;
     margin-bottom: 2px;
   }
   .game-label-text {
     display: inline-block;
-    padding: 2px 5px;
+    padding: 0 5px;
     border-radius: 10px;
-    background-color: lighten(@azul, 30%);
-    color: darken(@azul, 30%);
-    font-size: 12px;
+    font-size: 11px;
   }
   .game-icon {
+    width: 56px;
     box-sizing: border-box;
     display: block;
-    width: 70px;
   }
 }
 
@@ -687,16 +697,16 @@ export default {
       transform: scaleX(0.5);
     }
     .service {
-      background-image: url('../assets/service.png')
+      background-image: url("../assets/service.png");
     }
     .trail {
-      background-image: url('../assets/trail.svg')
+      background-image: url("../assets/trail.svg");
     }
     .download {
-      background-image: url('../assets/download_app.svg')
+      background-image: url("../assets/download_app.svg");
     }
     .promotion {
-      background-image: url('../assets/promotion.png')
+      background-image: url("../assets/promotion.png");
     }
     .icon {
       width: 24px;
@@ -728,7 +738,7 @@ export default {
 .envelope-btn {
   position: fixed;
   right: 20px;
-  top: 70vh;
+  top: 55vh;
   width: 40px;
   height: 60px;
   background: url('../assets/envelope_btn.svg') no-repeat;

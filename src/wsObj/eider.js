@@ -2,6 +2,7 @@ import store from '../store'
 import urls from '../api/urls'
 import Vue from 'vue'
 
+const JWT_TYPE = 'eider'
 let wsLivingCount = 0
 function GhostSocketObj (token) {
   this.initWs(token)
@@ -134,14 +135,14 @@ GhostSocketObj.prototype.closeConnect = function () {
   clearInterval(this.checkWsLivingInterval)
   store.dispatch('setWs', {
     ws: null,
-    type: 'eider'
+    type: JWT_TYPE
   })
 }
 
 GhostSocketObj.prototype.reconnect = function () {
   clearInterval(this.checkWsLivingInterval)
 
-  let token = Vue.cookie.get('access_token')
+  let token = localStorage.getItem(JWT_TYPE + '_token')
   if (token) this.initWs(token)
 }
 

@@ -57,8 +57,6 @@ export function report (config) {
       reportLog += '&username=tryplay'
     }
     fetch('https://log.021toilet.com/f?' + reportLog, {mode: 'no-cors', method: 'GET'})
-    let img = new Image()
-    img.src = `https://b.clkud.com/1.png?${reportLog}`
   } catch (e) {
     console.log(e)
   }

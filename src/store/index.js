@@ -7,6 +7,7 @@ import { getLastGameData } from '../utils'
 import page from './page'
 import chatroom from './chatroom'
 import game from './game'
+import customerService from './customerService'
 
 Vue.use(Vuex)
 
@@ -80,7 +81,6 @@ export default new Vuex.Store({
     categories: {},
     systemConfig: {
       process: 'pending',
-      customerServiceUrl: '',
       agentDashboardUrl: '',
       mobileLogo: '',
       homePageLogo: '',
@@ -96,7 +96,8 @@ export default new Vuex.Store({
       smsValidationEnabled: false,
       appDownloadUrl: '',
       planSiteUrl: '',
-      envelopeActivityId: ''
+      envelopeActivityId: '',
+      serviceAction: null
     },
     envelope: {},
     urgencySwitchedGame: null,
@@ -105,7 +106,8 @@ export default new Vuex.Store({
     keepAlivePage: ['Home'],
     promotions: [],
     ws: {
-      eider: null
+      eider: null,
+      venom: null
     },
     messages: [],
     announce: {
@@ -120,7 +122,8 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    bettrackPositions: {}
+    bettrackPositions: {},
+    serviceUnread: 0
   },
   actions,
   mutations,
@@ -128,6 +131,7 @@ export default new Vuex.Store({
   modules: {
     page,
     chatroom,
-    game
+    game,
+    customerService
   }
 })
