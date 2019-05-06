@@ -447,6 +447,9 @@ export default {
           font-size: 14px;
           word-wrap: break-word;
           word-break: break-all;
+          .content-wrapper {
+            display: inline-block;
+          }
         }
       }
       .content-wrapper {
