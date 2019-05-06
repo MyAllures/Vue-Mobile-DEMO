@@ -69,7 +69,7 @@
       </div>
     </template>
     <component v-else
-      :key="category.id"
+      :key="currentCategory.id"
       :mode="mode"
       :is="customPlayGroupsSetting.component"
       :gameCode="game.code"
