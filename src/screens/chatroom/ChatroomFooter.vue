@@ -170,9 +170,10 @@ export default {
       }
     },
     hidePanel (e) {
-      if (e.target.id !== 'emoji-btn') {
-        this.isShowEmojiPanel = false
+      if (e && e.target.id === 'emoji-btn') {
+        return
       }
+      this.isShowEmojiPanel = false
     },
     sendImg (e) {
       if (this.noPermission) {
