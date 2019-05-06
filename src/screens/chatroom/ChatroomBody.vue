@@ -466,7 +466,7 @@ export default {
           height: 36px;
           border-radius: 12px;
           margin-right: 5px;
-          background-size: contain;
+          background-size: cover;
           background-repeat: no-repeat;
         }
         .nickname {

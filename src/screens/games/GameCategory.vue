@@ -61,7 +61,7 @@
                 <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
                   <span class="num">{{play.display_name}}</span>
                 </span>
-                <span :class="['play-odds', {'right': game && k3Games.includes(game.code) && play.display_name.split(',').length>1 }]">{{play.display_name}}</span>
+                <span :class="['play-odds', {'right': game && k3Games.includes(game.code) && play.display_name.split(',').length>1 }]">{{play.odds}}</span>
               </template>
             </div>
           </div>
