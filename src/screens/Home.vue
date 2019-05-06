@@ -53,7 +53,7 @@
     </div>
 
     <flexbox class="activity-area" gutter="4" v-if="showActivityArea">
-      <flexbox-item v-if="!user.account_type && systemConfig.regPresentAmount > 0">
+      <flexbox-item class="activity-register" v-if="!user.account_type && systemConfig.regPresentAmount > 0">
         <router-link to="/register">
           <flexbox class="activity" gutter="2">
             <flexbox-item class="activity-icon">
@@ -554,14 +554,25 @@ export default {
       height: 100%;
     }
   }
+  .activity-register {
+    .activity-icon,
+    ~ .vux-flexbox-item .activity-icon {
+      flex: 0 0 28px;
+      height: 28px;
+    }
+    .activity,
+    ~ .vux-flexbox-item .activity {
+      max-width: 130px;
+    }
+  }
   .activity {
     height: 100%;
-    max-width: 130px;
+    max-width: 134px;
     margin: 0 auto;
   }
   .activity-icon {
-    flex: 0 0 28px;
-    height: 28px;
+    flex: 0 0 32px;
+    height: 32px;
 
     img {
       max-width: 100%;
