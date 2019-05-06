@@ -29,10 +29,6 @@
           </div>
         </div>
         <div class="content stats">
-          <div class="stat received">
-            <div class="count">{{ myData.total_envelope_count }}</div>
-            <div class="desc">今日已领红包数</div>
-          </div>
           <div class="stat available">
             <div class="count highlight" :class="{ gray: myData.remain_envelope_count === 0 }">{{ myData.remain_envelope_count }}</div>
             <div class="desc">今日未拆红包个数</div>
@@ -220,6 +216,11 @@ export default {
   &.stats {
     .stat {
       margin-bottom: 14px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
     button {
       font-size: 16px;
