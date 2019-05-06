@@ -30,16 +30,23 @@ export default {
   computed: {
     ...mapState('customerService', {
       showReview: state => state.showReview,
-      lastArchive: state => state.lastArchive
+      lastArchive: state => state.lastArchive,
+      assigned: state => state.sessionAssigned
     }),
     ...mapGetters('customerService', {
       lastSession: 'lastSession',
       session: 'currentSession'
-    })
+    }),
+    isPreventReview () {
+      return (!this.session && !this.lastSession) || (this.session && !this.assigned)
+    }
   },
   watch: {
+    session () {
+      this.$store.dispatch('customerService/setSessionAssigned', false)
+    },
     showReview (show) {
-      if (show && !this.session && !this.lastSession) {
+      if (show && this.isPreventReview) {
         this.$createToast({
           type: 'warn',
           txt: '先别急着评，先跟客服聊聊再说'

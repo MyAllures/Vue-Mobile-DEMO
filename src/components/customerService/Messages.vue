@@ -173,7 +173,9 @@ export default {
   },
   watch: {
     pullDownRefreshOptions (val) {
-      this.options.pullDownRefresh = val
+      if (this.options) {
+        this.options.pullDownRefresh = val
+      }
     },
     messageCollection () {
       this.handleScrollTop()

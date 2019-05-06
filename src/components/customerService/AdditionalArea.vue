@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <label class="control-btn" for="capture" @click="clickSendImg">
+    <label class="control-btn" for="capture">
       <img class="icon" src="../../assets/icon_upload.svg" alt="upload" />
       <input @change="sendMsgImg"
         type="file"
@@ -9,14 +9,14 @@
         class="img-upload-input"
         accept="image/*" />
     </label>
-    <a class="control-btn" href="#" @click.prevent="showReview">
+    <a class="control-btn" href="#" @click.prevent="showReview" v-if="enableReview">
       <img class="icon" src="../../assets/cs/icon-review.svg" alt="comment" />
     </a>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import lrz from 'lrz'
 import { uploadImgToService } from '@/api'
 import { msgFormatter } from '@/utils'
@@ -63,6 +63,11 @@ export default {
     showReview () {
       this.showReviewDialog()
     }
+  },
+  computed: {
+    ...mapState('customerService', {
+      enableReview: state => state.enableReview
+    })
   }
 }
 </script>
