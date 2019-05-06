@@ -21,10 +21,10 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
 import ReviewDialog from '@/components/customerService/ReviewDialog'
-
 import VenomSocketObj from '@/wsObj/venom'
-import {fetchJWTToken} from '@/api'
-import {getJWTToken} from '@/utils'
+import { fetchJWTToken } from '@/api'
+import { getJWTToken } from '@/utils'
+
 export default {
   components: {
     Footer,
