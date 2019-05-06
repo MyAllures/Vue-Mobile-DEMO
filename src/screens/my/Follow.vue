@@ -101,7 +101,7 @@ export default {
   border-radius: 10px;
   margin-right: 10px;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
 }
 .cancel {
