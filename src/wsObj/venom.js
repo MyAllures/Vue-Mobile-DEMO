@@ -144,6 +144,17 @@ VenomSocketObj.prototype.initWs = function (token) {
         case RECEIVED_ACTION.assign:
           store.dispatch('customerService/setSessionAssigned', true)
           break
+        case RECEIVED_ACTION.system:
+          if (process.env.NODE_ENV !== 'development') {
+            return
+          }
+          data.message.type = MSG_TYPE.system
+          store.dispatch('customerService/receiveMessages', {
+            category: MSG_CAT.common,
+            messages: [data.message],
+            once: false
+          })
+          break
         case 'ping':
           this.ws.send(JSON.stringify({
             'action': 'pong'

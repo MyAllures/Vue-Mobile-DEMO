@@ -251,6 +251,7 @@ export default {
             break
           case MSG_TYPE.datetag:
           case MSG_TYPE.reviewCancel:
+          case MSG_TYPE.system:
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
             if (msg.text === this.$moment().format('YYYY-MM-DD')) {
