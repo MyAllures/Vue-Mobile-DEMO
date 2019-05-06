@@ -2,7 +2,7 @@
   <popup
     :value="visible"
     @on-hide="$emit('update:visible', false)"
-    height="90%"
+    height="75%"
     v-transfer-dom
     :zIndex="200">
       <div :class="['info-content', type]">

@@ -12,16 +12,28 @@ import {
   // popup
   Popup,
   Picker,
+  ActionSheet,
   DatePicker,
   // scroll
   Scroll,
-  Sticky
+  Sticky,
+  Input,
+  Upload,
+  Loading,
+  TabBar,
+  TabPanels
 } from 'cube-ui'
 
 Vue.use(Checkbox)
 Vue.use(Switch)
 Vue.use(Popup)
 Vue.use(Picker)
+Vue.use(ActionSheet)
 Vue.use(DatePicker)
 Vue.use(Scroll)
 Vue.use(Sticky)
+Vue.use(Input)
+Vue.use(Upload)
+Vue.use(Loading)
+Vue.use(TabBar)
+Vue.use(TabPanels)

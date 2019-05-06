@@ -428,6 +428,17 @@ const baseRoutes = [
     component: resolve => { require(['../screens/chatroom/RedEnvelopeDetail.vue'], resolve) }
   },
   {
+    path: '/CustomerSerivce',
+    name: 'CustomerSerivce',
+    meta: {
+      title: '联系客服',
+      leftCtrl: 'back',
+      requiresAuth: true,
+      tabbarHidden: true
+    },
+    component: resolve => { require(['../screens/CustomerService.vue'], resolve) }
+  },
+  {
     path: '*',
     redirect: '/'
   }

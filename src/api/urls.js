@@ -10,9 +10,13 @@ const apiv1 = host + '/v1'
 const wsEiderHost = env.eiderHost.replace(/"/g, '')
 const eagleHost = env.eagleHost.replace(/"/g, '')
 const wsEagleHost = env.wsEagleHost.replace(/"/g, '')
+const venomHost = env.venomHost.replace(/"/g, '')
+const wsVenomHost = env.venomSocket.replace(/"/g, '')
 
 export default {
   wsEiderHost,
+  venomHost,
+  wsVenomHost,
   domain: host,
   login: prefix + '/login/',
   register: v2Member + '/register/',
@@ -67,6 +71,10 @@ export default {
   expert_bettrack: host + '/betrecord/expert_plan_bets/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/',
+  service_emoji: venomHost + '/chat/emoji/',
+  service_stickers: venomHost + '/chat/stickers/',
+  service_unread: venomHost + '/support/has_unread/',
+  service_image_attachment: venomHost + '/chat/attachment/',
   eagle: {
     host: eagleHost,
     ws_host: wsEagleHost,

@@ -291,4 +291,15 @@ export function makeCancelable (promise) {
       hasCanceled_ = true
     }
   }
-};
+}
+
+export function getJWTToken (type) {
+  let setting = localStorage.getItem(type + '_setting')
+  if (setting) {
+    setting = JSON.parse(setting)
+    if (new Date().getTime() / 1000 < setting.expire) {
+      return setting.token
+    }
+  }
+  return ''
+}

@@ -34,7 +34,11 @@ let companyMap = {
     '8fn3_4': {
      id: 4,
      name: 'hm7899'
-   }
+   },
+   'ee9m_5': {
+      id: 5,
+      name: '6j'
+    }
   }
 let companyInfo = companyMap[process.env.company] || {id: 0, name: 'staging'}
 

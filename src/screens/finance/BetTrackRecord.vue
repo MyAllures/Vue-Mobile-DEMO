@@ -48,7 +48,7 @@
           </td>
           <td>
             <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
-            <span v-else-if="record.status === 'pending'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
+            <span v-else-if="record.status === 'ongoing'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
             <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
               {{record.profit | currency('￥')}}
             </p>

@@ -48,10 +48,14 @@ const login = function ({ commit, state, dispatch }, { user }) {
 
 export default {
   login: login,
-  logout: ({ commit, state }) => {
+  logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
+        Vue.cookie.delete('access_token')
+        Vue.cookie.delete('refresh_token')
         commit(types.RESET_USER)
+        dispatch('customerService/clearMessage')
+        dispatch('customerService/setServiceUnread', false)
       },
       errRes => Promise.reject(errRes)
     )
@@ -130,7 +134,7 @@ export default {
       })
 
       const tagTable = {
-        '热门游戏': res.slice(0, 17)
+        '热门游戏': res.slice(0, 23)
       }
 
       commit(types.SET_GAMES, {
