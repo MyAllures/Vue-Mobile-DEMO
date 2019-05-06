@@ -52,8 +52,8 @@
       </div>
     </div>
 
-    <flexbox class="activity-area" gutter="4" v-if="!user.account_type || actBoost.enabled || actReferral.enabled">
-      <flexbox-item v-if="!user.account_type">
+    <flexbox class="activity-area" gutter="4" v-if="showActivityArea">
+      <flexbox-item v-if="!user.account_type && systemConfig.regPresentAmount > 0">
         <router-link to="/register">
           <flexbox class="activity" gutter="2">
             <flexbox-item class="activity-icon">
@@ -342,6 +342,9 @@ export default {
         })
       }
       return actions
+    },
+    showActivityArea () {
+      return (!this.user.account_type && this.systemConfig.regPresentAmount > 0) || this.actBoost.enabled || this.actReferral.enabled
     }
   },
   watch: {
