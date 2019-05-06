@@ -322,7 +322,6 @@ export default {
   width: 100%;
   height: 40px;
   white-space: nowrap;
-  text-align: right;
   overflow-x: auto;
 }
 

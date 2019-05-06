@@ -99,14 +99,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       launchScreen,
       inject: false
     }),
-    new AddAssetHtmlPlugin([{
-      filepath: require.resolve('../lib/base1.dll.js'),
-      includeSourcemap: false
-    },
-    {
-      filepath: require.resolve('../lib/tools.dll.js'),
-      includeSourcemap: false
-    }]),
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),

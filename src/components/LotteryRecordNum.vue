@@ -24,30 +24,31 @@ export default {
       let rawNums = this.record.result_str.split(',')
       let formattedNums = []
       if (this.gameType === 'bjkl8') { rawNums.pop() }
+      let comparision = {
+        oddEven: 'ball_odd_even_',
+        thanSize: 'ball_than_size_',
+        tailThanSize: 'ball_tail_than_size_',
+        ballOfSumOddEven: 'ball_of_sum_number_odd_even_',
+        ballOfSumThanSize: 'ball_of_sum_number_than_size_',
+        zodiac: 'ball_chinese_zodiac_'
+      }
       let resultCategory = this.record.result_category || {}
       rawNums.forEach((rawBall, i) => {
         if (rawBall[0] === '0' && rawBall !== '0') { rawBall = rawBall.slice(1) }
 
         let index = i + 1
-        let comparision = {
-          oddEven: resultCategory[`ball_odd_even_${index}`],
-          thanSize: resultCategory[`ball_than_size_${index}`],
-          tailThanSize: resultCategory[`ball_tail_than_size_${index}`],
-          ballOfSumOddEven: resultCategory[`ball_of_sum_number_odd_even_${index}`],
-          ballOfSumThanSize: resultCategory[`ball_of_sum_number_than_size_${index}`],
-          zodiac: resultCategory[`ball_chinese_zodiac_${index}`]
-        }
-
+        let data = resultCategory[comparision[this.activeType] + index]
         let obj = {}
+
         obj.type = this.activeType
         if (this.activeType === 'number') {
           obj.num = rawBall
           obj.class = `ball result-${this.gameType} resultnum-${rawBall}`
+        } else if (this.activeType === 'zodiac') {
+          obj.zodiac = data
+          obj.class = 'zodiac'
         } else {
-          obj.class = `${comparision[this.activeType] || 'default'}`
-        }
-        if (this.activeType === 'zodiac') {
-          obj.zodiac = comparision[this.activeType]
+          obj.class = `${data || 'default'}`
         }
 
         formattedNums.push(obj)
@@ -69,6 +70,10 @@ export default {
   width: 35px;
   height: 35px;
   text-indent: -9999px;
+  @media only screen and (max-width: 360px) {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .zodiac {
@@ -82,18 +87,35 @@ export default {
 .bigger {
   background-position: -4px center;
 }
+
 .smaller {
   background-position: -36px center;
+  @media only screen and (max-width: 360px) {
+    background-position: -32px center;
+  }
 }
+
 .even {
   background-position: -67px center;
+  @media only screen and (max-width: 360px) {
+    background-position: -61px center;
+  }
 }
+
 .odd {
   background-position: -101px center;
+  @media only screen and (max-width: 360px) {
+    background-position: -92px center;
+  }
 }
+
 .equal {
   background-position: -135px center;
+  @media only screen and (max-width: 360px) {
+    background-position: -123px center;
+  }
 }
+
 .zodiac {
   &::after {
     content: attr(data-zodiac);
