@@ -46,6 +46,9 @@ export default {
     },
     updateRedEnvelopeStatus: (state, {id, status}) => {
       Vue.set(state.redEnvelopeStatus, id, status)
+    },
+    updatePermission: (state, permission) => {
+      state.permission = permission
     }
   },
   actions: {
@@ -83,6 +86,9 @@ export default {
     },
     updateRedEnvelopeStatus: ({commit}, data) => {
       commit('updateRedEnvelopeStatus', data)
+    },
+    updatePermission: ({commit}, data) => {
+      commit('updatePermission', data)
     }
   }
 }

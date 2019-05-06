@@ -48,7 +48,7 @@
           </div>
         </div>
       </div>
-      <div class="main" v-fix-scroll>
+      <div class="main">
         <router-view
           v-if="activeCategory"
           :activeCategory="activeCategory"

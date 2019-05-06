@@ -37,6 +37,11 @@ function onmessage (response) {
       case 'betrecord-sharing':
         store.dispatch('chatroom/receiveMsg', data)
         break
+      case 'private':
+        store.dispatch('chatroom/updatePermission', {
+          eligible: false,
+          messages: data.content
+        })
     }
   }
 }

@@ -468,6 +468,7 @@ export default {
           margin-right: 5px;
           background-size: cover;
           background-repeat: no-repeat;
+          background-position: center;
         }
         .nickname {
           font-size: 12px;
@@ -731,13 +732,13 @@ export default {
     border-bottom: 1px solid #eee;
     margin-bottom: 10px;
     .avatar {
-      width: 100%;
+      width: 80px;
       height: 80px;
       border-radius: 12px;
-      background-size: contain;
+      background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      margin-bottom: 10px;
+      margin: 0 auto 10px auto;
     }
     .nickname {
       font-size: 16px;
