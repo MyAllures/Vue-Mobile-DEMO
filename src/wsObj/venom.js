@@ -61,16 +61,20 @@ VenomSocketObj.prototype.initWs = function (token) {
       let data = JSON.parse(response.data)
       switch (data.action) {
         case RECEIVED_ACTION.welcome_message:
+          if (!data.message) {
+            return
+          }
           const welcomeMsg = {
             type: MSG_TYPE.welcome_message,
             cat: MSG_CAT.welcome,
-            text: data.message.text['default-welcome-message']
+            text: data.message['default-welcome-message']
           }
           store.dispatch('customerService/receiveMessages', {
             category: MSG_CAT.welcome,
             messages: [welcomeMsg]
           })
-          store.dispatch('customerService/setThankMessage', data.message.text['thanks-comment-words'])
+          store.dispatch('customerService/setEnableReview', data.message['enable-member-comment'] === 'true')
+          store.dispatch('customerService/setThankMessage', data.message['thanks-comment-words'])
           break
         case RECEIVED_ACTION.offline_message:
           data.message.forEach(msg => {
@@ -136,6 +140,9 @@ VenomSocketObj.prototype.initWs = function (token) {
           if (data.message.session_achieved === 'solved') {
             store.dispatch('customerService/archiveSession')
           }
+          break
+        case RECEIVED_ACTION.assign:
+          store.dispatch('customerService/setSessionAssigned', true)
           break
         case 'ping':
           this.ws.send(JSON.stringify({

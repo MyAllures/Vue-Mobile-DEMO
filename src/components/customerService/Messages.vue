@@ -39,7 +39,7 @@
               <template v-else-if="msg.type === MSG_TYPE.review">
                 <p class="review-box">
                   <span class="rating">您为这次对话给出了<span :style="{ color: getRatingColor(msg.rating) }">【{{ getRatingDesc(msg.rating) }}】</span></span>
-                  <span class="comment" v-html="msg.text" v-if="msg.text"></span>
+                  <span class="comment" v-if="msg.text">{{ msg.text }}</span>
                 </p>
                 <a class="clear" href="#" @click.prevent="clearReview(msg.id, msg.session)"><img src="../../assets/cs/icon-review-remove.svg" />清除</a>
               </template>
@@ -173,7 +173,9 @@ export default {
   },
   watch: {
     pullDownRefreshOptions (val) {
-      this.options.pullDownRefresh = val
+      if (this.options) {
+        this.options.pullDownRefresh = val
+      }
     },
     messageCollection () {
       this.handleScrollTop()

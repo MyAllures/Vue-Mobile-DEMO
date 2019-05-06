@@ -5,7 +5,8 @@ const RECEIVED_ACTION = {
   normal: 'normal',
   image: 'image',
   sticker: 'sticker',
-  archive_session: 'archive_session'
+  archive_session: 'archive_session',
+  assign: 'assign'
 }
 
 const EMITTED_ACTION = {

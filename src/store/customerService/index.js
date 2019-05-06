@@ -12,7 +12,9 @@ export default {
       error: [],
       thank: ''
     },
+    enableReview: false,
     showReview: false,
+    sessionAssigned: false,
     lastArchive: 0
   },
   getters: {
@@ -52,6 +54,9 @@ export default {
       state.received.common = []
       state.messages = []
     },
+    setEnableReview: (state, bool) => {
+      state.enableReview = bool
+    },
     showReviewDialog: (state, bool) => {
       state.showReview = bool
     },
@@ -61,6 +66,9 @@ export default {
       msg.text = '您已清除本次对话的满意度调查'
       msg.type = MSG_TYPE.reviewCancel
       state.received.common.splice(index, 1)
+    },
+    setSessionAssigned: (state, bool) => {
+      state.sessionAssigned = bool
     },
     archiveSession: (state, currentSession) => {
       const index = state.received.common.findIndex(msg => msg.session === currentSession && msg.type === MSG_TYPE.review)
@@ -82,11 +90,17 @@ export default {
     clearMessage: ({ commit }) => {
       commit('clearMessage')
     },
+    setEnableReview: ({ commit }, bool = false) => {
+      commit('setEnableReview', bool)
+    },
     showReviewDialog: ({ commit }, bool = true) => {
       commit('showReviewDialog', bool)
     },
     deleteReview: ({ commit }, id) => {
       commit('deleteReview', id)
+    },
+    setSessionAssigned: ({ commit }, bool) => {
+      commit('setSessionAssigned', bool)
     },
     archiveSession: ({ commit, getters }) => {
       commit('archiveSession', getters.currentSession)
