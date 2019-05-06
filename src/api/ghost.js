@@ -277,7 +277,10 @@ function fetchTrendChart (params) {
 
 function fetchJWTToken (type) {
   return axios.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
-    return res[JWT[type] + '_token']
+    return {
+      expire: res.expire,
+      token: res[JWT[type] + '_token']
+    }
   })
 }
 

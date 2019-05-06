@@ -12,26 +12,44 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken } from './api'
+import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
+import {getJWTToken} from './utils'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
-import VenomSocketObj from './wsObj/venom'
 
 const sendGaEvent = ({label, category, action}) => {
   if (store.state.systemConfig.gaTrackingId) {
     window.gtag('event', action, {'event_category': category, 'event_label': label})
   }
 }
+
+let serviceUnreadInterval = null
+
+const pollServiceUnread = () => {
+  const getUnread = () => {
+    fetchServiceUnread().then((res) => {
+      store.dispatch('customerService/setServiceUnread', res.has_unread)
+    }).catch((e) => {
+      clearInterval(serviceUnreadInterval)
+    })
+  }
+  serviceUnreadInterval = setInterval(() => {
+    getUnread()
+  }, 5000)
+}
+
 function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
+
+  store.dispatch('setSystemConfig', {...store.state.systemConfig, state: 'pending'})
 
   gethomePage().then(
     response => {
@@ -91,7 +109,8 @@ function initData () {
           planSiteUrl: pref.plan_site_url,
           appIcon: response.app_icon,
           envelopeActivityId: response.envelope_activity_id,
-          serviceAction
+          serviceAction,
+          enableBuiltInCustomerService: pref.enable_built_in_customer_service === 'true'
         })
 
       const themeId = response.theme || 1
@@ -172,10 +191,10 @@ axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
   const fromRaven = config.url.includes(urls.ravenHost)
   if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('venom_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('venom')}`
   }
   if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('raven_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('raven')}`
   }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
@@ -193,6 +212,7 @@ axios.interceptors.response.use(res => {
   const fromRaven = res.config.url.includes(urls.ravenHost)
 
   let responseData = res.data
+
   if (fromVenom) {
     return responseData
   }
@@ -344,43 +364,47 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
-  store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
-    if (store.state.systemConfig.process === 'pending') {
-      const unwatch = store.watch((state) => {
-        return state.systemConfig.process
-      }, (configProcess) => {
-        unwatch()
-        if (configProcess === 'fulfilled') {
-          setChatRoomSetting()
-        }
-      })
-    } else {
-      setChatRoomSetting()
-    }
-  }
-  if (logined) {
-    let venomTokenPromise
-    let venomToken = localStorage.getItem('venom_token')
-    if (venomToken) {
-      venomTokenPromise = Promise.resolve(venomToken)
-    } else {
-      venomTokenPromise = fetchJWTToken('venom').catch(() => {})
-    }
-    venomTokenPromise.then(token => {
-      localStorage.setItem('venom_token', token)
-      store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
-    }).catch(() => {})
+    const unwatch = store.watch((state) => {
+      return state.systemConfig.process
+    }, (configProcess) => {
+      if (configProcess === 'fulfilled') {
+        if (store.state.systemConfig.enableBuiltInCustomerService) {
+          let venomTokenPromise
+          let venomToken = getJWTToken('venom')
 
+          if (venomToken) {
+            venomTokenPromise = Promise.resolve(venomToken)
+          } else if (!venomToken) {
+            venomTokenPromise = fetchJWTToken('venom').then(setting => {
+              localStorage.setItem('venom_setting', JSON.stringify(setting))
+              return setting.token
+            }).catch(() => {})
+          }
+          venomTokenPromise.then(() => {
+            pollServiceUnread()
+          }).catch(() => {})
+        }
+
+        setChatRoomSetting()
+        unwatch()
+      }
+    })
+  }
+
+  if (logined) {
     let eiderTokenPromise
-    let eidereToken = localStorage.getItem('eider_token')
-    if (eidereToken) {
-      eiderTokenPromise = Promise.resolve(eidereToken)
+    let eiderToken = getJWTToken('eider')
+    if (eiderToken) {
+      eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
-      eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
+      eiderTokenPromise = fetchJWTToken('eider').then(setting => {
+        localStorage.setItem('eider_setting', JSON.stringify(setting))
+        return setting.token
+      }).catch(() => {})
     }
+
     eiderTokenPromise.then(token => {
-      localStorage.setItem('eider_token', token)
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
     }).catch(() => {})
 
@@ -388,7 +412,12 @@ store.watch((state) => {
     setHeartBeatInterval()
     initData()
   } else {
+    clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
+
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`raven_setting`)
+    localStorage.removeItem(`eider_setting`)
   }
 })
 
