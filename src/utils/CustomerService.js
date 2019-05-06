@@ -6,6 +6,7 @@ const RECEIVED_ACTION = {
   image: 'image',
   sticker: 'sticker',
   archive_session: 'archive_session',
+  system: 'system',
   assign: 'assign'
 }
 
