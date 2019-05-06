@@ -36,7 +36,7 @@
   <div class="input-panel" id="typing" @click="handTriggerPanel">
     <div v-if="envelopeSetting.enabled===true" id="envelope-btn" class="envelope-btn" @click="openRedEnvelopeDialog">
     </div>
-    <label class="image-btn">
+    <label class="image-btn" id="image-btn">
       <input @change="sendImg"
         type="file"
         ref="fileImgSend"
@@ -141,6 +141,11 @@ export default {
   },
   methods: {
     handTriggerPanel (e) {
+      if (this.noPermission) {
+        e.stopPropagation()
+        e.preventDefault()
+        return
+      }
       let target = e.target
       let id = target.id
       while (id !== 'typing') {
@@ -164,8 +169,10 @@ export default {
         }
       }
     },
-    hidePanel () {
-      this.isShowEmojiPanel = false
+    hidePanel (e) {
+      if (e.target.id !== 'emoji-btn') {
+        this.isShowEmojiPanel = false
+      }
     },
     sendImg (e) {
       if (this.noPermission) {
@@ -211,14 +218,6 @@ export default {
           break
         }
         target = target.parentNode
-      }
-    },
-    clickSendImg (e) {
-      if (!this.user.account_type) {
-        e.preventDefault()
-      }
-      if (this.noPermission) {
-        e.preventDefault()
       }
     },
     openRedEnvelopeDialog () {
