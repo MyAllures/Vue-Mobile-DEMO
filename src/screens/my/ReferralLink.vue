@@ -135,15 +135,16 @@ export default {
   margin: 0 16px 16px;
   font-size: 14px;
   color: #666;
-}
-.help {
-  line-height: 20px;
-}
-.title {
-  margin: 16px 0 10px;
+  
+  .help {
+    line-height: 20px;
+  }
+  .title {
+    margin: 16px 0 10px;
 
-  img {
-    vertical-align: middle;
+    img {
+      vertical-align: middle;
+    }
   }
 }
 .content {
