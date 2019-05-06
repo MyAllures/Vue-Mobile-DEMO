@@ -44,6 +44,10 @@
       background-color: @main;
       background-image: @gradient;
     }
+    &.active {
+      background-color: @main;
+      background-image: linear-gradient(to right, @main, darken(@main, 15%));
+    }
   }
 
   .service-btn {

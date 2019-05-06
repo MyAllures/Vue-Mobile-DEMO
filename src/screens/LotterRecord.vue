@@ -1,14 +1,23 @@
 <template>
-  <div class="history-container">
-    <div class="title">
-      {{game.display_name}}
-      <div v-if="game.code === 'hkl' || game.code === 'fc3d'" class="date-picker">
-        <date-selector class="date-picker-input" :z-index="600" v-model="date" :max-date="new Date()" :column-count="2"></date-selector>
-        <i class="solid-triangle point-down"></i>
+  <div :class="['history-container', compareTypes ? 'additional' : 'simple']">
+    <div class="header">
+      <span class="title">{{game.display_name}}</span>
+      <div>
+        <div v-if="game.code === 'hkl' || game.code === 'fc3d'" class="date-picker">
+          <date-selector class="date-picker-input" :z-index="600" v-model="date" :max-date="new Date()" :column-count="2"></date-selector>
+          <i class="solid-triangle point-down"></i>
+        </div>
+        <div v-else class="date-picker">
+          <date-selector class="date-picker-input" :z-index="600" :max-date="new Date()" v-model="date"></date-selector>
+          <i class="solid-triangle point-down"></i>
+        </div>
       </div>
-      <div v-else class="date-picker">
-        <date-selector class="date-picker-input" :z-index="600" :max-date="new Date()" v-model="date"></date-selector>
-        <i class="solid-triangle point-down"></i>
+      <div class="type-btns" v-if="compareTypes">
+        <x-button type="primary"
+          :class="['type-btn', {'active': type === activeType}]"
+          @click.native="activeType = type"
+          v-for="(type, index) in compareTypes.types"
+          :key="index">{{type | typeFilter}}</x-button>
       </div>
     </div>
     <div class="content">
@@ -26,15 +35,9 @@
             <div class="invalid text-center" v-if="schedule.result_status !== 'valid'">官方开奖无效</div>
             <div class="lottery-result" v-else>
               <lottery-record-num
-                :results="schedule.result_str"
+                :activeType="activeType"
+                :record="schedule"
                 :gameType="gameType" />
-              <div v-if="schedule.result_category && lotteryCompare">
-                <span
-                  v-for="(compareKey, index) in lotteryCompare"
-                  :key="'subHead' + index">
-                  {{schedule.result_category[compareKey] | changeDataType}}
-                </span>
-              </div>
             </div>
           </td>
         </tr>
@@ -66,59 +69,15 @@
 </template>
 
 <script>
-import { XHeader, Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, InlineLoading, XTable } from 'vux'
+import { Flexbox, FlexboxItem, XAddress, dateFormat, PopupRadio, TabItem, Group, XInput, XButton, InlineLoading, XTable } from 'vux'
 import LotteryRecordNum from '@/components/LotteryRecordNum.vue'
 import { getGameHistoryData } from '../api'
 import {HKL_GAMES} from '../config'
 import DateSelector from '@/components/DateSelector'
-
-const TransformerCompareList = ['sum_of_1st_2st', 'sum_of_1st_2st_than_size', 'sum_of_1st_2st_odd_even', 'dragon_tiger_1_10', 'dragon_tiger_2_9', 'dragon_tiger_3_8', 'dragon_tiger_4_7', 'dragon_tiger_5_6']
-const sscCompareList = ['sum_of_ball', 'sum_of_ball_than_size', 'sum_of_ball_odd_even', 'dragon_tiger_1_5']
-const cqlfCompareList = ['sum_of_ball', 'sum_of_ball_than_size', 'sum_of_ball_odd_even', 'sum_of_ball_tail_than_size']
-const pcddCompareList = ['sum_of_ball', 'sum_of_ball_than_size', 'sum_of_ball_odd_even']
-const jsk3CompareList = ['sum_of_ball', 'sum_of_ball_than_size']
-const gd11x5CompareList = ['sum_of_ball', 'sum_of_ball_than_size', 'sum_of_ball_odd_even', 'sum_of_ball_tail_than_size', 'dragon_tiger_1_5']
-const hklCompareList = ['sum_of_ball', 'sum_of_ball_odd_even', 'sum_of_ball_than_size', 'seven_color_wavelength']
-const fc3dCompareList = ['three_balls_sum', 'ball_odd_even_1', 'ball_odd_even_2', 'ball_odd_even_3']
-const gameTable = {
-  'jspk10': TransformerCompareList,
-  'cs60cr': TransformerCompareList,
-  'bcr': TransformerCompareList,
-  'mlaft': TransformerCompareList,
-  'er75ft': TransformerCompareList,
-  'cs600cr': TransformerCompareList,
-  'cqssc': sscCompareList,
-  'ynssc': sscCompareList,
-  'hjssc': sscCompareList,
-  'cs10fc': sscCompareList,
-  'cs5fc': sscCompareList,
-  'jsssc': sscCompareList,
-  'xjssc': sscCompareList,
-  'tjssc': sscCompareList,
-  'csffc': sscCompareList,
-  'cqlf': cqlfCompareList,
-  'gdklsf': cqlfCompareList,
-  'pcdd': pcddCompareList,
-  'jnd28': pcddCompareList,
-  'luckdd': pcddCompareList,
-  'jsk3': jsk3CompareList,
-  'msk3': jsk3CompareList,
-  'bjk3': jsk3CompareList,
-  'gxk3': jsk3CompareList,
-  'shk3': jsk3CompareList,
-  'hubk3': jsk3CompareList,
-  'gd11x5': gd11x5CompareList,
-  'ah11x5': gd11x5CompareList,
-  'bj11x5': gd11x5CompareList,
-  'fh11x5': gd11x5CompareList,
-  'gs11x5': gd11x5CompareList,
-  'hkl': hklCompareList,
-  'cs600hkl': hklCompareList,
-  'csjndhkl': hklCompareList,
-  'cs75hkl': hklCompareList,
-  'fc3d': fc3dCompareList
-}
+import {changeableCompareTypes} from '@/utils/lotteryRecordSetting'
+import _ from 'lodash'
 export default {
+  name: 'LotterRecord',
   props: {
     game: {
       type: Object,
@@ -127,8 +86,9 @@ export default {
   },
   data () {
     return {
+      changeableCompareTypes,
+      activeType: 'number',
       records: { results: [] },
-      lotteryCompare: null,
       pagination: {
         total: 0,
         offset: 0
@@ -141,66 +101,22 @@ export default {
     dateFilter (value) {
       return dateFormat(new Date(value), 'MM-DD HH:mm')
     },
-    changeDataType (val) {
+    typeFilter (val) {
       switch (val) {
-        case 'dragon':
-          return '龙'
-        case 'tiger':
-          return '虎'
-        case 'bigger':
-          return '大'
-        case 'smaller':
-          return '小'
-        case 'great':
-          return '极大'
-        case 'tiny':
-          return '极小'
-        case 'outOfDefinition':
-          return '无极值'
-        case 'odd':
-          return '单'
-        case 'even':
-          return '双'
-        case 'straight':
-          return '顺子'
-        case 'half_straight':
-          return '半顺'
-        case 'misc_six':
-          return '杂六'
-        case 'pair':
-          return '对子'
-        case 'leopard':
-          return '豹子'
-        case 'blue':
-          return '蓝波'
-        case 'red':
-          return '红波'
-        case 'green':
-          return '绿波'
-        case 'equal':
-          return '和'
-        case 'gold':
-          return '金'
-        case 'wood':
-          return '木'
-        case 'water':
-          return '水'
-        case 'fire':
-          return '火'
-        case 'earth':
-          return '土'
-        case 'front_part_more':
-          return '前多'
-        case 'rear_part_more':
-          return '后多'
-        case 'odd_more':
-          return '单多'
-        case 'even_more':
-          return '双多'
-        case 'prime':
-          return '质'
-        case 'composite':
-          return '合'
+        case 'number':
+          return '号码'
+        case 'thanSize':
+          return '大小'
+        case 'oddEven':
+          return '单双'
+        case 'ballOfSumThanSize':
+          return '合大小'
+        case 'ballOfSumOddEven':
+          return '合单双'
+        case 'tailThanSize':
+          return '尾大小'
+        case 'zodiac':
+          return '生肖'
         default:
           return val
       }
@@ -210,6 +126,9 @@ export default {
     this.initRecords()
   },
   computed: {
+    compareTypes () {
+      return _.flatMap(this.changeableCompareTypes).find(l => l.games.includes(this.game.code))
+    },
     gameType () {
       if (HKL_GAMES.includes(this.game.code)) {
         return 'hkl'
@@ -263,7 +182,6 @@ export default {
         this.pagination.total = response.count
         this.codeKl = false
         this.records = response
-        this.lotteryCompare = gameTable[this.gameType]
         this.loading = false
       })
     },
@@ -287,7 +205,6 @@ export default {
     }
   },
   components: {
-    XHeader,
     XAddress,
     Flexbox,
     FlexboxItem,
@@ -310,22 +227,38 @@ export default {
 }
 .history-container {
   height: 100%;
-  .title {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 10px;
-    font-size: 16px;
-    line-height: 40px;
-    height: 40px;
+  overflow: hidden;
+  &.additional {
+    .header {
+      height: 80px;
+    }
+    .content {
+      height: calc(~"100%" - 140px);
+    }
+  }
 
+  &.simple {
+    .header {
+      height: 45px;
+    }
+    .content {
+      height: calc(~"100%" - 105px);
+    }
+  }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
     background-color: #f5f5f5;
-    top: 0;
     z-index: 2;
   }
   .content {
     padding-bottom: 70px;
-    height: calc(~"100%" - 40px);
     overflow-y: auto;
   }
 }
@@ -382,5 +315,32 @@ export default {
 
 .invalid {
   line-height: 50px;
+}
+
+.type-btns {
+  display: inline-block;
+  width: 100%;
+  height: 40px;
+  white-space: nowrap;
+  text-align: right;
+  overflow-x: auto;
+}
+
+.type-btn {
+  display: inline-block;
+  width: 70px;
+  height: 32px;
+  font-size: 14px;
+  margin-left: 5px;
+  &.weui-btn {
+    margin-top: 0;
+  }
+  &.active {
+    font-weight: 700;
+  }
+}
+
+.vux-table td {
+  vertical-align: middle;
 }
 </style>
