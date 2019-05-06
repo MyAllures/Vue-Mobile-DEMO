@@ -7,6 +7,7 @@
       <div class="footer">
         <Footer />
       </div>
+      <ReviewDialog :show="showReview" />
     </template>
     <div class="container loading" v-else>
       <div class="body"><cube-loading :size="40"></cube-loading></div>
@@ -16,26 +17,61 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex'
 import Footer from '@/components/customerService/Footer'
 import Messages from '@/components/customerService/Messages'
-import {mapState} from 'vuex'
+import ReviewDialog from '@/components/customerService/ReviewDialog'
 import VenomSocketObj from '@/wsObj/venom'
-import {fetchJWTToken} from '@/api'
-import {getJWTToken} from '@/utils'
+import { fetchJWTToken } from '@/api'
+import { getJWTToken } from '@/utils'
+
 export default {
   components: {
     Footer,
-    Messages
+    Messages,
+    ReviewDialog
   },
   data () {
     return {
       ready: false
     }
   },
+  methods: {
+    ...mapActions('customerService', [
+      'showReviewDialog'
+    ])
+  },
   computed: {
-    ...mapState(['systemConfig', 'ws'])
+    ...mapState('customerService', {
+      showReview: state => state.showReview,
+      lastArchive: state => state.lastArchive,
+      assigned: state => state.sessionAssigned
+    }),
+    ...mapState(['systemConfig', 'ws']),
+    ...mapGetters('customerService', {
+      lastSession: 'lastSession',
+      session: 'currentSession'
+    }),
+    isPreventReview () {
+      return (!this.session && !this.lastSession) || (this.session && !this.assigned)
+    }
   },
   watch: {
+    session () {
+      this.$store.dispatch('customerService/setSessionAssigned', false)
+    },
+    showReview (show) {
+      if (show && this.isPreventReview) {
+        this.$createToast({
+          type: 'warn',
+          txt: '先别急着评，先跟客服聊聊再说'
+        }).show()
+        this.showReviewDialog(false)
+      }
+    },
+    lastArchive () {
+      this.showReviewDialog()
+    },
     'systemConfig.enableBuiltInCustomerService': {
       handler (enabled) {
         let venomTokenPromise
