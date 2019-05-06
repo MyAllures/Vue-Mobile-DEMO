@@ -72,6 +72,7 @@ export default {
   service_stickers: venomHost + '/chat/stickers/',
   service_unread: venomHost + '/support/has_unread/',
   service_image_attachment: venomHost + '/chat/attachment/',
+  service_comment: venomHost + '/support/member_comment/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/'
 }
