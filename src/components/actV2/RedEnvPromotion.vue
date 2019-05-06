@@ -208,6 +208,7 @@ export default {
   background: #fae8c6;
   color: #6d6452;
   padding: 5px 6px;
+  text-align: left;
   border-radius: 4px;
 }
 .footer {
