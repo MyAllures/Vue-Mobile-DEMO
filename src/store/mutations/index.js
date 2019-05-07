@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import * as types from './mutation-types'
 import {saveLastGameData} from '../../utils'
+import axios from 'axios'
+
 const themeMap = {
   1: '#156fd8',
   2: '#1976d2',
@@ -26,6 +28,7 @@ export default {
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
     Vue.cookie.delete('message_broker_token')
+    delete axios.defaults.headers.common['Authorization']
   },
   [types.UPDATE_LOADING]: (state, payload) => {
     state.isLoading = payload.isLoading
@@ -174,7 +177,6 @@ export default {
   },
   [types.SET_THEME]: (state, themeId) => {
     state.theme = themeMap[themeId]
-    state.themeId = themeId
   },
   [types.SHOW_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = true
