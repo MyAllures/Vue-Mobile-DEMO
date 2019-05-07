@@ -30,7 +30,7 @@
                 @imgStart="imgLoadCount++"
                 @imgLoad="imgLoadCount--"
                 @click.native="previewImg(msg.content)"/>
-              <div v-else class="content-wrapper">
+              <div v-else class="bubble">
                 <bet-info
                   :is-self="user.username === msg.sender.username"
                   v-if="msg.type==='betrecord-sharing'"
@@ -52,7 +52,7 @@
               @imgStart="imgLoadCount++"
               @imgLoad="imgLoadCount--"
               @click.native="previewImg(msg.content)"/>
-            <div v-else class="content-wrapper">
+            <div v-else class="bubble">
               <bet-info
                 :is-self="user.username === msg.sender.username"
                 v-if="msg.type==='betrecord-sharing'"
@@ -445,17 +445,20 @@ export default {
       .self-message {
         &.text {
           font-size: 14px;
-          word-wrap: break-word;
-          word-break: break-all;
-          .content-wrapper {
+          .bubble {
             display: inline-block;
+            .text {
+              word-wrap: break-word;
+            }
           }
         }
       }
-      .content-wrapper {
+      .bubble {
+        box-sizing: border-box;
         position: relative;
         border-radius: 10px;
         padding: 5px 10px;
+        max-width: 100%;
       }
       .other-message {
         display: flex;
@@ -473,7 +476,7 @@ export default {
         .nickname {
           font-size: 12px;
         }
-        .content-wrapper {
+        .bubble {
           border-top-left-radius: 0;
         }
         &.text {
@@ -481,7 +484,7 @@ export default {
         }
         &.text,
         &.bet-info {
-          .content-wrapper {
+          .bubble {
             background: #fff;
           }
         }
@@ -496,7 +499,7 @@ export default {
       }
       .self-message {
         margin-left: auto;
-        .content-wrapper {
+        .bubble {
           border-top-right-radius: 0;
         }
         &.text {
@@ -504,7 +507,7 @@ export default {
         }
         &.text,
         &.bet-info {
-          .content-wrapper {
+          .bubble {
             background: @azul;
             color: #fff;
           }

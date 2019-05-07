@@ -106,7 +106,7 @@ export class EagleWebSocket {
     }
     this.roomId = roomId
     if (this.ws.wsState === WebSocket.OPEN) {
-      store.dispatch('chatroom/initMsg', [])
+      store.dispatch('chatroom/clear')
       this.ws.send({
         'command': 'join',
         'receiver': this.roomId
@@ -122,7 +122,7 @@ export class EagleWebSocket {
       })
     }
     this.ws.disconnect()
-    store.dispatch('chatroom/initMsg', [])
+    store.dispatch('chatroom/clear')
     store.dispatch('chatroom/setWs', null)
   }
 }

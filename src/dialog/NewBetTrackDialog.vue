@@ -18,6 +18,7 @@
                 <AmountInput class="amount-input" v-model="bettrack.bet_amount"/>
               </div>
             </div>
+            <p v-if="bettrack.optionDisplayNames" class="options"> {{`已选号码：${bettrack.optionDisplayNames}`}} </p>
             <div class="row2">
               <div class="col">
                 追&nbsp;
@@ -93,7 +94,8 @@ export default {
         play_ids: '',
         type: 1,
         multiple: 1,
-        game_schedule: ''
+        game_schedule: '',
+        optionDisplayNames: ''
       }
     }
   },
@@ -185,6 +187,7 @@ export default {
         this.bettrack.type = this.dialogData.period
         this.bettrack.multiple = this.dialogData.multiple
         this.bettrack.game_schedule = this.dialogData.scheduleId
+        this.bettrack.optionDisplayNames = this.dialogData.optionDisplayNames
       }
     },
     'dialogVisible': function (dialogVisible) {
@@ -250,10 +253,9 @@ export default {
 .input-panel {
   box-sizing: border-box;
   flex: 0 0 auto;
-  height: 90px;
   background: #fff;
   color: #333;
-  padding: 0 5px 0 10px;
+  padding: 10px 5px 10px 0;
   font-size: 14px;
   .amount-input {
     background: #fff;
@@ -267,17 +269,21 @@ export default {
   .row1 {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 25px;
     .amount-input-wrapper {
       margin-left: auto;
       box-sizing: border-box;
       height: 25px;
     }
   }
+  .options {
+    width: 100%;
+    padding-left: 10px;
+  }
   .row2 {
     display: flex;
     align-items: center;
-    height: 50px;
+    padding: 10px 0 0 10px;
     .col {
       display: flex;
       align-items: center;
