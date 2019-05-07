@@ -174,7 +174,6 @@ export default {
   },
   [types.SET_THEME]: (state, themeId) => {
     state.theme = themeMap[themeId]
-    state.themeId = themeId
   },
   [types.SHOW_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = true
