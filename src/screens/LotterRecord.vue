@@ -13,14 +13,14 @@
         </div>
       </div>
       <div class="type-btns" v-if="compareTypes">
-        <x-button type="primary"
-          :class="['type-btn', {'active': type === activeType}]"
+        <x-button :type="type === activeType ? 'primary' : 'default'"
+          class="type-btn"
           @click.native="activeType = type"
           v-for="(type, index) in compareTypes.types"
           :key="index">{{type | typeFilter}}</x-button>
       </div>
     </div>
-    <div class="content">
+    <div class="content" v-fix-scroll>
       <x-table class="table">
         <tr
           v-for="(schedule, scheduleIndex) in records.results"
@@ -76,6 +76,7 @@ import {HKL_GAMES} from '../config'
 import DateSelector from '@/components/DateSelector'
 import {changeableCompareTypes} from '@/utils/lotteryRecordSetting'
 import _ from 'lodash'
+import FixScroll from '../directive/fixscroll'
 export default {
   name: 'LotterRecord',
   props: {
@@ -83,6 +84,9 @@ export default {
       type: Object,
       required: true
     }
+  },
+  directives: {
+    FixScroll
   },
   data () {
     return {
@@ -260,6 +264,7 @@ export default {
   .content {
     padding-bottom: 70px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 .condition {
@@ -323,19 +328,17 @@ export default {
   height: 40px;
   white-space: nowrap;
   overflow-x: auto;
+  text-align: center;
 }
 
 .type-btn {
   display: inline-block;
-  width: 70px;
+  width: auto;
   height: 32px;
   font-size: 14px;
   margin-left: 5px;
   &.weui-btn {
     margin-top: 0;
-  }
-  &.active {
-    font-weight: 700;
   }
 }
 
