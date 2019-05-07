@@ -2,6 +2,7 @@ import Vue from 'vue'
 import store from '@/store'
 import router from '@/router'
 import urls from '@/api/urls'
+import { fetchJWTToken } from '@/api'
 import { RECEIVED_ACTION, EMITTED_ACTION, MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 
 const DEBUG = false
@@ -27,6 +28,18 @@ function VenomSocketObj (token) {
 VenomSocketObj.prototype.initWs = function (token) {
   this.ws = new WebSocket(`${urls.wsVenomHost}/ws?token=${token}`)
 
+  this.ws.onclose = e => {
+    if (e.code === 1006) {
+      localStorage.removeItem(JWT_TYPE + '_token')
+      fetchJWTToken(JWT_TYPE).then(token => {
+        localStorage.setItem(JWT_TYPE + '_token', token)
+        store.dispatch('setWs', { ws: new VenomSocketObj(token), type: JWT_TYPE })
+      }).catch(() => {
+
+      })
+    }
+  }
+
   this.ws.onopen = e => {
     wsDebug('ws onopen')
     clearInterval(this.wsConnCheckInterval)
@@ -48,12 +61,20 @@ VenomSocketObj.prototype.initWs = function (token) {
       let data = JSON.parse(response.data)
       switch (data.action) {
         case RECEIVED_ACTION.welcome_message:
-          data.message.type = MSG_TYPE.welcome_message
-          data.message.cat = MSG_CAT.welcome
+          if (!data.message) {
+            return
+          }
+          const welcomeMsg = {
+            type: MSG_TYPE.welcome_message,
+            cat: MSG_CAT.welcome,
+            text: data.message['default-welcome-message']
+          }
           store.dispatch('customerService/receiveMessages', {
             category: MSG_CAT.welcome,
-            messages: [data.message]
+            messages: [welcomeMsg]
           })
+          store.dispatch('customerService/setEnableReview', data.message['enable-member-comment'] === 'true')
+          store.dispatch('customerService/setThankMessage', data.message['thanks-comment-words'])
           break
         case RECEIVED_ACTION.offline_message:
           data.message.forEach(msg => {
@@ -114,6 +135,25 @@ VenomSocketObj.prototype.initWs = function (token) {
               }
             })
           }
+          break
+        case RECEIVED_ACTION.archive_session:
+          if (data.message.session_achieved === 'solved') {
+            store.dispatch('customerService/archiveSession')
+          }
+          break
+        case RECEIVED_ACTION.assign:
+          store.dispatch('customerService/setSessionAssigned', true)
+          break
+        case RECEIVED_ACTION.system:
+          if (process.env.NODE_ENV !== 'development') {
+            return
+          }
+          data.message.type = MSG_TYPE.system
+          store.dispatch('customerService/receiveMessages', {
+            category: MSG_CAT.common,
+            messages: [data.message],
+            once: false
+          })
           break
         case 'ping':
           this.ws.send(JSON.stringify({
