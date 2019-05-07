@@ -15,8 +15,13 @@
     <div class="bet-info-content">
       <ul class="bet-group">
         <li class="bet-group-item" v-for="(bet, index) in info.bets" :key="bet">
-          <div class="label">{{`${bet.play.playgroup} - ${bet.play.display_name}`}}</div>
-          <div class="amount">{{bet.bet_amount|currency('￥')}}</div>
+          <div class="item">
+            <div class="label">{{`${bet.play.playgroup} - ${bet.play.display_name}`}}</div>
+            <div class="amount">{{bet.bet_amount|currency('￥')}}</div>
+          </div>
+          <div class="options" v-if="bet.bet_options&&bet.bet_options.options">
+            {{`已选号码：${bet.bet_options.options.join(',')}`}}
+          </div>
         </li>
       </ul>
     </div>
@@ -50,6 +55,10 @@ export default {
         bet.bet_options = bet.bet_options || {
           opts_combos_count: ''
         }
+        let optionDisplayNames = []
+        if (bet.bet_options && bet.bet_options.options) {
+          optionDisplayNames = bet.bet_options.options
+        }
         return {
           game_schedule: bet.game_schedule,
           display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
@@ -57,7 +66,8 @@ export default {
           play: bet.play.id,
           bet_options: bet.bet_options,
           odds: bet.play.odds,
-          opts_combos_count: bet.bet_options.opts_combos_count
+          opts_combos_count: bet.bet_options.opts_combos_count,
+          optionDisplayNames: optionDisplayNames.join(',')
         }
       })
       this.$store.dispatch('updateDialog', {
@@ -102,17 +112,18 @@ export default {
     border-top: 1px dashed;
     border-color: #ddd;
     padding-top: 2px;
-    .bet-group {
-      width: 100%;
-      .bet-group-item {
+    .bet-group-item {
+      .item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 100%;
-        .amount {
-          flex: 0 0 auto;
-          width: 60px;
-        }
+      }
+      .options {
+        padding-left: 10px;
+      }
+      .amount {
+        flex: 0 0 auto;
+        width: 60px;
       }
     }
   }

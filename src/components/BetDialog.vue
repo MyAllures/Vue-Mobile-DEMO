@@ -285,8 +285,7 @@ export default {
     margin-right: 10px;
     color: @red;
   }
-  .options,
-  .combinations {
+  .options {
     width: 100%;
     padding-left: 10px;
   }

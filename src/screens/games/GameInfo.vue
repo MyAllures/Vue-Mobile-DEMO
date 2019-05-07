@@ -9,7 +9,7 @@
         <component :is="showing" :game="game">
         </component>
         <div class="btn-wrapper vux-1px-t">
-          <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回游戏</x-button>
+          <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回{{type==='chatmanage'?'聊天室':'游戏'}}</x-button>
         </div>
       </div>
   </popup>

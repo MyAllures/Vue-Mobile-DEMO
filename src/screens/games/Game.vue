@@ -31,10 +31,10 @@
     <div class="mode-tab">
       <div
         :class="['mode-tab-item', {active: mode==='bet'}]"
-        @click="mode = 'bet'">投注</div>
+        @click="switchBetMode('bet')">投注</div>
       <div
         :class="['mode-tab-item', {active: mode==='bettrack'}]"
-        @click="mode = 'bettrack'">追号</div>
+        @click="switchBetMode('bettrack')">追号</div>
     </div>
     <div :class="['bet-area', mode]">
       <div class="aside" v-fix-scroll>
@@ -546,19 +546,23 @@ export default {
         play: this.validPlays[0]
       }
       let betOptions
+      let optionDisplayNames = []
       if (play.activedOptions) {
         let options = []
         _.each(play.activedOptions, option => {
           options.push(option.num)
+          optionDisplayNames.push(option.displayName || option.num)
         })
         betOptions = { options: options }
       } else if (play.combinations) {
+        optionDisplayNames = [...play.combinations]
         betOptions = { options: play.combinations }
       }
 
       if (betOptions) {
         data.betOptions = betOptions
       }
+      data.optionDisplayNames = optionDisplayNames.join(',')
 
       this.$store.dispatch('updateDialog', {
         name: 'new_bettrack',
@@ -620,6 +624,10 @@ export default {
           }
         }
       )
+    },
+    switchBetMode (mode) {
+      this.$set(this, 'playReset', !this.playReset)
+      this.mode = mode
     }
   },
   beforeDestroy () {
