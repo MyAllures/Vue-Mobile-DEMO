@@ -16,8 +16,7 @@ const loadingImg = require('../assets/loading.gif')
 
 export default new Vuex.Store({
   state: {
-    theme: 0,
-    themeId: 0,
+    theme: '#166FD8',
     user: {
       logined: 'pending',
       unread: 0
