@@ -63,16 +63,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.badge() {
-  background: url('../assets/comparision.png') no-repeat;
-  background-size: 500% 100%;
+.badge(@name) {
+  background: url('../assets/lotteryrecord/icon-@{name}.svg');
+  background-size: 100% 100%;
+  background-position: center center;
   display: inline-block;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   text-indent: -9999px;
+  background-repeat: no-repeat;
+  margin: 1px;
   @media only screen and (max-width: 360px) {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -80,43 +83,24 @@ export default {
   display: block;
 }
 
-.bigger, .smaller, .even, .odd, .equal {
-  .badge();
-}
-
 .bigger {
-  background-position: -4px center;
-  @media only screen and (max-width: 360px) {
-    background-position: -3px center;
-  }
+  .badge(bigger);
 }
 
 .smaller {
-  background-position: -26px center;
-  @media only screen and (max-width: 360px) {
-    background-position: -23px center;
-  }
+  .badge(smaller);
 }
 
 .even {
-  background-position: -50px center;
-  @media only screen and (max-width: 360px) {
-    background-position: -43px center;
-  }
+  .badge(even);
 }
 
 .odd {
-  background-position: -75px center;
-  @media only screen and (max-width: 360px) {
-    background-position: -63px center;
-  }
+  .badge(odd);
 }
 
 .equal {
-  background-position: -99px center;
-  @media only screen and (max-width: 360px) {
-    background-position: -84px center;
-  }
+  .badge(equal);
 }
 
 .zodiac {
