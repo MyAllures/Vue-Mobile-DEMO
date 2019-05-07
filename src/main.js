@@ -366,7 +366,7 @@ store.watch((state) => {
             }).catch(() => {})
           }
           venomTokenPromise.then(token => {
-            axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
+            axiosVenom.defaults.headers.common['Authorization'] = 'Bearer ' + token
             pollServiceUnread()
           }).catch(() => {})
         }

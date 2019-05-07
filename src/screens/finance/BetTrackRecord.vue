@@ -34,17 +34,21 @@
           </td>
           <td>
             <p>{{record.game.display_name}}</p>
-            <span v-if="record.issue_numbers.length<=1" class="item">{{record.issue_numbers[0].slice(-3)}}期</span>
-            <span v-else class="item">
+            <span v-if="record.issue_numbers.length<=1" class="issue-number">{{record.issue_numbers[0].slice(-3)}}期</span>
+            <span v-else class="issue-number">
               {{`${record.issue_numbers.length}期(${record.issue_numbers[0].slice(-3)}-${record.issue_numbers[record.issue_numbers.length-1].slice(-3)}期)`}}
             </span>
           </td>
           <td>
-            <p>{{record.play_position }}</p>
-            <span :class="['item', {win: num === record.winning_number}]" v-for="(num, index) in record.track_numbers" :key="index">{{num}}</span>
+            <span v-if="record.play">{{`${record.play.playgroup} @ ${record.play.display_name}`}}</span>
+            <template v-else>
+              <p>{{record.play_position }}</p>
+              <span :class="['item', {win: num === record.winning_number}]" v-for="(num, index) in record.track_numbers" :key="index">{{num}}</span>
+            </template>
           </td>
           <td>
             <p>{{record.bet_amount| currency('￥')}}</p>
+            <p>{{record.multiple}}倍</p>
           </td>
           <td>
             <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
@@ -351,9 +355,19 @@ export default {
     }
   }
 }
-
+.issue-number {
+  color: #999;
+  font-size: 12px;
+}
 .item {
   color: #999;
   font-size: 12px;
+  &.win {
+    color: red;
+  }
+  &:not(:last-child):after {
+    content: ', ';
+    color: #999;
+  }
 }
 </style>

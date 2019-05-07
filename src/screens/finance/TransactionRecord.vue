@@ -162,7 +162,7 @@ export default {
   computed: {
     transactionType () {
       const routeName = this.$route.name
-      if (routeName === 'PaymentRecord') {
+      if (routeName === 'DepositRecord') {
         return 'online_pay,remit'
       } else if (routeName === 'WithdrawRecord') {
         return 'withdraw'
