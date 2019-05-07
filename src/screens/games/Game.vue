@@ -317,6 +317,8 @@ export default {
                 status: d.result_status
               }
             })
+          }).catch(() => {
+
           })
         }
       },
