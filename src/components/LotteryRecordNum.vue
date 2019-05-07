@@ -67,12 +67,12 @@ export default {
   background: url('../assets/comparision.png') no-repeat;
   background-size: 500% 100%;
   display: inline-block;
-  width: 35px;
-  height: 35px;
+  width: 26px;
+  height: 26px;
   text-indent: -9999px;
   @media only screen and (max-width: 360px) {
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
   }
 }
 
@@ -86,33 +86,36 @@ export default {
 
 .bigger {
   background-position: -4px center;
+  @media only screen and (max-width: 360px) {
+    background-position: -3px center;
+  }
 }
 
 .smaller {
-  background-position: -36px center;
+  background-position: -26px center;
   @media only screen and (max-width: 360px) {
-    background-position: -32px center;
+    background-position: -23px center;
   }
 }
 
 .even {
-  background-position: -67px center;
+  background-position: -50px center;
   @media only screen and (max-width: 360px) {
-    background-position: -61px center;
+    background-position: -43px center;
   }
 }
 
 .odd {
-  background-position: -101px center;
+  background-position: -75px center;
   @media only screen and (max-width: 360px) {
-    background-position: -92px center;
+    background-position: -63px center;
   }
 }
 
 .equal {
-  background-position: -135px center;
+  background-position: -99px center;
   @media only screen and (max-width: 360px) {
-    background-position: -123px center;
+    background-position: -84px center;
   }
 }
 
