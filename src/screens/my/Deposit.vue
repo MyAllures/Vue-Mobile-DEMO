@@ -154,6 +154,13 @@ export default {
   directives: {
     TransferDom
   },
+  watch: {
+    showDialog (boolean) {
+      if (!boolean) {
+        this.currentPay.amount = ''
+      }
+    }
+  },
   computed: {
     ...mapState([
       'user'
@@ -326,6 +333,7 @@ export default {
     },
     addAmount (amount) {
       this.currentPay.amount = amount
+      this.validateAmount(amount)
     },
     submit (e) {
       if (!this.warnMessage) {
