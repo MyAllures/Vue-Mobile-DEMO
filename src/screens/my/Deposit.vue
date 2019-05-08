@@ -81,6 +81,11 @@
               <span class="amount-icon">¥</span>
             </label>
             <div class="hint">{{warnMessage||limitHint}}</div>
+            <flexbox :gutter="0" wrap="wrap" class="amount-btns">
+              <flexbox-item :span="1/4" v-for="amount in rechargeAmount" :key="amount">
+                <x-button class="btn" mini action-type="button" @click.native="addAmount(amount)">¥{{amount}}</x-button>
+              </flexbox-item>
+            </flexbox>
           </div>
           <x-button type="primary" :disabled="!currentPay.amount||!!warnMessage">
             <spinner v-if="loading" :type="'spiral'" class="vux-spinner-inverse"></spinner>
@@ -93,7 +98,7 @@
 </template>
 
 <script>
-import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle, TransferDom, XDialog } from 'vux'
+import { ButtonTab, ButtonTabItem, XButton, Radio, Cell, Group, XInput, GroupTitle, TransferDom, XDialog, Flexbox, FlexboxItem } from 'vux'
 import { getOnlinepayees, getRemitPayees } from '../../api'
 import { validateDepositAmount } from '../../utils'
 import { mapState } from 'vuex'
@@ -126,7 +131,8 @@ export default {
       warnMessage: '',
       showDialog: false,
       dialogStyle,
-      skeletonBar: [35, 30, 40, 20, 25]
+      skeletonBar: [35, 30, 40, 20, 25],
+      rechargeAmount: [100, 200, 300, 500, 1000, 5000, 10000, 20000]
     }
   },
   components: {
@@ -139,7 +145,9 @@ export default {
     XInput,
     GroupTitle,
     XDialog,
-    rowSkeleton
+    rowSkeleton,
+    Flexbox,
+    FlexboxItem
   },
   directives: {
     TransferDom
@@ -314,6 +322,9 @@ export default {
         this.warnMessage = ''
       }
     },
+    addAmount (amount) {
+      this.currentPay.amount = amount
+    },
     submit (e) {
       if (!this.warnMessage) {
         window.gtag('event', '充值', {'event_category': '在線支付', 'event_label': this.selectedGroup.display_name})
@@ -454,7 +465,17 @@ export default {
     font-size: 12px;
     color: #999;
     font-weight: lighter;
-    margin-bottom: 33px;
+    margin-bottom: 10px;
+  }
+  .amount-btns {
+    margin-bottom: 10px;
+    .btn {
+      width: 95%;
+      padding: 0 1px;
+      margin-bottom: 5px;
+      font-size: 12px;
+      line-height: 2;
+    }
   }
   &.warn {
     color: @red;
