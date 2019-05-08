@@ -310,7 +310,8 @@ body {
     padding: 5px 10px;
     max-width: 240px;
     font-size: 14px;
-    word-break: break-all;
+    word-break: break-word;
+
     &.image {
       padding: 0;
     }
