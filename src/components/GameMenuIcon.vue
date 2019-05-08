@@ -63,18 +63,9 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'themeId'
-    ]),
-    backgroundColor () {
-      switch (this.themeId.toString()) {
-        case '1' :return '#166FD8'
-        case '2' :return '#4AA3DE'
-        case '3' :return '#EA8653'
-        case '4' :return '#5CC5D0'
-        case '5' :return '#7379E1'
-      }
-    }
+    ...mapState({
+      backgroundColor: (state) => state.theme
+    })
   }
 }
 </script>

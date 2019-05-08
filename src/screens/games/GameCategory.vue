@@ -4,7 +4,7 @@
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
           :animate="false"
-          line-width="2"
+          :line-width="2"
           active-color="theme" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
@@ -17,7 +17,7 @@
     </div>
     <div v-if="shawOptions.length" class="shaw-options">
       <div class="wrapper vux-1px-b">
-        <check-icon 
+        <check-icon
           :key="option.name"
           v-on:click.native="toggleShaw(option, $event)"
           v-for="option in shawOptions"
@@ -372,11 +372,11 @@ export default {
 
 <style lang="less" scoped>
 .shaw-options {
-  overflow-x: scroll; 
-  .wrapper { 
+  overflow-x: scroll;
+  .wrapper {
     width: 600px;
   }
-  
+
   /deep/ .vux-check-icon {
     width: 50px;
     text-align: center;

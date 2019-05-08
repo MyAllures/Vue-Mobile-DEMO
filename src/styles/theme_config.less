@@ -44,6 +44,10 @@
       background-color: @main;
       background-image: @gradient;
     }
+    &.active {
+      background-color: @main;
+      background-image: linear-gradient(to right, @main, darken(@main, 15%));
+    }
   }
 
   .service-btn {
@@ -187,6 +191,11 @@
   .game-label .game-label-text {
     background-color: #d0e2f7;
     color: #113f7c;
+  }
+  .weui-btn_primary {
+    &.active {
+      background-color: darken(#166fd8, 10%);
+    }
   }
 }
 
