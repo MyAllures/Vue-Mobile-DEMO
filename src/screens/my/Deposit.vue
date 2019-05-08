@@ -111,7 +111,9 @@ export default {
     const dialogStyle = {
       'box-sizing': 'border-box',
       'padding': '12px 20px',
-      'text-align': 'left'
+      'text-align': 'left',
+      'width': '90vw',
+      'max-width': '90vw'
     }
     return {
       payees: [],
@@ -473,7 +475,7 @@ export default {
       width: 95%;
       padding: 5px 1px;
       margin-bottom: 5px;
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   &.warn {
