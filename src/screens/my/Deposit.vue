@@ -471,10 +471,9 @@ export default {
     margin-bottom: 10px;
     .btn {
       width: 95%;
-      padding: 0 1px;
+      padding: 5px 1px;
       margin-bottom: 5px;
       font-size: 12px;
-      line-height: 2;
     }
   }
   &.warn {
