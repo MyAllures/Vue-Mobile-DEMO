@@ -112,9 +112,11 @@ export default {
   background: #d23f34;
   width: 100vw;
   height: 100vh;
+  max-height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
+  overflow-y: auto;
   z-index: 999;
 }
 .header {

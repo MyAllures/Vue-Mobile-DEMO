@@ -9,12 +9,12 @@ export default {
   state: {
     boost: {
       enabled: false,
-      count: 0,
+      count: false,
       detail: {}
     },
     referral: {
       enabled: false,
-      count: 0,
+      count: false,
       detail: {}
     }
   },

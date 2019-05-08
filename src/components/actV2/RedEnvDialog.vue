@@ -17,10 +17,10 @@
           </div>
         </div>
         <div class="footer">
-          <div class="prompt" v-if="hasMore">尚有 {{ remain }} 个红包还没拆</div>
-          <button v-if="hasMore" @click="openNext">继续拆</button>
+          <div class="prompt" v-if="hasMore && !isError">尚有 {{ remain }} 个红包还没拆</div>
+          <button v-if="hasMore && !isError" @click="openNext">继续拆</button>
           <button v-else @click="hide">确认</button>
-       </div>
+        </div>
      </div>
      <a class="close" href="#" @click.prevent="hide"><x-icon type="ios-close-outline"></x-icon></a>
    </div>

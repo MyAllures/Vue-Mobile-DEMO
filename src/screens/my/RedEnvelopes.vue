@@ -30,7 +30,7 @@
         </div>
         <div class="content stats">
           <div class="stat available">
-            <div class="count highlight" :class="{ gray: myData.remain_envelope_count === 0 }">{{ myData.remain_envelope_count }}</div>
+            <div class="count highlight" :class="{ gray: myData.remain_envelope_count === 0 }">{{ redEnvRemain }}</div>
             <div class="desc">今日未拆红包个数</div>
           </div>
           <XButton type="primary" text="拆紅包" @click.native="openRE" :show-loading="reLoading" :disabled="reLoading" v-if="myData.remain_envelope_count" />
@@ -39,7 +39,7 @@
       </template>
     </div>
     <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
-    <RedEnvDialog :data="redEnvData" :remain="myData && myData.remain_envelope_count" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
+    <RedEnvDialog :data="redEnvData" :remain="redEnvRemain" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
   </div>
 </template>
 
@@ -86,9 +86,6 @@ export default {
       this.reLoading = true
       this.showReDialog = false
       openActRe('engagement_boost').then(response => {
-        if (response.amount) {
-          this.myData.remain_envelope_count--
-        }
         this.redEnvData = response
         this.showReDialog = true
         this.reLoading = false
@@ -97,6 +94,7 @@ export default {
   },
   computed: {
     ...mapState('actv2', {
+      remainCount: state => state.boost.count,
       act: state => state.boost.detail
     }),
     betInterval () {
@@ -118,6 +116,12 @@ export default {
       }
       const percent = (this.myData.bet_amount - this.currentBetLevelAmount) / (this.nextBetLevelAmount - this.currentBetLevelAmount) * 100
       return Math.min(percent, 100)
+    },
+    redEnvRemain () {
+      if (this.remainCount === false) {
+        return this.redEnvData ? this.redEnvData.remain_envelope_count : 0
+      }
+      return this.remainCount
     }
   }
 }
