@@ -53,13 +53,13 @@ export default {
       session: 'currentSession'
     }),
     isPreventReview () {
-      return (!this.session && !this.lastSession) || (this.session && !this.assigned)
+      if (this.session && this.session !== this.lastSession) {
+        return !this.assigned
+      }
+      return !this.session && !this.lastSession
     }
   },
   watch: {
-    session () {
-      this.$store.dispatch('customerService/setSessionAssigned', false)
-    },
     showReview (show) {
       if (show && this.isPreventReview) {
         this.$createToast({
