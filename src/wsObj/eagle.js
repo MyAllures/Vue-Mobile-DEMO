@@ -20,29 +20,26 @@ function onclose () {
   store.dispatch('chatroom/setStatus', 'closed')
 }
 
-function onmessage (response) {
-  if (typeof response.data === 'string') {
-    let data = JSON.parse(response.data)
-    switch (data.type) {
-      case 'initial-data':
-        store.dispatch('chatroom/init', data)
-        break
-      case 'message':
-      case 'image':
-      case 'sticker':
-      case 'system':
-      case 'red-envelope':
-        store.dispatch('chatroom/receiveMsg', data)
-        break
-      case 'betrecord-sharing':
-        store.dispatch('chatroom/receiveMsg', data)
-        break
-      case 'private':
-        store.dispatch('chatroom/updatePermission', {
-          eligible: false,
-          messages: data.content
-        })
-    }
+function onmessage (data) {
+  switch (data.type) {
+    case 'initial-data':
+      store.dispatch('chatroom/init', data)
+      break
+    case 'message':
+    case 'image':
+    case 'sticker':
+    case 'system':
+    case 'red-envelope':
+      store.dispatch('chatroom/receiveMsg', data)
+      break
+    case 'betrecord-sharing':
+      store.dispatch('chatroom/receiveMsg', data)
+      break
+    case 'private':
+      store.dispatch('chatroom/updatePermission', {
+        eligible: false,
+        messages: data.content
+      })
   }
 }
 
@@ -63,6 +60,7 @@ export class EagleWebSocket {
       onclose
     })
     this.ws.connect()
+    this.ws.heartBeat(10000)
   }
 
   sendMsg (message) {
