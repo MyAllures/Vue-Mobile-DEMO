@@ -167,7 +167,7 @@ export default {
       } else if (routeName === 'WithdrawRecord') {
         return 'withdraw'
       } else {
-        return 'discount,envelope'
+        return 'discount,envelope,engagement_boost_envelope,referral_envelope'
       }
     }
   },
