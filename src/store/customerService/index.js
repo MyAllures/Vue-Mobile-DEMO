@@ -65,10 +65,11 @@ export default {
       state.showReview = bool
     },
     deleteReview: (state, id) => {
-      const index = state.received.common.findIndex(msg => msg.id === id)
+      const index = state.received.common.length - 1 - state.received.common.slice().reverse().findIndex(msg => msg.id === id)
       const msg = state.received.common[index + 1]
-      msg.text = '您已清除本次对话的满意度调查'
+      msg.id = id
       msg.type = MSG_TYPE.reviewCancel
+      msg.text = '您已清除本次对话的满意度调查'
       state.received.common.splice(index, 1)
     },
     setSessionAssigned: (state, bool) => {

@@ -41,7 +41,7 @@
                   <span class="rating">您为这次对话给出了<span :style="{ color: getRatingColor(msg.rating) }">【{{ getRatingDesc(msg.rating) }}】</span></span>
                   <span class="comment" v-if="msg.text">{{ msg.text }}</span>
                 </p>
-                <a class="clear" href="#" @click.prevent="clearReview(msg.id, msg.session)"><img src="../../assets/cs/icon-review-remove.svg" />清除</a>
+                <a class="clear" href="#" @click.prevent="clearReview(msg.id)" v-if="isLastReview(msgIndex)"><img src="../../assets/cs/icon-review-remove.svg" />清除</a>
               </template>
               <template v-else>
                 <p v-html="msg.text"></p>
@@ -57,7 +57,7 @@
           <div v-if="props.beforePullDown"
             class="before-trigger"
             :style="{paddingTop: props.bubbleY + 'px'}">
-            <span :class="{rotate: props.bubbleY > options.pullDownRefresh.threshold - 60}">↓</span>
+            <span :class="{rotate: props.bubbleY > props.pullDownRefresh.threshold - 60}">↓</span>
           </div>
           <div class="after-trigger" v-else>
             <div v-show="props.isPullingDown" class="loading">
@@ -164,6 +164,10 @@ export default {
     getRatingColor (rating) {
       const item = RATINGS.find(r => r.value === rating)
       return item.color
+    },
+    isLastReview (index) {
+      const last = this.sortedMessages.length - 1 - this.sortedMessages.slice().reverse().findIndex(msg => msg.type === MSG_TYPE.review || msg.type === MSG_TYPE.reviewCancel)
+      return last === index
     },
     clearReview (id) {
       deleteServiceReview(id).then(() => {
