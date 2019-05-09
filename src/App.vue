@@ -14,7 +14,7 @@
       <template slot="right">
         <div v-if="pageSetting.rightCtrl === 'info'" class="right-ctrl">
           <template v-if="!user.logined">
-            <a class="link" @click="tryDemo">试玩</a>
+            <a class="link" @click="trial">试玩</a>
             <div class="divide"></div>
             <router-link class="link" to="/register">注册</router-link>
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
@@ -98,7 +98,6 @@ import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
-import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
@@ -234,7 +233,6 @@ export default {
       isHelperVisible: false
     }
   },
-  mixins: [freetrial],
   computed: {
     ...mapGetters([
       'user', 'allGames'
@@ -307,6 +305,9 @@ export default {
     }
   },
   methods: {
+    trial () {
+      this.$store.dispatch('trial')
+    },
     closeDetailNotification () {
       this.currentNotificationDetail = null
     },
