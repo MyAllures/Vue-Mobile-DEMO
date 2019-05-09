@@ -15,7 +15,8 @@ export default {
     referral: {
       enabled: false,
       count: false,
-      detail: {}
+      detail: {},
+      list: []
     }
   },
   getters: {
@@ -37,6 +38,15 @@ export default {
     clearCount: state => {
       state.boost.count = 0
       state.referral.count = 0
+    },
+    setRefList: (state, data) => {
+      state.referral.list = data
+    },
+    setRefRemainCount: (state, { id, count }) => {
+      const index = state.referral.list.findIndex(ref => ref.id === id)
+      if (index > -1) {
+        state.referral.list[index].envelope_count = count
+      }
     }
   },
   actions: {
@@ -80,8 +90,17 @@ export default {
         })
       })
     },
+    setCount: ({ commit }, { type, count }) => {
+      commit('setCount', { type, count })
+    },
     clearCount: ({ commit }) => {
       commit('clearCount')
+    },
+    setRefList: ({ commit }, data) => {
+      commit('setRefList', data)
+    },
+    setRefRemainCount: ({ commit }, { id, count }) => {
+      commit('setRefRemainCount', { id, count })
     }
   }
 }

@@ -117,16 +117,20 @@ GhostSocketObj.prototype.initWs = function (token) {
               closeLeft: data.close_left
             })
             break
-          case 'engagement_boost':
-            store.commit('actv2/setCount', {
+          case 'engagement-boost-envelope':
+            store.dispatch('actv2/setCount', {
               type: 'boost',
-              count: data.remain_engagement_boost_envelope_count
+              count: data.remain_count
             })
             break
-          case 'referral':
-            store.commit('actv2/setCount', {
+          case 'referral-envelope':
+            store.dispatch('actv2/setCount', {
               type: 'referral',
-              count: data.remain_referral_envelope_count
+              count: data.remain_count
+            })
+            store.dispatch('actv2/setRefRemainCount', {
+              id: data.detail_id,
+              count: data.detail_count
             })
             break
         }
