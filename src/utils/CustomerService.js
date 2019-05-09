@@ -1,5 +1,5 @@
 const RECEIVED_ACTION = {
-  welcome_message: 'welcome_message',
+  member_init_info: 'member_init_info',
   offline_message: 'offline_message',
   history_message: 'history_message',
   normal: 'normal',
