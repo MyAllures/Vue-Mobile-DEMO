@@ -54,8 +54,6 @@
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
-
-    <loading v-model="isLoading"></loading>
     <right-menu
       :value="$store.state.isRightMenuVisible"
       @closeRightMenu="$store.dispatch('hideRightMenu')"/>
@@ -86,12 +84,17 @@
         </div>
       </transition>
     </div>
+    <transition name="fade">
+      <div class="global-loading" v-if="isLoading">
+        <cube-loading :size="50"></cube-loading>
+      </div>
+    </transition>
   </ViewArea>
 </template>
 
 <script>
 import Vue from 'vue'
-import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
+import { Tabbar, TabbarItem, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
@@ -112,7 +115,6 @@ export default {
   components: {
     Tabbar,
     TabbarItem,
-    Loading,
     RightMenu,
     TryplayPopup,
     BetDialog,
@@ -465,5 +467,18 @@ export default {
   box-sizing: border-box;
   padding-right: 10px;
   color: #fff;
+}
+
+.global-loading {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,255,255, .7);
+  z-index: @global-loading-mask-zindex;
 }
 </style>
