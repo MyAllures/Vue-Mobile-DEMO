@@ -15,10 +15,14 @@ export default {
     enableReview: false,
     showReview: false,
     sessionAssigned: false,
+    lastArchiveSession: false,
     lastArchive: 0
   },
   getters: {
     lastSession (state) {
+      if (state.lastArchiveSession) {
+        return state.lastArchiveSession
+      }
       const length = state.received.history.length
       if (length > 1) {
         const latest = state.received.history[length - 1]
@@ -61,10 +65,11 @@ export default {
       state.showReview = bool
     },
     deleteReview: (state, id) => {
-      const index = state.received.common.findIndex(msg => msg.id === id)
+      const index = state.received.common.length - 1 - state.received.common.slice().reverse().findIndex(msg => msg.id === id)
       const msg = state.received.common[index + 1]
-      msg.text = '您已清除本次对话的满意度调查'
+      msg.id = id
       msg.type = MSG_TYPE.reviewCancel
+      msg.text = '您已清除本次对话的满意度调查'
       state.received.common.splice(index, 1)
     },
     setSessionAssigned: (state, bool) => {
@@ -73,6 +78,7 @@ export default {
     archiveSession: (state, currentSession) => {
       const index = state.received.common.findIndex(msg => msg.session === currentSession && msg.type === MSG_TYPE.review)
       if (index === -1) {
+        state.lastArchiveSession = currentSession
         state.lastArchive = Date.now()
       }
     }

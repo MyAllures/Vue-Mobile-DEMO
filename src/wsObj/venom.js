@@ -60,7 +60,7 @@ VenomSocketObj.prototype.initWs = function (token) {
     try {
       let data = JSON.parse(response.data)
       switch (data.action) {
-        case RECEIVED_ACTION.welcome_message:
+        case RECEIVED_ACTION.member_init_info:
           if (!data.message) {
             return
           }
@@ -73,7 +73,8 @@ VenomSocketObj.prototype.initWs = function (token) {
             category: MSG_CAT.welcome,
             messages: [welcomeMsg]
           })
-          store.dispatch('customerService/setEnableReview', data.message['enable-member-comment'] === 'true')
+          store.dispatch('customerService/setSessionAssigned', data.message.assigned === true)
+          store.dispatch('customerService/setEnableReview', data.message['enable-member-comment'] === true)
           store.dispatch('customerService/setThankMessage', data.message['thanks-comment-words'])
           break
         case RECEIVED_ACTION.offline_message:
@@ -139,6 +140,7 @@ VenomSocketObj.prototype.initWs = function (token) {
         case RECEIVED_ACTION.archive_session:
           if (data.message.session_achieved === 'solved') {
             store.dispatch('customerService/archiveSession')
+            store.dispatch('customerService/setSessionAssigned', false)
           }
           break
         case RECEIVED_ACTION.assign:
