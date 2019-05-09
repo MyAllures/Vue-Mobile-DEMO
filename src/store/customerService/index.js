@@ -15,10 +15,14 @@ export default {
     enableReview: false,
     showReview: false,
     sessionAssigned: false,
+    lastArchiveSession: false,
     lastArchive: 0
   },
   getters: {
     lastSession (state) {
+      if (state.lastArchiveSession) {
+        return state.lastArchiveSession
+      }
       const length = state.received.history.length
       if (length > 1) {
         const latest = state.received.history[length - 1]
@@ -73,6 +77,7 @@ export default {
     archiveSession: (state, currentSession) => {
       const index = state.received.common.findIndex(msg => msg.session === currentSession && msg.type === MSG_TYPE.review)
       if (index === -1) {
+        state.lastArchiveSession = currentSession
         state.lastArchive = Date.now()
       }
     }
