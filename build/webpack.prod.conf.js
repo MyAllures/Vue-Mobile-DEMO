@@ -57,6 +57,15 @@ const webpackConfig = merge(baseWebpackConfig, {
         ],
       },
       {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'less-loader'
+        ],
+      },
+      {
         test: /\.styl(us)?$/,
         use: [
           MiniCssExtractPlugin.loader,

@@ -1,4 +1,10 @@
-.theme (@main: @azul, @gradient, @playColor) {
+@theme1mainColor: #156fd8;
+@theme2mainColor: #1976d2;
+@theme3mainColor: #dd603a;
+@theme4mainColor: #53b8df;
+@theme5mainColor: #6a42a6;
+
+.theme (@main: @theme1mainColor, @gradient, @playColor) {
   .topbar {
     background-color: @main;
     background-image: @gradient;
@@ -177,7 +183,7 @@
 .theme0 { // processing
   @main: #eee;
   @gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-  @playColor: @azul;
+  @playColor: @theme1mainColor;
   .theme(@main, @gradient, @playColor);
 }
 
@@ -197,20 +203,6 @@
       background-color: darken(#166fd8, 10%);
     }
   }
-}
-
-@theme1mainColor: #156fd8;
-@theme2mainColor: #1976d2;
-@theme3mainColor: #dd603a;
-@theme4mainColor: #53b8df;
-@theme5mainColor: #6a42a6;
-
-:export {
-  theme1: @theme1mainColor;
-  theme2: @theme2mainColor;
-  theme3: @theme3mainColor;
-  theme4: @theme4mainColor;
-  theme5: @theme5mainColor;
 }
 
 .theme2 {
@@ -241,4 +233,10 @@
   .theme(@main, @gradient, @playColor);
 }
 
-
+:export {
+  theme1: @theme1mainColor;
+  theme2: @theme2mainColor;
+  theme3: @theme3mainColor;
+  theme4: @theme4mainColor;
+  theme5: @theme5mainColor;
+}
