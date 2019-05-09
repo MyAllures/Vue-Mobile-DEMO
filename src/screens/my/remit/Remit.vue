@@ -124,7 +124,11 @@
         return lowerHint + comma + upperHint
       },
       inputCompleted () {
-        return this.remit.remit_info.depositor !== '' && this.remit.amount !== ''
+        if (this.payee.remit_type.need_depositor) {
+          return this.remit.remit_info.depositor !== '' && this.remit.amount !== ''
+        } else {
+          return this.remit.amount !== ''
+        }
       }
     },
     created () {
