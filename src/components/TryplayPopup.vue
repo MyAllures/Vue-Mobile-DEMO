@@ -21,7 +21,7 @@
       </group>
       <div class="continue">
         <div class="text-danger text-center m-a">{{error}}</div>
-        <x-button class="trial-btn" type="primary" @click.native="tryDemo">继续试玩</x-button>
+        <x-button class="trial-btn" type="primary" @click.native="trial">继续试玩</x-button>
       </div>
     </div>
   </popup>
@@ -29,7 +29,7 @@
 </template>
 <script>
 import { TransferDom, XInput, Group, XButton, Popup } from 'vux'
-import { register, fetchCaptcha } from '../api'
+import { fetchCaptcha } from '../api'
 export default {
   directives: {
     TransferDom
@@ -63,23 +63,18 @@ export default {
         this.verification_code_0 = res.captcha_val
       })
     },
-    tryDemo () {
-      register({
-        account_type: 0,
+    trial () {
+      this.$store.dispatch('trial', {
         verification_code_0: this.verification_code_0,
         verification_code_1: this.verification_code_1
-      }).then(user => {
-        if (user.trial_auth_req === 1) {
-          return Promise.reject(user)
-        }
-        return this.$store.dispatch('login', { user })
-      }).then(result => {
+      }).then((response) => {
         this.$router.push({name: 'Home'})
-        this.$store.dispatch('fetchUser')
         this.$store.dispatch('closeVerifyPopup')
-      }).catch(error => {
-        this.fetchCaptcha()
-        this.error = error.msg
+      }).catch((errRes) => {
+        if (errRes.trial_auth_req === 1) {
+          this.fetchCaptcha()
+          this.error = errRes.msg
+        }
       })
     },
     reset () {

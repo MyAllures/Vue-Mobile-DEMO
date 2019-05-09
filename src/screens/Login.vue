@@ -42,12 +42,11 @@
           <flexbox-item class="register text-center" @click.native="$router.push({path: '/register'})">
             <span>{{$t('misc.register')}}</span>
           </flexbox-item>
-          <flexbox-item class="text-center" @click.native="tryDemo">
+          <flexbox-item class="text-center" @click.native="trial">
             <span>{{$t('misc.try')}}</span>
           </flexbox-item>
         </flexbox>
       </div>
-    <tryplay-popup />
   </div>
 </template>
 
@@ -55,8 +54,6 @@
 import { XInput, Group, XButton, Flexbox, FlexboxItem } from 'vux'
 import { fetchCaptcha } from '../api'
 import { msgFormatter } from '../utils'
-import TryplayPopup from '../components/TryplayPopup'
-import freetrial from '../mixins/freetrial.js'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
@@ -85,7 +82,6 @@ export default {
       passwordDom: null
     }
   },
-  mixins: [freetrial],
   computed: {
     valid () {
       return inputs.every(input => this.validators[input] === true)
@@ -104,6 +100,11 @@ export default {
     }, 500)
   },
   methods: {
+    trial () {
+      this.$store.dispatch('trial').then((res) => {
+        this.$router.push({name: 'Home'})
+      })
+    },
     handleClose () {
       this.$store.dispatch('closeVerifyPopup')
     },
@@ -150,7 +151,6 @@ export default {
     XButton,
     Flexbox,
     FlexboxItem,
-    TryplayPopup,
     VForm,
     VFormItem,
     VInput
