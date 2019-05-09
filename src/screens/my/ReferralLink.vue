@@ -1,5 +1,5 @@
 <template>
-  <div class="stretch-layout">
+  <div class="act-wrap">
     <div class="top">
       <div class="title">推荐链结使用说明</div>
       <div class="rules">
@@ -109,7 +109,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.stretch-layout {
+.act-wrap {
   padding-bottom: 53px;
 }
 .top {
