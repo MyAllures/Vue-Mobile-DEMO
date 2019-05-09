@@ -1,5 +1,5 @@
 <template>
-  <div class="stretch-layout">
+  <div class="act-wrap">
     <div class="top">
       <div class="title">我的今日返利红包</div>
       <div class="rules">
@@ -128,7 +128,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.stretch-layout {
+.act-wrap {
   padding-bottom: 53px;
 }
 .top {
