@@ -1,15 +1,8 @@
 import Vue from 'vue'
+import themeColors from '../../styles/theme_config.less'
 import * as types from './mutation-types'
 import {saveLastGameData} from '../../utils'
 import axios from 'axios'
-
-const themeMap = {
-  1: '#156fd8',
-  2: '#1976d2',
-  3: '#dd603a',
-  4: '#53b8df',
-  5: '#6a42a6'
-}
 
 export default {
   [types.SET_USER]: (state, user) => {
@@ -176,7 +169,7 @@ export default {
     saveLastGameData(state.lastGameData)
   },
   [types.SET_THEME]: (state, themeId) => {
-    state.theme = themeMap[themeId]
+    state.theme = themeColors[`theme${themeId}`]
   },
   [types.SHOW_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = true
