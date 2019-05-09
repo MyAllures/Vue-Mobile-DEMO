@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { XButton } from 'vux'
 import RedEnvPromotion from '@/components/actV2/RedEnvPromotion'
 import RedEnvDialog from '@/components/actV2/RedEnvDialog'
@@ -62,7 +63,6 @@ export default {
   data: () => ({
     isLoading: true,
     listWrapHeight: 'auto',
-    list: [],
     reLoading: false,
     redEnvData: {},
     showReDialog: false,
@@ -78,7 +78,7 @@ export default {
   methods: {
     fetchActRefList () {
       fetchActRefList().then(response => {
-        this.list = response
+        this.$store.dispatch('actv2/setRefList', response)
         this.isLoading = false
       })
     },
@@ -93,14 +93,16 @@ export default {
       this.showReDialog = false
 
       openActRe('referral', this.currentId).then(response => {
-        if (response.amount) {
-          this.list[this.currentIdx].envelope_count--
-        }
         this.redEnvData = response
         this.showReDialog = true
         this.reLoading = false
       })
     }
+  },
+  computed: {
+    ...mapState('actv2', {
+      list: state => state.referral.list
+    })
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.getListWrapHeight)
@@ -135,7 +137,7 @@ export default {
 .list {
   display: flex;
   justify-content: space-between;
-  padding: 0 16px;
+  padding-left: 16px;
   color: #666;
   height: 45px;
   line-height: 45px;
@@ -157,7 +159,7 @@ export default {
       }
     }
     &.r {
-      flex: 1;
+      flex: 0 0 130px;
       text-align: center;
 
       button {
