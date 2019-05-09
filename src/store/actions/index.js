@@ -54,6 +54,7 @@ export default {
       payload.verification_code_0 = data.verification_code_0
       payload.verification_code_1 = data.verification_code_1
     }
+    commit(types.UPDATE_LOADING, {isLoading: true})
     return trial(payload).then(response => {
       if (response.trial_auth_req === 1) {
         dispatch('openVerifyPopup')
@@ -99,6 +100,7 @@ export default {
         return Promise.reject(errorMsg)
       }
     }).finally(() => {
+      commit(types.UPDATE_LOADING, {isLoading: false})
     })
   },
   logout: ({ commit, state, dispatch }) => {
