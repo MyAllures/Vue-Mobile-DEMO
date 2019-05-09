@@ -65,7 +65,16 @@ export default {
     const tokenCancelablePromise = makeCancelable(tokenPromise)
     this.tokenCancelablePromise = tokenCancelablePromise
     tokenCancelablePromise.promise.then(token => {
-      this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+      if (this.roomList.length > 0) {
+        this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+      } else {
+        const unwatch = this.$watch('roomList', (roomList) => {
+          if (roomList.length > 0) {
+            this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, roomList[0]))
+            unwatch()
+          }
+        })
+      }
     }).catch(() => {
 
     })

@@ -113,13 +113,17 @@ class WebSocketBuilder {
   [initWebsocketEvent] () {
     this.ws.onopen = e => {
       this.retryConfig.tried = 0
+      this.retryConfig.count = 0
       this.wsState = OPEN
       this.listener.onopen(e)
       if (this.heartBeatConfig.doCheck) this[doHeartCheck]().start()
     }
     this.ws.onmessage = e => {
-      this.listener.onmessage(e)
-      if (this.heartBeatConfig.doCheck) this[doHeartCheck]().reset().start()
+      if (typeof e.data === 'string') {
+        let data = JSON.parse(e.data)
+        this.listener.onmessage(data)
+        if (this.heartBeatConfig.doCheck && data.type === 'pong') this[doHeartCheck]().reset().start()
+      }
     }
 
     this.ws.onerror = this.listener.onerror
@@ -130,7 +134,7 @@ class WebSocketBuilder {
       this.ws = null
       this.listener.onclose(e)
       if (this.heartBeatConfig.doCheck) this[doHeartCheck]().reset()
-      if (this.retryConfig.count !== 0 && e.code !== 1000) this[doRetry]()
+      if (this.retryConfig.count !== 0 || e.code !== 1000) this[doRetry]()
     }
   }
 
@@ -161,6 +165,8 @@ class WebSocketBuilder {
         self.heartBeatConfig.timeoutObj = setTimeout(() => {
           self.send(message)
           self.heartBeatConfig.serverTimeoutObj = setTimeout(() => {
+            self.needRetry = true
+            self.retry(3)
             self.disconnect(4000, 'Loss connection')
           }, 10000)
         }, timeout)
@@ -193,9 +199,6 @@ class WebSocketBuilder {
   }
 
   disconnect (code = 1000, reason = 'Normal closure') {
-    if ((code && !code === 1000) || (code >= 4999 && code <= 3000)) {
-      throw new Error('Invalid code')
-    }
     if (this.ws !== null && this.wsState === OPEN) {
       this.wsState = CLOSING
       const wasClean = true
