@@ -112,15 +112,17 @@ export default {
   background: #d23f34;
   width: 100vw;
   height: 100vh;
-  max-height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
 }
 .re-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   overflow-y: auto;
 }
 .header {
