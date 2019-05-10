@@ -166,7 +166,7 @@ export default {
         return []
       }
       let number = parseInt(this.dialogData.issue_number)
-      let amount = parseInt(this.bettrack.bet_amount)
+      let amount = parseFloat(this.bettrack.bet_amount)
       return Array.from({length: this.bettrack.type}, (v, i) => {
         return {
           issueNumber: i + number,
@@ -190,7 +190,7 @@ export default {
         this.bettrack.optionDisplayNames = this.dialogData.optionDisplayNames
       }
     },
-    'dialogVisible': function (dialogVisible) {
+    dialogVisible: function (dialogVisible) {
       if (dialogVisible === false && this.dialog.visible !== dialogVisible) {
         this.$store.dispatch('updateDialog', {
           name: 'new_bettrack',
