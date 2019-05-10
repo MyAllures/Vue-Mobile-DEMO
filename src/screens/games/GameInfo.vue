@@ -42,7 +42,9 @@ export default {
   },
   components: {
     Popup,
-    XButton,
+    XButton
+  },
+  directives: {
     TransferDom
   },
   computed: {

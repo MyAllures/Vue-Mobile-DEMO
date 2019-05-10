@@ -116,6 +116,8 @@
             type="number"
             class="period-input"
             pattern="[0-9]*"
+            min="0"
+            @keypress="isNumberKey"
             v-model="bettrack.period"/>&nbsp;期
         </div>
         <div class="col">
@@ -124,6 +126,8 @@
             type="number"
             class="time-input"
             pattern="[0-9]*"
+            min="0"
+            @keypress="isNumberKey"
             v-model="bettrack.multiple"/>
         </div>
         <div class="col">
@@ -271,12 +275,12 @@ export default {
       },
       immediate: true
     },
-    'gameClosed': function (closed) {
+    gameClosed: function (closed) {
       if (closed) {
         this.fetchBetTrackSchedules(4)
       }
     },
-    '$route': function (to, from) {
+    $route: function (to, from) {
       if (to.path === `/game/${this.gameId}`) {
         this.chooseCategory()
       }
@@ -298,10 +302,10 @@ export default {
         this.closeCountDown = this.diffTime(closeTime)
       }
     },
-    'amount': function (amount) {
+    amount: function (amount) {
       localStorage.setItem('amount', amount)
     },
-    'result': {
+    result: {
       handler: function (result) {
         if (result) {
           getGameHistoryData({
@@ -628,6 +632,12 @@ export default {
     switchBetMode (mode) {
       this.$set(this, 'playReset', !this.playReset)
       this.mode = mode
+    },
+    isNumberKey (e) {
+      const charCode = e.which ? e.which : e.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        e.preventDefault()
+      }
     }
   },
   beforeDestroy () {

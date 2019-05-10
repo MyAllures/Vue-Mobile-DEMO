@@ -26,6 +26,8 @@
                   type="number"
                   class="period-input"
                   pattern="[0-9]*"
+                  min="0"
+                  @keypress="isNumberKey"
                   v-model.number="bettrack.type"/>&nbsp;期
               </div>
               <div class="col">
@@ -34,6 +36,8 @@
                   type="number"
                   class="time-input"
                   pattern="[0-9]*"
+                  min="0"
+                  @keypress="isNumberKey"
                   v-model.number="bettrack.multiple"/>
               </div>
             </div>
@@ -68,8 +72,8 @@
 </template>
 
 <script>
-import {XDialog, XButton, TransferDom, InlineLoading} from 'vux'
-import {newBetTrack} from '@/api'
+import { XDialog, XButton, TransferDom, InlineLoading } from 'vux'
+import { newBetTrack } from '@/api'
 import FixScroll from '@/directive/fixscroll'
 import { msgFormatter } from '@/utils'
 import { mapState } from 'vuex'
@@ -149,6 +153,12 @@ export default {
         this.loading = false
         this.dialogVisible = false
       })
+    },
+    isNumberKey (e) {
+      const charCode = e.which ? e.which : e.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        e.preventDefault()
+      }
     }
   },
   computed: {
@@ -166,7 +176,7 @@ export default {
         return []
       }
       let number = parseInt(this.dialogData.issue_number)
-      let amount = parseInt(this.bettrack.bet_amount)
+      let amount = parseFloat(this.bettrack.bet_amount)
       return Array.from({length: this.bettrack.type}, (v, i) => {
         return {
           issueNumber: i + number,
@@ -190,7 +200,7 @@ export default {
         this.bettrack.optionDisplayNames = this.dialogData.optionDisplayNames
       }
     },
-    'dialogVisible': function (dialogVisible) {
+    dialogVisible: function (dialogVisible) {
       if (dialogVisible === false && this.dialog.visible !== dialogVisible) {
         this.$store.dispatch('updateDialog', {
           name: 'new_bettrack',
