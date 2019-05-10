@@ -50,7 +50,7 @@
           <span class="warn-tip" v-else>未填写</span>
         </cell>
       </group>
-      <group>
+      <group v-if="boostEnabled">
         <cell
           @click.native="$router.push('/my/red_envelopes')"
           title="返利红包"
@@ -59,7 +59,7 @@
           <Badge :text="boostCount" v-if="boostCount" />
         </cell>
       </group>
-      <group title="我的好友推荐">
+      <group title="我的好友推荐" v-if="referralEnabled">
         <cell
           @click.native="$router.push('/my/referral_link')"
           title="推荐链结"
@@ -135,7 +135,9 @@ export default {
       'systemConfig'
     ]),
     ...mapState('actv2', {
+      boostEnabled: state => state.boost.enabled,
       boostCount: state => state.boost.count,
+      referralEnabled: state => state.referral.enabled,
       referralCount: state => state.referral.count
     }),
     serviceAction () {

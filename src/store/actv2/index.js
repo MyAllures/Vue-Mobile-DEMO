@@ -27,6 +27,7 @@ export default {
   mutations: {
     setAct: (state, { type, enabled, detail }) => {
       if (detail) {
+        state[type].enabled = enabled
         state[type].detail = detail
       }
     },
