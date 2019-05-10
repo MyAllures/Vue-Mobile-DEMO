@@ -34,7 +34,7 @@
                 class="form-item__input"
                 v-model="envelope.pack_nums"
                 placeholder="请输入红包个数"
-                :match="/^([1-9]\d*|0)/"/>
+                :match="/^([1-9]\d*)/"/>
             </div>
             <div class="form-item__hint">{{numHint}}</div>
           </div>
