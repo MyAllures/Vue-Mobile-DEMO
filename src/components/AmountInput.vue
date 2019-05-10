@@ -19,7 +19,7 @@ export default {
     value: [String, Number],
     match: {
       type: RegExp,
-      default: /^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/
+      default: () => /^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/
     }
   },
   data () {
