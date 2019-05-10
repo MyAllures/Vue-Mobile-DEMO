@@ -6,6 +6,7 @@ import Vue from 'vue'
 import {
   /* eslint-disable no-unused-vars */
   Style,
+  Textarea,
   Picker,
   ActionSheet,
   DatePicker,
@@ -19,6 +20,7 @@ import {
   Toast
 } from 'cube-ui'
 
+Vue.use(Textarea)
 Vue.use(Picker)
 Vue.use(ActionSheet)
 Vue.use(DatePicker)

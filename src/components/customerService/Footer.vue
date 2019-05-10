@@ -2,7 +2,7 @@
   <div class="container">
     <AdditionalArea />
     <Input ref="input" :value.sync="value" />
-    <SendBtn @send="send" />
+    <SendBtn @send="send"/>
   </div>
 </template>
 

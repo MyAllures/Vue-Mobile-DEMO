@@ -2,12 +2,11 @@
   <popup
     :value="visible"
     @on-hide="$emit('update:visible', false)"
-    height="90%"
-    v-transfer-dom
-    :zIndex="200">
+    height="75%"
+    :zIndex="200"
+    v-transfer-dom>
       <div :class="['info-content', type]">
-        <component :is="showing" :game="game">
-        </component>
+        <component :is="showing" :game="game"></component>
         <div class="btn-wrapper vux-1px-t">
           <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回游戏</x-button>
         </div>
@@ -40,7 +39,9 @@ export default {
   },
   components: {
     Popup,
-    XButton,
+    XButton
+  },
+  directives: {
     TransferDom
   },
   computed: {

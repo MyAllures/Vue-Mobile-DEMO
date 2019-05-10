@@ -60,13 +60,22 @@ VenomSocketObj.prototype.initWs = function (token) {
     try {
       let data = JSON.parse(response.data)
       switch (data.action) {
-        case RECEIVED_ACTION.welcome_message:
-          data.message.type = MSG_TYPE.welcome_message
-          data.message.cat = MSG_CAT.welcome
+        case RECEIVED_ACTION.member_init_info:
+          if (!data.message) {
+            return
+          }
+          const welcomeMsg = {
+            type: MSG_TYPE.welcome_message,
+            cat: MSG_CAT.welcome,
+            text: data.message['default-welcome-message']
+          }
           store.dispatch('customerService/receiveMessages', {
             category: MSG_CAT.welcome,
-            messages: [data.message]
+            messages: [welcomeMsg]
           })
+          store.dispatch('customerService/setSessionAssigned', data.message.assigned === true)
+          store.dispatch('customerService/setEnableReview', data.message['enable-member-comment'] === true)
+          store.dispatch('customerService/setThankMessage', data.message['thanks-comment-words'])
           break
         case RECEIVED_ACTION.offline_message:
           data.message.forEach(msg => {
@@ -127,6 +136,26 @@ VenomSocketObj.prototype.initWs = function (token) {
               }
             })
           }
+          break
+        case RECEIVED_ACTION.archive_session:
+          if (data.message.session_achieved === 'solved') {
+            store.dispatch('customerService/archiveSession')
+            store.dispatch('customerService/setSessionAssigned', false)
+          }
+          break
+        case RECEIVED_ACTION.assign:
+          store.dispatch('customerService/setSessionAssigned', true)
+          break
+        case RECEIVED_ACTION.system:
+          if (process.env.NODE_ENV !== 'development') {
+            return
+          }
+          data.message.type = MSG_TYPE.system
+          store.dispatch('customerService/receiveMessages', {
+            category: MSG_CAT.common,
+            messages: [data.message],
+            once: false
+          })
           break
         case 'ping':
           this.ws.send(JSON.stringify({
