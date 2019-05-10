@@ -125,8 +125,8 @@
           <input
             type="number"
             class="time-input"
-            pattern="[0-9]*"
-            min="0"
+            pattern="[1-9]*"
+            min="1"
             @keypress="isNumberKey"
             v-model="bettrack.multiple"/>
         </div>
