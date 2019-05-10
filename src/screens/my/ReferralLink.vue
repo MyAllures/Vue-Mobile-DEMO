@@ -109,9 +109,6 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-#re-promotion {
-  position: absolute;
-}
 .act-wrap {
   padding-bottom: 53px;
 }

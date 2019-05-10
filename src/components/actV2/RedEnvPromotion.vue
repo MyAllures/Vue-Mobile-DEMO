@@ -1,69 +1,71 @@
 <template>
   <transition name="slide-fade">
     <div id="re-promotion" v-if="act">
-      <div class="header">
-        <a href="#" @click="hide"><x-icon type="ios-arrow-left" />返回</a>
-      </div>
-      <div class="content-wrap">
-        <div class="content">
-          <div class="promo-title">{{ act.name }}</div>
-          <div class="section">
-            <div class="section-title">活動介紹</div>
-            <div class="section-content">{{ act.description }}</div>
-          </div>
-          <div class="section">
-            <div class="section-title">活動內容</div>
-            <div class="section-content">
-              <table v-if="type === 'boost'">
-                <thead>
-                  <tr>
-                    <td>每日充值金额</td>
-                    <td>每日有效投注金额</td>
-                    <td>当日可领红包个数</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr :key="i" v-for="(level, i) in act.levels">
-                    <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
-                    <td>{{ level.bet_amount_min }}</td>
-                    <td>{{ level.count }}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <table v-else-if="type === 'referral'">
-                <thead>
-                  <tr>
-                    <td>推荐人数</td>
-                    <td>每成功推荐一人，可领红包数</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr :key="i" v-for="(level, i) in act.levels">
-                    <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
-                    <td v-else>{{ level.referral_min }} 以上</td>
-                    <td>{{ level.count }}</td>
-                  </tr>
-                </tbody>
-              </table>
+      <div class="re-wrap">
+        <div class="header">
+          <a href="#" @click="hide"><x-icon type="ios-arrow-left" />返回</a>
+        </div>
+        <div class="content-wrap">
+          <div class="content">
+            <div class="promo-title">{{ act.name }}</div>
+            <div class="section">
+              <div class="section-title">活動介紹</div>
+              <div class="section-content">{{ act.description }}</div>
+            </div>
+            <div class="section">
+              <div class="section-title">活動內容</div>
+              <div class="section-content">
+                <table v-if="type === 'boost'">
+                  <thead>
+                    <tr>
+                      <td>每日充值金额</td>
+                      <td>每日有效投注金额</td>
+                      <td>当日可领红包个数</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr :key="i" v-for="(level, i) in act.levels">
+                      <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
+                      <td>{{ level.bet_amount_min }}</td>
+                      <td>{{ level.count }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table v-else-if="type === 'referral'">
+                  <thead>
+                    <tr>
+                      <td>推荐人数</td>
+                      <td>每成功推荐一人，可领红包数</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr :key="i" v-for="(level, i) in act.levels">
+                      <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
+                      <td v-else>{{ level.referral_min }} 以上</td>
+                      <td>{{ level.count }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="footer">
-        <template v-if="user.account_type">
-          <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
-          <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
-        </template>
-        <template v-else>
-          <div class="f-col login">
-           <p>已有帐号</p>
-           <button @click="goto('/login')">立即登录</button>
-         </div>
-         <div class="f-col register">
-           <p>尚未注册</p>
-           <button @click="goto('/register')">免费注册</button>
-         </div>
-       </template>
+        <div class="footer">
+          <template v-if="user.account_type">
+            <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
+            <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
+          </template>
+          <template v-else>
+            <div class="f-col login">
+             <p>已有帐号</p>
+             <button @click="goto('/login')">立即登录</button>
+           </div>
+           <div class="f-col register">
+             <p>尚未注册</p>
+             <button @click="goto('/register')">免费注册</button>
+           </div>
+         </template>
+       </div>
      </div>
    </div>
  </transition>
@@ -77,8 +79,6 @@ export default {
   props: {
     type: String
   },
-  data: () => ({
-  }),
   methods: {
     goto (path) {
       this.hide()
@@ -116,8 +116,12 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto;
   z-index: 999;
+}
+.re-wrap {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 .header {
   height: 56px;
