@@ -26,6 +26,7 @@
                   type="number"
                   class="period-input"
                   pattern="[0-9]*"
+                  min="0"
                   @keypress="isNumberKey"
                   v-model.number="bettrack.type"/>&nbsp;期
               </div>
@@ -35,6 +36,7 @@
                   type="number"
                   class="time-input"
                   pattern="[0-9]*"
+                  min="0"
                   @keypress="isNumberKey"
                   v-model.number="bettrack.multiple"/>
               </div>
@@ -70,8 +72,8 @@
 </template>
 
 <script>
-import {XDialog, XButton, TransferDom, InlineLoading} from 'vux'
-import {newBetTrack} from '@/api'
+import { XDialog, XButton, TransferDom, InlineLoading } from 'vux'
+import { newBetTrack } from '@/api'
 import FixScroll from '@/directive/fixscroll'
 import { msgFormatter } from '@/utils'
 import { mapState } from 'vuex'
