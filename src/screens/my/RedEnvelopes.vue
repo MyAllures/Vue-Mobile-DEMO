@@ -220,7 +220,6 @@ export default {
   &.stats {
     .stat {
       margin-bottom: 14px;
-      height: 100px;
       display: flex;
       justify-content: center;
       align-items: center;
