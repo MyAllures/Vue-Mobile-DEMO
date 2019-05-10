@@ -26,6 +26,7 @@
                   type="number"
                   class="period-input"
                   pattern="[0-9]*"
+                  @keypress="isNumberKey"
                   v-model.number="bettrack.type"/>&nbsp;期
               </div>
               <div class="col">
@@ -34,6 +35,7 @@
                   type="number"
                   class="time-input"
                   pattern="[0-9]*"
+                  @keypress="isNumberKey"
                   v-model.number="bettrack.multiple"/>
               </div>
             </div>
@@ -149,6 +151,12 @@ export default {
         this.loading = false
         this.dialogVisible = false
       })
+    },
+    isNumberKey (e) {
+      const charCode = e.which ? e.which : e.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        e.preventDefault()
+      }
     }
   },
   computed: {
