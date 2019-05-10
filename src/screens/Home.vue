@@ -564,6 +564,9 @@ export default {
     ~ .vux-flexbox-item .activity {
       max-width: 130px;
     }
+    ~ .vux-flexbox-item .activity-title {
+      padding-right: 8px;
+    }
   }
   .activity {
     height: 100%;
@@ -588,7 +591,7 @@ export default {
     font-size: 13px;
     font-weight: bold;
     line-height: 1.2;
-    padding-right: 8px;
+    padding-right: 7px;
     color: #314762;
   }
   .activity-desc {
