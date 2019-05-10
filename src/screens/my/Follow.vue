@@ -24,7 +24,7 @@
       <div v-else class="no-follow">
         <div class="icon"></div>
         <div class="text">还没有关注任何会员</div>
-        <div class="hint">点击头像即可关注会员，快去关注吧！</div>
+        <div class="hint">在聊天室点击头像即可关注会员，快去关注吧！</div>
       </div>
     </template>
   </div>
