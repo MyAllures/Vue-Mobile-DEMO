@@ -25,6 +25,7 @@ import ChatBody from './ChatBody'
 import ChatFooter from './ChatFooter'
 import Marquee from './Marquee'
 import WebSocketObj from '../wsObj'
+import {getJWTToken} from '@/utils'
 
 export default {
   components: {
@@ -64,14 +65,16 @@ export default {
       this.ws.raven.joinRoom(this.RECEIVER)
     } else {
       let ravenTokenPromise
-      let ravenToken = localStorage.getItem('raven_token')
+      let ravenToken = getJWTToken('raven')
       if (ravenToken) {
         ravenTokenPromise = Promise.resolve(ravenToken)
       } else {
-        ravenTokenPromise = fetchJWTToken('raven').catch(() => {})
+        ravenTokenPromise = fetchJWTToken('raven').then(setting => {
+          localStorage.setItem('raven_setting', JSON.stringify(setting))
+          return setting.token
+        }).catch(() => {})
       }
       ravenTokenPromise.then(token => {
-        localStorage.setItem('raven_token', token)
         this.$store.dispatch('setWs', { ws: new WebSocketObj(token, this.RECEIVER), type: 'raven' })
       })
     }

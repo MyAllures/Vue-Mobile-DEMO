@@ -1,23 +1,31 @@
 <template>
   <div class="wrapper">
-    <label class="control-btn" for="capture" @click="clickSendImg">
-      <img class="icon" src="../../assets/icon_upload.svg" alt="upload">
+    <label class="control-btn" for="capture">
+      <img class="icon" src="../../assets/icon_upload.svg" alt="upload" />
       <input @change="sendMsgImg"
         type="file"
         id="capture"
         ref="fileImgSend"
         class="img-upload-input"
-        accept="image/*">
+        accept="image/*" />
     </label>
+    <a class="control-btn" href="#" @click.prevent="showReview" v-if="enableReview">
+      <img class="icon" src="../../assets/cs/icon-review.svg" alt="comment" />
+    </a>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import lrz from 'lrz'
-import {uploadImgToService} from '@/api'
-import {msgFormatter} from '@/utils'
+import { uploadImgToService } from '@/api'
+import { msgFormatter } from '@/utils'
+
 export default {
   methods: {
+    ...mapActions('customerService', [
+      'showReviewDialog'
+    ]),
     sendMsgImg (e) {
       let fileInp = this.$refs.fileImgSend
       let file = fileInp.files[0]
@@ -51,7 +59,15 @@ export default {
           })
         })
       })
+    },
+    showReview () {
+      this.showReviewDialog()
     }
+  },
+  computed: {
+    ...mapState('customerService', {
+      enableReview: state => state.enableReview
+    })
   }
 }
 </script>
@@ -61,6 +77,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: flex-end;
+}
+.control-btn {
+  width: 30px;
+  text-align: center;
 }
 .icon {
   display: inline-block;

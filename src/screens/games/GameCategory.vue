@@ -4,7 +4,7 @@
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
           :animate="false"
-          line-width="2"
+          :line-width="2"
           active-color="theme" >
         <tab-item v-for="(key, index) in  tabKeys"
           @on-item-click="switchTab(key)"
@@ -17,7 +17,7 @@
     </div>
     <div v-if="shawOptions.length" class="shaw-options">
       <div class="wrapper vux-1px-b">
-        <check-icon 
+        <check-icon
           :key="option.name"
           v-on:click.native="toggleShaw(option, $event)"
           v-for="option in shawOptions"
@@ -38,7 +38,7 @@
           :key="play.id + 'play'"
           @on-item-click="toggleActive(plays[play.id], $event)">
           <div class="play-area">
-            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3')">
+            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3' || game.code === 'gzk3')">
               <div class="dice-container">
                 <span :class="`play result-${game.code} resultnum-${dice}`"
                   v-for="(dice, index) in play.display_name.split(',')"
@@ -60,7 +60,7 @@
               <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
                 <span class="num">{{play.display_name}}</span>
               </span>
-              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3')}]">{{play.odds}}</span>
+              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3' || game.code === 'gzk3')}]">{{play.odds}}</span>
             </template>
           </div>
         </grid-item>
@@ -372,11 +372,11 @@ export default {
 
 <style lang="less" scoped>
 .shaw-options {
-  overflow-x: scroll; 
-  .wrapper { 
+  overflow-x: scroll;
+  .wrapper {
     width: 600px;
   }
-  
+
   /deep/ .vux-check-icon {
     width: 50px;
     text-align: center;

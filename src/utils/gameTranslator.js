@@ -290,5 +290,6 @@ export default {
   'gxk3': msk3Translator,
   'shk3': msk3Translator,
   'hubk3': msk3Translator,
+  'gzk3': msk3Translator,
   'fc3d': fc3dTranslator
 }
