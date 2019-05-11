@@ -1,5 +1,5 @@
 <template>
-  <div class="chatroom-body-wrapper">
+  <div class="chatroom-body-wrapper" :style="{'padding-top': tryPlayUser?'':'40px'}">
     <div class="chatroom-body" v-fix-scroll ref="view">
       <div v-if="!isRoomExist" class="room-disable">
         <div class="image"></div>
@@ -67,7 +67,7 @@
       <inline-loading></inline-loading>加载中
     </div>
     <template v-if="!loading">
-      <div class="followee-filter filter">
+      <div class="followee-filter filter" v-if="!tryPlayUser">
         <div :class="['followee-filter-item', {active: !followeeOnly}]" @click="followeeOnly=false">全部</div>
         <div :class="['followee-filter-item', {active: followeeOnly}]" @click="followeeOnly=true">关注</div>
       </div>
@@ -111,12 +111,14 @@
               <div class="nickname">{{selectedMember.nickname}}</div>
             </div>
             <div class="buttons single">
-              <div v-if="!selectedMember.username||!user.followeeList||followLoading" class="loading">
-                <inline-loading></inline-loading>加载中
-              </div>
-              <x-button v-else-if="!selectedMember.followable" type="default" disabled>未开放关注</x-button>
-              <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
-              <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
+              <template v-if="!tryPlayUser">
+                <div v-if="!selectedMember.username||!user.followeeList||followLoading" class="loading">
+                  <inline-loading></inline-loading>加载中
+                </div>
+                <x-button v-else-if="!selectedMember.followable" type="default" disabled>未开放关注</x-button>
+                <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
+                <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
+              </template>
             </div>
             <div v-if="selectedMember.username&&isManager&&selectedMember.bannable" class="buttons">
               <div v-if="banLoading" class="loading">
@@ -257,6 +259,9 @@ export default {
         result = result.filter(msg => msg.type !== 'betrecord-sharing')
       }
       return result
+    },
+    tryPlayUser () {
+      return !this.user.account_type
     }
   },
   watch: {
@@ -387,7 +392,6 @@ export default {
   height: calc(~"100%" - 50px);
   flex-direction: column;
   box-sizing: border-box;
-  padding-top: 40px;
 }
 
 .room-loading {
