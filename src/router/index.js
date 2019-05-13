@@ -389,6 +389,17 @@ export default new Router({
       ]
     },
     {
+      path: '/act/:type',
+      name: 'RedEnvPromotion',
+      meta: {
+        title: '',
+        leftCtrl: 'back',
+        headerBgColor: '#d23f34',
+        tabbarHidden: true
+      },
+      component: resolve => { require(['../screens/act/RedEnvPromotion.vue'], resolve) }
+    },
+    {
       path: '/CustomerSerivce',
       name: 'CustomerSerivce',
       meta: {

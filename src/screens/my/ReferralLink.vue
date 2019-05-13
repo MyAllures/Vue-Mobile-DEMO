@@ -3,9 +3,9 @@
     <div class="top">
       <div class="title">推荐链结使用说明</div>
       <div class="rules">
-        <a @click="actDialogType = 'referral'">
+        <router-link to="/act/referral">
           活动规则 <img src="@/assets/red-envelope-v2/icon-arrow.svg" />
-        </a>
+        </router-link>
       </div>
     </div>
     <div class="content-wrap">
@@ -36,7 +36,6 @@
         </div>
       </div>
     </div>
-    <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
   </div>
 </template>
 
@@ -44,7 +43,6 @@
 import { mapState } from 'vuex'
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import ClipboardJS from 'clipboard'
-import RedEnvPromotion from '@/components/actV2/RedEnvPromotion'
 import {
   fetchActRefCode
 } from '@/api'
@@ -52,14 +50,12 @@ import {
 export default {
   name: 'referral_link',
   components: {
-    qrcode: VueQrcode,
-    RedEnvPromotion
+    qrcode: VueQrcode
   },
   data: () => ({
     clipboard: null,
     codeLoading: true,
-    code: '',
-    actDialogType: ''
+    code: ''
   }),
   mounted () {
     this.getRefCode()
