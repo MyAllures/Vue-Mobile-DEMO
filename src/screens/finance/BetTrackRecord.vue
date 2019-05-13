@@ -47,11 +47,11 @@
             </template>
           </td>
           <td>
-            <p>{{record.bet_amount| currency('￥')}}</p>
+            <p>{{record.bet_amount | currency('￥')}}</p>
             <p>{{record.multiple}}倍</p>
           </td>
           <td>
-            <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
+            <span v-if="record.message && (record.status === 'cancelled')">取消 <i class="cancelled-icon" :data-msg="record.message">!</i></span>
             <span v-else-if="record.status === 'ongoing'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
             <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
               {{record.profit | currency('￥')}}
