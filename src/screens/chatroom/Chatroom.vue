@@ -52,6 +52,9 @@ export default {
     }
   },
   created () {
+    if (this.ws) {
+      this.ws.leaveRoom()
+    }
     let tokenPromise
     let token = getJWTToken('eagle')
     if (token) {

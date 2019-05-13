@@ -165,7 +165,7 @@
                 type="primary"
                 action-type="button"
                 :disabled="false"
-                @click.native="$router.push({path: `/red_envelope/${selectedRedEnvelope.id}`})">查看领取详情
+                @click.native="toEnvelopeDetail">查看领取详情
             </x-button>
             </div>
           </div>
@@ -378,6 +378,11 @@ export default {
     handleEnvelope (data) {
       this.selectedRedEnvelope = data
       this.takingRedEnvelopeDialogVisible = true
+    },
+    toEnvelopeDetail () {
+      this.takingRedEnvelopeDialogVisible = false
+      this.$store.dispatch('addKeepAlive', 'Chatroom')
+      this.$router.push({path: `/red_envelope/${this.selectedRedEnvelope.id}`})
     }
   },
   beforeDestroy () {

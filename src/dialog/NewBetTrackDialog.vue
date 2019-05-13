@@ -198,6 +198,7 @@ export default {
         this.bettrack.multiple = this.dialogData.multiple
         this.bettrack.game_schedule = this.dialogData.scheduleId
         this.bettrack.optionDisplayNames = this.dialogData.optionDisplayNames
+        this.ifStopTracking = true
       }
     },
     dialogVisible: function (dialogVisible) {
