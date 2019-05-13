@@ -134,6 +134,7 @@ export default {
           this.$vux.loading.hide()
         })
       } else {
+        this.$store.dispatch('addKeepAlive', 'Chatroom')
         this.$router.push({path: `/red_envelope/${envelopeId}`})
       }
     }

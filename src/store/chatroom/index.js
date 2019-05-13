@@ -39,6 +39,9 @@ export default {
       state.isManager = false
     },
     receiveMsg: (state, message) => {
+      if (state.messages.length > 300) {
+        state.messages = state.messages.slice(100)
+      }
       state.messages.push(message)
     },
     initEmoji: (state, emojiMap) => {

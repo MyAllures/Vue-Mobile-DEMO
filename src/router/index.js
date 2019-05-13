@@ -97,6 +97,12 @@ const baseRoutes = [
         text: '首页',
         path: '/'
       }
+    },
+    beforeEnter: (to, from, next) => {
+      if (from.name !== 'RedEnvelopeDetail') {
+        store.dispatch('removeKeepAlive', 'Chatroom')
+      }
+      next()
     }
   },
   {
