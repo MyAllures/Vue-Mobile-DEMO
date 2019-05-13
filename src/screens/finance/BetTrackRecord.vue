@@ -79,10 +79,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { fetchBetTrackRecord } from '../../api'
+import { fetchNewBetTrackRecord } from '@/api'
 import { XTable, XButton, Toast, Loading, TransferDom, PopupPicker } from 'vux'
 import DateSelector from '@/components/DateSelector'
-import { msgFormatter } from '../../utils'
+import { msgFormatter } from '@/utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
 const today = Vue.moment().format('YYYY-MM-DD')
@@ -100,6 +100,7 @@ const DateFormat = Vue.extend({
     }
   }
 })
+
 export default {
   name: 'PaymentRecord',
   components: {
@@ -171,16 +172,16 @@ export default {
     }
   },
   watch: {
-    'conditions': function (conditions) {
+    conditions: function (conditions) {
       this.$router.push({
         query: conditions
       })
     },
-    '$route': function (to) {
+    $route: function (to) {
       if (to.name === 'BetTrackRecord') {
         this.selectedGame = [to.query.game]
         this.date = to.query.date
-        this.initFetchBetTrackRecord(this.conditions)
+        this.initFetchNewBetTrackRecord(this.conditions)
       }
     }
   },
@@ -188,13 +189,13 @@ export default {
     if (Object.keys(this.$route.query).length === 0) {
       this.$router.replace({query: this.conditions})
     } else {
-      this.initFetchBetTrackRecord(this.conditions)
+      this.initFetchNewBetTrackRecord(this.conditions)
     }
   },
   methods: {
-    initFetchBetTrackRecord (option) {
+    initFetchNewBetTrackRecord (option) {
       this.loading = true
-      fetchBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
+      fetchNewBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
         this.totalCount = data.count
         this.records = data.results
       }).catch(errorMsg => {
@@ -220,7 +221,7 @@ export default {
         return
       }
       this.loading = true
-      fetchBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
+      fetchNewBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.records.push(...data.results)
         this.loading = false
