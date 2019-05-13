@@ -24,7 +24,7 @@
                 <div class="icon"></div>
                 助手
               </div>
-              <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
+              <ul class="helper-link-group" v-show="helperVisible" @click="$store.dispatch('hideHelper')">
                 <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
                   <a target="_blank" class="badage" :href="seoWebsite">
                     人工计划
@@ -132,7 +132,6 @@ export default {
       contentType: '',
       isGameInfoVisible: false,
       isGameMenuVisible: false,
-      isHelperVisible: false,
       showNotifiyMsg: true,
       showChatRoom: false,
       showBottomPrompt: true
@@ -170,7 +169,7 @@ export default {
       'allGames'
     ]),
     ...mapState([
-      'roomInfo', 'roomId', 'systemConfig', 'theme'
+      'roomInfo', 'roomId', 'systemConfig', 'theme', 'helperVisible'
     ]),
     chatroomEnabled () {
       return this.systemConfig.chatroomEnabled
@@ -335,11 +334,15 @@ export default {
       }
     },
     toggleHelper () {
-      this.isHelperVisible = !this.isHelperVisible
+      if (this.helperVisible) {
+        this.$store.dispatch('hideHelper')
+      } else {
+        this.$store.dispatch('showHelper')
+      }
       this.isGameMenuVisible = false
     },
     onClickOutSideHelper () {
-      this.isHelperVisible = false
+      this.$store.dispatch('hideHelper')
     },
     showGameInfo (type) {
       this.sendHelperGa(type)

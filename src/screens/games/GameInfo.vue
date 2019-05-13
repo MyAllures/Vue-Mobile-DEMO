@@ -2,7 +2,7 @@
   <popup
     :value="visible"
     @on-hide="$emit('update:visible', false)"
-    :height="`calc(100vh - ${reservedCountdownPanelHeight}px)`"
+    :height="`calc(100% - ${reservedCountdownPanelHeight || 46}px)`"
     :zIndex="200"
     v-transfer-dom>
       <div :class="['info-content', type]">
@@ -16,6 +16,7 @@
 
 <script>
 import { Popup, XButton, TransferDom } from 'vux'
+import {mapState} from 'vuex'
 const GameIntro = (resolve) => require(['@/screens/games/GameIntro'], resolve)
 const RoadBeads = (resolve) => require(['@/screens/games/RoadBeads'], resolve)
 const Leaderboards = (resolve) => require(['@/screens/games/Leaderboards'], resolve)
@@ -50,6 +51,7 @@ export default {
     TransferDom
   },
   computed: {
+    ...mapState(['helperVisible']),
     showing () {
       let type = this.type
       switch (type) {
@@ -64,6 +66,19 @@ export default {
         case 'intro':
           return GameIntro
       }
+    }
+  },
+  watch: {
+    'helperVisible': {
+      handler (visible) {
+        if (visible) {
+          let sectionDOM = document.getElementById('data-section')
+          if (sectionDOM) {
+            this.reservedCountdownPanelHeight = 46 + sectionDOM.getBoundingClientRect().height
+          }
+        }
+      },
+      immediate: true
     }
   }
 }

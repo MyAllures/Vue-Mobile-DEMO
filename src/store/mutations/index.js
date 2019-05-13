@@ -177,6 +177,12 @@ export default {
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
   },
+  [types.SHOW_HELPER]: (state) => {
+    state.helperVisible = true
+  },
+  [types.HIDE_HELPER]: (state) => {
+    state.helperVisible = false
+  },
   [types.DATA_SECTION_STYLE]: (state, style) => {
     state.dataSectionStyle = style
   }
