@@ -52,10 +52,10 @@
       </div>
     </div>
 
-    <flexbox class="activity-area" gutter="4" v-if="showActivityArea">
+    <flexbox class="activity-area" :gutter="4" v-if="showActivityArea">
       <flexbox-item class="activity-register" v-if="!user.account_type && systemConfig.regPresentAmount > 0">
         <router-link to="/register">
-          <flexbox class="activity" gutter="2">
+          <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
               <img src="../assets/red-envelope-v2/act-index-1.svg" />
             </flexbox-item>
@@ -68,7 +68,7 @@
       </flexbox-item>
       <flexbox-item v-if="actBoost.enabled">
         <a href="#" @click.prevent="actDialogType = 'boost'">
-          <flexbox class="activity" gutter="2">
+          <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
               <img src="../assets/red-envelope-v2/act-index-2.svg" />
             </flexbox-item>
@@ -81,7 +81,7 @@
       </flexbox-item>
       <flexbox-item v-if="actReferral.enabled">
         <a href="#" @click.prevent="actDialogType = 'referral'">
-          <flexbox class="activity" gutter="2">
+          <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
               <img src="../assets/red-envelope-v2/act-index-3.svg" />
             </flexbox-item>
