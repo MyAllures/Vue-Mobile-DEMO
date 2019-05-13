@@ -3,9 +3,9 @@
     <div class="top">
       <div class="title">我的今日返利红包</div>
       <div class="rules">
-        <a @click="actDialogType = 'boost'">
+        <router-link to="/act/boost">
           活动规则 <img src="@/assets/red-envelope-v2/icon-arrow.svg" />
-        </a>
+        </router-link>
       </div>
     </div>
     <div class="content-wrap">
@@ -38,7 +38,6 @@
         </div>
       </template>
     </div>
-    <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
     <RedEnvDialog :data="redEnvData" :remain="redEnvRemain" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
   </div>
 </template>
@@ -46,7 +45,6 @@
 <script>
 import { mapState } from 'vuex'
 import { Group, Cell, XButton } from 'vux'
-import RedEnvPromotion from '@/components/actV2/RedEnvPromotion'
 import RedEnvDialog from '@/components/actV2/RedEnvDialog'
 import {
   fetchActBoost,
@@ -59,7 +57,6 @@ export default {
     Group,
     Cell,
     XButton,
-    RedEnvPromotion,
     RedEnvDialog
   },
   data: () => ({
@@ -67,8 +64,7 @@ export default {
     myData: null,
     reLoading: false,
     redEnvData: {},
-    showReDialog: false,
-    actDialogType: ''
+    showReDialog: false
   }),
   mounted () {
     this.fetchActBoost()

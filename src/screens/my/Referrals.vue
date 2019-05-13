@@ -3,9 +3,9 @@
     <div class="top">
       <div class="title">我的好友推荐名单</div>
       <div class="rules">
-        <a @click="actDialogType = 'referral'">
+        <router-link to="/act/referral">
           活动规则 <img src="@/assets/red-envelope-v2/icon-arrow.svg" />
-        </a>
+        </router-link>
       </div>
     </div>
     <div class="content-wrap">
@@ -38,7 +38,6 @@
         <XButton text="推荐好友领红包" type="primary" @click.native="$router.push('/my/referral_link')" />
       </div>
     </div>
-    <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
     <RedEnvDialog :data="redEnvData" :remain="list[currentIdx] && list[currentIdx].envelope_count" :show="showReDialog" @next="openRE" @hide="showReDialog = false" />
   </div>
 </template>
@@ -46,7 +45,6 @@
 <script>
 import { mapState } from 'vuex'
 import { XButton } from 'vux'
-import RedEnvPromotion from '@/components/actV2/RedEnvPromotion'
 import RedEnvDialog from '@/components/actV2/RedEnvDialog'
 import {
   fetchActRefList,
@@ -57,7 +55,6 @@ export default {
   name: 'referrals',
   components: {
     XButton,
-    RedEnvPromotion,
     RedEnvDialog
   },
   data: () => ({
@@ -67,8 +64,7 @@ export default {
     redEnvData: {},
     showReDialog: false,
     currentId: -1,
-    currentIdx: -1,
-    actDialogType: ''
+    currentIdx: -1
   }),
   mounted () {
     this.fetchActRefList()

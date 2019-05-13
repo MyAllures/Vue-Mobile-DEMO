@@ -67,7 +67,7 @@
         </router-link>
       </flexbox-item>
       <flexbox-item v-if="actBoost.enabled">
-        <a href="#" @click.prevent="actDialogType = 'boost'">
+        <router-link to="/act/boost">
           <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
               <img src="../assets/red-envelope-v2/act-index-2.svg" />
@@ -77,10 +77,10 @@
               <div class="activity-desc">天天拆紅包</div>
             </flexbox-item>
           </flexbox>
-        </a>
+        </router-link>
       </flexbox-item>
       <flexbox-item v-if="actReferral.enabled">
-        <a href="#" @click.prevent="actDialogType = 'referral'">
+        <router-link to="/act/referral">
           <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
               <img src="../assets/red-envelope-v2/act-index-3.svg" />
@@ -90,7 +90,7 @@
               <div class="activity-desc">好友多紅包多</div>
             </flexbox-item>
           </flexbox>
-        </a>
+        </router-link>
       </flexbox-item>
     </flexbox>
 
@@ -188,8 +188,6 @@
       class="envelope-btn"
       @click="showEnvelope">
     </div>
-
-    <RedEnvPromotion :type="actDialogType" @hide="actDialogType = ''" />
   </div>
 </template>
 
@@ -224,7 +222,6 @@ import UnreadPoint from '@/components/UnreadPoint'
 import WinHistory from '@/components/WinHistory'
 import AppPrompt from '@/components/AppPrompt'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
-import RedEnvPromotion from '@/components/actV2/RedEnvPromotion'
 
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -243,8 +240,7 @@ export default {
       today: this.$moment(),
       currentTag: '',
       isGameMenuVisible: false,
-      isEnvelopeVisible: false,
-      actDialogType: ''
+      isEnvelopeVisible: false
     }
   },
   directives: {
@@ -275,8 +271,7 @@ export default {
     GameMenu,
     ActivityEnvelopeDialog,
     WinHistory,
-    AppPrompt,
-    RedEnvPromotion
+    AppPrompt
   },
   mixins: [freetrial],
   computed: {
@@ -361,9 +356,6 @@ export default {
     },
     showDialog (showDialog) {
       this.fixBody(showDialog)
-    },
-    actDialogType (type) {
-      this.fixBody(type !== '')
     }
   },
   created () {

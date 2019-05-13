@@ -1,6 +1,6 @@
 <template>
   <ViewArea>
-    <top-bar v-if="$route.name!=='GameDetail' && $route.name!=='Home' && $route.name !== 'DetailBetRecord'">
+    <top-bar v-if="!['GameDetail', 'Home', 'DetailBetRecord'].includes($route.name)">
       <template slot="left" v-if="pageSetting.leftCtrl">
         <div
           v-if="pageSetting.leftCtrl === 'back'"
@@ -23,7 +23,7 @@
             <div
               class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥')}}
+              {{ user.balance|currency('￥') }}
             </div>
           </template>
         </div>
@@ -37,7 +37,6 @@
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view ref="page"></router-view>
     </keep-alive>
-
     <tabbar v-show="!tabbarHidden" class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
