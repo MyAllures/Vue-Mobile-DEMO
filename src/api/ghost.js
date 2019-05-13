@@ -56,7 +56,7 @@ function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId) {
 }
 
 function fetchBetTrackRecord (option) {
-  let url = `${urls.bettrack_record}?`
+  let url = `${urls.new_bettrack}?`
   Object.keys(option).forEach(key => {
     if (key === 'date') {
       url += `&start_date=${option[key]}&end_date=${option[key]}`
