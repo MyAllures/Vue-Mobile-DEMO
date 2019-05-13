@@ -2,7 +2,7 @@
   <popup
     :value="visible"
     @on-hide="$emit('update:visible', false)"
-    height="75%"
+    :height="`calc(100vh - ${reservedCountdownPanelHeight}px)`"
     :zIndex="200"
     v-transfer-dom>
       <div :class="['info-content', type]">
@@ -35,6 +35,11 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    }
+  },
+  data () {
+    return {
+      reservedCountdownPanelHeight: 46 + 90
     }
   },
   components: {
