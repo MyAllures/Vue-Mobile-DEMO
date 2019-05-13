@@ -233,8 +233,12 @@ export default {
   }
 }
 </script>
+
 <style lang="less" scoped>
 @import '../../styles/vars.less';
+.container {
+  padding-bottom: 50px;
+}
 .filter-area {
   position: sticky;
   top: 0;
