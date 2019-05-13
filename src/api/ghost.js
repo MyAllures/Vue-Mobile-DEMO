@@ -56,7 +56,7 @@ function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId) {
 }
 
 function fetchBetTrackRecord (option) {
-  let url = `${urls.new_bettrack}?`
+  let url = `${urls.bettrack_record}?`
   Object.keys(option).forEach(key => {
     if (key === 'date') {
       url += `&start_date=${option[key]}&end_date=${option[key]}`
@@ -82,6 +82,18 @@ function betTrack (data) {
  */
 function newBetTrack (data) {
   return axiosGhost.post(`${urls.new_bettrack}`, data)
+}
+
+function fetchNewBetTrackRecord (option) {
+  let params = []
+  Object.keys(option).forEach(key => {
+    if (key === 'date') {
+      params.push(`bet_date=${option[key]}`)
+      return
+    }
+    params.push(`${key}=${option[key]}`)
+  })
+  return axiosGhost.get(`${urls.new_bettrack}?${params.join('&')}`)
 }
 
 function placeBet (data) {
@@ -389,6 +401,7 @@ export {
   placeBet,
   betTrack,
   newBetTrack,
+  fetchNewBetTrackRecord,
   fetchBetTrackRecord,
   fetchBetTrackSchedules,
   fetchSchedule,
