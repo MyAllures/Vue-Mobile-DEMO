@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="dataSectionStyle">
+    <div class="data-section" id="data-section" :style="dataSectionStyle">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
@@ -537,7 +537,6 @@ export default {
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 2; // higher than the sticky groupplay-title
   transition-duration: .7s;
-  flex: 0 0 90px;
 }
 
 .active {

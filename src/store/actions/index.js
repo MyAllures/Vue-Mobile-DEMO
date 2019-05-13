@@ -268,6 +268,12 @@ export default {
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
   },
+  showHelper: ({commit}) => {
+    commit(types.SHOW_HELPER)
+  },
+  hideHelper: ({commit}) => {
+    commit(types.HIDE_HELPER)
+  },
   setDataSectionStyle: ({commit}, style) => {
     commit(types.DATA_SECTION_STYLE, style)
   }
