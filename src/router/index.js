@@ -290,6 +290,7 @@ const baseRoutes = [
             meta: {
               title: '追号纪录',
               gaTitle: '追号纪录',
+              rightCtrl: 'info',
               requiresAuth: true
             },
             component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }
