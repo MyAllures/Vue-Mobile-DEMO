@@ -40,7 +40,7 @@
           </div>
           <div class="form-item">
             <div class="form-item__content">
-              <input v-model="content" class="form-item__input" placeholder="恭喜发财，大吉大利！"></input>
+              <input v-model="envelope.content" class="form-item__input" maxlength="10" placeholder="恭喜发财，大吉大利！"></input>
             </div>
           </div>
           <div class="footer">
@@ -110,7 +110,7 @@ export default {
       error: '',
       dialogStyle,
       validators: {
-        'pack_amount': {
+        pack_amount: {
           error: '',
           validate: (value) => {
             if (!value) {
@@ -127,7 +127,7 @@ export default {
             }
           }
         },
-        'pack_nums': {
+        pack_nums: {
           error: '',
           validate: (value) => {
             if (!value) {
