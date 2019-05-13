@@ -113,22 +113,22 @@
         <div class="col">
           追&nbsp;
           <input
-            type="number"
             class="period-input"
             pattern="[0-9]*"
-            min="0"
-            @keypress="isNumberKey"
-            v-model="bettrack.period"/>&nbsp;期
+            v-positive-number="{integer: true}"
+            @update="bettrack.period=$event.target.value"
+            :value="bettrack.period"
+          />&nbsp;期
         </div>
         <div class="col">
           翻倍：
           <input
-            type="number"
             class="time-input"
             pattern="[0-9]*"
-            min="0"
-            @keypress="isNumberKey"
-            v-model="bettrack.multiple"/>
+            v-positive-number="{integer: true}"
+            @update="bettrack.multiple=$event.target.value"
+            :value="bettrack.multiple"
+          />
         </div>
         <div class="col">
           <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openBettrackDialog">提交</x-button>
@@ -154,6 +154,7 @@ import AmountInput from '../../components/AmountInput'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
 import FixScroll from '@/directive/fixscroll'
 import {hasBettrack} from '@/utils/bettrackSetting'
+import PositiveNumber from '@/directive/positiveNumber'
 
 export default {
   name: 'Game',
@@ -177,7 +178,8 @@ export default {
   },
   directives: {
     TransferDom,
-    FixScroll
+    FixScroll,
+    PositiveNumber
   },
   data () {
     return {
