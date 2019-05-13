@@ -26,7 +26,7 @@
       <div class="info-panel">
         <div class="name">{{envelope.sender}}的红包</div>
         <div class="desc">{{envelope.content}}</div>
-        <div v-if="envelope.status==='acquired'"class="amount">{{envelope.amount|currency('￥')}}</div>
+        <div v-if="envelope.status==='acquired'"class="amount">{{myAmount|currency('￥')}}</div>
       </div>
       <div class="ellipse"></div>
     </div>
@@ -64,7 +64,11 @@ export default {
   computed: {
     ...mapState([
       'user'
-    ])
+    ]),
+    myAmount () {
+      const data = this.envelope.receiver_list.find(list => list.username === this.user.username)
+      return data ? data.amount : 0
+    }
   },
   created () {
     fetchRedEnvelopeDetail(this.$route.params.id).then(res => {
