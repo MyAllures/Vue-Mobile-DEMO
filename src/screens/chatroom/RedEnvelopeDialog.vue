@@ -40,7 +40,7 @@
           </div>
           <div class="form-item">
             <div class="form-item__content">
-              <input v-model="envelope.content" class="form-item__input" placeholder="恭喜发财，大吉大利！"></input>
+              <input v-model="envelope.content" class="form-item__input" maxlength="10" placeholder="恭喜发财，大吉大利！"></input>
             </div>
           </div>
           <div class="footer">
