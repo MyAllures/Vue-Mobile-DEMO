@@ -1,0 +1,6 @@
+{
+  "ssSeries": ["cs5fc", "hjssc", "ynssc", "cs10fc", "csffc", "tjssc", "xjssc", "cqssc", "jsssc"],
+  "racingSeries": ["cs60cr", "cs600cr", "jspk10", "bcr", "er75ft", "mlaft"],
+  "ddSeries": ["pcdd", "jnd28", "luckdd"],
+  "k3Series": ["msk3", "jsk3", "bjk3", "gxk3", "shk3", "hubk3", "gzk3"]
+}

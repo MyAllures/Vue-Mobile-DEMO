@@ -28,7 +28,7 @@
       </div>
     </div>
     <div :class="['history-panel-mask', {visible: isHistoryVisible}]" @click="isHistoryVisible = false"></div>
-    <div class="mode-tab">
+    <div class="mode-tab" v-if="hasBettrack(currentGame.code)">
       <div
         :class="['mode-tab-item', {active: mode==='bet'}]"
         @click="switchBetMode('bet')">投注</div>
@@ -153,6 +153,7 @@ import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
 import AmountInput from '../../components/AmountInput'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
 import FixScroll from '@/directive/fixscroll'
+import {hasBettrack} from '@/utils/bettrackSetting'
 
 export default {
   name: 'Game',
@@ -205,7 +206,8 @@ export default {
       historyData: [],
       isHistoryVisible: false,
       mode: 'bet',
-      showBottomPrompt: false
+      showBottomPrompt: false,
+      hasBettrack
     }
   },
   computed: {
