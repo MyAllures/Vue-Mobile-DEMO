@@ -59,10 +59,18 @@ export default {
         if (bet.bet_options && bet.bet_options.options) {
           optionDisplayNames = bet.bet_options.options
         }
+
+        let betAmount
+        if (bet.bet_options.opts_combos_count) {
+          // 注額是總額所以在多組的情況要按組數平分
+          betAmount = bet.bet_amount / bet.bet_options.opts_combos_count
+        } else {
+          betAmount = bet.bet_amount
+        }
         return {
           game_schedule: bet.game_schedule,
           display_name: `${bet.play.playgroup} - ${bet.play.display_name}`,
-          bet_amount: bet.bet_amount,
+          bet_amount: betAmount,
           play: bet.play.id,
           bet_options: bet.bet_options,
           odds: bet.play.odds,

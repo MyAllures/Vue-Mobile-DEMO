@@ -34,9 +34,11 @@
     </div>
   </div>
   <div class="input-panel" id="typing" @click="handTriggerPanel">
-    <div v-if="envelopeSetting.enabled===true" id="envelope-btn" class="envelope-btn" @click="openRedEnvelopeDialog">
+    <div v-if="envelopeSetting.enabled===true" id="envelope-btn" :class="['envelope-btn btn', {disabled: noPermission}]" @click="openRedEnvelopeDialog">
+      <red-envelope-icon/>
     </div>
-    <label class="image-btn" id="image-btn">
+    <label :class="['image-btn btn', {disabled: noPermission}]" id="image-btn">
+      <picture-icon/>
       <input @change="sendImg"
         type="file"
         ref="fileImgSend"
@@ -54,7 +56,8 @@
         v-model="msgCnt"
         :disabled="noPermission">
       </textarea>
-      <div id="emoji-btn" class="emoji-btn">
+      <div id="emoji-btn" :class="['emoji-btn btn', {disabled: noPermission}]">
+        <smile-icon/>
       </div>
     </label>
     <div class="send-btn" @click="sendMsg">
@@ -74,12 +77,18 @@ import { eagle } from '@/api'
 import lrz from 'lrz'
 import vClickOutside from 'v-click-outside'
 import RedEnvelopeDialog from './RedEnvelopeDialog'
+import PictureIcon from '@/components/icon/Picture'
+import RedEnvelopeIcon from '@/components/icon/RedEnvelope'
+import SmileIcon from '@/components/icon/Smile'
 export default {
   name: 'ChatFooter',
   components: {
     Swiper,
     SwiperItem,
-    RedEnvelopeDialog
+    RedEnvelopeDialog,
+    PictureIcon,
+    RedEnvelopeIcon,
+    SmileIcon
   },
   directives: {
     clickOutside: vClickOutside.directive
@@ -152,7 +161,8 @@ export default {
         if (id === 'envelope-btn') {
           this.isShowEmojiPanel = false
           break
-        } else if (id === 'emoji-btn') {
+        }
+        if (id === 'emoji-btn') {
           if (this.noPermission) {
             return
           }
@@ -170,8 +180,16 @@ export default {
       }
     },
     hidePanel (e) {
-      if (e && e.target.id === 'emoji-btn') {
-        return
+      if (e) {
+        let target = e.target
+        let id = target.id
+        while (target.nodeName !== 'BODY') {
+          if (id === 'emoji-btn') {
+            return
+          }
+          target = target.parentNode
+          id = target.id
+        }
       }
       this.isShowEmojiPanel = false
     },
@@ -191,7 +209,7 @@ export default {
         return false
       }
 
-      lrz(file, {width: 600}).then(rst => {
+      lrz(file, { width: 600 }).then(rst => {
         let formData = new FormData()
         formData.append('receiver', this.ws.roomId)
         formData.append('image', rst.file)
@@ -269,28 +287,23 @@ export default {
       color: #fff;
     }
   }
-  .envelope-btn,
-  .keyboard-btn {
+  .btn {
+    &.disabled {
+      color: #ddd;
+    }
     flex: 0 0 auto;
-    box-sizing: border-box;
-    height: 100%;
-    width: 50px;
-    border-right: 1px solid #e5e5e5;
-    background-size: 60% 60%;
-  }
-  .keyboard-btn {
-    background: url("../../assets/chatroom/keyboard.svg") no-repeat center
-      center;
-  }
-  .envelope-btn {
-    background: url("../../assets/chatroom/envelope.svg") no-repeat center center;
-  }
-  .image-btn {
-    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 100%;
     width: 40px;
-    background: url("../../assets/chatroom/picture.svg") no-repeat center center;
-    background-size: 60% 60%;
+    color: #999;
+  }
+  .envelope-btn {
+    box-sizing: border-box;
+    border-right: 1px solid #e5e5e5;
+  }
+  .image-btn {
     .img-upload-input {
       display: none;
     }
@@ -299,10 +312,6 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
-    width: 40px;
-    background: url("../../assets/chatroom/smile.svg") no-repeat center center;
-    background-size: 60% auto;
   }
 
   .touch-input {

@@ -271,6 +271,9 @@ export default {
       }
       this.notNeedScroll = false
       let view = this.$refs.view
+      if (!view) {
+        return
+      }
       if (oldCount === 0) { // 初始
         this.$nextTick(() => {
           view.scrollTop = view.scrollHeight
@@ -290,6 +293,9 @@ export default {
         if (!this.notNeedScroll) {
           this.$nextTick(() => {
             const view = this.$refs.view
+            if (!view) {
+              return
+            }
             view.scrollTop = view.scrollHeight
           })
         }
