@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="dataSectionStyle">
+    <div class="data-section" id="data-section" :style="dataSectionStyle">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
@@ -71,10 +71,10 @@
             <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
               <span class="tips">常用金额</span>
               <ul  class="items" >
-                <li 
+                <li
                   v-if="index < 5"
-                  @click="amount=item.bet_amount + ''" 
-                  v-for="(item, index) in user.bet_amount_count" 
+                  @click="amount=item.bet_amount + ''"
+                  v-for="(item, index) in user.bet_amount_count"
                   class="vux-1px-l">{{ item.bet_amount }}</li>
               </ul>
             </div>
@@ -532,6 +532,7 @@ export default {
 }
 
 .data-section {
+  box-sizing: border-box;
   background: #fff;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 2; // higher than the sticky groupplay-title
@@ -634,7 +635,7 @@ export default {
       color: #333;
     }
   }
-  
+
 }
 .amount-shortcut {
   display: flex;
@@ -654,7 +655,7 @@ export default {
   &.collapsed {
     max-height: 0;
   }
-  .tips { 
+  .tips {
     font-size: 13px;
     padding: 0 5px;
     color: #999;
