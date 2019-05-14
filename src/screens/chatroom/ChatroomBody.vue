@@ -350,7 +350,7 @@ export default {
       this.ws.banMember(this.selectedMember.username, duration).then(res => {
         this.selectedMember.banned = true
         this.$vux.toast.show({
-          text: res.status,
+          text: `<span style="word-break: break-all;width: 7.6em;">${res.status}</span>`,
           type: 'success'
         })
       }).catch(() => {

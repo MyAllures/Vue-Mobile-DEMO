@@ -116,7 +116,7 @@ export default {
             if (!value) {
               return '请输入金额'
             } else {
-              value = parseInt(value)
+              value = parseFloat(value)
               if (value < this.envelopeSetting.min_amount) {
                 return '须高于最低金额限制'
               } else if (value > this.envelopeSetting.max_amount) {
