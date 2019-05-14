@@ -42,6 +42,7 @@
             <div class="form-item__content">
               <input v-model="content" class="form-item__input" placeholder="恭喜发财，大吉大利！"></input>
             </div>
+            <div class="form-item__hint">附言最多十字</div>
           </div>
           <div class="footer">
             <div class="error">{{error}}</div>
