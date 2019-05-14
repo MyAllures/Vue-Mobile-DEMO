@@ -105,6 +105,15 @@ function register (user) {
   return axios.post(urls.register, qs.stringify(user), {withCredentials: true})
 }
 
+function trial (data) {
+  let payload = { account_type: 0 }
+  if (data.verification_code_0 && data.verification_code_1) {
+    payload.verification_code_0 = data.verification_code_0
+    payload.verification_code_1 = data.verification_code_1
+  }
+  return axios.post(`${urls.register}trial/`, qs.stringify(payload))
+}
+
 function checkUserName (username) {
   return axios.get(urls.check_username, { params: { username: username } })
 }
@@ -301,6 +310,7 @@ function fetchWinHistory () {
 function fetchUnreadCount () {
   return axios.get(urls.unreadMessage)
 }
+
 export {
   fetchUnreadCount,
   fetchActivityEnvelope,
@@ -357,5 +367,6 @@ export {
   updateUser,
   fetchUser,
   logout,
-  login
+  login,
+  trial
 }
