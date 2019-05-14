@@ -131,7 +131,7 @@
           />
         </div>
         <div class="col">
-          <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openBettrackDialog">提交</x-button>
+          <x-button type="primary" :disabled="submitBtnDisabled || !bettrack.multiple || !bettrack.period" @click.native="openBettrackDialog">提交</x-button>
         </div>
       </div>
       <div v-if="(gameClosed&&closeCountDown)" class="gameclosed-mask">
