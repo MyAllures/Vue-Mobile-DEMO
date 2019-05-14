@@ -56,7 +56,7 @@ export default {
       this.unbanLoading = true
       this.ws.unbanMember(username).then(res => {
         this.$vux.toast.show({
-          text: res.status,
+          text: `<span style="word-break: break-all;width: 7.6em;">${res.status}</span>`,
           type: 'success'
         })
         return this.ws.fetchBannedList()
