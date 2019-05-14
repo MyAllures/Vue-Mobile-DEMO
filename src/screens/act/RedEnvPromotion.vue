@@ -44,22 +44,22 @@
           </div>
         </div>
       </div>
-      <div class="footer">
-        <template v-if="user.account_type">
-          <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
-          <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
-        </template>
-        <template v-else>
-          <div class="f-col login">
-           <p>已有帐号</p>
-           <button @click="goto('/login')">立即登录</button>
-         </div>
-         <div class="f-col register">
-           <p>尚未注册</p>
-           <button @click="goto('/register')">免费注册</button>
-         </div>
-        </template>
-      </div>
+    </div>
+    <div class="footer">
+      <template v-if="user.account_type">
+        <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
+        <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
+      </template>
+      <template v-else>
+        <div class="f-col login">
+         <p>已有帐号</p>
+         <button @click="goto('/login')">立即登录</button>
+       </div>
+       <div class="f-col register">
+         <p>尚未注册</p>
+         <button @click="goto('/register')">免费注册</button>
+       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -99,9 +99,8 @@ export default {
 <style lang="scss" scoped>
 #re-promotion {
   background: #d23f34;
-  width: 100vw;
-  height: 100%;
   padding-top: 5px;
+  min-height: calc(100vh - 46px - 5px);
 }
 .header {
   height: 46px;
@@ -198,7 +197,8 @@ export default {
   border-radius: 4px;
 }
 .footer {
-  margin: 25px auto;
+  margin: 0 auto;
+  padding: 25px 0;
   width: 300px;
   display: flex;
   justify-content: center;

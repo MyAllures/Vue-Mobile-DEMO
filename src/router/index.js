@@ -335,7 +335,8 @@ export default new Router({
         title: '返利红包',
         leftCtrl: 'back',
         rightCtrl: 'info',
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/RedEnvelopes.vue'], resolve) }
     },
@@ -343,9 +344,10 @@ export default new Router({
       path: '/my/referral_link',
       name: 'referral_link',
       meta: {
-        title: '推荐链结',
+        title: '推荐好友',
         leftCtrl: 'back',
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/ReferralLink.vue'], resolve) }
     },
@@ -355,7 +357,8 @@ export default new Router({
       meta: {
         title: '我的推荐',
         leftCtrl: 'back',
-        requiresAuth: true
+        requiresAuth: true,
+        tabbarHidden: true
       },
       component: resolve => { require(['../screens/my/Referrals.vue'], resolve) }
     },

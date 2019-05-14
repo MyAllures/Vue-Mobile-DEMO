@@ -62,7 +62,7 @@
       <group title="我的好友推荐" v-if="referralEnabled">
         <cell
           @click.native="$router.push('/my/referral_link')"
-          title="推荐链结"
+          title="推荐好友"
           is-link>
           <img class="svg-icon" src="../assets/my/recommend_link.svg" slot="icon" />
         </cell>
