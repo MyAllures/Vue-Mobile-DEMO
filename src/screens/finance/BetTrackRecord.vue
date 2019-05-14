@@ -51,7 +51,7 @@
             <p>{{record.multiple}}倍</p>
           </td>
           <td>
-            <span v-if="record.message && (record.status === 'cancelled')">取消 <i class="cancelled-icon" :data-msg="record.message">!</i></span>
+            <span v-if="record.status === 'cancelled'">取消 <i v-if="record.message" class="cancelled-icon" :data-msg="record.message">!</i></span>
             <span v-else-if="record.status === 'ongoing'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
             <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
               {{record.profit | currency('￥')}}
@@ -68,7 +68,6 @@
         </tr>
       </tbody>
     </x-table>
-    <!-- <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast> -->
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
   <register-tips v-else ></register-tips>
