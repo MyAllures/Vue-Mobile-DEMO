@@ -23,7 +23,7 @@
               <div class="progress-inner" :style="{ width: `${progressWidth}%` }"></div>
             </div>
           </div>
-          <div class="prompt highlight">
+          <div class="prompt">
             <span v-if="myData.next_level === 'finished'">今日返利红包已领完，明天继续加油</span>
             <span v-else>{{ myData.next_level }}</span>
           </div>
