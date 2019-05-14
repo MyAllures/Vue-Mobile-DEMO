@@ -23,7 +23,7 @@
           <cube-loading v-if="codeLoading" />
           <qrcode ref="qr" :value="refLink" :options="{ width: 200, margin: 2 }" v-else />
         </div>
-        <a class="weui-btn weui-btn_mini weui-btn_default download-qr" download="qrcode.jpg" @click="saveQRCode">保存至手机</a>
+        <XButton class="download-qr" text="保存至手机" :mini="true" @click.native="saveQRCode" />
       </div>
       <div class="title">
         <img src="@/assets/red-envelope-v2/blue-point.svg" />
@@ -41,6 +41,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { XButton } from 'vux'
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import ClipboardJS from 'clipboard'
 import {
@@ -50,6 +51,7 @@ import {
 export default {
   name: 'referral_link',
   components: {
+    XButton,
     qrcode: VueQrcode
   },
   data: () => ({
@@ -79,9 +81,13 @@ export default {
         e.trigger.focus()
       })
     },
-    saveQRCode (e) {
-      const image = this.$refs.qr.$el.toDataURL('image/jpg')
-      e.target.href = image
+    saveQRCode () {
+      const image = this.$refs.qr.$el.toDataURL('image/png')
+      const el = document.createElement('a')
+      el.download = 'qrcode.png'
+      el.href = image
+      el.target = '_blank'
+      el.click()
     }
   },
   computed: {
