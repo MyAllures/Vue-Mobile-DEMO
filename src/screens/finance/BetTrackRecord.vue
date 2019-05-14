@@ -31,6 +31,8 @@
           v-for="(record, index) in records" :key="index">
           <td :style="{'line-height':'20px'}">
             <date-format :record="record"/>
+            <span v-if="record.bet_type==='is_bettrackrecorde'" class="issue-number">追号</span>
+            <span v-if="record.bet_type==='is_expert_plan'" class="issue-number">专家计划</span>
           </td>
           <td>
             <p>{{record.game.display_name}}</p>

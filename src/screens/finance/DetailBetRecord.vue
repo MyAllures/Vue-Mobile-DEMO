@@ -53,7 +53,8 @@
             :key="index">
           <td>
             <p :class="{'half-height':record.type==='bettrack'}">{{record.created_at|moment('HH:mm:ss')}}</p>
-            <p v-if="record.type==='bettrack'" class="bettrack-hint half-height">追号</p>
+            <p v-if="record.bet_type==='is_bettrackrecorde'" class="bettrack-hint half-height">追号</p>
+            <p v-if="record.bet_type==='is_expert_plan'" class="bettrack-hint half-height">专家计划</p>
           </td>
           <td>
             <span class="game">{{record.game.display_name}}</span>
