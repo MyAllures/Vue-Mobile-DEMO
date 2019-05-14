@@ -174,9 +174,6 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
   }
 }
 const search = window.location.search.slice(1, window.location.search.length)
-if (search) {
-  window.history.replaceState({}, document.title, '/')
-}
 const params = qs.parse(search)
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
