@@ -47,11 +47,11 @@
             </template>
           </td>
           <td>
-            <p>{{record.bet_amount| currency('￥')}}</p>
+            <p>{{record.bet_amount | currency('￥')}}</p>
             <p>{{record.multiple}}倍</p>
           </td>
           <td>
-            <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
+            <span v-if="record.message && (record.status === 'cancelled')">取消 <i class="cancelled-icon" :data-msg="record.message">!</i></span>
             <span v-else-if="record.status === 'ongoing'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
             <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
               {{record.profit | currency('￥')}}
@@ -71,20 +71,19 @@
     <!-- <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast> -->
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
-  <div v-else class="tip">
-    <p>请注册会员后访问</p>
-    <x-button type="primary" link="/register">立即注册</x-button>
-  </div>
+  <register-tips v-else ></register-tips>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { fetchBetTrackRecord } from '../../api'
+import { fetchNewBetTrackRecord } from '@/api'
 import { XTable, XButton, Toast, Loading, TransferDom, PopupPicker } from 'vux'
 import DateSelector from '@/components/DateSelector'
-import { msgFormatter } from '../../utils'
+import { msgFormatter } from '@/utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
+import RegisterTips from '../../components/RegisterTips'
+
 const today = Vue.moment().format('YYYY-MM-DD')
 const DateFormat = Vue.extend({
   render: function (createElement) {
@@ -100,6 +99,7 @@ const DateFormat = Vue.extend({
     }
   }
 })
+
 export default {
   name: 'PaymentRecord',
   components: {
@@ -109,7 +109,8 @@ export default {
     Loading,
     XButton,
     PopupPicker,
-    DateSelector
+    DateSelector,
+    RegisterTips
   },
   directives: {
     infiniteScroll,
@@ -171,16 +172,16 @@ export default {
     }
   },
   watch: {
-    'conditions': function (conditions) {
+    conditions: function (conditions) {
       this.$router.push({
         query: conditions
       })
     },
-    '$route': function (to) {
+    $route: function (to) {
       if (to.name === 'BetTrackRecord') {
         this.selectedGame = [to.query.game]
         this.date = to.query.date
-        this.initFetchBetTrackRecord(this.conditions)
+        this.initFetchNewBetTrackRecord(this.conditions)
       }
     }
   },
@@ -188,13 +189,13 @@ export default {
     if (Object.keys(this.$route.query).length === 0) {
       this.$router.replace({query: this.conditions})
     } else {
-      this.initFetchBetTrackRecord(this.conditions)
+      this.initFetchNewBetTrackRecord(this.conditions)
     }
   },
   methods: {
-    initFetchBetTrackRecord (option) {
+    initFetchNewBetTrackRecord (option) {
       this.loading = true
-      fetchBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
+      fetchNewBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
         this.totalCount = data.count
         this.records = data.results
       }).catch(errorMsg => {
@@ -220,7 +221,7 @@ export default {
         return
       }
       this.loading = true
-      fetchBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
+      fetchNewBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.records.push(...data.results)
         this.loading = false
@@ -233,8 +234,12 @@ export default {
   }
 }
 </script>
+
 <style lang="less" scoped>
 @import '../../styles/vars.less';
+.container {
+  padding-bottom: 50px;
+}
 .filter-area {
   position: sticky;
   top: 0;

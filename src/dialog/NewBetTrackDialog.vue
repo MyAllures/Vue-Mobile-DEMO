@@ -26,19 +26,19 @@
                   type="number"
                   class="period-input"
                   pattern="[0-9]*"
-                  min="0"
-                  @keypress="isNumberKey"
-                  v-model.number="bettrack.type"/>&nbsp;期
+                  v-positive-number="{integer: true}"
+                  @update="bettrack.multiple=$event.target.value"
+                  :value="bettrack.type"/>&nbsp;期
               </div>
               <div class="col">
                 翻倍：
                 <input
                   type="number"
                   class="time-input"
-                  pattern="[1-9]*"
-                  min="1"
-                  @keypress="isNumberKey"
-                  v-model.number="bettrack.multiple"/>
+                  pattern="[0-9]*"
+                  v-positive-number="{integer: true}"
+                  @update="bettrack.multiple=$event.target.value"
+                  :value="bettrack.multiple"/>
               </div>
             </div>
           </div>
@@ -78,6 +78,7 @@ import FixScroll from '@/directive/fixscroll'
 import { msgFormatter } from '@/utils'
 import { mapState } from 'vuex'
 import AmountInput from '@/components/AmountInput'
+import PositiveNumber from '@/directive/positiveNumber'
 
 export default {
   name: 'NewBetTrackDialog',
@@ -86,7 +87,8 @@ export default {
   },
   directives: {
     TransferDom,
-    FixScroll
+    FixScroll,
+    PositiveNumber
   },
   data () {
     return {
@@ -198,6 +200,7 @@ export default {
         this.bettrack.multiple = this.dialogData.multiple
         this.bettrack.game_schedule = this.dialogData.scheduleId
         this.bettrack.optionDisplayNames = this.dialogData.optionDisplayNames
+        this.ifStopTracking = true
       }
     },
     dialogVisible: function (dialogVisible) {

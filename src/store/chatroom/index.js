@@ -13,7 +13,8 @@ export default {
     loading: true,
     roomList: [],
     isRoomExist: true,
-    redEnvelopeStatus: {}
+    redEnvelopeStatus: {},
+    roomName: '聊天室'
   },
   mutations: {
     setStatus: (state, status) => {
@@ -28,6 +29,7 @@ export default {
       state.permission = data.user.chat_permission
       state.isManager = data.user.is_manager
       state.redEnvelopeStatus = data.red_envelopes || {}
+      state.roomName = data.room.display_name
     },
     roomList: (state, roomList) => {
       state.roomList = roomList
@@ -39,6 +41,9 @@ export default {
       state.isManager = false
     },
     receiveMsg: (state, message) => {
+      if (state.messages.length > 300) {
+        state.messages = state.messages.slice(100)
+      }
       state.messages.push(message)
     },
     initEmoji: (state, emojiMap) => {

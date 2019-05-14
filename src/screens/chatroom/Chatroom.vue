@@ -42,7 +42,8 @@ export default {
       emojiMap: state => state.emojiMap,
       ws: state => state.ws,
       wsStatus: state => state.status,
-      roomList: state => state.roomList
+      roomList: state => state.roomList,
+      roomName: state => state.roomName
     }),
     showing () {
       switch (this.contentType) {
@@ -52,6 +53,9 @@ export default {
     }
   },
   created () {
+    if (this.ws) {
+      this.ws.leaveRoom()
+    }
     let tokenPromise
     let token = getJWTToken('eagle')
     if (token) {
@@ -105,6 +109,22 @@ export default {
 
         to(scrollTop)
       }
+    },
+    roomName: {
+      handler (name) {
+        this.$store.dispatch('page/updatePageSetting', {
+          title: name,
+          requiresAuth: true,
+          tabbarHidden: true,
+          leftCtrl: 'back',
+          rightCtrl: 'info',
+          backPage: {
+            text: '首页',
+            path: '/'
+          }
+        })
+      },
+      immediate: true
     }
   },
   beforeDestroy () {

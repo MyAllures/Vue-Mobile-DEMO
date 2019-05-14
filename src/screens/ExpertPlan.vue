@@ -1,27 +1,34 @@
 <template>
   <div class="expert-plan-container">
+
     <div class="expert-panel">
-      <div class="expert-selector" @click="chooseExpert">
-        {{selectedExpert.expert_name}}
-        <i class="solid-triangle point-down"></i>
+      <div
+        class="selector"
+        @click="chooseExpert">
+        <div class="desc">专家</div>
+        <div class="text">{{selectedExpert.expert_name}}</div>
+        <div class="arrow"></div>
       </div>
       <div class="win-rate">胜率：{{~~(selectedExpert.win_rate*100)}}%</div>
     </div>
 
-    <div class="tab">
+    <div class="selector-area">
       <div
-        :class="['tab-item', {active: selectedPositionIdx===index+1}]"
-        v-for="(pos, index) in currentSetting"
-        :key="index"
-        @click="choosePosIdx(index+1)">{{pos}}</div>
-    </div>
-    <div class="tab">
+        class="selector"
+        @click="choosePos">
+        <div class="desc">位置</div>
+        <div class="text">{{currentPosText}}</div>
+        <div class="arrow"></div>
+      </div>
       <div
-        v-for="sceme in schemeTypeList"
-        :key="sceme.type"
-        :class="['tab-item', {active: selectedSchemeType===sceme.type}]"
-        @click="chooseScheme(sceme.type)">{{sceme.label}}</div>
+        class="selector"
+        @click="chooseScheme">
+        <div class="desc">类型</div>
+        <div class="text">{{currentSchemeText}}</div>
+        <div class="arrow"></div>
+      </div>
     </div>
+
     <div class="plan-section">
       <div class="table-wrapper">
         <table v-if="planList&&planList.length>0" class="table">
@@ -81,11 +88,11 @@ import { fetchExpertPlan } from '@/api'
 import '@/styles/expertplan_resultsball.scss'
 import {XButton} from 'vux'
 import { mapState } from 'vuex'
-const schemeTypeList = [
-  { type: 'FIVE_NUM_FOR_SINGLE', label: '單期5碼' },
-  { type: 'SIX_NUM_FOR_SINGLE', label: '單期6碼' },
-  { type: 'FIVE_NUM_FOR_TRIPLE', label: '3期5碼' },
-  { type: 'SIX_NUM_FOR_DOUBLE', label: '2期6碼' }
+const schemeTypeOptions = [
+  { value: 'FIVE_NUM_FOR_SINGLE', text: '單期5碼' },
+  { value: 'SIX_NUM_FOR_SINGLE', text: '單期6碼' },
+  { value: 'FIVE_NUM_FOR_TRIPLE', text: '3期5碼' },
+  { value: 'SIX_NUM_FOR_DOUBLE', text: '2期6碼' }
 ]
 export default {
   name: 'ExpertPlan',
@@ -100,8 +107,7 @@ export default {
   },
   data () {
     return {
-      schemeTypeList,
-      currentSetting: setting[this.game.code],
+      positionOptions: setting[this.game.code].map((pos, i) => { return {text: pos, value: i + 1} }),
       selectedPositionIdx: 1,
       selectedSchemeType: 'FIVE_NUM_FOR_SINGLE',
       loading: false,
@@ -132,6 +138,12 @@ export default {
           value: expert.expert__id
         }
       })
+    },
+    currentPosText () {
+      return this.positionOptions.find(o => o.value === this.selectedPositionIdx).text
+    },
+    currentSchemeText () {
+      return schemeTypeOptions.find(o => o.value === this.selectedSchemeType).text
     }
   },
   watch: {
@@ -174,17 +186,35 @@ export default {
       })
       picker.show()
     },
-    choosePosIdx (index) {
+    choosePos (index) {
       if (this.loading) {
         return
       }
-      this.selectedPositionIdx = index
+      const picker = this.$createPicker({
+        data: [this.positionOptions],
+        selectedIndex: [this.positionOptions.findIndex(o => o.value === this.selectedPositionIdx)],
+        onSelect: (v) => {
+          this.selectedPositionIdx = v[0]
+        },
+        onCancel: () => { },
+        zIndex: 600
+      })
+      picker.show()
     },
     chooseScheme (type) {
       if (this.loading) {
         return
       }
-      this.selectedSchemeType = type
+      const picker = this.$createPicker({
+        data: [schemeTypeOptions],
+        selectedIndex: [schemeTypeOptions.findIndex(o => o.value === this.selectedSchemeType)],
+        onSelect: (v) => {
+          this.selectedSchemeType = v[0]
+        },
+        onCancel: () => { },
+        zIndex: 600
+      })
+      picker.show()
     },
     openBettrackDialog (data) {
       let period = ''
@@ -235,43 +265,74 @@ export default {
     align-items: center;
     justify-content: space-between;
     height: 40px;
-    padding: 0 10px;
-    .expert-selector {
-      display: flex;
-      align-items: center;
-      font-size: 18px;
-      .solid-triangle {
-        border-top: 5px solid #666;
-        margin-left: 5px;
-      }
-    }
     .win-rate {
       color: @red;
       font-size: 14px;
+      padding-right: 10px;
     }
   }
-  .tab {
-    flex: 0 0 auto;
+
+  .selector-area {
+    z-index: 1;
     display: flex;
-    height: 50px;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    height: 44px;
+    width: 100%;
     background: #fff;
-    .tab-item {
-      box-sizing: border-box;
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    border-bottom: 2px solid #eee;
+    border-top: 2px solid #eee;
+    color: #666;
+    font-size: 13px;
+    overflow: hidden;
+    .selector {
+      border-right: 1px solid #e9e9e9;
+    }
+  }
+  .selector {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    width: 50%;
+    &.full {
+      width: 100%;
+    }
+    color: #424242;
+    .desc {
+      flex: 0 0 auto;
       height: 100%;
-      padding-bottom: 3px;
-      border-bottom: 2px solid;
-      border-color: #f5f5f5;
-      color: #999999;
-      &.active {
-        color: @azul;
-        border-color: @azul;
+      width: 45px;
+      line-height: 40px;
+      font-size: 12px;
+      font-weight: lighter;
+      text-align: center;
+      color: #999;
+    }
+    .text {
+      flex: 1 0 auto;
+      height: 100%;
+      line-height: 40px;
+      text-align: center;
+    }
+    .arrow {
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      &::after {
+        display: inline-block;
+        content: "";
+        border-style: solid;
+        border-width: 6px 6px 0 6px;
+        border-color: #166fd8 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0)
+          rgba(0, 0, 0, 0);
       }
     }
   }
+
+
   .plan-section {
     flex: 1 1 auto;
     box-sizing: border-box;
@@ -344,6 +405,4 @@ export default {
     }
   }
 }
-
-
 </style>

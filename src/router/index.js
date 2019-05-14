@@ -97,6 +97,12 @@ const baseRoutes = [
         text: '首页',
         path: '/'
       }
+    },
+    beforeEnter: (to, from, next) => {
+      if (from.name !== 'RedEnvelopeDetail') {
+        store.dispatch('removeKeepAlive', 'Chatroom')
+      }
+      next()
     }
   },
   {
@@ -290,6 +296,7 @@ const baseRoutes = [
             meta: {
               title: '追号纪录',
               gaTitle: '追号纪录',
+              rightCtrl: 'info',
               requiresAuth: true
             },
             component: resolve => { require(['../screens/finance/BetTrackRecord.vue'], resolve) }

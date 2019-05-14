@@ -84,6 +84,18 @@ function newBetTrack (data) {
   return axiosGhost.post(`${urls.new_bettrack}`, data)
 }
 
+function fetchNewBetTrackRecord (option) {
+  let params = []
+  Object.keys(option).forEach(key => {
+    if (key === 'date') {
+      params.push(`bet_date=${option[key]}`)
+      return
+    }
+    params.push(`${key}=${option[key]}`)
+  })
+  return axiosGhost.get(`${urls.new_bettrack}?${params.join('&')}`)
+}
+
 function placeBet (data) {
   return axiosGhost.post(urls.betrecord, data, {
     'Content-Type': 'application/json'
@@ -389,6 +401,7 @@ export {
   placeBet,
   betTrack,
   newBetTrack,
+  fetchNewBetTrackRecord,
   fetchBetTrackRecord,
   fetchBetTrackSchedules,
   fetchSchedule,
