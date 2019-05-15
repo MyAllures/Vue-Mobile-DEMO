@@ -88,12 +88,13 @@ function fetchNewBetTrackRecord (option) {
   let params = []
   Object.keys(option).forEach(key => {
     if (key === 'date') {
-      params.push(`bet_date=${option[key]}`)
+      params.push(`start_date=${option[key]}`)
+      params.push(`end_date=${option[key]}`)
       return
     }
     params.push(`${key}=${option[key]}`)
   })
-  return axiosGhost.get(`${urls.new_bettrack}?${params.join('&')}`)
+  return axiosGhost.get(`${urls.bettrack_record}?${params.join('&')}`)
 }
 
 function placeBet (data) {
