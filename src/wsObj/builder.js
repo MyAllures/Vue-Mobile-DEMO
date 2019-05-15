@@ -183,14 +183,19 @@ class WebSocketBuilder {
     return this
   }
 
-  connect () {
+  connect (isRetry) {
     try {
       if (this.wsState !== CLOSED) {
         console.warn('Connection is busy, please try again later.')
         return
       }
       this.wsState = CONNECTING
-      this.ws = new WebSocket(this.url)
+      if (isRetry && this.retryUrl) {
+        this.ws = new WebSocket(this.retryUrl)
+      } else {
+        this.ws = new WebSocket(this.url)
+      }
+
       this[initWebsocketEvent]()
       return this
     } catch (e) {
@@ -215,7 +220,9 @@ class WebSocketBuilder {
     }
     this.timer = setInterval(() => {
       if (this.wsState === CLOSED) {
-        this.connect()
+        this.connect(true)
+      } else {
+        this[clearTimer]()
       }
     }, interval)
   }
@@ -226,6 +233,10 @@ class WebSocketBuilder {
     }
     this.retryConfig = Object.assign(this.retryConfig, { count, interval })
     return this
+  }
+
+  setRetryHint () {
+    this.retryUrl = this.url + '&reconnect=true'
   }
 
   heartBeat (timeout = 30000, message = {command: 'ping'}) {

@@ -60,6 +60,7 @@ export class EagleWebSocket {
       onclose
     })
     this.ws.connect()
+    this.ws.setRetryHint()
     this.ws.heartBeat(10000)
   }
 
