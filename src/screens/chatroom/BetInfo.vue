@@ -14,7 +14,7 @@
     </div>
     <div class="bet-info-content">
       <ul class="bet-group">
-        <li class="bet-group-item" v-for="(bet, index) in info.bets" :key="bet">
+        <li class="bet-group-item" v-for="(bet, index) in info.bets" :key="index">
           <div class="item">
             <div class="label">{{`${bet.play.playgroup} - ${bet.play.display_name}`}}</div>
             <div class="amount">{{bet.bet_amount|currency('￥')}}</div>

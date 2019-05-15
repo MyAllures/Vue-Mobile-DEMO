@@ -11,6 +11,7 @@ import {
   Switch,
   // popup
   Popup,
+  Textarea,
   Picker,
   ActionSheet,
   DatePicker,
@@ -21,12 +22,14 @@ import {
   Upload,
   Loading,
   TabBar,
-  TabPanels
+  TabPanels,
+  Toast
 } from 'cube-ui'
 
 Vue.use(Checkbox)
 Vue.use(Switch)
 Vue.use(Popup)
+Vue.use(Textarea)
 Vue.use(Picker)
 Vue.use(ActionSheet)
 Vue.use(DatePicker)
@@ -37,3 +40,4 @@ Vue.use(Upload)
 Vue.use(Loading)
 Vue.use(TabBar)
 Vue.use(TabPanels)
+Vue.use(Toast)

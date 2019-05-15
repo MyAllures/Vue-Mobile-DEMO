@@ -326,15 +326,13 @@ const token = Vue.cookie.get('access_token')
 if (token) {
   axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + token
   axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').then(() => {}).catch(() => { initData() })
+  store.dispatch('fetchUser').catch(() => { })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
-    initData()
   })
 }
-
-store.dispatch('fetchGames')
+initData()
 
 let heartBeatInterval
 const setHeartBeatInterval = () => {
@@ -348,6 +346,7 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
+  store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
     const unwatch = store.watch((state) => {
       return state.systemConfig.process
@@ -394,7 +393,6 @@ store.watch((state) => {
 
     store.dispatch('initUnread')
     setHeartBeatInterval()
-    initData()
   } else {
     if (store.state.ws.eider) {
       store.state.ws.eider.closeConnect()

@@ -75,6 +75,7 @@ export default {
   service_stickers: venomHost + '/chat/stickers/',
   service_unread: venomHost + '/support/has_unread/',
   service_image_attachment: venomHost + '/chat/attachment/',
+  service_comment: venomHost + '/support/member_comment/',
   eagle: {
     host: eagleHost,
     ws_host: wsEagleHost,

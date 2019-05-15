@@ -150,7 +150,7 @@ export default {
             liHead: {
               left: {
                 main: r.game_name,
-                sub: `${r.play_position} - ${r.track_numbers.join(', ')}`,
+                sub: r.play ? `${r.play.playgroup} - ${r.play.display_name}` : `${r.play_position} - ${r.track_numbers.join(', ')}`,
                 class: ''
               },
               right: {
