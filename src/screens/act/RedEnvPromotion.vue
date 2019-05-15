@@ -4,11 +4,11 @@
       <div class="content">
         <div class="promo-title">{{ act.name }}</div>
         <div class="section">
-          <div class="section-title">活動介紹</div>
+          <div class="section-title">活动介绍</div>
           <div class="section-content">{{ act.description }}</div>
         </div>
         <div class="section">
-          <div class="section-title">活動內容</div>
+          <div class="section-title">活动内容</div>
           <div class="section-content">
             <table v-if="type === 'boost'">
               <thead>
@@ -47,7 +47,7 @@
     </div>
     <div class="footer">
       <template v-if="user.account_type">
-        <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利紅包</button>
+        <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利红包</button>
         <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
       </template>
       <template v-else>
