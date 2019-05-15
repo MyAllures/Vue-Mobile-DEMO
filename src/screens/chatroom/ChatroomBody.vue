@@ -193,12 +193,6 @@ import CrossIcon from '@/components/icon/Cross'
 
 export default {
   name: 'ChatroomBody',
-  props: {
-    game: {
-      required: true,
-      type: Object
-    }
-  },
   components: {
     BetInfo,
     ImgWrapper,

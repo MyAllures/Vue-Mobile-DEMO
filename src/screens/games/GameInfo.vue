@@ -1,13 +1,13 @@
 <template>
   <popup
     :value="visible"
+    @on-show="calcHeight"
     @on-hide="$emit('update:visible', false)"
-    height="75%"
-    v-transfer-dom
-    :zIndex="200">
+    :height="`calc(100% - ${reservedCountdownPanelHeight}px)`"
+    :zIndex="200"
+    v-transfer-dom>
       <div :class="['info-content', type]">
-        <component :is="showing" :game="game">
-        </component>
+        <component :is="showing" :game="game"></component>
         <div class="btn-wrapper vux-1px-t">
           <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回{{type==='chatmanage'?'聊天室':'游戏'}}</x-button>
         </div>
@@ -40,6 +40,11 @@ export default {
       default: false
     }
   },
+  data () {
+    return {
+      reservedCountdownPanelHeight: 46 + 90
+    }
+  },
   components: {
     Popup,
     XButton
@@ -65,6 +70,15 @@ export default {
           return ExpertPlan
         case 'chatmanage':
           return ChatManage
+      }
+    }
+  },
+  methods: {
+    calcHeight () {
+      let sectionDOM = document.getElementById('data-section')
+      if (sectionDOM) {
+        let height = sectionDOM.getBoundingClientRect().height || 90
+        this.reservedCountdownPanelHeight = 46 + height
       }
     }
   }

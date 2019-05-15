@@ -36,6 +36,13 @@
                   </div>
                 </div>
               </template>
+              <template v-else-if="msg.type === MSG_TYPE.review">
+                <p class="review-box">
+                  <span class="rating">您为这次对话给出了<span :style="{ color: getRatingColor(msg.rating) }">【{{ getRatingDesc(msg.rating) }}】</span></span>
+                  <span class="comment" v-if="msg.text">{{ msg.text }}</span>
+                </p>
+                <a class="clear" href="#" @click.prevent="clearReview(msg.id)" v-if="isLastReview(msgIndex)"><img src="../../assets/cs/icon-review-remove.svg" />清除</a>
+              </template>
               <template v-else>
                 <p v-html="msg.text"></p>
               </template>
@@ -50,7 +57,7 @@
           <div v-if="props.beforePullDown"
             class="before-trigger"
             :style="{paddingTop: props.bubbleY + 'px'}">
-            <span :class="{rotate: props.bubbleY > options.pullDownRefresh.threshold - 60}">↓</span>
+            <span :class="{rotate: props.bubbleY > props.pullDownRefresh.threshold - 60}">↓</span>
           </div>
           <div class="after-trigger" v-else>
             <div v-show="props.isPullingDown" class="loading">
@@ -72,15 +79,17 @@
 </template>
 
 <script>
-import { concat, map, takeRight } from 'lodash'
-import { MSG_TYPE, MSG_CAT } from '@/utils/CustomerService'
 import { mapState } from 'vuex'
+import { concat, map, takeRight } from 'lodash'
+import { MSG_TYPE, MSG_CAT, RATINGS } from '@/utils/CustomerService'
+import { deleteServiceReview } from '@/api'
 
 export default {
   data () {
     return {
       MSG_TYPE,
       MSG_CAT,
+      RATINGS,
       defaultHistoryNum: 30,
       showFullHistory: false,
       showPullDownTip: true,
@@ -147,11 +156,30 @@ export default {
     },
     catHasMessages (cat) {
       return this.received[cat] && this.received[cat].length > 0
+    },
+    getRatingDesc (rating) {
+      const item = RATINGS.find(r => r.value === rating)
+      return item.desc
+    },
+    getRatingColor (rating) {
+      const item = RATINGS.find(r => r.value === rating)
+      return item.color
+    },
+    isLastReview (index) {
+      const last = this.sortedMessages.length - 1 - this.sortedMessages.slice().reverse().findIndex(msg => msg.type === MSG_TYPE.review || msg.type === MSG_TYPE.reviewCancel)
+      return last === index
+    },
+    clearReview (id) {
+      deleteServiceReview(id).then(() => {
+        this.$store.dispatch('customerService/deleteReview', id)
+      })
     }
   },
   watch: {
     pullDownRefreshOptions (val) {
-      this.options.pullDownRefresh = val
+      if (this.options) {
+        this.options.pullDownRefresh = val
+      }
     },
     messageCollection () {
       this.handleScrollTop()
@@ -217,10 +245,17 @@ export default {
         switch (msg.type) {
           case MSG_TYPE.welcome_message:
           case MSG_TYPE.error:
+          case MSG_TYPE.review:
+          case MSG_TYPE.reviewThank:
             wrapperClassList = ['msg-box']
             contentClassList = ['box', msg.cat]
+            if (msg.type === MSG_TYPE.review) {
+              contentClassList.push('review')
+            }
             break
           case MSG_TYPE.datetag:
+          case MSG_TYPE.reviewCancel:
+          case MSG_TYPE.system:
             wrapperClassList = ['msg-badge']
             contentClassList = ['badge']
             if (msg.text === this.$moment().format('YYYY-MM-DD')) {
@@ -279,7 +314,8 @@ body {
     padding: 5px 10px;
     max-width: 240px;
     font-size: 14px;
-    word-break: break-all;
+    word-break: break-word;
+
     &.image {
       padding: 0;
     }
@@ -301,6 +337,23 @@ body {
     display: inline-block;
     width: 120px;
     height: 120px;
+  }
+  .review-box {
+    width: 100%;
+
+    .rating,
+    .comment {
+      display: block;
+    }
+    .rating {
+      text-align: center;
+    }
+    .comment {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+      word-break: break-word;
+    }
   }
 
   .self-sent {
@@ -378,6 +431,25 @@ body {
     text-align: left;
     font-size: 14px;
     color: #333;
+    box-sizing: border-box;
+  }
+  .review {
+    width: 250px;
+    position: relative;
+
+    .clear {
+      display: block;
+      position: absolute;
+      right: -43px;
+      bottom: 0;
+      font-size: 12px;
+      color: #b0b0b0;
+      line-height: 1;
+
+      img {
+        vertical-align: middle;
+      }
+    }
   }
   .error {
     color: #d0021b;
