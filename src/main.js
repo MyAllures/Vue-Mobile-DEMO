@@ -18,10 +18,10 @@ import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
+import {getJWTToken} from './utils'
 import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
-import VenomSocketObj from './wsObj/venom'
 
 const sendGaEvent = ({label, category, action}) => {
   if (store.state.systemConfig.gaTrackingId) {
@@ -191,10 +191,10 @@ axios.interceptors.request.use((config) => {
   const fromVenom = config.url.includes(urls.venomHost)
   const fromRaven = config.url.includes(urls.ravenHost)
   if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('venom_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('venom')}`
   }
   if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${localStorage.getItem('raven_token')}`
+    config.headers['Authorization'] = `JWT ${getJWTToken('raven')}`
   }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
@@ -212,6 +212,7 @@ axios.interceptors.response.use(res => {
   const fromRaven = res.config.url.includes(urls.ravenHost)
 
   let responseData = res.data
+
   if (fromVenom) {
     return responseData
   }
@@ -341,15 +342,13 @@ const setChatRoomSetting = (username) => {
 const token = Vue.cookie.get('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  store.dispatch('fetchUser').catch(() => { initData() })
+  store.dispatch('fetchUser').catch(() => { })
 } else {
   Vue.nextTick(() => {
     store.dispatch('resetUser')
-    initData()
   })
 }
-
-store.dispatch('fetchGames')
+initData()
 
 let heartBeatInterval
 const setHeartBeatInterval = () => {
@@ -363,57 +362,60 @@ const setHeartBeatInterval = () => {
 store.watch((state) => {
   return state.user.logined
 }, (logined) => {
+  store.dispatch('fetchPromotions')
   if (store.state.user.account_type) {
     const unwatch = store.watch((state) => {
       return state.systemConfig.process
     }, (configProcess) => {
       if (configProcess === 'fulfilled') {
-        unwatch()
         if (store.state.systemConfig.enableBuiltInCustomerService) {
           let venomTokenPromise
-          let venomToken = localStorage.getItem('venom_token')
+          let venomToken = getJWTToken('venom')
+
           if (venomToken) {
             venomTokenPromise = Promise.resolve(venomToken)
           } else if (!venomToken) {
-            venomTokenPromise = fetchJWTToken('venom').catch(() => {})
+            venomTokenPromise = fetchJWTToken('venom').then(setting => {
+              localStorage.setItem('venom_setting', JSON.stringify(setting))
+              return setting.token
+            }).catch(() => {})
           }
-
-          venomTokenPromise.then(token => {
-            localStorage.setItem('venom_token', token)
-            store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+          venomTokenPromise.then(() => {
             pollServiceUnread()
           }).catch(() => {})
         }
 
         setChatRoomSetting()
+        unwatch()
       }
     })
   }
 
   if (logined) {
     let eiderTokenPromise
-    let eidereToken = localStorage.getItem('eider_token')
-    if (eidereToken) {
-      eiderTokenPromise = Promise.resolve(eidereToken)
+    let eiderToken = getJWTToken('eider')
+    if (eiderToken) {
+      eiderTokenPromise = Promise.resolve(eiderToken)
     } else {
-      eiderTokenPromise = fetchJWTToken('eider').catch(() => {})
+      eiderTokenPromise = fetchJWTToken('eider').then(setting => {
+        localStorage.setItem('eider_setting', JSON.stringify(setting))
+        return setting.token
+      }).catch(() => {})
     }
 
     eiderTokenPromise.then(token => {
-      localStorage.setItem('eider_token', token)
       store.dispatch('setWs', { ws: new GhostSocketObj(token), type: 'eider' })
     }).catch(() => {})
 
     store.dispatch('initUnread')
     setHeartBeatInterval()
-    initData()
   } else {
     clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
 
-    localStorage.removeItem(`venom_token`)
-    localStorage.removeItem(`raven_token`)
-    localStorage.removeItem(`eider_token`)
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`raven_setting`)
+    localStorage.removeItem(`eider_setting`)
   }
 })
 

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import axios from 'axios'
+import { msgFormatter } from '../../utils'
+
 import {
   fetchUser,
   login as userLogin,
@@ -11,7 +13,8 @@ import {
   getPromotions,
   fetchBanner,
   fetchUnreadCount,
-  fetchAnnouncements
+  fetchAnnouncements,
+  trial
 } from '../../api'
 import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
@@ -44,7 +47,62 @@ const login = function ({ commit, state, dispatch }, { user }) {
 }
 
 export default {
-  login: login,
+  login,
+  trial: ({commit, state, dispatch}, data) => {
+    let payload = {}
+    if (data) {
+      payload.verification_code_0 = data.verification_code_0
+      payload.verification_code_1 = data.verification_code_1
+    }
+    commit(types.UPDATE_LOADING, {isLoading: true})
+    return trial(payload).then(response => {
+      if (response.trial_auth_req === 1) {
+        dispatch('openVerifyPopup')
+        return Promise.reject(response)
+      }
+
+      let tokenObj = response.token
+      if (tokenObj.access_token && tokenObj.refresh_token) {
+        localStorage.setItem('token_expire', tokenObj.expires_in)
+        Vue.cookie.set('access_token', tokenObj.access_token, {
+          expires: tokenObj.expires_in
+        })
+        Vue.cookie.set('refresh_token', tokenObj.refresh_token, {
+          expires: tokenObj.expires_in
+        })
+        axios.defaults.withCredentials = true
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + tokenObj.access_token
+        if (response.agent) {
+          commit('SET_USER', {
+            ...state.user,
+            agent: response.agent
+          })
+        }
+
+        Vue.$vux.toast.show({
+          text: '试玩已开启',
+          type: 'success'
+        })
+
+        window.gtag('event', '試玩', {'event_category': '遊客'})
+      }
+
+      return dispatch('fetchUser')
+    }).catch((errorMsg) => {
+      if (errorMsg) {
+        if (!errorMsg.trial_auth_req) {
+          Vue.$vux.toast.show({
+            text: msgFormatter(errorMsg),
+            type: 'warn'
+          })
+        }
+
+        return Promise.reject(errorMsg)
+      }
+    }).finally(() => {
+      commit(types.UPDATE_LOADING, {isLoading: false})
+    })
+  },
   logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
@@ -267,6 +325,12 @@ export default {
   },
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
+  },
+  showHelper: ({commit}) => {
+    commit(types.SHOW_HELPER)
+  },
+  hideHelper: ({commit}) => {
+    commit(types.HIDE_HELPER)
   },
   setDataSectionStyle: ({commit}, style) => {
     commit(types.DATA_SECTION_STYLE, style)

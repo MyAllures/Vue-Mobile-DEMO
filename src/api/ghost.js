@@ -105,6 +105,15 @@ function register (user) {
   return axios.post(urls.register, qs.stringify(user), {withCredentials: true})
 }
 
+function trial (data) {
+  let payload = { account_type: 0 }
+  if (data.verification_code_0 && data.verification_code_1) {
+    payload.verification_code_0 = data.verification_code_0
+    payload.verification_code_1 = data.verification_code_1
+  }
+  return axios.post(`${urls.register}trial/`, qs.stringify(payload))
+}
+
 function checkUserName (username) {
   return axios.get(urls.check_username, { params: { username: username } })
 }
@@ -277,7 +286,10 @@ function fetchTrendChart (params) {
 
 function fetchJWTToken (type) {
   return axios.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
-    return res[JWT[type] + '_token']
+    return {
+      expire: res.expire,
+      token: res[JWT[type] + '_token']
+    }
   })
 }
 
@@ -298,6 +310,7 @@ function fetchWinHistory () {
 function fetchUnreadCount () {
   return axios.get(urls.unreadMessage)
 }
+
 export {
   fetchUnreadCount,
   fetchActivityEnvelope,
@@ -354,5 +367,6 @@ export {
   updateUser,
   fetchUser,
   logout,
-  login
+  login,
+  trial
 }

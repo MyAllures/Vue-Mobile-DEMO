@@ -1,5 +1,5 @@
 library 'jenkinsfileTemplate'
-deployTemplateMerger {
+deployTemplateMergerFrontend {
     PROJECT_NAME = 'bison'
     DEPLOY_TAG = 'frontend'
 }

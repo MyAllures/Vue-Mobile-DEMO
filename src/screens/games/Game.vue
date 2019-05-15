@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="dataSectionStyle">
+    <div class="data-section" id="data-section" :style="dataSectionStyle">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
@@ -71,10 +71,10 @@
             <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
               <span class="tips">常用金额</span>
               <ul  class="items" >
-                <li 
+                <li
                   v-if="index < 5"
-                  @click="amount=item.bet_amount + ''" 
-                  v-for="(item, index) in user.bet_amount_count" 
+                  @click="amount=item.bet_amount + ''"
+                  v-for="(item, index) in user.bet_amount_count"
                   class="vux-1px-l">{{ item.bet_amount }}</li>
               </ul>
             </div>
@@ -297,12 +297,19 @@ export default {
       if (!this.gameId) {
         return
       }
-      return Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
+
+      let promises = [fetchSchedule(this.gameId, this.currentGame.code)]
+
+      if (this.currentGame.code === 'hkl') {
+        promises.push(fetchGameResult(this.gameId))
+      }
+
+      return Promise.all(promises).then(results => {
         if (this.hasDestroy) {
           return
         }
-        const schedule = results[0][0]
 
+        const schedule = results[0][0]
         if (schedule) {
           this.schedule = schedule
           let serverTime = this.$moment(this.schedule.schedule_result)
@@ -323,8 +330,8 @@ export default {
           }
         }
 
-        const result = results[1][0]
-        if (this.currentGame.code === 'hkl') {
+        if (results[1]) {
+          const result = results[1][0]
           let realScheduleIssueNumber = parseInt(result.issue_number)
           // 六合彩至多149期，所以149期下一期跳001期為合理
           if (!schedule.issue_number.endsWith('001') || !result.issue_number.endsWith('149')) {
@@ -532,6 +539,7 @@ export default {
 }
 
 .data-section {
+  box-sizing: border-box;
   background: #fff;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 2; // higher than the sticky groupplay-title
@@ -634,7 +642,7 @@ export default {
       color: #333;
     }
   }
-  
+
 }
 .amount-shortcut {
   display: flex;
@@ -654,7 +662,7 @@ export default {
   &.collapsed {
     max-height: 0;
   }
-  .tips { 
+  .tips {
     font-size: 13px;
     padding: 0 5px;
     color: #999;

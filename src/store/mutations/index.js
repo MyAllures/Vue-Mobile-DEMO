@@ -1,13 +1,8 @@
 import Vue from 'vue'
+import themeColors from '../../styles/theme_config.less'
 import * as types from './mutation-types'
 import {saveLastGameData} from '../../utils'
-const themeMap = {
-  1: '#156fd8',
-  2: '#1976d2',
-  3: '#dd603a',
-  4: '#53b8df',
-  5: '#6a42a6'
-}
+import axios from 'axios'
 
 export default {
   [types.SET_USER]: (state, user) => {
@@ -26,6 +21,7 @@ export default {
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
     Vue.cookie.delete('message_broker_token')
+    delete axios.defaults.headers.common['Authorization']
   },
   [types.UPDATE_LOADING]: (state, payload) => {
     state.isLoading = payload.isLoading
@@ -173,14 +169,19 @@ export default {
     saveLastGameData(state.lastGameData)
   },
   [types.SET_THEME]: (state, themeId) => {
-    state.theme = themeMap[themeId]
-    state.themeId = themeId
+    state.theme = themeColors[`theme${themeId}`]
   },
   [types.SHOW_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = true
   },
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
+  },
+  [types.SHOW_HELPER]: (state) => {
+    state.helperVisible = true
+  },
+  [types.HIDE_HELPER]: (state) => {
+    state.helperVisible = false
   },
   [types.DATA_SECTION_STYLE]: (state, style) => {
     state.dataSectionStyle = style

@@ -57,6 +57,15 @@ const webpackConfig = merge(baseWebpackConfig, {
         ],
       },
       {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'less-loader'
+        ],
+      },
+      {
         test: /\.styl(us)?$/,
         use: [
           MiniCssExtractPlugin.loader,
@@ -79,6 +88,14 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[hash].js')
   },
   plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('../lib/base1-manifest.json')
+    }),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('../lib/tools-manifest.json')
+    }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
