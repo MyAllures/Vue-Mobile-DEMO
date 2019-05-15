@@ -297,12 +297,19 @@ export default {
       if (!this.gameId) {
         return
       }
-      return Promise.all([fetchSchedule(this.gameId, this.currentGame.code), fetchGameResult(this.gameId)]).then(results => {
+
+      let promises = [fetchSchedule(this.gameId, this.currentGame.code)]
+
+      if (this.currentGame.code === 'hkl') {
+        promises.push(fetchGameResult(this.gameId))
+      }
+
+      return Promise.all(promises).then(results => {
         if (this.hasDestroy) {
           return
         }
-        const schedule = results[0][0]
 
+        const schedule = results[0][0]
         if (schedule) {
           this.schedule = schedule
           let serverTime = this.$moment(this.schedule.schedule_result)
@@ -323,8 +330,8 @@ export default {
           }
         }
 
-        const result = results[1][0]
-        if (this.currentGame.code === 'hkl') {
+        if (results[1]) {
+          const result = results[1][0]
           let realScheduleIssueNumber = parseInt(result.issue_number)
           // 六合彩至多149期，所以149期下一期跳001期為合理
           if (!schedule.issue_number.endsWith('001') || !result.issue_number.endsWith('149')) {
@@ -537,7 +544,6 @@ export default {
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
   z-index: 2; // higher than the sticky groupplay-title
   transition-duration: .7s;
-  flex: 0 0 90px;
 }
 
 .active {
