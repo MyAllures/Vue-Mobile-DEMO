@@ -1,8 +1,9 @@
 <template>
   <popup
     :value="visible"
+    @on-show="calcHeight"
     @on-hide="$emit('update:visible', false)"
-    :height="`calc(100vh - ${reservedCountdownPanelHeight}px)`"
+    :height="`calc(100% - ${reservedCountdownPanelHeight}px)`"
     :zIndex="200"
     v-transfer-dom>
       <div :class="['info-content', type]">
@@ -63,6 +64,15 @@ export default {
           return LotterRecord
         case 'intro':
           return GameIntro
+      }
+    }
+  },
+  methods: {
+    calcHeight () {
+      let sectionDOM = document.getElementById('data-section')
+      if (sectionDOM) {
+        let height = sectionDOM.getBoundingClientRect().height || 90
+        this.reservedCountdownPanelHeight = 46 + height
       }
     }
   }

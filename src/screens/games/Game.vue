@@ -1,6 +1,6 @@
 <template>
   <div class="game">
-    <div class="data-section" :style="dataSectionStyle">
+    <div class="data-section" id="data-section" :style="dataSectionStyle">
       <div class="wrapper">
         <GameResult v-if="result" :result="result"/>
         <div class="result-skeleton-wrapper" v-else>
