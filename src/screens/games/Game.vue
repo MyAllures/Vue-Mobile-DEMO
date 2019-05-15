@@ -240,6 +240,9 @@ export default {
     ...mapState([
       'systemConfig', 'user', 'latestResultMap', 'theme', 'games'
     ]),
+    ...mapState('chatroom', {
+      isChatroomEnabled: state => state.roomList.length > 0
+    }),
     gameId () {
       return this.$route.params.gameId
     },
@@ -534,7 +537,7 @@ export default {
           bets: bets,
           isSuccess: false
         }
-        if (this.user.account_type) {
+        if (this.user.account_type && this.isChatroomEnabled) {
           state.hasShared = true
         }
         this.$store.dispatch('updateDialog', {
