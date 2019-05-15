@@ -53,8 +53,6 @@ function initData () {
   gethomePage().then(
     response => {
       let pref = response.global_preferences || {}
-      const chatroomEnabled = pref.chatroom_enabled === 'true'
-
       const customerServiceUrl = pref.customer_service_url
       const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
       let serviceAction = null
@@ -96,7 +94,6 @@ function initData () {
           contactEmail: pref.contact_email,
           contactPhoneNumber: pref.contact_phone_number,
           openAccountConsultingQQ: pref.open_account_consulting_qq,
-          chatroomEnabled: chatroomEnabled,
           siteName: response.name,
           gaTrackingId: pref.ga_tracking_id,
           regPresentAmount: response.reg_present_amount,

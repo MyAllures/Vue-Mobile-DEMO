@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'systemConfig', 'user'
+      'user'
     ]),
     betDialog () {
       return this.$store.state.dialog.bet

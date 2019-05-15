@@ -87,7 +87,6 @@ export default new Vuex.Store({
       global_preferences: {
         send_chat_conditions: '{}'
       },
-      chatroomEnabled: false,
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
       chatroomEnvelopeSettings: {},
