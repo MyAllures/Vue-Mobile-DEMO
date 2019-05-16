@@ -1,5 +1,8 @@
 <template>
   <section class="rule-details">
+    <p>官网：
+      <a href="https://ontariopowerball.com" target="_blank">Ontario Power Ball</a>
+    </p>
     <p>引进加拿大安大略省所开发的 7/49 彩票，是当地火红热门的彩种，以丰富多样的六合彩游戏玩法为依据，从 00:00 起每三分钟开奖一次，共480期，全天候不间断！</p>
     <h3>
       <span class="warn">1.特码</span>
