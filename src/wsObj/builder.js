@@ -88,7 +88,8 @@ class WebSocketBuilder {
     this.retryConfig = {
       count: 0,
       interval: 5000,
-      tried: 0
+      tried: 0,
+      trying: false
     }
     this.heartBeatConfig = {
       doCheck: false,
@@ -130,7 +131,6 @@ class WebSocketBuilder {
 
     this.ws.onclose = e => {
       this.wsState = CLOSED
-      this[clearTimer]()
       this.ws = null
       this.listener.onclose(e)
       if (this.heartBeatConfig.doCheck) this[doHeartCheck]().reset()
@@ -139,17 +139,11 @@ class WebSocketBuilder {
   }
 
   [doRetry] () {
-    let { count, interval, tried } = this.retryConfig
-    if (!count) {
-      this.reconnect(interval)
+    if (this.retryConfig.trying) {
       return
     }
-    if (this.wsState !== WebSocket.OPEN && tried < count - 1) {
-      this.reconnect(interval)
-      this.retryConfig.tried += 1
-    } else {
-      this.retryConfig.tried = 0
-    }
+    this.retryConfig.trying = true
+    this.reconnect()
   }
 
   [doHeartCheck] () {
@@ -214,17 +208,21 @@ class WebSocketBuilder {
     }
   }
 
-  reconnect (interval = 5000) {
-    if (typeof this.timer !== 'undefined' || this.timer !== null) {
-      this[clearTimer]()
+  reconnect () {
+    let { count, interval, tried } = this.retryConfig
+    if (tried >= count) {
+      this.retryConfig.trying = false
+      return
     }
-    this.timer = setInterval(() => {
-      if (this.wsState === CLOSED) {
-        this.connect(true)
+    this.connect(true)
+    this.retryConfig.tried += 1
+    this.timer = setTimeout(() => {
+      if (this.wsState !== OPEN) {
+        this.reconnect()
       } else {
-        this[clearTimer]()
+        this.retryConfig.trying = false
       }
-    }, interval)
+    }, interval || 5000)
   }
 
   retry (count, interval = 5000) {
