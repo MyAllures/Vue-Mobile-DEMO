@@ -22,6 +22,7 @@ export default {
         this.$nextTick(() => {
           this.$emit('imgLoad')
         })
+        img.onload = null
       }
       img.onerror = () => {
         this.$emit('imgLoad')

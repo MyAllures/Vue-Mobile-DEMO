@@ -28,6 +28,11 @@ function onmessage (data) {
       break
     case 'message':
     case 'image':
+      if (data.sender.username === store.state.user.username) {
+        store.dispatch('chatroom/deleteFakeImg')
+      }
+      store.dispatch('chatroom/receiveMsg', data)
+      break
     case 'sticker':
     case 'system':
     case 'red-envelope':

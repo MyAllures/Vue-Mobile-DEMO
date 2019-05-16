@@ -56,6 +56,21 @@ export default {
       }
       state.messages.push(message)
     },
+    deleteFakeImg: (state) => {
+      let i = state.messages.length - 1
+      let idx = -1
+      while (i >= 0) {
+        let msg = state.messages[i]
+        if (msg.isFake) {
+          idx = i
+          break
+        }
+        i--
+      }
+      if (idx !== -1) {
+        state.messages.splice(idx, 1)
+      }
+    },
     initEmoji: (state, emojiMap) => {
       state.emojiMap = emojiMap
     },
@@ -93,6 +108,9 @@ export default {
     },
     receiveMsg: ({ commit }, message) => {
       commit('receiveMsg', message)
+    },
+    deleteFakeImg: ({ commit }) => {
+      commit('deleteFakeImg')
     },
     initEmoji: ({commit}) => {
       eagle.fetchStickers().then(res => {

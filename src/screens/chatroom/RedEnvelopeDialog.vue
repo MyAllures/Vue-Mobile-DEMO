@@ -51,7 +51,7 @@
               action-type ="button"
               :show-loading="loading"
               :disabled="loading"
-              @click.native="submit">塞钱进红包
+              @click.native="submit">{{loading?'':'塞钱进红包'}}
             </x-button>
           </div>
         </div>

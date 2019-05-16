@@ -210,6 +210,15 @@ export default {
       }
 
       lrz(file, { width: 600 }).then(rst => {
+        this.$store.dispatch('chatroom/receiveMsg', {
+          type: 'image',
+          isFake: true,
+          sender: {
+            username: this.user.username
+          },
+          content: URL.createObjectURL(rst.file)
+        })
+
         let formData = new FormData()
         formData.append('receiver', this.ws.roomId)
         formData.append('image', rst.file)
