@@ -16,7 +16,7 @@
       <template slot="right" v-if="!isGameMenuVisible">
         <div class="right-ctrl">
           <template v-if="!user.logined">
-            <a class="link" @click="tryDemo">试玩</a>
+            <a class="link" @click="trial">试玩</a>
             <div class="divide"></div>
             <router-link class="link" to="/register">注册</router-link>
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
@@ -142,7 +142,6 @@
         </swiper>
       </div>
     </x-dialog>
-    <tryplay-popup />
     <game-menu v-if="games&&games.length" v-model="isGameMenuVisible" />
     <app-prompt v-if="systemConfig.appDownloadUrl"></app-prompt>
     <activity-envelope-dialog :visible.sync="isEnvelopeVisible" @on-close="isEnvelopeVisible = false"/>
@@ -176,9 +175,7 @@ import {
   TransferDom
 } from 'vux'
 import { mapState } from 'vuex'
-import TryplayPopup from '../components/TryplayPopup'
 import Marquee from '../components/Marquee'
-import freetrial from '../mixins/freetrial.js'
 import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
 import UnreadPoint from '@/components/UnreadPoint.vue'
@@ -224,7 +221,6 @@ export default {
     Grid,
     GridItem,
     InlineLoading,
-    TryplayPopup,
     Group,
     Cell,
     XButton,
@@ -236,7 +232,6 @@ export default {
     WinHistory,
     AppPrompt
   },
-  mixins: [freetrial],
   computed: {
     ...mapState([
       'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce', 'games'
@@ -291,7 +286,7 @@ export default {
         actions.push({
           type: 'button',
           className: 'trail',
-          click: this.tryDemo,
+          click: this.trial,
           text: '立即试玩'
         })
       }
@@ -351,6 +346,9 @@ export default {
     })
   },
   methods: {
+    trial () {
+      this.$store.dispatch('trial')
+    },
     openPromotions () {
       this.$router.push({ name: 'Promotions' })
     },

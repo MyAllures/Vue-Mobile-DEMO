@@ -60,17 +60,15 @@ function initData () {
       const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
       let serviceAction = null
       if (enableBuiltInCustomerService) {
-        if (store.state.user.account_type) {
-          serviceAction = () => {
+        serviceAction = () => {
+          if (store.state.user.account_type) {
             sendGaEvent({
               label: '我的',
               category: '點擊/進入客服',
               action: '點擊'
             })
             router.push({path: '/CustomerSerivce'})
-          }
-        } else {
-          serviceAction = () => {
+          } else {
             Vue.$vux.toast.show({
               text: '请先登入会员，如未有会员帐号请先注册',
               type: 'warn'
@@ -84,6 +82,7 @@ function initData () {
           serviceAction = null
         }
       }
+
       store.dispatch('setSystemConfig',
         {
           process: 'fulfilled',
