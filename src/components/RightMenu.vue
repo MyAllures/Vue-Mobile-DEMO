@@ -100,16 +100,6 @@
       },
       currentGame () {
         return this.$store.getters.gameById(this.$route.params.gameId)
-      },
-      seoWebsite () {
-        if (this.systemConfig.planSiteUrl && this.currentGame) {
-          const code = this.currentGame.code
-          const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft']
-          if (gamesHasPlan.includes(code)) {
-            return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
-          }
-        }
-        return ''
       }
     },
     methods: {

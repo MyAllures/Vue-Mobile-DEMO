@@ -24,7 +24,7 @@
             </div>
             <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
               <li v-if="hasExpertPlan" class="helper-link" @click="showGameInfo('expertplan')">
-                专家计划
+                <a :href="seoWebsite" target="_blank">专家计划</a>
               </li>
               <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
                 路珠
@@ -79,8 +79,8 @@ import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
 import { hasExpertPlan } from '@/utils/expertPlanSetting'
-import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
-import {hasRoadBead} from '@/utils/roadBeadSetting'
+import { hasTrendDiagram } from '@/utils/trendDiagramSetting'
+import { hasRoadBead } from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
 import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
@@ -158,7 +158,7 @@ export default {
     seoWebsite () {
       if (this.systemConfig.planSiteUrl && this.currentGame) {
         const code = this.currentGame.code
-        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft']
+        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'jspk10', 'mlaft', 'cs60cr']
         if (gamesHasPlan.includes(code)) {
           return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
         }
@@ -251,7 +251,7 @@ export default {
           category: '返回首頁',
           action: '点击'
         })
-        this.$router.push({name: 'Home'})
+        this.$router.push({ name: 'Home' })
       }
     },
     toggleHelper () {
@@ -263,6 +263,9 @@ export default {
     },
     showGameInfo (type) {
       this.sendHelperGa(type)
+      if (type === 'expertplan') {
+        return
+      }
       this.isGameInfoVisible = !!type
       // show history from game hall
       type = type === 'historyViaHall' ? 'history' : type
@@ -330,7 +333,7 @@ export default {
     .icon {
       height: 16px;
       width: 16px;
-      background: url('../../assets/helper.svg') no-repeat;
+      background: url("../../assets/helper.svg") no-repeat;
       background-size: contain;
     }
   }
@@ -379,12 +382,12 @@ export default {
         &:after {
           position: absolute;
           top: 14px;
-          content: '';
+          content: "";
           display: inline-block;
           width: 24px;
           height: 12px;
           margin-left: 5px;
-          background-image: url('../../assets/badge_new.svg');
+          background-image: url("../../assets/badge_new.svg");
           background-repeat: no-repeat;
           background-size: contain;
         }
@@ -417,10 +420,10 @@ export default {
 }
 
 .notify-msg-wrapper {
-    height: 25px;
-    transition-duration: 0.7s;
-    margin-top: 0;
-  }
+  height: 25px;
+  transition-duration: 0.7s;
+  margin-top: 0;
+}
 
 .notify-msg {
   position: relative;
