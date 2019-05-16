@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: {
     ws: null,
+    currentRoomId: '',
     status: '',
     messages: [],
     permission: null,
@@ -23,6 +24,9 @@ export default {
     setWs: (state, ws) => {
       state.ws = ws
     },
+    setRoomInfo: (state, data) => {
+      Object.assign(state, data)
+    },
     init: (state, data) => {
       state.loading = false
       state.messages = data.recent_messages
@@ -33,6 +37,12 @@ export default {
     },
     roomList: (state, roomList) => {
       state.roomList = roomList
+    },
+    removeRoom: (state, id) => {
+      let idx = state.roomList.indexOf(id)
+      if (idx !== -1) {
+        state.roomList.splice(idx, 1)
+      }
     },
     clear: (state, data) => {
       state.loading = true
@@ -63,6 +73,9 @@ export default {
     setWs: ({ commit }, ws) => {
       commit('setWs', ws)
     },
+    setRoomInfo: ({commit}, data) => {
+      commit('setRoomInfo', data)
+    },
     init: ({ commit }, data) => {
       commit('init', data)
     },
@@ -71,6 +84,9 @@ export default {
         commit('roomList', res.available_rooms)
         return res.available_rooms
       })
+    },
+    removeRoom: ({ commit }, id) => {
+      commit('removeRoom', id)
     },
     clear: ({ commit }, data) => {
       commit('clear', data)

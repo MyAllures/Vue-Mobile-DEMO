@@ -9,6 +9,7 @@ function onopen () {
   if (!this.originRoomId || this.originRoomId !== this.roomId) {
     this.joinRoom(this.roomId)
   }
+  store.dispatch('chatroom/setRoomInfo', {currentRoomId: this.roomId})
   store.dispatch('chatroom/setStatus', 'open')
 }
 
@@ -31,6 +32,19 @@ function onmessage (data) {
     case 'system':
     case 'red-envelope':
       store.dispatch('chatroom/receiveMsg', data)
+      break
+    case 'action':
+      if (data.value === 'chatroom_disabled') {
+        store.dispatch('chatroom/receiveMsg', {
+          type: 'system',
+          content: data.message
+        })
+        store.dispatch('chatroom/updatePermission', {
+          eligible: false,
+          messages: data.message
+        })
+        store.dispatch('chatroom/removeRoom', store.state.chatroom.currentRoomId)
+      }
       break
     case 'betrecord-sharing':
       store.dispatch('chatroom/receiveMsg', data)
