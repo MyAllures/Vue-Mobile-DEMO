@@ -27,7 +27,7 @@
                   class="period-input"
                   pattern="[0-9]*"
                   v-positive-number="{integer: true}"
-                  @update="bettrack.multiple=$event.target.value"
+                  @update="bettrack.type=$event.target.value"
                   :value="bettrack.type"/>&nbsp;期
               </div>
               <div class="col">
