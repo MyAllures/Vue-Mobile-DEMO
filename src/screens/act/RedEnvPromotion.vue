@@ -13,9 +13,10 @@
             <table v-if="type === 'boost'">
               <thead>
                 <tr>
-                  <td>每日充值金额</td>
-                  <td>每日有效投注金额</td>
-                  <td>当日可领红包个数</td>
+                  <td>每日充值<br v-if="hasMaxAmount" />金额</td>
+                  <td>每日有效<br v-if="hasMaxAmount" />投注金额</td>
+                  <td>当日可领<br v-if="hasMaxAmount" />红包个数</td>
+                  <td v-if="hasMaxAmount">最高<br />金额</td>
                 </tr>
               </thead>
               <tbody>
@@ -23,6 +24,7 @@
                   <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
                   <td>{{ level.bet_amount_min }}</td>
                   <td>{{ level.count }}</td>
+                  <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
                 </tr>
               </tbody>
             </table>
@@ -30,7 +32,8 @@
               <thead>
                 <tr>
                   <td>推荐人数</td>
-                  <td>每成功推荐一人，可领红包数</td>
+                  <td>每成功推荐一人，<br v-if="hasMaxAmount" />可领红包数</td>
+                  <td v-if="hasMaxAmount">最高<br />金额</td>
                 </tr>
               </thead>
               <tbody>
@@ -38,6 +41,7 @@
                   <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
                   <td v-else>{{ level.referral_min }} 以上</td>
                   <td>{{ level.count }}</td>
+                  <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
                 </tr>
               </tbody>
             </table>
@@ -86,11 +90,14 @@ export default {
       return this.$route.params.type
     },
     act () {
-      const pairs = {
+      const acts = {
         boost: this.actBoost,
         referral: this.actReferral
       }
-      return pairs[this.type]
+      return acts[this.type]
+    },
+    hasMaxAmount () {
+      return this.act.display_max_amount > 0
     }
   }
 }
@@ -150,6 +157,7 @@ export default {
       font-size: 11px;
 
       td {
+        line-height: 16px;
         border-top-color: transparent;
         border-right-color: transparent;
         border-left-color: transparent;
@@ -160,6 +168,11 @@ export default {
       text-align: center;
       vertical-align: middle;
       border: solid 1px #e1cfaf;
+    }
+    tbody {
+      td {
+        padding: 0 5px;
+      }
     }
   }
 }
