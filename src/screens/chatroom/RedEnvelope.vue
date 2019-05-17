@@ -126,7 +126,7 @@ export default {
           })
         }).catch(errRes => {
           this.$emit('take-envelope', {
-            message: msgFormatter(errRes),
+            message: msgFormatter(errRes) || '系统繁忙中请稍后再试',
             status: 'error',
             id: envelopeId
           })

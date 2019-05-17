@@ -57,15 +57,13 @@ export default {
       state.messages.push(message)
     },
     deleteFakeImg: (state) => {
-      let i = state.messages.length - 1
       let idx = -1
-      while (i >= 0) {
+      for (let i = 0, len = state.messages.length; i < len; i++) {
         let msg = state.messages[i]
         if (msg.isFake) {
           idx = i
           break
         }
-        i--
       }
       if (idx !== -1) {
         state.messages.splice(idx, 1)
