@@ -15,11 +15,11 @@ export default {
     state.user = {
       logined: false
     }
-    localStorage.removeItem('eider_token')
-    localStorage.removeItem('eagle_token')
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
-    Vue.cookie.delete('message_broker_token')
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`eagle_setting`)
+    localStorage.removeItem(`eider_setting`)
     delete axios.defaults.headers.common['Authorization']
   },
   [types.UPDATE_LOADING]: (state, payload) => {
