@@ -132,7 +132,7 @@ export default {
     },
     chatConditionMessage () {
       if (this.noPermission && this.permission) {
-        return this.permission.messages
+        return this.permission.messages.join(',')
       } else {
         return ''
       }
