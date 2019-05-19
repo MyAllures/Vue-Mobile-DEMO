@@ -43,19 +43,19 @@
             <tr v-if="mainName==='总和色波'">
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
                 <template v-for="(k,i) in daRoadList[index]">
-                  <div v-if="['red','blue','green'].includes(k)" :class="['hollow-ball', k]" :key="i"></div>
-                  <div v-else class="font" :key="i">{{k}}</div>
+                  <div v-if="['red','blue','green'].includes(k)" :class="['hollow-ball', k]" :key="k+i"></div>
+                  <div v-else class="font" :key="k+i">{{k}}</div>
                 </template>
               </td>
             </tr>
             <tr v-else-if="mainName==='五行'">
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
+                <div class="font" v-for="(k,i) in daRoadList[index]" :key="k+i">{{k|typeFilter}}</div>
               </td>
             </tr>
             <tr v-else>
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div :class="['hollow-ball', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
+                <div :class="['hollow-ball', k]" v-for="(k,i) in daRoadList[index]" :key="k+i"></div>
               </td>
             </tr>
           </tbody>
