@@ -1,8 +1,8 @@
 <template>
   <div id="re-promotion" v-if="act">
     <div class="content-wrap">
+      <img class="flower" src="@/assets/red-envelope-v2/promotion-flower.svg" />
       <div class="content">
-        <div class="promo-title">{{ act.name }}</div>
         <div class="section">
           <div class="section-title">活动介绍</div>
           <div class="section-content">{{ act.description }}</div>
@@ -69,11 +69,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'RedEnvPromotion',
+  mounted () {
+    this.updatePageSetting({
+      ...this.$store.state.page.meta,
+      title: this.act.name
+    })
+  },
   methods: {
+    ...mapActions('page', [
+      'updatePageSetting'
+    ]),
     goto (path) {
       this.$router.push(path)
     }
@@ -107,7 +116,7 @@ export default {
 #re-promotion {
   background: #d23f34;
   padding-top: 5px;
-  min-height: calc(100vh - 46px - 5px);
+  height: calc(100vh - 46px - 5px);
 }
 .header {
   height: 46px;
@@ -123,27 +132,41 @@ export default {
 }
 .content-wrap {
   width: 324px;
-  height: 470px;
-  background: url(../../assets/red-envelope-v2/promotion-bg.png) no-repeat;
-  background-size: 324px 470px;
-  margin: 0 auto;
-  padding: 20px 12px 16px;
+  height: calc(100% - 90px - 10px); // footer + :before top
+  background: #fff4df;
+  margin: 12px auto 0;
+  padding: 12px;
+  position: relative;
   text-align: center;
+  border-radius: 10px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, .3);
   box-sizing: border-box;
+
+  &:before {
+    content: '';
+    display: block;
+    background: #fff4df;
+    width: 84%;
+    height: 10px;
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px 10px 0 0;
+  }
+}
+.flower {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 .content {
   height: 100%;
   overflow-y: auto;
-}
-.promo-title {
-  width: 252px;
-  height: 47px;
-  background: url(../../assets/red-envelope-v2/promotion-title.png) no-repeat;
-  background-size: 252px 47px;
-  margin: 0 auto 5px;
-  font-size: 20px;
-  color: #fae8c6;
-  line-height: 47px;
+  position: relative;
 }
 .section {
   font-size: 14px;
@@ -210,11 +233,16 @@ export default {
   border-radius: 4px;
 }
 .footer {
-  margin: 0 auto;
-  padding: 25px 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
   width: 300px;
+  height: 90px;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   .f-col {
     flex: 1;
