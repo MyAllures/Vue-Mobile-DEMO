@@ -399,10 +399,6 @@ store.watch((state) => {
     }
     clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
-
-    localStorage.removeItem(`venom_setting`)
-    localStorage.removeItem(`eagle_setting`)
-    localStorage.removeItem(`eider_setting`)
   }
 })
 

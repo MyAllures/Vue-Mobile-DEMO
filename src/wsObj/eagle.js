@@ -38,17 +38,22 @@ function onmessage (data) {
     case 'red-envelope':
       store.dispatch('chatroom/receiveMsg', data)
       break
-    case 'action':
-      if (data.value === 'chatroom_disabled') {
+    case 'event':
+      if (data.code === 'chatroom_disabled') {
         store.dispatch('chatroom/receiveMsg', {
           type: 'system',
           content: data.message
         })
         store.dispatch('chatroom/updatePermission', {
           eligible: false,
-          messages: data.message
+          messages: [data.message]
         })
         store.dispatch('chatroom/removeRoom', store.state.chatroom.currentRoomId)
+      } else if (data.code === 'chat_permission_passed') {
+        store.dispatch('chatroom/updatePermission', {
+          eligible: true,
+          messages: []
+        })
       }
       break
     case 'betrecord-sharing':
@@ -57,7 +62,7 @@ function onmessage (data) {
     case 'private':
       store.dispatch('chatroom/updatePermission', {
         eligible: false,
-        messages: data.content
+        messages: [data.content]
       })
   }
 }

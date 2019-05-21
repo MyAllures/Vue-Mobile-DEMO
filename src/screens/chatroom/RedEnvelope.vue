@@ -104,29 +104,33 @@ export default {
       if (this.status === 'acquirable') {
         this.$vux.loading.show()
         takeRedEnvelope(envelopeId).then(data => {
-          this.$store.dispatch('chatroom/updateRedEnvelopeStatus', {
-            id: envelopeId,
-            status: data.status
-          })
-          let status
+          let envelopeStatus
+          let actionStatus
           switch (data.status) {
             case 'acquired':
-              status = 'success'
+              actionStatus = 'success'
+              envelopeStatus = 'acquired'
               break
             case 'exhausted':
-              status = 'fail'
+              actionStatus = 'fail'
+              envelopeStatus = 'exhausted'
               break
             default:
-              status = 'error'
+              actionStatus = 'error'
+              envelopeStatus = 'acquirable'
           }
+          this.$store.dispatch('chatroom/updateRedEnvelopeStatus', {
+            id: envelopeId,
+            status: envelopeStatus
+          })
           this.$emit('take-envelope', {
             ...data,
-            status,
+            status: actionStatus,
             id: envelopeId
           })
         }).catch(errRes => {
           this.$emit('take-envelope', {
-            message: msgFormatter(errRes),
+            message: msgFormatter(errRes) || '系统繁忙中请稍后再试',
             status: 'error',
             id: envelopeId
           })

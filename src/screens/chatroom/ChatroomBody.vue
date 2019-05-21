@@ -314,6 +314,9 @@ export default {
     })
     view.addEventListener('scroll', this.showToBottomBtn)
   },
+  activated () {
+    this.toBottom()
+  },
   methods: {
     toBottom () {
       const view = this.$refs.view

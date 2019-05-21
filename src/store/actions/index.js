@@ -51,8 +51,6 @@ export default {
   logout: ({ commit, state, dispatch }) => {
     return logout().then(
       res => {
-        Vue.cookie.delete('access_token')
-        Vue.cookie.delete('refresh_token')
         commit(types.RESET_USER)
         dispatch('customerService/clearMessage')
         dispatch('customerService/setServiceUnread', false)
