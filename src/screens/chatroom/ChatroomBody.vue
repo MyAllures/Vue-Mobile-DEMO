@@ -67,9 +67,9 @@
       <inline-loading></inline-loading>加载中
     </div>
     <template v-if="!loading">
-      <div class="followee-filter filter" v-if="!tryPlayUser">
-        <div :class="['followee-filter-item', {active: !followeeOnly}]" @click="followeeOnly=false">全部</div>
-        <div :class="['followee-filter-item', {active: followeeOnly}]" @click="followeeOnly=true">关注</div>
+      <div class="followee-filter filter" :class="{ busy: this.changingFolloweeOnly }" v-if="!tryPlayUser">
+        <div :class="['followee-filter-item', {active: !followeeOnly}]" @click="setFolloweeOnly(false)">全部</div>
+        <div :class="['followee-filter-item', {active: followeeOnly}]" @click="setFolloweeOnly(true)">关注</div>
       </div>
       <div class="bet-filter filter" @click="showFilterDialog = true" v-if="user.filters">
         <filter-icon/>游戏筛选
@@ -181,7 +181,7 @@
 </template>
 <script>
 import BetInfo from './BetInfo'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
 import { eagle } from '@/api'
 import emitter from '@/mixins/emitter'
@@ -228,7 +228,7 @@ export default {
       bannedList: [],
       banLoading: false,
       followLoading: false,
-      followeeOnly: false,
+      changingFolloweeOnly: false,
       showFilterDialog: false
     }
   },
@@ -245,7 +245,7 @@ export default {
     }),
     messagesForDisplay () {
       let result = this.messages
-      if (this.followeeOnly === true) {
+      if (this.followeeOnly) {
         const hash = {}
         this.user.followeeList.forEach(followee => {
           hash[followee.username] = true
@@ -253,11 +253,11 @@ export default {
         result = result.filter(msg => !!msg.sender && !!msg.sender.username && hash[msg.sender.username])
       }
       if (this.user.filters) {
-        const hideGames = this.user.filters.game_settings ? Object.keys(this.user.filters.game_settings).filter(key => this.user.filters.game_settings[key] === false) : []
+        const showGames = this.user.filters.game_settings ? Object.keys(this.user.filters.game_settings).filter(key => this.user.filters.game_settings[key] === true) : []
         result = result.filter(msg => {
           if (msg.type === 'betrecord-sharing') {
             const content = JSON.parse(msg.content)
-            return !hideGames.includes(content.game_code)
+            return showGames.includes(content.game_code)
           }
           return true
         })
@@ -266,6 +266,9 @@ export default {
     },
     tryPlayUser () {
       return !this.user.account_type
+    },
+    followeeOnly () {
+      return this.user.filters.filter_followee
     }
   },
   watch: {
@@ -318,6 +321,9 @@ export default {
     this.toBottom()
   },
   methods: {
+    ...mapActions([
+      'updateFilters'
+    ]),
     toBottom () {
       const view = this.$refs.view
       if (view) {
@@ -396,6 +402,18 @@ export default {
       this.takingRedEnvelopeDialogVisible = false
       this.$store.dispatch('addKeepAlive', 'Chatroom')
       this.$router.push({path: `/red_envelope/${this.selectedRedEnvelope.id}`})
+    },
+    setFolloweeOnly (bool) {
+      if (bool === this.followeeOnly || this.changingFolloweeOnly) return
+      this.changingFolloweeOnly = true
+      eagle.updateChatRoomUserInfo(this.user.username, {
+        filter_followee: bool
+      }).then(() => {
+        this.updateFilters({
+          filter_followee: bool
+        })
+        this.changingFolloweeOnly = false
+      })
     }
   },
   beforeDestroy () {
@@ -554,6 +572,10 @@ export default {
   padding: 2px;
   color: #666;
   font-size: 12px;
+
+  &.busy {
+    opacity: .6;
+  }
 }
 .followee-filter {
   left: 10px;
