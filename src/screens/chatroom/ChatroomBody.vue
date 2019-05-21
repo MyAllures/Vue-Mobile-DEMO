@@ -253,11 +253,11 @@ export default {
         result = result.filter(msg => !!msg.sender && !!msg.sender.username && hash[msg.sender.username])
       }
       if (this.user.filters) {
-        const hideGames = this.user.filters.game_settings ? Object.keys(this.user.filters.game_settings).filter(key => this.user.filters.game_settings[key] === false) : []
+        const showGames = this.user.filters.game_settings ? Object.keys(this.user.filters.game_settings).filter(key => this.user.filters.game_settings[key] === true) : []
         result = result.filter(msg => {
           if (msg.type === 'betrecord-sharing') {
             const content = JSON.parse(msg.content)
-            return !hideGames.includes(content.game_code)
+            return showGames.includes(content.game_code)
           }
           return true
         })
