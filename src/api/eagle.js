@@ -73,13 +73,6 @@ const eagle = {
    */
   fetchFilters (username) {
     return axiosEagle.get(`${urls.eagle.user}${username}/?fields=game_settings`)
-  },
-  /**
-   * 更新訊息篩選設定
-   * @param {Object} data
-   */
-  updateFilters (username, data) {
-    return axiosEagle.patch(`${urls.eagle.user}${username}/`, data)
   }
 }
 export {

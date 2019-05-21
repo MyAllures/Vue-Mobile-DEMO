@@ -182,8 +182,6 @@ export default {
     }
   },
   [types.UPDATE_FILTERS]: (state, filters) => {
-    console.log(state.user.filters)
-    console.log(filters)
     state.filters = Object.assign(state.user.filters, filters)
   }
 }

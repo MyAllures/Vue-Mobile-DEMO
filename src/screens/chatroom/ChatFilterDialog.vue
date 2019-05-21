@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { TransferDom, Popup, XButton } from 'vux'
 import { eagle } from '@/api'
 
@@ -85,16 +85,14 @@ export default {
     },
     selectAllGames (selected) {
       this.gamesByGroup.forEach(group => {
-        group.data.map(data => {
+        group.data.forEach(data => {
           data.selected = selected
-          return data
         })
       })
     },
     selectGames (groupIndex, selected) {
-      this.gamesByGroup[groupIndex].data.map(data => {
+      this.gamesByGroup[groupIndex].data.forEach(data => {
         data.selected = selected
-        return data
       })
     },
     childHasSelected (groupIndex) {
@@ -108,7 +106,7 @@ export default {
           data[game.code] = game.selected
         })
       })
-      eagle.updateFilters(this.user.username, {
+      eagle.updateChatRoomUserInfo(this.user.username, {
         game_settings: data
       }).then(() => {
         this.updateFilters({
