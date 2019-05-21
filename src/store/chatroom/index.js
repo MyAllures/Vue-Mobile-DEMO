@@ -39,6 +39,7 @@ export default {
       state.roomList = roomList
     },
     removeRoom: (state, id) => {
+      state.loading = false
       let idx = state.roomList.indexOf(id)
       if (idx !== -1) {
         state.roomList.splice(idx, 1)
