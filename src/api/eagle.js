@@ -67,6 +67,12 @@ const eagle = {
    */
   toggleFollowee (username) {
     return axiosEagle.post(urls.eagle.toggle_follow, {followee: username})
+  },
+  /**
+   * 取得訊息篩選設定
+   */
+  fetchFilters (username) {
+    return axiosEagle.get(`${urls.eagle.user}${username}/?fields=game_settings`)
   }
 }
 export {

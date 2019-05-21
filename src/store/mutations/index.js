@@ -180,5 +180,8 @@ export default {
     } else {
       state.user.followeeList.push(followee)
     }
+  },
+  [types.UPDATE_FILTERS]: (state, filters) => {
+    state.filters = Object.assign(state.user.filters, filters)
   }
 }

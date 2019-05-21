@@ -1,4 +1,4 @@
-import {eagle} from '@/api'
+import { eagle } from '@/api'
 import Vue from 'vue'
 
 export default {

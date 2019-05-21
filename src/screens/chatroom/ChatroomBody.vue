@@ -71,124 +71,126 @@
         <div :class="['followee-filter-item', {active: !followeeOnly}]" @click="followeeOnly=false">全部</div>
         <div :class="['followee-filter-item', {active: followeeOnly}]" @click="followeeOnly=true">关注</div>
       </div>
-      <div :class="['bet-filter filter', {active: withoutBet}]" @click="withoutBet = !withoutBet">
-        <filter-icon/>不看投注
+      <div class="bet-filter filter" @click="showFilterDialog = true" v-if="user.filters">
+        <filter-icon/>游戏筛选
       </div>
     </template>
     <div :class="['to-bottom-btn', {visible: isToBottomBtnVisible}]" @click="toBottom"></div>
-      <div v-if="isManager" class="manage-btn" @click="dispatch('Chatroom', 'showPopup', 'chatmanage')">
-        <p>禁言</p>
-        <p>管理</p>
+    <div v-if="isManager" class="manage-btn" @click="dispatch('Chatroom', 'showPopup', 'chatmanage')">
+      <p>禁言</p>
+      <p>管理</p>
+    </div>
+    <cube-popup
+      v-transfer-dom
+      class="preview-image-popup"
+      type="extend-popup"
+      ref="image-popup"
+      :maskClosable="true"
+      :z-index="1000">
+      <div class="preview-image-popup-content" @click="hidePreviewImg">
+        <div class="close-btn"></div>
+        <div class="preview-image" :style="{'background-image': `url('${selectedImage}')`}"></div>
       </div>
-      <cube-popup
-        v-transfer-dom
-        class="preview-image-popup"
-        type="extend-popup"
-        ref="image-popup"
-        :maskClosable="true"
-        :z-index="1000">
-        <div class="preview-image-popup-content" @click="hidePreviewImg">
-          <div class="close-btn"></div>
-          <div class="preview-image" :style="{'background-image': `url('${selectedImage}')`}"></div>
-        </div>
-      </cube-popup>
-      <div v-transfer-dom>
-        <x-dialog
-          :show.sync="chatManageDialogVisible"
-          :hide-on-blur="true"
-          :dialog-style="{
-            width: '100%'
-          }"
-          @touchmove.native.prevent>
-          <div class="chat-manage-dialog-wrapper">
-            <div class="header">
-              <div class="title">会员</div>
-            </div>
-            <div class="content">
-              <div
-                class="avatar"
-                :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
-              <div class="nickname">{{selectedMember.nickname}}</div>
-            </div>
-            <div class="buttons single">
-              <template v-if="!tryPlayUser">
-                <div v-if="!selectedMember.username||!user.followeeList||followLoading" class="loading">
-                  <inline-loading></inline-loading>加载中
-                </div>
-                <x-button v-else-if="!selectedMember.followable" type="default" disabled>未开放关注</x-button>
-                <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
-                <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
-              </template>
-            </div>
-            <div v-if="selectedMember.username&&isManager&&selectedMember.bannable" class="buttons">
-              <div v-if="banLoading" class="loading">
+    </cube-popup>
+    <div v-transfer-dom>
+      <x-dialog
+        :show.sync="chatManageDialogVisible"
+        :hide-on-blur="true"
+        :dialog-style="{
+          width: '100%'
+        }"
+        @touchmove.native.prevent>
+        <div class="chat-manage-dialog-wrapper">
+          <div class="header">
+            <div class="title">会员</div>
+          </div>
+          <div class="content">
+            <div
+              class="avatar"
+              :style="{'background-image': selectedMember.avatar_url?`url('${selectedMember.avatar_url}')`:`url('${defaultAvatar}')`}"></div>
+            <div class="nickname">{{selectedMember.nickname}}</div>
+          </div>
+          <div class="buttons single">
+            <template v-if="!tryPlayUser">
+              <div v-if="!selectedMember.username||!user.followeeList||followLoading" class="loading">
                 <inline-loading></inline-loading>加载中
               </div>
-              <template v-else>
-                <x-button type="default" :disabled="selectedMember.banned" @click.native="banMember(15)">禁言15分钟</x-button>
-                <x-button type="default" :disabled="selectedMember.banned" @click.native="banMember(30)">禁言30分钟</x-button>
-              </template>
-            </div>
+              <x-button v-else-if="!selectedMember.followable" type="default" disabled>未开放关注</x-button>
+              <x-button v-else-if="user.followeeList.find(followee => followee.username === selectedMember.username)" type="default" @click.native="toggleFollowee">取消关注</x-button>
+              <x-button v-else type="primary" @click.native="toggleFollowee">关注</x-button>
+            </template>
           </div>
-        </x-dialog>
-      </div>
-      <div v-transfer-dom>
-        <x-dialog
-          :show.sync="takingRedEnvelopeDialogVisible"
-          :hide-on-blur="true"
-          :dialog-style="{
-            width: '220px',
-            height: '395px',
-            background: 'rgba(0, 0, 0, 0)'
-          }"
-          @touchmove.native.prevent>
-          <div class="taking-envelope-dialog-wrapper">
-            <div class="paper" v-if="selectedRedEnvelope.status==='success'">
-              <div class="text">领取成功</div>
-              <div class="amount">{{selectedRedEnvelope.amount|currency('￥')}}</div>
+          <div v-if="selectedMember.username&&isManager&&selectedMember.bannable" class="buttons">
+            <div v-if="banLoading" class="loading">
+              <inline-loading></inline-loading>加载中
             </div>
-            <div class="paper" v-else-if="selectedRedEnvelope.status==='error'">
-              <div class="text">领取失败</div>
-            </div>
-            <div :class="['status-icon', selectedRedEnvelope.status]"></div>
-            <div class="msg">{{selectedRedEnvelope.message}}</div>
-            <div class="detail-button">
-              <x-button
-                v-if="selectedRedEnvelope.status==='error'"
-                type="primary"
-                action-type="button"
-                :disabled="false"
-                @click.native="takingRedEnvelopeDialogVisible=false">确认
-            </x-button>
+            <template v-else>
+              <x-button type="default" :disabled="selectedMember.banned" @click.native="banMember(15)">禁言15分钟</x-button>
+              <x-button type="default" :disabled="selectedMember.banned" @click.native="banMember(30)">禁言30分钟</x-button>
+            </template>
+          </div>
+        </div>
+      </x-dialog>
+    </div>
+    <div v-transfer-dom>
+      <x-dialog
+        :show.sync="takingRedEnvelopeDialogVisible"
+        :hide-on-blur="true"
+        :dialog-style="{
+          width: '220px',
+          height: '395px',
+          background: 'rgba(0, 0, 0, 0)'
+        }"
+        @touchmove.native.prevent>
+        <div class="taking-envelope-dialog-wrapper">
+          <div class="paper" v-if="selectedRedEnvelope.status==='success'">
+            <div class="text">领取成功</div>
+            <div class="amount">{{selectedRedEnvelope.amount|currency('￥')}}</div>
+          </div>
+          <div class="paper" v-else-if="selectedRedEnvelope.status==='error'">
+            <div class="text">领取失败</div>
+          </div>
+          <div :class="['status-icon', selectedRedEnvelope.status]"></div>
+          <div class="msg">{{selectedRedEnvelope.message}}</div>
+          <div class="detail-button">
             <x-button
-                v-else
-                type="primary"
-                action-type="button"
-                :disabled="false"
-                @click.native="toEnvelopeDetail">查看领取详情
-            </x-button>
-            </div>
+              v-if="selectedRedEnvelope.status==='error'"
+              type="primary"
+              action-type="button"
+              :disabled="false"
+              @click.native="takingRedEnvelopeDialogVisible=false">确认
+          </x-button>
+          <x-button
+              v-else
+              type="primary"
+              action-type="button"
+              :disabled="false"
+              @click.native="toEnvelopeDetail">查看领取详情
+          </x-button>
           </div>
-          <div class="close-area" @click="takingRedEnvelopeDialogVisible = false">
-            <div class="icon">
-              <cross-icon></cross-icon>
-            </div>
+        </div>
+        <div class="close-area" @click="takingRedEnvelopeDialogVisible = false">
+          <div class="icon">
+            <cross-icon></cross-icon>
           </div>
-        </x-dialog>
-      </div>
+        </div>
+      </x-dialog>
+    </div>
+    <ChatFilterDialog :show.sync="showFilterDialog" v-if="user.filters" />
   </div>
 </template>
 <script>
 import BetInfo from './BetInfo'
 import { mapState } from 'vuex'
 import { TransferDom, XDialog, XButton, InlineLoading } from 'vux'
-import emitter from '@/mixins/emitter.js'
+import { eagle } from '@/api'
+import emitter from '@/mixins/emitter'
 import throttle from 'lodash/throttle'
 import FixScroll from '@/directive/fixscroll'
 import ImgWrapper from './ImgWrapper'
 import FilterIcon from '@/components/icon/Filter'
 import RedEnvelope from '@/screens/chatroom/RedEnvelope'
-import {eagle} from '@/api'
+import ChatFilterDialog from '@/screens/chatroom/ChatFilterDialog'
 import CrossIcon from '@/components/icon/Cross'
 
 export default {
@@ -201,6 +203,7 @@ export default {
     InlineLoading,
     FilterIcon,
     RedEnvelope,
+    ChatFilterDialog,
     CrossIcon
   },
   directives: {
@@ -226,7 +229,7 @@ export default {
       banLoading: false,
       followLoading: false,
       followeeOnly: false,
-      withoutBet: false
+      showFilterDialog: false
     }
   },
   computed: {
@@ -249,8 +252,15 @@ export default {
         })
         result = result.filter(msg => !!msg.sender && !!msg.sender.username && hash[msg.sender.username])
       }
-      if (this.withoutBet) {
-        result = result.filter(msg => msg.type !== 'betrecord-sharing')
+      if (this.user.filters) {
+        const hideGames = this.user.filters.game_settings ? Object.keys(this.user.filters.game_settings).filter(key => this.user.filters.game_settings[key] === false) : []
+        result = result.filter(msg => {
+          if (msg.type === 'betrecord-sharing') {
+            const content = JSON.parse(msg.content)
+            return !hideGames.includes(content.game_code)
+          }
+          return true
+        })
       }
       return result
     },
@@ -282,7 +292,7 @@ export default {
         this.notNeedScroll = true
       }
     },
-    'imgLoadCount': function (count) {
+    imgLoadCount: function (count) {
       if (count === 0) {
         if (!this.notNeedScroll) {
           this.$nextTick(() => {
@@ -537,6 +547,7 @@ export default {
   position: absolute;
   top: 10px;
   display: flex;
+  align-items: center;
   height: 20px;
   background: #ddd;
   border-radius: 4px;
