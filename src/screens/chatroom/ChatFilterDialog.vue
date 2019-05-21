@@ -51,7 +51,7 @@ export default {
     loading: false,
     gamesByGroup: []
   }),
-  mounted () {
+  created () {
     this.setGames()
   },
   methods: {
