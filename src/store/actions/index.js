@@ -272,10 +272,11 @@ export default {
     commit(types.HIDE_RIGHT_MENU)
   },
   fetchChatRoomUserInfo: ({commit, state}) => {
-    Promise.all([eagle.fetchChatRoomUserInfo(state.user.username), eagle.fetchFolloweeList().catch(() => [])]).then(([user, followeeList]) => {
+    Promise.all([eagle.fetchChatRoomUserInfo(state.user.username), eagle.fetchFolloweeList().catch(() => []), eagle.fetchFilters(state.user.username)]).then(([user, followeeList, filters]) => {
       commit(types.SET_USER, {
         followeeList,
-        followable: user.followable
+        followable: user.followable,
+        filters
       })
     }).catch(e => {
 
@@ -286,5 +287,8 @@ export default {
       commit(types.TOGGLE_FOLLOWEE, followee)
       return res
     })
+  },
+  updateFilters: ({ commit }, data) => {
+    commit(types.UPDATE_FILTERS, data)
   }
 }

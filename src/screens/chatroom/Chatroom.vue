@@ -91,7 +91,7 @@ export default {
     })
   },
   watch: {
-    'isGameInfoVisible': function (visible) {
+    isGameInfoVisible: function (visible) {
       if (visible) {
         // 在弹出层显示之前，记录当前的滚动位置
         scrollTop = getScrollTop()
