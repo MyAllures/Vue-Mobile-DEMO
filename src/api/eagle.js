@@ -72,7 +72,7 @@ const eagle = {
    * 取得訊息篩選設定
    */
   fetchFilters (username) {
-    return axiosEagle.get(`${urls.eagle.user}${username}/?fields=filter_followee,game_settings`)
+    return axiosEagle.get(`${urls.eagle.user}${username}/?fields=game_settings`)
   },
   /**
    * 更新訊息篩選設定
