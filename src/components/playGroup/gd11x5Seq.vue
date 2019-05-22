@@ -3,23 +3,25 @@
     <div class="playgroup-odds">赔率：<span class="red">{{activePlay.odds}}</span></div>
     <div v-for="(group, index) in showViewCustomOptionsGroup" :key="index">
       <div class="playgroup-title">{{group.name}}</div>
-      <grid :cols="chunkOptions.length === 2 ? 2 : 3" v-for="(chunkOptions, index) in group.options" :key="index">
-        <grid-item
-          :class="['play', {active: option.active && !gameClosed}]"
+      <div class="playgroup-content" v-for="(chunkOptions, index) in group.options" :key="index">
+        <div
+          :class="['play-wrapper', {active: option.active && !gameClosed}]"
+          :style="{width: `calc(${100/calcCol(chunkOptions.length)}%)`}"
           v-for="(option, index) in chunkOptions"
           :key="index"
-          @on-item-click="toggleActive(option)">
-          <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
-            <span class="num">{{option.num}}</span>
+          @click="toggleActive(option)">
+          <div class="play-area">
+            <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
+              <span class="num">{{option.num}}</span>
+            </div>
           </div>
-        </grid-item>
-      </grid>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import _ from 'lodash'
-import { Grid, GridItem } from 'vux'
 import Combinatorics from 'js-combinatorics'
 export default {
   name: 'gd11x5Seq',
@@ -39,10 +41,6 @@ export default {
     setting: {
       type: Object
     }
-  },
-  components: {
-    Grid,
-    GridItem
   },
   data () {
     const customOptionsGroup = [[], [], []]
@@ -119,6 +117,9 @@ export default {
     }
   },
   methods: {
+    calcCol (len) {
+      return len === 2 ? 2 : 3
+    },
     calculateCombinations () {
       let activedOptionNumbers = _.map(this.activedOptions, options => {
         return _.map(options, option => option.num)

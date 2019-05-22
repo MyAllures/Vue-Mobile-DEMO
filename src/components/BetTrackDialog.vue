@@ -15,19 +15,19 @@
           <div>
             <div class="info-wrapper">
               <div class="row">
-                <span class="name">位置 :</span>
+                <div class="name">位置 :</div>
                 <span class="value">{{dialog.data.forDisplay.play_code_pattern}}</span>
               </div>
               <div class="row">
-                <span class="name">号码 :</span>
+                <div class="name">号码 :</div>
                 <span class="value">{{dialog.data.track_numbers.join(',')}}</span>
               </div>
               <div class="row">
-                <span class="name">单注 :</span>
+                <div class="name">单注 :</div>
                 <span class="value">￥{{dialog.data.bet_amount}}</span>
               </div>
               <div class="row">
-                <span class="name">期数 :</span>
+                <div class="name">期数 :</div>
                 <span class="value">
                   <span class="schedule-text" v-for="(s, i) in dialog.data.forDisplay.selectedSchedules" :key="i">{{s}}</span>{{dialog.data.forDisplay.type}}
                 </span>
@@ -35,7 +35,7 @@
             </div>
             <div class="summary">
               <p>一期<span class="red"> {{dialog.data.track_numbers.length}} </span>注 总金额：<span class="red">￥{{dialog.data.track_numbers.length * dialog.data.bet_amount}}</span></p>
-              <p>如有一期中奖即停止追号</p>
+              <p v-if="dialog.data.forDisplay.selectedSchedules&&dialog.data.forDisplay.selectedSchedules.length>1">如有一期中奖即停止追号</p>
           </div>
           </div>
           <div v-if="loading"  class="loading">
@@ -83,7 +83,7 @@ export default {
       let submitData = pick(this.dialog.data, ['game_schedule', 'type', 'bet_amount', 'track_numbers', 'play_code_pattern'])
       betTrack(submitData).then((res) => {
         this.sendGaEvent({
-          label: this.gameInfo.display_name,
+          label: this.gameName,
           category: '遊戲追號',
           action: '投注'
         })
@@ -126,7 +126,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['gameInfo']),
+    ...mapState('game', {
+      gameName: state => state.displayName
+    }),
     dialog () {
       return this.$store.state.dialog.bettrack
     }
@@ -191,7 +193,7 @@ export default {
 }
 
 .name {
-  display: inline-block;
+  flex: 0 0 auto;
   width: 50px;
   color: #999;
   line-height: 2;

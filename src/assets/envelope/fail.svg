@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_red pocket_fail</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="25" cy="25" r="25"></circle>
+    </defs>
+    <g id="icon_red-pocket_fail" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-9">
+            <g>
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <circle stroke="#FDEBC5" stroke-width="3" cx="25" cy="25" r="23.5"></circle>
+                <circle id="Oval-2" fill="#FDEBC5" mask="url(#mask-2)" cx="15" cy="17" r="3"></circle>
+                <circle id="Oval-2" fill="#FDEBC5" mask="url(#mask-2)" cx="35" cy="17" r="3"></circle>
+                <path d="M37,34.74889 C34.601,30.56789 30.131,27.74889 25,27.74889 C19.869,27.74889 15.399,30.56789 13,34.74889" id="Page-1" stroke="#FDEBC5" stroke-width="3" mask="url(#mask-2)"></path>
+            </g>
+        </g>
+    </g>
+</svg>

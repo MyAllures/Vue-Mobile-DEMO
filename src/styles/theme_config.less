@@ -32,6 +32,15 @@
     }
   }
 
+  .cube-checkbox_checked .cube-checkbox-ui i {
+    color: @main;
+  }
+
+  .cube-switch .cube-switch-input:checked + .cube-switch-ui {
+    border-color: @main;
+    background-color: @main;
+  }
+
   .weui-btn_primary {
     background-color: @main;
     background-image: @gradient;
@@ -66,10 +75,6 @@
   .weui-btn_plain-primary:not(.weui-btn_plain-disabled):active {
     color: @main;
     border: 1px solid @main;
-  }
-  .weui-btn.weui-btn_default {
-    border: 1px solid @main;
-    color: @main;
   }
 
   .vux-tab .vux-tab-item.vux-tab-selected {
@@ -107,8 +112,37 @@
     background-image: @gradient;
   }
 
-  .category-menu-item.active {
-    background-color: @playColor;
+  .game-category-container {
+    .play-wrapper.active {
+      .play-area {
+        background-color: @playColor;
+      }
+    }
+  }
+
+  .game-container {
+    .mode-tab {
+      .mode-tab-item.active {
+        color: @main;
+        border-color: @main;
+      }
+    }
+  }
+
+  .chatroom-body-wrapper {
+    .bet-filter.active {
+      background-color: @main;
+    }
+  }
+
+  .bet-area {
+    .aside {
+      .category-menu {
+        .category-menu-item.active {
+          background-color: @playColor;
+        }
+      }
+    }
   }
 
   .weui-grid.play.active {
@@ -143,7 +177,7 @@
   }
 
   .fin-tabs .tab-view {
-    background-image: @gradient;;
+    background-image: @gradient;
     .tab-item.selected .tab-item-text {
       color: @main;
     }
@@ -178,6 +212,9 @@
       }
     }
   }
+  .fin-tabs .vux-tab .vux-tab-item.vux-tab-selected {
+    background: lighten(@main, 30%);
+  }
 }
 
 .theme0 { // processing
@@ -197,6 +234,9 @@
   .game-label .game-label-text {
     background-color: #d0e2f7;
     color: #113f7c;
+  }
+  .fin-tabs .vux-tab .vux-tab-item.vux-tab-selected {
+    background: lighten(#166fd8, 30%);
   }
   .weui-btn_primary {
     &.active {

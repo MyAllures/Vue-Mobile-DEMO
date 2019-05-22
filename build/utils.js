@@ -59,7 +59,10 @@ exports.cssLoaders = function (options) {
   }
 
   const stylusOptions = {
-    'resolve url': true
+    'resolve url': true,
+    'import': [
+      [path.resolve(__dirname, '../src/styles/cube_theme')]
+    ]
   }
   // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {

@@ -5,6 +5,8 @@ import mutations from './mutations'
 import getters from './getters'
 import { getLastGameData } from '../utils'
 import page from './page'
+import chatroom from './chatroom'
+import game from './game'
 import customerService from './customerService'
 
 Vue.use(Vuex)
@@ -39,12 +41,14 @@ export default new Vuex.Store({
         minutes: 0,
         seconds: 0
       },
-      issue_number: ''
+      issue_number: '',
+      isClosed: false
     },
     notifications: [],
     notificationVisible: false,
     dialog: {
       bet: {
+        gameName: '',
         visible: false,
         bets: [],
         isSuccess: false
@@ -61,6 +65,16 @@ export default new Vuex.Store({
           forDisplay: {}
         },
         isSuccess: false
+      },
+      new_bettrack: {
+        visible: false,
+        data: null,
+        isSuccess: false
+      },
+      expert_bettrack: {
+        visible: false,
+        data: null,
+        isSuccess: false
       }
     },
     categories: {},
@@ -73,10 +87,9 @@ export default new Vuex.Store({
       global_preferences: {
         send_chat_conditions: '{}'
       },
-      chatroomEnabled: false,
       isAllowNewPaymentWindow: 'false',
       regPresentAmount: undefined,
-      envelopeSettings: {},
+      chatroomEnvelopeSettings: {},
       stickerGroups: [],
       smsValidationEnabled: false,
       appDownloadUrl: '',
@@ -91,15 +104,11 @@ export default new Vuex.Store({
     keepAlivePage: ['Home'],
     promotions: [],
     ws: {
-      raven: null,
       eider: null,
       venom: null
     },
-    roomId: undefined,
-    roomInfo: null,
     messages: [],
     announce: {
-      chatroom: [],
       homepage: []
     },
     banners: [],
@@ -111,15 +120,16 @@ export default new Vuex.Store({
     },
     latestResultMap: {},
     lastGameData: getLastGameData(),
-    dataSectionStyle: {'padding-top': '5px'},
-    serviceUnread: 0,
-    helperVisible: false
+    bettrackPositions: {},
+    serviceUnread: 0
   },
   actions,
   mutations,
   getters,
   modules: {
     page,
+    chatroom,
+    game,
     customerService
   }
 })

@@ -16,7 +16,11 @@ export default {
   props: {
     maxlength: Number,
     placeholder: String,
-    value: [String, Number]
+    value: [String, Number],
+    match: {
+      type: RegExp,
+      default: () => /^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/
+    }
   },
   data () {
     return {
@@ -24,7 +28,7 @@ export default {
     }
   },
   watch: {
-    'currentValue': function (val, oldVal) {
+    currentValue: function (val, oldVal) {
       // 調用filter過濾數據
       let formattedValue = this.filter(val)
       formattedValue = this.typeNumberFilter(formattedValue, oldVal)
@@ -35,7 +39,7 @@ export default {
       }
       this.$emit('input', formattedValue)
     },
-    'value': function (value) {
+    value: function (value) {
       this.currentValue = value
     }
   },
@@ -54,7 +58,7 @@ export default {
     },
     filter (value) {
       let formattedValue = ''
-      const match = value.match(/^([1-9]\d*(\.[\d]{0,1})?|0(\.[\d]{0,1})?)[\d.]*/)
+      const match = value.match(this.match)
       if (match) {
         formattedValue = match[1]
       }

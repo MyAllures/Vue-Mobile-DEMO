@@ -7,14 +7,14 @@
       <ul class="items" >
         <li v-for="item in topItems" class="item">
           <span>{{ item.username }}</span>
-          <span>{{ item.display }}</span> 
+          <span>{{ item.display }}</span>
           <span class="amount">{{ item.amount | currency('￥') }}</span>
         </li>
       </ul>
       <ul class="items" ref="bottomList">
         <li v-for="item in bottomItems" class="item">
           <span>{{ item.username }}</span>
-          <span>{{ item.display }}</span> 
+          <span>{{ item.display }}</span>
           <span class="amount">{{ item.amount | currency('￥') }}</span>
         </li>
       </ul>
@@ -112,7 +112,7 @@ export default {
   background: #fff;
   padding: 10px;
 }
-.title { 
+.title {
   background: #fff url('../assets/wave_bg.png') repeat-x left bottom;
   text-align: center;
   color: #feae2c;
@@ -135,7 +135,7 @@ export default {
   line-height: 26px;
   font-size: 14px;
   display: flex;
-  justifyContent: center;
+  justify-content: center;
   span {
     flex: 1;
   }

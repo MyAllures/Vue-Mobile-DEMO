@@ -15,12 +15,11 @@ export default {
     state.user = {
       logined: false
     }
-    if (state.ws.raven) {
-      state.ws.raven.disconnect()
-    }
     Vue.cookie.delete('access_token')
     Vue.cookie.delete('refresh_token')
-    Vue.cookie.delete('message_broker_token')
+    localStorage.removeItem(`venom_setting`)
+    localStorage.removeItem(`eagle_setting`)
+    localStorage.removeItem(`eider_setting`)
     delete axios.defaults.headers.common['Authorization']
   },
   [types.UPDATE_LOADING]: (state, payload) => {
@@ -31,6 +30,9 @@ export default {
   },
   [types.SET_CATEGORIES]: (state, {gameId, categories}) => {
     Vue.set(state.categories, gameId, categories)
+  },
+  [types.SET_BETTRACK_POSITIONS]: (state, pos) => {
+    state.bettrackPositions = pos
   },
   [types.SET_SYSTEM_CONFIG]: (state, data) => {
     state.systemConfig = data
@@ -114,12 +116,6 @@ export default {
   [types.UPDATE_GAME_INFO]: (state, info) => {
     state.gameInfo = {...state.gameInfo, ...info}
   },
-  [types.SET_ROOM_INFO]: (state, info) => {
-    state.roomInfo = info
-  },
-  [types.SET_ROOM_ID]: (state, id) => {
-    state.roomId = id
-  },
   [types.UPDATE_DIALOG]: (state, option) => {
     state.dialog[option.name] = option.state
   },
@@ -177,13 +173,15 @@ export default {
   [types.HIDE_RIGHT_MENU]: (state) => {
     state.isRightMenuVisible = false
   },
-  [types.SHOW_HELPER]: (state) => {
-    state.helperVisible = true
+  [types.TOGGLE_FOLLOWEE]: (state, followee) => {
+    let idx = state.user.followeeList.findIndex((user) => user.username === followee.username)
+    if (idx >= 0) {
+      state.user.followeeList.splice(idx, 1)
+    } else {
+      state.user.followeeList.push(followee)
+    }
   },
-  [types.HIDE_HELPER]: (state) => {
-    state.helperVisible = false
-  },
-  [types.DATA_SECTION_STYLE]: (state, style) => {
-    state.dataSectionStyle = style
+  [types.UPDATE_FILTERS]: (state, filters) => {
+    state.filters = Object.assign(state.user.filters, filters)
   }
 }
