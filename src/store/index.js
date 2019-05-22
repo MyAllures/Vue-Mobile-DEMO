@@ -113,7 +113,8 @@ export default new Vuex.Store({
     latestResultMap: {},
     lastGameData: getLastGameData(),
     dataSectionStyle: {'padding-top': '5px'},
-    serviceUnread: 0
+    serviceUnread: 0,
+    helperVisible: false
   },
   actions,
   mutations,

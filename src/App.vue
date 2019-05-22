@@ -14,7 +14,7 @@
       <template slot="right">
         <div v-if="pageSetting.rightCtrl === 'info'" class="right-ctrl">
           <template v-if="!user.logined">
-            <a class="link" @click="tryDemo">试玩</a>
+            <a class="link" @click="trial">试玩</a>
             <div class="divide"></div>
             <router-link class="link" to="/register">注册</router-link>
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
@@ -53,8 +53,6 @@
         <span slot="label">{{menu.label}}</span>
       </tabbar-item>
     </tabbar>
-
-    <loading v-model="isLoading"></loading>
     <right-menu
       :value="$store.state.isRightMenuVisible"
       @closeRightMenu="$store.dispatch('hideRightMenu')"/>
@@ -85,19 +83,23 @@
         </div>
       </transition>
     </div>
+    <transition name="fade">
+      <div class="global-loading" v-if="isLoading">
+        <cube-loading :size="50"></cube-loading>
+      </div>
+    </transition>
   </ViewArea>
 </template>
 
 <script>
 import Vue from 'vue'
-import { Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
+import { Tabbar, TabbarItem, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
 import { getToken } from './api'
 import axios from 'axios'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
-import freetrial from './mixins/freetrial.js'
 import BetDialog from './components/BetDialog'
 import BalanceHintDialog from './components/BalanceHintDialog'
 import BetTrackDialog from './components/BetTrackDialog'
@@ -112,7 +114,6 @@ export default {
   components: {
     Tabbar,
     TabbarItem,
-    Loading,
     RightMenu,
     TryplayPopup,
     BetDialog,
@@ -233,7 +234,6 @@ export default {
       isHelperVisible: false
     }
   },
-  mixins: [freetrial],
   computed: {
     ...mapGetters([
       'user', 'allGames'
@@ -310,6 +310,9 @@ export default {
     }
   },
   methods: {
+    trial () {
+      this.$store.dispatch('trial')
+    },
     closeDetailNotification () {
       this.currentNotificationDetail = null
     },
@@ -467,5 +470,18 @@ export default {
   box-sizing: border-box;
   padding-right: 10px;
   color: #fff;
+}
+
+.global-loading {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,255,255, .7);
+  z-index: @global-loading-mask-zindex;
 }
 </style>
