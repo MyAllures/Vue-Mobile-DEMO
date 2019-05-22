@@ -236,9 +236,9 @@ axiosGhost.interceptors.response.use(res => {
 })
 
 axiosEagle.interceptors.request.use((config) => { // TODO: apply JWT token
-  let token = Vue.cookie.get('access_token')
+  let token = getJWTToken('eagle')
   if (token) {
-    config.headers.common['Authorization'] = 'Bearer ' + token
+    config.headers.common['Authorization'] = 'JWT ' + token
   }
   return config
 }, function (error) {
@@ -392,7 +392,20 @@ store.watch((state) => {
   }
 
   if (logined) {
-    store.dispatch('fetchChatRoomUserInfo')
+    let eagleTokenPromise
+    let eagleToken = getJWTToken('eagle')
+    if (eagleToken) {
+      eagleTokenPromise = Promise.resolve(eagleToken)
+    } else {
+      eagleTokenPromise = fetchJWTToken('eagle').then(setting => {
+        localStorage.setItem('eagle_setting', JSON.stringify(setting))
+        return setting.token
+      })
+    }
+    eagleTokenPromise.then(() => {
+      store.dispatch('fetchChatRoomUserInfo')
+    })
+
     let eiderTokenPromise
     let eiderToken = getJWTToken('eider')
     if (eiderToken) {
