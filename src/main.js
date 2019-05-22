@@ -189,6 +189,10 @@ axiosGhost.interceptors.request.use((config) => {
     config.headers.common['x-sign'] = sign.ink(t)
     config.headers.common['x-date'] = sign.blot(t)
   }
+  let token = Vue.cookie.get('access_token')
+  if (token) {
+    config.headers.common['Authorization'] = 'Bearer ' + token
+  }
   return config
 }, function (error) {
   return Promise.reject(error)
@@ -231,6 +235,16 @@ axiosGhost.interceptors.response.use(res => {
   return Promise.reject(error)
 })
 
+axiosEagle.interceptors.request.use((config) => {
+  let token = Vue.cookie.get('access_token')
+  if (token) {
+    config.headers.common['Authorization'] = 'Bearer ' + token
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
 axiosEagle.interceptors.response.use(res => {
   return res.data
 }, (error) => {
@@ -239,6 +253,16 @@ axiosEagle.interceptors.response.use(res => {
     error
   })
   return Promise.reject(error.response)
+})
+
+axiosVenom.interceptors.request.use((config) => {
+  let token = getJWTToken('venom')
+  if (token) {
+    config.headers.common['Authorization'] = 'Bearer ' + token
+  }
+  return config
+}, function (error) {
+  return Promise.reject(error)
 })
 
 axiosVenom.interceptors.response.use(res => {
@@ -320,8 +344,6 @@ Vue.mixin({
 // init data
 const token = Vue.cookie.get('access_token')
 if (token) {
-  axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + token
-  axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
   store.dispatch('fetchUser').catch(() => { })
 } else {
   Vue.nextTick(() => {
@@ -361,7 +383,6 @@ store.watch((state) => {
             }).catch(() => {})
           }
           venomTokenPromise.then(token => {
-            axiosVenom.defaults.headers.common['Authorization'] = 'Bearer ' + token
             pollServiceUnread()
           }).catch(() => {})
         }

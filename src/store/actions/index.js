@@ -2,8 +2,6 @@ import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
 import {msgFormatter} from '@/utils'
 import {
-  axiosGhost,
-  axiosEagle,
   fetchUser,
   login as userLogin,
   logout,
@@ -32,9 +30,6 @@ const login = function ({ commit, state, dispatch }, { user }) {
       Vue.cookie.set('refresh_token', res.refresh_token, {
         expires: expires
       })
-      axiosGhost.defaults.withCredentials = true
-      axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-      axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       if (res.agent) {
         commit(types.SET_USER, {
           ...user,
@@ -72,8 +67,6 @@ export default {
         Vue.cookie.set('refresh_token', tokenObj.refresh_token, {
           expires: tokenObj.expires_in
         })
-        axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + tokenObj.access_token
-        axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + tokenObj.access_token
         if (response.agent) {
           commit('SET_USER', {
             ...state.user,
