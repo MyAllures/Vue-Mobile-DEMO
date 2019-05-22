@@ -30,10 +30,10 @@
         </div>
         <div class="content stats">
           <div class="stat available">
-            <div class="count highlight" :class="{ gray: myData.remain_envelope_count === 0 }">{{ redEnvRemain }}</div>
+            <div class="count highlight" :class="{ gray: redEnvRemain === 0 }">{{ redEnvRemain }}</div>
             <div class="desc">今日未拆红包个数</div>
           </div>
-          <XButton type="primary" text="拆紅包" @click.native="openRE" :show-loading="reLoading" :disabled="reLoading" v-if="myData.remain_envelope_count" />
+          <XButton type="primary" text="拆紅包" @click.native="openRE" :show-loading="reLoading" :disabled="reLoading" v-if="redEnvRemain" />
           <XButton text="今日红包已拆完，加把劲继续投注！" disabled v-else />
         </div>
       </template>
