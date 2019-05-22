@@ -235,7 +235,7 @@ axiosGhost.interceptors.response.use(res => {
   return Promise.reject(error)
 })
 
-axiosEagle.interceptors.request.use((config) => {
+axiosEagle.interceptors.request.use((config) => { // TODO: apply JWT token
   let token = Vue.cookie.get('access_token')
   if (token) {
     config.headers.common['Authorization'] = 'Bearer ' + token
@@ -258,7 +258,7 @@ axiosEagle.interceptors.response.use(res => {
 axiosVenom.interceptors.request.use((config) => {
   let token = getJWTToken('venom')
   if (token) {
-    config.headers.common['Authorization'] = 'Bearer ' + token
+    config.headers.common['Authorization'] = 'JWT ' + token
   }
   return config
 }, function (error) {
