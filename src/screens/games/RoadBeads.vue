@@ -43,19 +43,19 @@
             <tr v-if="mainName==='总和色波'">
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
                 <template v-for="(k,i) in daRoadList[index]">
-                  <div v-if="['red','blue','green'].includes(k)" :class="['hollow-ball', k]" :key="i"></div>
-                  <div v-else class="font" :key="i">{{k}}</div>
+                  <div v-if="['red','blue','green'].includes(k)" :class="['hollow-ball', k]" :key="k+i"></div>
+                  <div v-else class="font" :key="k+i">{{k}}</div>
                 </template>
               </td>
             </tr>
             <tr v-else-if="mainName==='五行'">
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div class="font" v-for="(k,i) in daRoadList[index]" :key="i">{{k|typeFilter}}</div>
+                <div class="font" v-for="(k,i) in daRoadList[index]" :key="k+i">{{k|typeFilter}}</div>
               </td>
             </tr>
             <tr v-else>
               <td width="4%" class="column" v-for="(num, index) in 25" :key="index">
-                <div :class="['hollow-ball', k]" v-for="(k,i) in daRoadList[index]" :key="i"></div>
+                <div :class="['hollow-ball', k]" v-for="(k,i) in daRoadList[index]" :key="k+i"></div>
               </td>
             </tr>
           </tbody>
@@ -197,7 +197,7 @@ export default {
         gd11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
         ah11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
         bj11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
-        fh11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
+        fj11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
         gs11x5: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
         cqlf: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'],
         gdklsf: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']
