@@ -1,7 +1,7 @@
 <template>
   <div id="re-promotion" v-if="act">
     <div class="content-wrap">
-      <img class="flower" src="@/assets/red-envelope-v2/promotion-flower.svg" />
+      <img class="flower" :src="require('@/assets/red-envelope-v2/promotion-flower.svg')" />
       <div class="content">
         <div class="section">
           <div class="section-title">活动介绍</div>
@@ -73,12 +73,6 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'RedEnvPromotion',
-  mounted () {
-    this.updatePageSetting({
-      ...this.$store.state.page.meta,
-      title: this.act.name
-    })
-  },
   methods: {
     ...mapActions('page', [
       'updatePageSetting'
@@ -108,6 +102,19 @@ export default {
     hasMaxAmount () {
       return this.act.display_max_amount > 0
     }
+  },
+  watch: {
+    'act.name': {
+      handler (name) {
+        if (name) {
+          this.updatePageSetting({
+            ...this.$store.state.page.meta,
+            title: name
+          })
+        }
+      },
+      immediate: true
+    }
   }
 }
 </script>
@@ -115,8 +122,7 @@ export default {
 <style lang="scss" scoped>
 #re-promotion {
   background: #d23f34;
-  padding-top: 5px;
-  height: calc(100vh - 46px - 5px);
+  height: calc(100vh - 46px);
 }
 .header {
   height: 46px;
@@ -132,11 +138,14 @@ export default {
 }
 .content-wrap {
   width: 324px;
-  height: calc(100% - 90px - 10px); // footer + :before top
   background: #fff4df;
-  margin: 12px auto 0;
+  margin: auto;
   padding: 12px;
-  position: relative;
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 90px;
   text-align: center;
   border-radius: 10px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, .3);
