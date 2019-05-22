@@ -2,7 +2,6 @@
 // eslint-disable-next-line
 import "babel-polyfill"
 import Vue from 'vue'
-import axios from 'axios'
 import './plugins/cube-ui'
 import App from './App'
 import router from './router'
@@ -12,14 +11,13 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import { gethomePage, setCookie, fetchChatUserInfo, fetchRoomInfo, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
+import { axiosGhost, axiosEagle, axiosVenom, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
-import { ToastPlugin, ConfirmPlugin } from 'vux'
+import { ToastPlugin, ConfirmPlugin, LoadingPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
 import {getJWTToken} from './utils'
-import urls from './api/urls'
 import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
 
@@ -48,14 +46,13 @@ function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
+  store.dispatch('chatroom/roomList').catch(() => {})
 
   store.dispatch('setSystemConfig', {...store.state.systemConfig, state: 'pending'})
 
   gethomePage().then(
     response => {
       let pref = response.global_preferences || {}
-      const chatroomEnabled = pref.chatroom_enabled === 'true'
-
       const customerServiceUrl = pref.customer_service_url
       const enableBuiltInCustomerService = pref.enable_built_in_customer_service === 'true'
       let serviceAction = null
@@ -96,13 +93,12 @@ function initData () {
           contactEmail: pref.contact_email,
           contactPhoneNumber: pref.contact_phone_number,
           openAccountConsultingQQ: pref.open_account_consulting_qq,
-          chatroomEnabled: chatroomEnabled,
           siteName: response.name,
           gaTrackingId: pref.ga_tracking_id,
           regPresentAmount: response.reg_present_amount,
           needBankinfo: response.need_bankinfo,
           stickerGroups: response.sticker_groups || [],
-          envelopeSettings: pref.red_envelope_settings || {},
+          chatroomEnvelopeSettings: pref.chatroom_red_envelope_eagle || {},
           smsValidationEnabled: pref.sms_validation_enabled === 'true',
           appDownloadUrl: pref.app_download_url,
           planSiteUrl: pref.plan_site_url,
@@ -166,7 +162,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
 let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
-  axios.defaults.headers.common['x-r'] = params.r
+  axiosGhost.defaults.headers.common['x-r'] = params.r
 }
 
 Vue.use(require('vue-moment'))
@@ -175,6 +171,7 @@ Vue.use(VueI18n)
 Vue.use(VueCookie)
 Vue.use(ToastPlugin, {position: 'middle', timing: 3000})
 Vue.use(ConfirmPlugin)
+Vue.use(LoadingPlugin)
 Vue.use(VueLazyload, {
   error: require('./assets/error.png'),
   loading: require('./assets/loading.gif'),
@@ -186,15 +183,7 @@ const i18n = new VueI18n({
   messages: locales
 })
 
-axios.interceptors.request.use((config) => {
-  const fromVenom = config.url.includes(urls.venomHost)
-  const fromRaven = config.url.includes(urls.ravenHost)
-  if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${getJWTToken('venom')}`
-  }
-  if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${getJWTToken('raven')}`
-  }
+axiosGhost.interceptors.request.use((config) => {
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
     config.headers.common['x-sign'] = sign.ink(t)
@@ -206,18 +195,9 @@ axios.interceptors.request.use((config) => {
 })
 
 const pollingApi = [urls.unread, urls.game_result]
-axios.interceptors.response.use(res => {
-  const fromVenom = res.config.url.includes(urls.venomHost)
-  const fromRaven = res.config.url.includes(urls.ravenHost)
-
+axiosGhost.interceptors.response.use(res => {
   let responseData = res.data
 
-  if (fromVenom) {
-    return responseData
-  }
-  if (fromRaven) {
-    return responseData
-  }
   if (responseData.code === 2000) {
     return responseData.data
   } else if (responseData.code === 9001) {
@@ -233,7 +213,7 @@ axios.interceptors.response.use(res => {
         toLogin(router)
       }
     } else if (responseData.code === 9011 || responseData.code === 9013) {
-      axios.defaults.withCredentials = true
+      axiosGhost.defaults.withCredentials = true
       Vue.cookie.set('sessionid', res.data.sessionid)
       return Promise.reject(responseData)
     }
@@ -249,6 +229,26 @@ axios.interceptors.response.use(res => {
   //   type: 'warn'
   // })
   return Promise.reject(error)
+})
+
+axiosEagle.interceptors.response.use(res => {
+  return res.data
+}, (error) => {
+  report({
+    type: HTTP_ERROR,
+    error
+  })
+  return Promise.reject(error.response)
+})
+
+axiosVenom.interceptors.response.use(res => {
+  return res.data
+}, (error) => {
+  report({
+    type: HTTP_ERROR,
+    error
+  })
+  return Promise.reject(error.response)
 })
 
 Vue.config.productionTip = false
@@ -317,30 +317,11 @@ Vue.mixin({
   }
 })
 
-const setChatRoomSetting = (username) => {
-  if (store.state.systemConfig.chatroomEnabled) {
-    fetchChatUserInfo(store.state.user.username).then(res => {
-      store.dispatch('setUser', {
-        planMakerRoom: res.data.plan_maker_rooms || []
-      })
-    }).catch(() => {})
-    fetchRoomInfo().then(res => {
-      if (!res) {
-        return
-      }
-      const roomInfo = {}
-      res.data.data.forEach(room => {
-        roomInfo[room.id] = {name: room.title, status: room.status}
-      })
-      store.commit(types.SET_ROOM_INFO, roomInfo)
-    }).catch(() => {})
-  }
-}
-
 // init data
 const token = Vue.cookie.get('access_token')
 if (token) {
-  axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + token
   store.dispatch('fetchUser').catch(() => { })
 } else {
   Vue.nextTick(() => {
@@ -379,18 +360,18 @@ store.watch((state) => {
               return setting.token
             }).catch(() => {})
           }
-          venomTokenPromise.then(() => {
+          venomTokenPromise.then(token => {
+            axiosVenom.defaults.headers.common['Authorization'] = 'Bearer ' + token
             pollServiceUnread()
           }).catch(() => {})
         }
-
-        setChatRoomSetting()
         unwatch()
       }
     })
   }
 
   if (logined) {
+    store.dispatch('fetchChatRoomUserInfo')
     let eiderTokenPromise
     let eiderToken = getJWTToken('eider')
     if (eiderToken) {
@@ -399,7 +380,7 @@ store.watch((state) => {
       eiderTokenPromise = fetchJWTToken('eider').then(setting => {
         localStorage.setItem('eider_setting', JSON.stringify(setting))
         return setting.token
-      }).catch(() => {})
+      })
     }
 
     eiderTokenPromise.then(token => {
@@ -409,12 +390,14 @@ store.watch((state) => {
     store.dispatch('initUnread')
     setHeartBeatInterval()
   } else {
+    if (store.state.ws.eider) {
+      store.state.ws.eider.closeConnect()
+    }
+    if (store.state.ws.venom) {
+      store.state.ws.venom.closeConnect()
+    }
     clearInterval(serviceUnreadInterval)
     clearInterval(heartBeatInterval)
-
-    localStorage.removeItem(`venom_setting`)
-    localStorage.removeItem(`raven_setting`)
-    localStorage.removeItem(`eider_setting`)
   }
 })
 

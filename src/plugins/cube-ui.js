@@ -6,12 +6,18 @@ import Vue from 'vue'
 import {
   /* eslint-disable no-unused-vars */
   Style,
+  // form
+  Checkbox,
+  Switch,
+  // popup
+  Popup,
   Textarea,
   Picker,
   ActionSheet,
   DatePicker,
   // scroll
   Scroll,
+  Sticky,
   Input,
   Upload,
   Loading,
@@ -20,11 +26,15 @@ import {
   Toast
 } from 'cube-ui'
 
+Vue.use(Checkbox)
+Vue.use(Switch)
+Vue.use(Popup)
 Vue.use(Textarea)
 Vue.use(Picker)
 Vue.use(ActionSheet)
 Vue.use(DatePicker)
 Vue.use(Scroll)
+Vue.use(Sticky)
 Vue.use(Input)
 Vue.use(Upload)
 Vue.use(Loading)

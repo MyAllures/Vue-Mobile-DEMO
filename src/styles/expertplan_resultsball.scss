@@ -1,0 +1,40 @@
+/*specific: racing games, common: ball-pk.png*/
+
+$results_racing: bcr, jspk10, mlaft, cs60cr;
+$racing_length: length($results_racing);
+$color: #e6de03, #0292dd, #4a4a4b, #ff7603, #17e2e5, #5234ff, #bfbfbf, #ff2602, #780b02, #07bf02;
+.expert-plan-container {
+  @for $index from 1 through $racing_length {
+    .expert-result-#{nth($results_racing, $index)} {
+      height: 30px;
+      line-height: 30px;
+      width: 30px;
+      text-align: center;
+      border-radius: 4px;
+      font-size: 18px;
+      color: #fff;
+      @for $num from 1 through 10 {
+        &.resultnum-#{$num} {
+          background-color: nth($color, $num);
+        }
+      }
+    }
+  }
+}
+
+$results_ssc: cqssc, jsssc;
+$ssc_length: length($results_ssc);
+.expert-plan-container {
+  @for $index from 1 through $ssc_length {
+    .expert-result-#{nth($results_ssc, $index)} {
+      height: 30px;
+      line-height: 30px;
+      width: 30px;
+      text-align: center;
+      border-radius: 50%;
+      background: #3170e4;
+      font-size: 18px;
+      color: #fff;
+    }
+  }
+}

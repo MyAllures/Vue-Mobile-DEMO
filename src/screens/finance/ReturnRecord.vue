@@ -56,10 +56,7 @@
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
-  <div v-else class="tip">
-    <p>请注册会员后访问</p>
-    <x-button type="primary" link="/register">立即注册</x-button>
-  </div>
+  <register-tips v-else></register-tips>
 </template>
 
 <script>
@@ -70,6 +67,8 @@ import DateSelector from '@/components/DateSelector'
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
+import RegisterTips from '../../components/RegisterTips'
+
 const today = Vue.moment().format('YYYY-MM-DD')
 const DateFormat = Vue.extend({
   render: function (createElement) {
@@ -97,7 +96,8 @@ export default {
     Loading,
     XButton,
     PopupPicker,
-    DateSelector
+    DateSelector,
+    RegisterTips
   },
   directives: {
     infiniteScroll

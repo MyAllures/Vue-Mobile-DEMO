@@ -20,10 +20,10 @@
       <thead>
         <tr class="record-thead">
           <th>{{$t('fin.time')}}</th>
-          <th>{{$t('fin.game')}}</th>
-          <th>位置/号码</th>
-          <th>结果</th>
-          <th>单注/输赢</th>
+          <th>游戏/追号期数</th>
+          <th>玩法</th>
+          <th>单注/翻倍</th>
+          <th>盈亏</th>
         </tr>
       </thead>
       <tbody v-if="records.length">
@@ -31,24 +31,31 @@
           v-for="(record, index) in records" :key="index">
           <td :style="{'line-height':'20px'}">
             <date-format :record="record"/>
+            <span v-if="record.bet_type==='is_expert_plan'" class="issue-number">专家计划</span>
           </td>
           <td>
             <p>{{record.game.display_name}}</p>
-            <span :class="['item', {win: num === record.winning_schedule}]" v-for="(num, index) in record.issue_numbers" :key="index">{{num.slice(-3)}}</span>
+            <span v-if="record.issue_numbers.length<=1" class="issue-number">{{record.issue_numbers[0].slice(-3)}}期</span>
+            <span v-else class="issue-number">
+              {{`${record.issue_numbers.length}期(${record.issue_numbers[0].slice(-3)}-${record.issue_numbers[record.issue_numbers.length-1].slice(-3)}期)`}}
+            </span>
           </td>
           <td>
-            <p>{{record.play_position }}</p>
-            <span :class="['item', {win: num === record.winning_number}]" v-for="(num, index) in record.track_numbers" :key="index">{{num}}</span>
+            <span v-if="record.play">{{`${record.play.playgroup} @ ${record.play.display_name}`}}</span>
+            <template v-else>
+              <p>{{record.play_position }}</p>
+              <span :class="['item', {win: num === record.winning_number}]" v-for="(num, index) in record.track_numbers" :key="index">{{num}}</span>
+            </template>
           </td>
           <td>
-            <span :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
-            <i v-if="record.message && (record.status === 'cancelled')" class="cancelled-icon" :data-msg="record.message">!</i>
+            <p>{{record.bet_amount | currency('￥')}}</p>
+            <p>{{record.multiple}}倍</p>
           </td>
           <td>
-            <p>{{record.bet_amount| currency('￥')}}</p>
-            <p :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
-              <template v-if="record.profit">{{record.profit | currency('￥')}}</template>
-              <template v-else>-</template>
+            <span v-if="record.status === 'cancelled'">取消 <i v-if="record.message" class="cancelled-icon" :data-msg="record.message">!</i></span>
+            <span v-else-if="record.status === 'ongoing'" :class="getStatusClass(record.status)">{{record.status | statusFilter}}</span>
+            <p v-else :class="record.profit > 0 ? 'red' : !record.profit ? '' : 'green'">
+              {{record.profit | currency('￥')}}
             </p>
           </td>
         </tr>
@@ -62,23 +69,21 @@
         </tr>
       </tbody>
     </x-table>
-    <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
-  <div v-else class="tip">
-    <p>请注册会员后访问</p>
-    <x-button type="primary" link="/register">立即注册</x-button>
-  </div>
+  <register-tips v-else ></register-tips>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { fetchBetTrackRecord } from '../../api'
+import { fetchNewBetTrackRecord } from '@/api'
 import { XTable, XButton, Toast, Loading, TransferDom, PopupPicker } from 'vux'
 import DateSelector from '@/components/DateSelector'
-import { msgFormatter } from '../../utils'
+import { msgFormatter } from '@/utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
+import RegisterTips from '../../components/RegisterTips'
+
 const today = Vue.moment().format('YYYY-MM-DD')
 const DateFormat = Vue.extend({
   render: function (createElement) {
@@ -94,6 +99,7 @@ const DateFormat = Vue.extend({
     }
   }
 })
+
 export default {
   name: 'PaymentRecord',
   components: {
@@ -103,7 +109,8 @@ export default {
     Loading,
     XButton,
     PopupPicker,
-    DateSelector
+    DateSelector,
+    RegisterTips
   },
   directives: {
     infiniteScroll,
@@ -165,16 +172,16 @@ export default {
     }
   },
   watch: {
-    'conditions': function (conditions) {
+    conditions: function (conditions) {
       this.$router.push({
         query: conditions
       })
     },
-    '$route': function (to) {
+    $route: function (to) {
       if (to.name === 'BetTrackRecord') {
         this.selectedGame = [to.query.game]
         this.date = to.query.date
-        this.initFetchBetTrackRecord(this.conditions)
+        this.initFetchNewBetTrackRecord(this.conditions)
       }
     }
   },
@@ -182,13 +189,13 @@ export default {
     if (Object.keys(this.$route.query).length === 0) {
       this.$router.replace({query: this.conditions})
     } else {
-      this.initFetchBetTrackRecord(this.conditions)
+      this.initFetchNewBetTrackRecord(this.conditions)
     }
   },
   methods: {
-    initFetchBetTrackRecord (option) {
+    initFetchNewBetTrackRecord (option) {
       this.loading = true
-      fetchBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
+      fetchNewBetTrackRecord({ ...option, offset: 0, limit: this.chunkSize }).then(data => {
         this.totalCount = data.count
         this.records = data.results
       }).catch(errorMsg => {
@@ -214,7 +221,7 @@ export default {
         return
       }
       this.loading = true
-      fetchBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
+      fetchNewBetTrackRecord({ ...this.conditions, offset: this.records.length, limit: 10 }).then(data => {
         this.currentChunk += 1
         this.records.push(...data.results)
         this.loading = false
@@ -227,8 +234,12 @@ export default {
   }
 }
 </script>
+
 <style lang="less" scoped>
 @import '../../styles/vars.less';
+.container {
+  padding-bottom: 50px;
+}
 .filter-area {
   position: sticky;
   top: 0;
@@ -349,7 +360,10 @@ export default {
     }
   }
 }
-
+.issue-number {
+  color: #999;
+  font-size: 12px;
+}
 .item {
   color: #999;
   font-size: 12px;
