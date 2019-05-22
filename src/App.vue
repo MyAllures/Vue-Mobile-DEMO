@@ -98,7 +98,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, TransferDom } from 'vux'
 import { mapState, mapGetters } from 'vuex'
-import { getToken, axiosGhost, axiosEagle } from './api'
+import { getToken } from './api'
 import ViewArea from './components/ViewArea'
 import RightMenu from './components/RightMenu'
 import TryplayPopup from './components/TryplayPopup'
@@ -347,8 +347,6 @@ export default {
         this.$cookie.set('refresh_token', res.refresh_token, {
           expires: expires
         })
-        axiosGhost.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-        axiosEagle.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       }).catch(() => {})
 
       this.refreshTokenTimer = setTimeout(() => {
