@@ -11,9 +11,8 @@ import ChatroomBody from './ChatroomBody'
 import ChatroomFooter from './ChatroomFooter'
 import { mapState } from 'vuex'
 import { EagleWebSocket } from '@/wsObj/eagle'
-import {fetchJWTToken} from '@/api'
 import GameInfo from '@/screens/games/GameInfo'
-import {makeCancelable, getJWTToken} from '@/utils'
+import { getJWTToken } from '@/utils'
 const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -56,32 +55,8 @@ export default {
     if (this.ws) {
       this.ws.leaveRoom()
     }
-    let tokenPromise
     let token = getJWTToken('eagle')
-    if (token) {
-      tokenPromise = Promise.resolve(token)
-    } else {
-      tokenPromise = fetchJWTToken('eagle').then(setting => {
-        localStorage.setItem('eagle_setting', JSON.stringify(setting))
-        return setting.token
-      })
-    }
-    const tokenCancelablePromise = makeCancelable(tokenPromise)
-    this.tokenCancelablePromise = tokenCancelablePromise
-    tokenCancelablePromise.promise.then(token => {
-      if (this.roomList.length > 0) {
-        this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
-      } else {
-        const unwatch = this.$watch('roomList', (roomList) => {
-          if (roomList.length > 0) {
-            this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, roomList[0]))
-            unwatch()
-          }
-        })
-      }
-    }).catch(() => {
-
-    })
+    this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
     if (this.emojiMap === null) {
       this.$store.dispatch('chatroom/initEmoji')
     }
