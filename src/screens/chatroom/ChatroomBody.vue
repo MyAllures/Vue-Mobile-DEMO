@@ -176,7 +176,9 @@
         </div>
       </x-dialog>
     </div>
-    <ChatFilterDialog :show.sync="showFilterDialog" v-if="user.filters" />
+    <div v-transfer-dom>
+      <ChatFilterDialog :show.sync="showFilterDialog" v-if="user.filters" />
+    </div>
   </div>
 </template>
 <script>
@@ -268,7 +270,7 @@ export default {
       return !this.user.account_type
     },
     followeeOnly () {
-      return this.user.filters.filter_followee
+      return this.user.filters && this.user.filters.filter_followee
     }
   },
   watch: {
@@ -283,13 +285,17 @@ export default {
       }
       if (oldCount === 0) { // 初始
         this.$nextTick(() => {
-          view.scrollTop = view.scrollHeight
+          if (view) {
+            view.scrollTop = view.scrollHeight
+          }
         })
       } else if ( // 1. user正在閱讀之前訊息 2. 是否為自己發的訊息
         view.scrollTop + view.clientHeight + 100 > view.scrollHeight ||
         (this.messagesForDisplay[newCount - 1].sender && this.messagesForDisplay[newCount - 1].sender.username === this.user.username)) {
         this.$nextTick(() => {
-          view.scrollTop = view.scrollHeight
+          if (view) {
+            view.scrollTop = view.scrollHeight
+          }
         })
       } else {
         this.notNeedScroll = true
@@ -303,7 +309,9 @@ export default {
             if (!view) {
               return
             }
-            view.scrollTop = view.scrollHeight
+            if (view) {
+              view.scrollTop = view.scrollHeight
+            }
           })
         }
       }
@@ -342,6 +350,9 @@ export default {
     },
     showToBottomBtn: throttle(function () {
       const view = this.$refs.view
+      if (!view) {
+        return
+      }
       if (view.scrollTop + view.clientHeight + 60 < view.scrollHeight) {
         this.isToBottomBtnVisible = true
       } else {
@@ -521,6 +532,9 @@ export default {
         }
         &.text {
           max-width: 90%;
+          .right {
+            width: calc(~"100%" - 36px);
+          }
         }
         &.text,
         &.bet-info {
