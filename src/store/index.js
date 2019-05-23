@@ -7,6 +7,7 @@ import { getLastGameData } from '../utils'
 import page from './page'
 import chatroom from './chatroom'
 import game from './game'
+import token from './token'
 import customerService from './customerService'
 
 Vue.use(Vuex)
@@ -130,6 +131,7 @@ export default new Vuex.Store({
     page,
     chatroom,
     game,
-    customerService
+    customerService,
+    token
   }
 })

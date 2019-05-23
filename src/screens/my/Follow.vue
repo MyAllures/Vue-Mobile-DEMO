@@ -49,7 +49,20 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user']),
+    ...mapState('token', {
+      hasToken: state => state.eagle
+    })
+  },
+  watch: {
+    hasToken: {
+      handler: function (hasToken) {
+        if (hasToken && !this.user.followeeList) {
+          this.$store.dispatch('fetchChatRoomUserInfo')
+        }
+      },
+      immediate: true
+    }
   },
   methods: {
     switchFollowStatus (val) {
