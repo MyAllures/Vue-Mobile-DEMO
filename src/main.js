@@ -237,7 +237,7 @@ axiosGhost.interceptors.response.use(res => {
 })
 
 axiosEagle.interceptors.request.use((config) => { // TODO: apply JWT token
-  let token = getJWTToken('eagle')
+  let token = store.state.token.eagle
   if (token) {
     config.headers.common['Authorization'] = 'JWT ' + token
   }
@@ -393,19 +393,16 @@ store.watch((state) => {
   }
 
   if (logined) {
-    let eagleTokenPromise
-    let eagleToken = getJWTToken('eagle')
-    if (eagleToken) {
-      eagleTokenPromise = Promise.resolve(eagleToken)
-    } else {
-      eagleTokenPromise = fetchJWTToken('eagle').then(setting => {
+    let eagleToken = store.state.token.eagle
+    if (!eagleToken) {
+      fetchJWTToken('eagle').then(setting => {
         localStorage.setItem('eagle_setting', JSON.stringify(setting))
-        return setting.token
+        store.dispatch('token/addToken', {
+          type: 'eagle',
+          token: setting.token
+        })
       })
     }
-    eagleTokenPromise.then(() => {
-      store.dispatch('fetchChatRoomUserInfo')
-    })
 
     let eiderTokenPromise
     let eiderToken = getJWTToken('eider')

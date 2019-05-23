@@ -37,6 +37,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
     ...mapState('chatroom', {
       emojiMap: state => state.emojiMap,
       ws: state => state.ws,
@@ -52,6 +53,9 @@ export default {
     }
   },
   created () {
+    if (!this.user.followeeList) {
+      this.$store.dispatch('fetchChatRoomUserInfo')
+    }
     if (this.ws) {
       this.ws.leaveRoom()
     }
