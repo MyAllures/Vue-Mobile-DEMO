@@ -19,7 +19,7 @@ import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
-      commit('RESET_USER')
+      dispatch('resetUser')
     }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
@@ -99,19 +99,19 @@ export default {
     })
   },
   logout: ({ commit, state, dispatch }) => {
+    dispatch('resetUser')
+    dispatch('customerService/clearMessage')
+    dispatch('customerService/setServiceUnread', false)
     return logout().then(
-      res => {
-        commit(types.RESET_USER)
-        dispatch('customerService/clearMessage')
-        dispatch('customerService/setServiceUnread', false)
-      },
+      res => {},
       errRes => Promise.reject(errRes)
-    )
+    ).catch(() => {})
   },
   setUser: ({commit}, data) => {
     commit(types.SET_USER, data)
   },
-  resetUser: ({commit}) => {
+  resetUser: ({commit, dispatch}) => {
+    dispatch('token/clear')
     commit(types.RESET_USER)
   },
   fetchBanner: ({commit, state}) => {

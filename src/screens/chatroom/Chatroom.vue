@@ -45,6 +45,9 @@ export default {
       roomList: state => state.roomList,
       roomName: state => state.roomName
     }),
+    ...mapState('token', {
+      hasToken: state => state.eagle
+    }),
     showing () {
       switch (this.contentType) {
         case 'chatmanage':
@@ -52,24 +55,25 @@ export default {
       }
     }
   },
-  created () {
-    if (!this.user.followeeList) {
-      this.$store.dispatch('fetchChatRoomUserInfo')
-    }
-    if (this.ws) {
-      this.ws.leaveRoom()
-    }
-    let token = getJWTToken('eagle')
-    this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
-    if (this.emojiMap === null) {
-      this.$store.dispatch('chatroom/initEmoji')
-    }
-    this.$on('showPopup', (type) => {
-      this.isGameInfoVisible = true
-      this.contentType = type
-    })
-  },
   watch: {
+    hasToken: {
+      handler: function (hasToken) {
+        if (hasToken) {
+          if (!this.user.followeeList) {
+            this.$store.dispatch('fetchChatRoomUserInfo')
+          }
+          if (this.ws) {
+            this.ws.leaveRoom()
+          }
+          let token = getJWTToken('eagle')
+          this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+          if (this.emojiMap === null) {
+            this.$store.dispatch('chatroom/initEmoji')
+          }
+        }
+      },
+      immediate: true
+    },
     isGameInfoVisible: function (visible) {
       if (visible) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -105,6 +109,12 @@ export default {
       },
       immediate: true
     }
+  },
+  created () {
+    this.$on('showPopup', (type) => {
+      this.isGameInfoVisible = true
+      this.contentType = type
+    })
   },
   beforeDestroy () {
     if (this.tokenCancelablePromise) {
