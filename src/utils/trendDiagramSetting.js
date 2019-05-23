@@ -79,12 +79,12 @@ export const settings = {
   gd11x5: gd11x5Setting,
   ah11x5: gd11x5Setting,
   bj11x5: gd11x5Setting,
-  fh11x5: gd11x5Setting,
+  fj11x5: gd11x5Setting,
   gs11x5: gd11x5Setting,
   gdklsf: gdklsfSetting
 }
 
-const hasTrendDiagramGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'ynssc', 'hjssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'pcdd', 'jnd28', 'luckdd', 'jsk3', 'gxk3', 'shk3', 'hubk3', 'msk3', 'bjk3', 'gzk3', 'gd11x5', 'ah11x5', 'bj11x5', 'fh11x5', 'gs11x5', 'gdklsf']
+const hasTrendDiagramGames = ['bcr', 'cs60cr', 'jspk10', 'er75ft', 'mlaft', 'cs600cr', 'jsssc', 'cqssc', 'ynssc', 'hjssc', 'xjssc', 'tjssc', 'csffc', 'cs10fc', 'cs5fc', 'pcdd', 'jnd28', 'luckdd', 'jsk3', 'gxk3', 'shk3', 'hubk3', 'msk3', 'bjk3', 'gzk3', 'gd11x5', 'ah11x5', 'bj11x5', 'fj11x5', 'gs11x5', 'gdklsf']
 export const hasTrendDiagram = (code) => {
   return hasTrendDiagramGames.includes(code)
 }
