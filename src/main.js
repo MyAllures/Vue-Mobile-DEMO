@@ -33,15 +33,16 @@ let serviceUnreadInterval = null
 
 const pollServiceUnread = () => {
   const getUnread = () => {
-    fetchServiceUnread().then((res) => {
+    if (router.history.current.name === 'CustomerSerivce') return
+    fetchServiceUnread().then(res => {
       store.dispatch('customerService/setServiceUnread', res.has_unread)
-    }).catch((e) => {
+    }).catch(e => {
       clearInterval(serviceUnreadInterval)
     })
   }
   serviceUnreadInterval = setInterval(() => {
     getUnread()
-  }, 5000)
+  }, 30000)
 }
 
 function initData () {
