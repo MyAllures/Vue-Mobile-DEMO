@@ -3,7 +3,7 @@
     <ul>
       <li>「甘肃11选5」是由国家体育总局发行，体育彩票管理中心承销。</li>
       <li>每日共开奖39期、每20分钟开奖1次。每次由1~11个号码随机摇出“5个”数字做为开奖号码；并依据押中的号码个数或玩法获得不同等级的奖金。</li>
-      <li>官方网站：<a href="http://www.fjtc.com.cn/index.html" target="_blank">福建体彩网</a></li>
+      <li>官方网站：<a href="http://www.gstc.org.cn/#/" target="_blank">甘肃体彩网</a></li>
     </ul>
     <h3>
       <span class="warn">单码</span> - 指第一球、第二球、第三球、第四球、第五球出现的顺序与号码为派彩依据。
