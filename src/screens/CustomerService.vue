@@ -86,8 +86,10 @@ export default {
         }
 
         venomTokenPromise.then(token => {
-          if (enabled && !this.ws.venom) {
-            this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+          if (enabled) {
+            if (!this.ws.venom) {
+              this.$store.dispatch('setWs', { ws: new VenomSocketObj(token), type: 'venom' })
+            }
             this.ready = true
           }
         })
