@@ -136,7 +136,7 @@ export default {
       currentTab: '',
       showCombinationDetails: false,
       shawOptions: [],
-      k3Games: ['jsk3', 'msk3', 'bjk3', 'gxk3', 'shk3', 'hubk3']
+      k3Games: ['jsk3', 'msk3', 'bjk3', 'gxk3', 'shk3', 'hubk3', 'gzk3']
     }
   },
   computed: {
