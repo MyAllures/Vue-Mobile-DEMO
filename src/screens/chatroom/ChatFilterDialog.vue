@@ -1,37 +1,35 @@
 <template>
-  <div v-transfer-dom>
-    <popup class="filter-dialog" v-model="isShow" height="88%">
-      <div class="header">
-        <div class="title">游戏筛选</div>
-        <div class="tools">
-          <a href="#" class="link" @click.prevent="selectAllGames(false)">清除</a>
-          <a href="#" class="link" @click.prevent="selectAllGames(true)">全选</a>
-        </div>
+  <popup class="filter-dialog" v-model="isShow" height="88%">
+    <div class="header">
+      <div class="title">游戏筛选</div>
+      <div class="tools">
+        <a href="#" class="link" @click.prevent="selectAllGames(false)">清除</a>
+        <a href="#" class="link" @click.prevent="selectAllGames(true)">全选</a>
       </div>
-      <div class="content">
-        <div class="group" :key="i" v-for="(group, i) in gamesByGroup">
-          <div class="top">
-            <div class="title">{{ group.name }}</div>
-            <div class="tools">
-              <a href="#" class="link" @click.prevent="selectGames(i, true)" v-if="!childHasSelected(i)">全选</a>
-              <a href="#" class="link" @click.prevent="selectGames(i, false)" v-else>清除全部</a>
-            </div>
-          </div>
-          <div class="selector">
-            <a href="#" :class="{ selected: game.selected }" :key="j" v-for="(game, j) in group.data" @click.prevent="game.selected = !game.selected">{{ game.name }}</a>
+    </div>
+    <div class="content">
+      <div class="group" :key="i" v-for="(group, i) in gamesByGroup">
+        <div class="top">
+          <div class="title">{{ group.name }}</div>
+          <div class="tools">
+            <a href="#" class="link" @click.prevent="selectGames(i, true)" v-if="!childHasSelected(i)">全选</a>
+            <a href="#" class="link" @click.prevent="selectGames(i, false)" v-else>清除全部</a>
           </div>
         </div>
+        <div class="selector">
+          <a href="#" :class="{ selected: game.selected }" :key="j" v-for="(game, j) in group.data" @click.prevent="game.selected = !game.selected">{{ game.name }}</a>
+        </div>
       </div>
-      <div class="footer">
-        <XButton text="确定" type="primary" :show-loading="loading" @click.native="submit" />
-      </div>
-    </popup>
-  </div>
+    </div>
+    <div class="footer">
+      <XButton text="确定" type="primary" :show-loading="loading" @click.native="submit" />
+    </div>
+  </popup>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { TransferDom, Popup, XButton } from 'vux'
+import { Popup, XButton } from 'vux'
 import { eagle } from '@/api'
 
 export default {
@@ -39,9 +37,6 @@ export default {
   components: {
     Popup,
     XButton
-  },
-  directives: {
-    TransferDom
   },
   props: {
     show: Boolean
