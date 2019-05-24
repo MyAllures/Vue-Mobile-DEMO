@@ -365,30 +365,30 @@ function fetchUnreadCount () {
 }
 
 function fetchActV2 (type) {
-  return axios.get(`${urls.actv2_activity}${type}/`)
+  return axiosGhost.get(`${urls.actv2_activity}${type}/`)
 }
 
 function fetchActBoost () {
-  return axios.get(urls.actv2_boost_get)
+  return axiosGhost.get(urls.actv2_boost_get)
 }
 
 function fetchActRefCode () {
-  return axios.get(urls.actv2_referral_code)
+  return axiosGhost.get(urls.actv2_referral_code)
 }
 
 function fetchActRefList () {
-  return axios.get(urls.actv2_referral_list)
+  return axiosGhost.get(urls.actv2_referral_list)
 }
 
 function openActRe (type, id = '') {
-  return axios.post(urls.actv2_re_open, {
+  return axiosGhost.post(urls.actv2_re_open, {
     type: type,
     referral_detail_id: id
   })
 }
 
 function fetchActReCount () {
-  return axios.get(urls.actv2_re_count)
+  return axiosGhost.get(urls.actv2_re_count)
 }
 
 export {
