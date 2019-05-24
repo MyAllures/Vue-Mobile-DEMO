@@ -315,11 +315,28 @@ export default {
     result: {
       handler: function (result) {
         if (result) {
-          getGameHistoryData({
+          const date = this.$moment(this.date)
+          let scheduleDates = {}
+          if (this.currentGame.code === 'hkl' || this.currentGame.code === 'fc3d') {
+            scheduleDates = {
+              schedule_result_0: date.date(1).format('YYYY-MM-DD'),
+              schedule_result_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
+            }
+          } else {
+            const dateFormat = date.format('YYYY-MM-DD')
+            scheduleDates = {
+              schedule_result_0: dateFormat,
+              schedule_result_1: dateFormat
+            }
+          }
+
+          let params = {
             offset: 1,
             game_code: this.currentGame.code,
-            limit: 9
-          }).then(res => {
+            limit: 9,
+            ...scheduleDates
+          }
+          getGameHistoryData(params).then(res => {
             this.historyData = res.results.map(d => {
               return {
                 game_code: this.currentGame.code,
@@ -328,9 +345,7 @@ export default {
                 status: d.result_status
               }
             })
-          }).catch(() => {
-
-          })
+          }).catch(() => {})
         }
       },
       immediate: true
