@@ -65,8 +65,15 @@ export default {
           if (this.ws) {
             this.ws.leaveRoom()
           }
-          let token = getJWTToken('eagle')
-          this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+          if (this.roomList) {
+            this.createConnection()
+          } else {
+            const unwatch = this.$watch('roomList', function () {
+              this.createConnection()
+              unwatch()
+            })
+          }
+
           if (this.emojiMap === null) {
             this.$store.dispatch('chatroom/initEmoji')
           }
@@ -115,6 +122,16 @@ export default {
       this.isGameInfoVisible = true
       this.contentType = type
     })
+  },
+  methods: {
+    createConnection () {
+      if (this.roomList.length > 0) {
+        let token = getJWTToken('eagle')
+        this.$store.dispatch('chatroom/setWs', new EagleWebSocket(token, this.roomList[0]))
+      } else {
+        this.$router.push({path: '/'})
+      }
+    }
   },
   beforeDestroy () {
     if (this.tokenCancelablePromise) {

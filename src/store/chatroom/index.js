@@ -12,7 +12,7 @@ export default {
     emojiMap: null,
     isManager: false,
     loading: true,
-    roomList: [],
+    roomList: null,
     isRoomExist: true,
     redEnvelopeStatus: {},
     roomName: '聊天室'
