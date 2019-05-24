@@ -23,7 +23,7 @@
             <div
               class="balance fr"
               @click="$store.dispatch('showRightMenu')">
-              {{ user.balance|currency('￥') }}
+              {{ user.balance|currency('￥')}}
             </div>
           </template>
         </div>
@@ -37,6 +37,7 @@
     <keep-alive :include="$store.state.keepAlivePage">
       <router-view ref="page"></router-view>
     </keep-alive>
+
     <tabbar v-show="!tabbarHidden" class="tabbar">
       <tabbar-item
         :badge="menu.unreadBadge && unread ? ('' + unread) : ''"
@@ -297,14 +298,7 @@ export default {
     }
   },
   watch: {
-    'user.logined' (logined) {
-      if (logined) {
-        this.$store.dispatch('actv2/fetchActReCount')
-      } else {
-        this.$store.dispatch('actv2/clearCount')
-      }
-    },
-    $route (to, from) {
+    '$route' (to, from) {
       this.tabbarHidden = to.meta.tabbarHidden
       this.noBackRoute = !window.history.state
 
