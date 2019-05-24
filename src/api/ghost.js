@@ -364,6 +364,33 @@ function fetchUnreadCount () {
   return axiosGhost.get(urls.unreadMessage)
 }
 
+function fetchActV2 (type) {
+  return axiosGhost.get(`${urls.actv2_activity}${type}/`)
+}
+
+function fetchActBoost () {
+  return axiosGhost.get(urls.actv2_boost_get)
+}
+
+function fetchActRefCode () {
+  return axiosGhost.get(urls.actv2_referral_code)
+}
+
+function fetchActRefList () {
+  return axiosGhost.get(urls.actv2_referral_list)
+}
+
+function openActRe (type, id = '') {
+  return axiosGhost.post(urls.actv2_re_open, {
+    type: type,
+    referral_detail_id: id
+  })
+}
+
+function fetchActReCount () {
+  return axiosGhost.get(urls.actv2_re_count)
+}
+
 export {
   axiosGhost,
   fetchUnreadCount,
@@ -427,5 +454,11 @@ export {
   fetchUser,
   logout,
   login,
-  trial
+  trial,
+  fetchActV2,
+  fetchActBoost,
+  fetchActRefCode,
+  fetchActRefList,
+  openActRe,
+  fetchActReCount
 }

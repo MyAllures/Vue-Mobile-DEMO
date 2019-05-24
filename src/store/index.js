@@ -9,6 +9,7 @@ import chatroom from './chatroom'
 import game from './game'
 import token from './token'
 import customerService from './customerService'
+import actv2 from './actv2'
 
 Vue.use(Vuex)
 
@@ -132,6 +133,7 @@ export default new Vuex.Store({
     chatroom,
     game,
     customerService,
+    actv2,
     token
   }
 })
