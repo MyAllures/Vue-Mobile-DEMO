@@ -383,6 +383,7 @@ export default {
 
 <style lang="less" scoped>
 .shaw-options {
+  background: #fff;
   overflow-x: scroll;
   .wrapper {
     width: 600px;
