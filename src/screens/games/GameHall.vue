@@ -14,90 +14,73 @@
       </div>
       <template slot="right">
         <div class="right-ctrl">
-          <template>
-            <div
-              v-click-outside="onClickOutSideHelper"
-              v-if="!this.showChatRoom"
-              class="helper"
-              slot="right">
-              <div class="helper-trigger" @click="toggleHelper">
-                <div class="icon"></div>
-                助手
-              </div>
-              <ul class="helper-link-group" v-show="helperVisible" @click="$store.dispatch('hideHelper')">
-                <li v-if="seoWebsite" class="helper-link" @click="sendHelperGa('plan')">
-                  <a target="_blank" class="badage" :href="seoWebsite">
-                    人工计划
-                  </a>
-                </li>
-                <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
-                  路珠
-                </li>
-                <li class="helper-link" @click="showGameInfo('leaderboard')">
-                  长龙排行榜
-                </li>
-                <li class="helper-link" @click="showGameInfo('history')">
-                  历史开奖
-                </li>
-                <li v-if="hasTrendDiagram" class="helper-link" @click="showGameInfo('trend')" >
-                  走势图表
-                </li>
-                <li class="helper-link" @click="showGameInfo('intro')">
-                  游戏介绍
-                </li>
-                <li v-if="isShowChatroomIcon" class="helper-link" @click="openChatRoom">
-                  聊天室
-                </li>
-              </ul>
+          <div
+            v-click-outside="onClickOutSideHelper"
+            class="helper"
+            slot="right">
+            <div class="helper-trigger" @click="toggleHelper">
+              <div class="icon"></div>
+              助手
             </div>
-            <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
-          </template>
+            <ul class="helper-link-group" v-show="isHelperVisible" @click="isHelperVisible = false">
+              <li v-if="hasExpertPlan" class="helper-link" @click="showGameInfo('expertplan')">
+                <a :href="seoWebsite" target="_blank">专家计划</a>
+              </li>
+              <li v-if="hasRoadBead" class="helper-link" @click="showGameInfo('roadbeads')">
+                路珠
+              </li>
+              <li class="helper-link" @click="showGameInfo('leaderboard')">
+                长龙排行榜
+              </li>
+              <li class="helper-link" @click="showGameInfo('history')">
+                历史开奖
+              </li>
+              <li v-if="hasTrendDiagram" class="helper-link" @click="showGameInfo('trend')" >
+                走势图表
+              </li>
+              <li class="helper-link" @click="showGameInfo('intro')">
+                游戏介绍
+              </li>
+            </ul>
+          </div>
+          <div class="right-menu-btn" @click="isGameMenuVisible=false;$store.dispatch('showRightMenu')"></div>
           <UnreadPoint></UnreadPoint>
         </div>
       </template>
     </top-bar>
-    <router-view v-show="!showChatRoom" :key="$route.params.gameId"/>
-    <chat-room v-if="chatroomEnabled&&showChatRoom"></chat-room>
+    <game-menu v-model="isGameMenuVisible" v-if="games&&games.length&&theme"/>
+    <div v-if="games&&games.length&&theme&&currentGame" class="notify-msg-wrapper topbar" :style="{'margin-top': showNotifiyMsg?'0':'-25px'}">
+      <div v-if="!isGameMenuVisible && showNotifiyMsg"
+        @click="isGameMenuVisible = !isGameMenuVisible"
+        class="notify-msg menu-center topbar" :style="{'background-color': theme}"
+      >开奖太久？立即体驗更快速的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
+      </div>
+    </div>
+    <game-menu-icon
+      class="menu-center"
+      :style="{top: showNotifiyMsg ? '63px' : '39px'}"
+      @click.native="isGameMenuVisible = !isGameMenuVisible"
+      type="more"
+    />
+    <div :style="{height: showNotifiyMsg? `calc(100% - 37px)`:'calc(100% - 12px)'}">
+      <router-view :key="$route.params.gameId"/>
+    </div>
     <game-info v-if="currentGame" :game="currentGame" :type="contentType" :visible.sync="isGameInfoVisible"/>
-    <template v-if="allGames&&allGames.length&&theme">
-      <game-menu v-model="isGameMenuVisible" v-if="allGames.length" :currentGame="currentGame"/>
-      <div v-if="currentGame">
-        <div v-if="!isGameMenuVisible && currentGame.is_prompt"
-          @click="toggleGameMenu('toppromot')"
-          class="notify-msg menu-center topbar" :class="{hide: !showNotifiyMsg}" :style="{'background-color': theme}"
-        >开奖太慢？查看更多开奖更快的{{currentGame.group_tag.name}}<div class="close-btn" @click.stop="hideNotifyMsg(currentGame.display_name)"></div>
-        </div>
-        <game-menu-icon
-          class="menu-center"
-          :style="{top: (showNotifiyMsg && currentGame.is_prompt) ? '63px' : '39px'}"
-          @click.native="toggleGameMenu('icon')"
-          type="more"
-        />
-      </div>
-
-      <div v-if="promotedGame && currentGame.is_prompt" class="bottom-prompt" :class="{ 'hidden' : !showBottomPrompt }">
-        <div class="inner topbar" :style="{'background-color': theme}">
-          <div class="close-btn small" @click="hideBottomPromot"></div>
-          <div class="txt">开奖太慢？推荐您体验{{promotedGame.period_descroption}}的{{promotedGame.display_name}}</div>
-          <x-button type="default" mini @click.native="forwardTo(promotedGame)">前往</x-button>
-        </div>
-      </div>
-    </template>
   </div>
 </template>
 <script>
 import { XHeader, Popup, XButton, TransferDom } from 'vux'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import GameInfo from './GameInfo'
 import { find } from 'lodash'
-import ChatRoom from '../../components/ChatRoom'
 import GameMenu from '@/components/GameMenu.vue'
 import GameMenuIcon from '@/components/GameMenuIcon'
 import '../../styles/resultsball.scss'
 import '../../styles/playgroup.scss'
 import TopBar from '@/components/TopBar'
-import {hasTrendDiagram} from '@/utils/trendDiagramSetting'
-import {hasRoadBead} from '@/utils/roadBeadSetting'
+import { hasExpertPlan } from '@/utils/expertPlanSetting'
+import { hasTrendDiagram } from '@/utils/trendDiagramSetting'
+import { hasRoadBead } from '@/utils/roadBeadSetting'
 import vClickOutside from 'v-click-outside'
 import UnreadPoint from '@/components/UnreadPoint.vue'
 function to (scrollTop) {
@@ -114,7 +97,6 @@ export default {
     UnreadPoint,
     Popup,
     XHeader,
-    ChatRoom,
     GameInfo,
     XButton,
     TopBar,
@@ -132,23 +114,28 @@ export default {
       contentType: '',
       isGameInfoVisible: false,
       isGameMenuVisible: false,
-      showNotifiyMsg: true,
-      showChatRoom: false,
-      showBottomPrompt: true
+      isHelperVisible: false,
+      showNotifiyMsg: false
     }
   },
   computed: {
     recommMaps () {
-      if (!this.allGames || !this.allGames.length) {
+      if (!this.games || !this.games.length) {
         return {}
       }
       let map = {}
-      this.allGames.forEach(game => {
+      this.games.forEach(game => {
         if (game.prompt_game) {
           map[game.code] = game.prompt_game
         }
       })
       return map
+    },
+    hasExpertPlan () {
+      if (!this.currentGame) {
+        return false
+      }
+      return hasExpertPlan(this.currentGame.code)
     },
     hasTrendDiagram () {
       if (!this.currentGame) {
@@ -165,37 +152,13 @@ export default {
     currentGame () {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
-    ...mapGetters([
-      'allGames'
-    ]),
     ...mapState([
-      'roomInfo', 'roomId', 'systemConfig', 'theme', 'helperVisible'
+      'systemConfig', 'theme', 'games'
     ]),
-    chatroomEnabled () {
-      return this.systemConfig.chatroomEnabled
-    },
-    isShowChatroomIcon () {
-      if (!this.systemConfig.chatroomEnabled) {
-        return false
-      }
-      if (!this.$route.params.gameId || !this.roomInfo) {
-        return false
-      }
-      if (!this.roomInfo[this.$route.params.gameId].status && !this.roomInfo[100000].status) {
-        return false
-      }
-      return true
-    },
-    roomName () {
-      if (this.roomInfo && this.roomId) {
-        return this.roomInfo[this.roomId].name
-      }
-      return ''
-    },
     seoWebsite () {
       if (this.systemConfig.planSiteUrl && this.currentGame) {
         const code = this.currentGame.code
-        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft']
+        const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'jspk10', 'mlaft', 'cs60cr']
         if (gamesHasPlan.includes(code)) {
           return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
         }
@@ -207,22 +170,13 @@ export default {
         return null
       }
       let code = this.recommMaps[this.currentGame.code]
-      return code ? find(this.allGames, game => {
+      return code ? find(this.games, game => {
         return game.code === code
       }) : null
     }
   },
   watch: {
     '$route': 'changeRoute',
-    'roomName': function (name) {
-      if (name) {
-        this.sendGaEvent({
-          label: name,
-          category: '聊天室',
-          action: '点击'
-        })
-      }
-    },
     'isGameInfoVisible': function (visible) {
       if (visible) {
         // 在弹出层显示之前，记录当前的滚动位置
@@ -242,14 +196,14 @@ export default {
         to(scrollTop)
       }
     },
-    'currentGame': {
-      handler (game) {
-        if (game) {
-          const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
-          const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
-          this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
-          this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
-          this.$store.dispatch('setDataSectionStyle', {'padding-top': this.showNotifiyMsg && game.is_prompt ? '35px' : '13px'})
+    'currentGame.code': {
+      handler (code) {
+        if (code) {
+          const game = this.currentGame
+          if (game.is_prompt) {
+            const topPromoteDateFlag = window.localStorage.getItem(game.display_name)
+            this.showNotifiyMsg = topPromoteDateFlag ? (+topPromoteDateFlag < +this.$moment().format('YYYYMMDD')) : true
+          }
         }
       },
       immediate: true
@@ -257,10 +211,10 @@ export default {
   },
   created () {
     if (!this.$route.params.gameId) {
-      if (this.allGames.length > 0) {
+      if (this.games.length > 0) {
         this.chooseGame()
       } else {
-        const unwatch = this.$watch('allGames', function (allGames) {
+        const unwatch = this.$watch('games', function (games) {
           this.chooseGame()
           unwatch()
         })
@@ -271,28 +225,6 @@ export default {
     })
   },
   methods: {
-    setBottomPromotFlag () {
-      window.localStorage.setItem(`bottom-promot-${this.currentGame.code}`, this.$moment().format('YYYY-MM-DD HH:mm:ss'))
-    },
-    hideBottomPromot () {
-      this.setBottomPromotFlag()
-      this.showBottomPrompt = false
-      this.sendGaEvent({
-        label: this.currentGame.display_name,
-        category: 'bottom-promot',
-        action: 'hide'
-      })
-    },
-    forwardTo (game) {
-      this.setBottomPromotFlag()
-      this.sendGaEvent({
-        label: game.name,
-        category: 'bottom-promot',
-        action: 'via-' + this.currentGame.display_name
-      })
-      this.$store.dispatch('saveLastGame', game.id)
-      this.$router.push({path: `/game/${game.id}/`})
-    },
     toggleGameMenu (trigger) {
       this.isGameMenuVisible = !this.isGameMenuVisible
       if (this.isGameMenuVisible) {
@@ -304,24 +236,13 @@ export default {
       }
     },
     changeRoute (to, from) {
-      this.showChatRoom = false
       if (to.path === '/game') {
         this.chooseGame()
       }
     },
     chooseGame () {
-      const gameId = this.$store.state.lastGameData.lastGame || this.allGames[0].id
+      const gameId = this.$store.state.lastGameData.lastGame || this.games[0].id
       this.$router.replace('/game/' + gameId)
-    },
-    closeChatRoom () {
-      this.showChatRoom = false
-      if (this.ws.raven && this.ws.raven.roomId) {
-        this.ws.raven.leaveRoom()
-      }
-    },
-    openChatRoom () {
-      this.sendHelperGa('chatroom')
-      this.showChatRoom = true
     },
     toHome () {
       if (this.$route.name !== 'Home') {
@@ -330,22 +251,21 @@ export default {
           category: '返回首頁',
           action: '点击'
         })
-        this.$router.push({name: 'Home'})
+        this.$router.push({ name: 'Home' })
       }
     },
     toggleHelper () {
-      if (this.helperVisible) {
-        this.$store.dispatch('hideHelper')
-      } else {
-        this.$store.dispatch('showHelper')
-      }
+      this.isHelperVisible = !this.isHelperVisible
       this.isGameMenuVisible = false
     },
     onClickOutSideHelper () {
-      this.$store.dispatch('hideHelper')
+      this.isHelperVisible = false
     },
     showGameInfo (type) {
       this.sendHelperGa(type)
+      if (type === 'expertplan') {
+        return
+      }
       this.isGameInfoVisible = !!type
       // show history from game hall
       type = type === 'historyViaHall' ? 'history' : type
@@ -359,7 +279,6 @@ export default {
         history: '历史开奖',
         historyViaHall: '历史开奖-游戏大厅',
         intro: '游戏介绍',
-        chatroom: '聊天室',
         trend: '走勢圖表'
       }
       this.sendGaEvent({
@@ -370,7 +289,6 @@ export default {
     },
     hideNotifyMsg (gameName) {
       window.localStorage.setItem(gameName, this.$moment().format('YYYYMMDD'))
-      this.$store.dispatch('setDataSectionStyle', {'padding-top': '13px'})
       this.showNotifiyMsg = false
     }
   }
@@ -381,6 +299,7 @@ export default {
 <style lang="less" scoped>
 .gamehall {
   height: 100%;
+  background-color: #fff;
 }
 
 .button-close {
@@ -414,7 +333,7 @@ export default {
     .icon {
       height: 16px;
       width: 16px;
-      background: url('../../assets/helper.svg') no-repeat;
+      background: url("../../assets/helper.svg") no-repeat;
       background-size: contain;
     }
   }
@@ -463,12 +382,12 @@ export default {
         &:after {
           position: absolute;
           top: 14px;
-          content: '';
+          content: "";
           display: inline-block;
           width: 24px;
           height: 12px;
           margin-left: 5px;
-          background-image: url('../../assets/badge_new.svg');
+          background-image: url("../../assets/badge_new.svg");
           background-repeat: no-repeat;
           background-size: contain;
         }
@@ -498,68 +417,29 @@ export default {
   transition: top 1s;
   display: block;
   margin: 0 auto;
-  position: fixed;
-  left: 0;
-  right: 0;
-  z-index: 100;
+}
+
+.notify-msg-wrapper {
+  height: 25px;
+  transition-duration: 0.7s;
+  margin-top: 0;
 }
 
 .notify-msg {
+  position: relative;
   height: 25px;
   font-size: 13px;
-  line-height: 22px;
+  line-height: 25px;
   color: white;
   text-align: center;
-  top: 45.5px;
-  transition: top 1s;
-  &.hide {
-    top: 20px;
-  }
-
   .close-btn {
     position: absolute;
     right: -1px;
     top: -1px;
-    &::before, &::after {
+    &::before,
+    &::after {
       height: 15px;
     }
-  }
-}
-.bottom-prompt {
-  opacity: 0.9;
-  width: 100%;
-  position: absolute;
-  bottom: 55px;
-  transition: bottom 1s, opacity 1s;
-  z-index: 5;
-  justify-content: center;
-  align-items: center;
-  &.hidden {
-    bottom: 100%;
-    opacity: 0;
-  }
-  .inner {
-    border-radius: 4px;
-    display: flex;
-    color: #fff;
-    margin: 10px;
-    padding: 10px 5px;
-  }
-  .close-btn {
-    margin-left: 10px;
-    align-self: center;
-  }
-  .txt {
-    line-height: 1.2;
-    font-size: 13px;
-    align-self: center;
-    padding: 0 10px;
-  }
-
-  .weui-btn.weui-btn_default {
-    height: 32px;
-    width: 80px;
-    align-self: center;
   }
 }
 </style>

@@ -1,22 +1,24 @@
 <template>
   <div class="gameplays">
     <div class="playgroup-odds">赔率：<span class="red">{{activeOdds}}</span></div>
-    <grid :cols="options.length === 2 ? 2 : 3" v-for="(options, index) in viewCustomOptions" :key="index">
-      <grid-item
-        :class="['play', {active: option.active && !gameClosed}]"
+    <div class="playgroup-content" v-for="(options, index) in viewCustomOptions" :key="index">
+      <div
+        :class="['play-wrapper', {active: option.active && !gameClosed}]"
+        :style="{width: `calc(${100/calcCol(options.length)}%)`}"
         v-for="(option, index) in options"
         :key="index"
-        @on-item-click="toggleActive(option)">
-        <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
-          <span class="num">{{option.num}}</span>
+        @click="toggleActive(option)">
+        <div class="play-area">
+          <div :class="`box-center play result-${gameCode} resultnum-${option.num}`">
+            <span class="num">{{option.num}}</span>
+          </div>
         </div>
-      </grid-item>
-    </grid>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import _ from 'lodash'
-import { Grid, GridItem } from 'vux'
 import Combinatorics from 'js-combinatorics'
 export default {
   name: 'WithCode',
@@ -36,10 +38,6 @@ export default {
     setting: {
       type: Object
     }
-  },
-  components: {
-    Grid,
-    GridItem
   },
   data () {
     const customOptions = []
@@ -96,6 +94,9 @@ export default {
     }
   },
   methods: {
+    calcCol (len) {
+      return len === 2 ? 2 : 3
+    },
     calculateCombinations () {
       let numbers = this.activedOptions.map(option => option.num)
       let rules = this.activePlay.rules

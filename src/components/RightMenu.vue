@@ -27,11 +27,11 @@
       </div>
     </div>
     <div class="action-area">
-      <div class="item" @click="handleRouteChange('/fin/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
+      <div class="item" @click="handleRouteChange('/fin/record/bet_record', $t('game.betrecord'))">{{$t('game.betrecord')}}</div>
       <div class="item" v-if="systemConfig.serviceAction" @click="handleServiceBtnClick">
         <span>{{$t('misc.need_help')}}<UnreadPoint :inRightMenu="true"></UnreadPoint></span>
       </div>
-      <div class="item" @click="handleRouteChange('/my/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
+      <div class="item" @click="handleRouteChange('/fin/deposit', $t('game.deposit'))">{{$t('game.deposit')}}</div>
     </div>
     <div class="logout" @click="logoutDialogShow = true">{{$t('misc.logout')}}</div>
     <div v-transfer-dom>
@@ -100,16 +100,6 @@
       },
       currentGame () {
         return this.$store.getters.gameById(this.$route.params.gameId)
-      },
-      seoWebsite () {
-        if (this.systemConfig.planSiteUrl && this.currentGame) {
-          const code = this.currentGame.code
-          const gamesHasPlan = ['bcr', 'cqssc', 'jsssc', 'ynssc', 'hjssc', 'jspk10', 'mlaft']
-          if (gamesHasPlan.includes(code)) {
-            return `${this.systemConfig.planSiteUrl}/game/${code}?utm_source=mobile_gamehall&utm_campaign=${location.host}`
-          }
-        }
-        return ''
       }
     },
     methods: {

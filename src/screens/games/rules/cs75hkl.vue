@@ -1,5 +1,8 @@
 <template>
   <section class="rule-details">
+    <p>官网：
+      <a href="https://fantasylotto7.com/" target="_blank">75 sec 7/49</a>
+    </p>
     <p>开奖时间和结果完全同步75 sec 7/49，从 0:00 起，每75秒开一次，全天共1152期开奖不间断。</p>
     <h3>
       <span class="warn">1.特码</span>

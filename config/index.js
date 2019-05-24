@@ -8,11 +8,18 @@ module.exports = {
     assetsSubDirectory: 'mobile/static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
-        target: 'https://staging-dev-1-api.h9339.com',
+      '/api-ghost': {
+        target: 'http://refactor-api.h9339.com',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api-ghost': ''
+        }
+      },
+      '/api-eagle': {
+        target: 'http://refactor-eagle.h9339.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api-eagle': ''
         }
       }
     },

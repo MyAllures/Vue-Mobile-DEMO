@@ -1,7 +1,7 @@
 <template>
   <div class="result-balls">
     <div class="balls-text">{{result&&result.issue_number}}{{$t('common.result_period')}}</div>
-    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading" @click="$root.bus.$emit('showGameHistory')">
+    <div :class="['balls-number', 'wrapper-' + gameType]" v-if="result && !result.loading">
       <div class="balls-frame">
         <div v-if="result.status!=='valid'">官方开奖无效</div>
         <div
@@ -13,7 +13,6 @@
           <p class="ball-zodiac" v-if="resultZodiac"> {{resultZodiac[index]}} </p>
         </div>
       </div>
-      <i class="solid-triangle point-down"></i>
     </div>
     <game-result-animate
       v-else-if="result"
@@ -120,6 +119,7 @@ export default {
   flex:0 0 auto;
   display: flex;
   color: #999;
+  padding: 2px 0;
   .balls-text {
     font-size: 14px;
     flex: 1;
@@ -148,11 +148,6 @@ export default {
       height: 100%;
       max-width: 265px;
     }
-  }
-  .solid-triangle {
-    position: absolute;
-    right: 5px;
-    border-top: 5px solid #666;
   }
   .text {
     font-size: 12px;

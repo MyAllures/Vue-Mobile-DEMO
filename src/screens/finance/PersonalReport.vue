@@ -82,10 +82,7 @@
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
 
-  <div v-else class="tip">
-    <p>请注册会员后访问</p>
-    <x-button type="primary" link="/register">立即注册</x-button>
-  </div>
+  <register-tips v-else></register-tips>
 </template>
 
 <script>
@@ -95,6 +92,8 @@ import DateSelector from '@/components/DateSelector'
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
+import RegisterTips from '../../components/RegisterTips'
+
 const dateFormatChecker = (format, dateString) => {
   // Params for a formatted String
   // Returns a Boolean whether this string is in the format that momentjs valid
@@ -112,7 +111,8 @@ export default {
     Toast,
     Loading,
     XButton,
-    DateSelector
+    DateSelector,
+    RegisterTips
   },
   directives: {
     infiniteScroll
