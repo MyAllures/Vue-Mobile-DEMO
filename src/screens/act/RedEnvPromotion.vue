@@ -1,70 +1,73 @@
 <template>
-  <div id="re-promotion" v-if="act">
-    <div class="content-wrap">
-      <img class="flower" :src="require('@/assets/red-envelope-v2/promotion-flower.svg')" />
-      <div class="content">
-        <div class="section">
-          <div class="section-title">活动介绍</div>
-          <div class="section-content">{{ act.description }}</div>
-        </div>
-        <div class="section">
-          <div class="section-title">活动内容</div>
-          <div class="section-content">
-            <table v-if="type === 'boost'">
-              <thead>
-                <tr>
-                  <td>每日充值<br v-if="hasMaxAmount" />金额</td>
-                  <td>每日有效<br v-if="hasMaxAmount" />投注金额</td>
-                  <td>当日可领<br v-if="hasMaxAmount" />红包个数</td>
-                  <td v-if="hasMaxAmount">最高<br />金额</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr :key="i" v-for="(level, i) in act.levels">
-                  <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
-                  <td>{{ level.bet_amount_min }}</td>
-                  <td>{{ level.count }}</td>
-                  <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <table v-else-if="type === 'referral'">
-              <thead>
-                <tr>
-                  <td>推荐人数</td>
-                  <td>每成功推荐一人，<br v-if="hasMaxAmount" />可领红包数</td>
-                  <td v-if="hasMaxAmount">最高<br />金额</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr :key="i" v-for="(level, i) in act.levels">
-                  <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
-                  <td v-else>{{ level.referral_min }} 以上</td>
-                  <td>{{ level.count }}</td>
-                  <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
-                </tr>
-              </tbody>
-            </table>
+  <div id="re-promotion" v-if="type">
+    <template v-if="act">
+      <div class="content-wrap">
+        <img class="flower" :src="require('@/assets/red-envelope-v2/promotion-flower.svg')" />
+        <div class="content">
+          <div class="section">
+            <div class="section-title">活动介绍</div>
+            <div class="section-content">{{ act.description }}</div>
+          </div>
+          <div class="section">
+            <div class="section-title">活动内容</div>
+            <div class="section-content">
+              <table v-if="type === 'boost'">
+                <thead>
+                  <tr>
+                    <td>每日充值<br v-if="hasMaxAmount" />金额</td>
+                    <td>每日有效<br v-if="hasMaxAmount" />投注金额</td>
+                    <td>当日可领<br v-if="hasMaxAmount" />红包个数</td>
+                    <td v-if="hasMaxAmount">最高<br />金额</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr :key="i" v-for="(level, i) in act.levels">
+                    <td v-if="i === 0" :rowspan="act.levels.length">{{ act.check_deposit.today_deposit || 0 }}+</td>
+                    <td>{{ level.bet_amount_min }}</td>
+                    <td>{{ level.count }}</td>
+                    <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table v-else-if="type === 'referral'">
+                <thead>
+                  <tr>
+                    <td>推荐人数</td>
+                    <td>每成功推荐一人，<br v-if="hasMaxAmount" />可领红包数</td>
+                    <td v-if="hasMaxAmount">最高<br />金额</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr :key="i" v-for="(level, i) in act.levels">
+                    <td v-if="i < act.levels.length - 1">{{ level.referral_min }} ~ {{ act.levels[i + 1].referral_min - 1 }}</td>
+                    <td v-else>{{ level.referral_min }} 以上</td>
+                    <td>{{ level.count }}</td>
+                    <td v-if="i === 0 && hasMaxAmount" :rowspan="act.levels.length">{{ act.display_max_amount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="footer">
-      <template v-if="user.account_type">
-        <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利红包</button>
-        <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
-      </template>
-      <template v-else>
-        <div class="f-col login">
-         <p>已有帐号</p>
-         <button @click="goto('/login')">立即登录</button>
-       </div>
-       <div class="f-col register">
-         <p>尚未注册</p>
-         <button @click="goto('/register')">免费注册</button>
-       </div>
-      </template>
-    </div>
+      <div class="footer">
+        <template v-if="user.account_type">
+          <button class="f-col" @click="goto('/my/red_envelopes')" v-if="type === 'boost'">查看我的返利红包</button>
+          <button class="f-col" @click="goto('/my/referral_link')" v-else-if="type === 'referral'">立即推荐好友</button>
+        </template>
+        <template v-else>
+          <div class="f-col login">
+           <p>已有帐号</p>
+           <button @click="goto('/login')">立即登录</button>
+         </div>
+         <div class="f-col register">
+           <p>尚未注册</p>
+           <button @click="goto('/register')">免费注册</button>
+         </div>
+        </template>
+      </div>
+    </template>
+    <div class="loading" v-else><cube-loading /></div>
   </div>
 </template>
 
@@ -73,9 +76,17 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'RedEnvPromotion',
+  mounted () {
+    if (this.type && !this.act) {
+      this.getAct(this.type)
+    }
+  },
   methods: {
     ...mapActions('page', [
       'updatePageSetting'
+    ]),
+    ...mapActions('actv2', [
+      'getAct'
     ]),
     goto (path) {
       this.$router.push(path)
@@ -285,5 +296,9 @@ export default {
     border: none;
     border-radius: 4px;
  }
+}
+.loading {
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -66,7 +66,7 @@
           </flexbox>
         </router-link>
       </flexbox-item>
-      <flexbox-item v-if="actBoost.enabled">
+      <flexbox-item v-if="actBoostEnabled">
         <router-link to="/act/boost">
           <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
@@ -79,7 +79,7 @@
           </flexbox>
         </router-link>
       </flexbox-item>
-      <flexbox-item v-if="actReferral.enabled">
+      <flexbox-item v-if="actReferralEnabled">
         <router-link to="/act/referral">
           <flexbox class="activity" :gutter="2">
             <flexbox-item class="activity-icon">
@@ -274,8 +274,8 @@ export default {
       'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce', 'games'
     ]),
     ...mapState('actv2', {
-      actBoost: state => state.boost.detail,
-      actReferral: state => state.referral.detail
+      actBoostEnabled: state => state.boost.enabled,
+      actReferralEnabled: state => state.referral.enabled
     }),
     announcements () {
       return this.announce.homepage
@@ -334,7 +334,7 @@ export default {
       return actions
     },
     showActivityArea () {
-      return (!this.user.account_type && this.systemConfig.regPresentAmount > 0) || this.actBoost.enabled || this.actReferral.enabled
+      return (!this.user.account_type && this.systemConfig.regPresentAmount > 0) || this.actBoostEnabled || this.actReferralEnabled
     }
   },
   watch: {

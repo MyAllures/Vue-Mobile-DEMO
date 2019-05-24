@@ -75,10 +75,10 @@ export default {
   service_comment: venomHost + '/support/member_comment/',
   win_history: host + '/members_win_histories?limit=20',
   get_jwt_token: host + '/get_jwt_token/',
-  actv2_activity: host + '/v2/activity-v2/',
-  actv2_boost_get: host + '/v2/member-engagement-boost/engagement_boost/',
-  actv2_referral_code: apiv2 + '/referral-code/',
-  actv2_referral_list: host + '/v2/referral_details/',
-  actv2_re_open: host + '/v2/receive-envelope/',
+  actv2_activity: host + '/v1/member/envelope/activity-v2/',
+  actv2_boost_get: host + '/v1/member/envelope/engagement_boost_details/',
+  actv2_referral_code: apiv2 + '/member/referral-code/',
+  actv2_referral_list: host + '/v1/member/envelope/referral_details/',
+  actv2_re_open: host + '/v1/member/envelope/receive-envelope/',
   actv2_re_count: host + '/v2/remain-envelope-count/'
 }
