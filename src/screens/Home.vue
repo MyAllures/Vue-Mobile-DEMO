@@ -22,7 +22,8 @@
             <router-link tag="div" class="link" to="/login"><div class="login">登录</div></router-link>
           </template>
           <template v-else>
-            <div class="balance fr"
+            <div
+              class="balance fr"
               @click="$store.dispatch('showRightMenu')">
               <span>{{ user.balance|currency('￥')}}</span>
             </div>
@@ -31,7 +32,6 @@
         </div>
       </template>
     </top-bar>
-
     <swiper
       class="banner-slider"
       :aspect-ratio=".4"
@@ -42,7 +42,6 @@
         <div class="swiper-desc-mask"></div>
       </swiper-item>
     </swiper>
-
     <div class="announcement" v-if="announcements.length" @click="showDialog = true">
       <div class="speaker">
         <img src="../assets/icon_bullhorn.svg" alt="bullhorn">
@@ -51,49 +50,15 @@
         <marquee :messages="announcements" height="32px"></marquee>
       </div>
     </div>
-
-    <flexbox class="activity-area" :gutter="4" v-if="showActivityArea">
-      <flexbox-item class="activity-register" v-if="!user.account_type && systemConfig.regPresentAmount > 0">
-        <router-link to="/register">
-          <flexbox class="activity" :gutter="2">
-            <flexbox-item class="activity-icon">
-              <img src="../assets/red-envelope-v2/act-index-1.svg" />
-            </flexbox-item>
-            <flexbox-item class="activity-info">
-              <div class="activity-title">立即注册送彩金</div>
-              <div class="activity-desc">注册立领 ¥{{ systemConfig.regPresentAmount }}</div>
-            </flexbox-item>
-          </flexbox>
-        </router-link>
-      </flexbox-item>
-      <flexbox-item v-if="actBoostEnabled">
-        <router-link to="/act/boost">
-          <flexbox class="activity" :gutter="2">
-            <flexbox-item class="activity-icon">
-              <img src="../assets/red-envelope-v2/act-index-2.svg" />
-            </flexbox-item>
-            <flexbox-item class="activity-info">
-              <div class="activity-title">返利红包大放送</div>
-              <div class="activity-desc">天天拆紅包</div>
-            </flexbox-item>
-          </flexbox>
-        </router-link>
-      </flexbox-item>
-      <flexbox-item v-if="actReferralEnabled">
-        <router-link to="/act/referral">
-          <flexbox class="activity" :gutter="2">
-            <flexbox-item class="activity-icon">
-              <img src="../assets/red-envelope-v2/act-index-3.svg" />
-            </flexbox-item>
-            <flexbox-item class="activity-info">
-              <div class="activity-title">推荐好友领红包</div>
-              <div class="activity-desc">好友多紅包多</div>
-            </flexbox-item>
-          </flexbox>
-        </router-link>
-      </flexbox-item>
-    </flexbox>
-
+    <router-link
+      tag="div"
+      to="/register"
+      class="register-money"
+      v-if="!user.account_type&&parseInt(systemConfig.regPresentAmount)">
+      <div class="icon"></div>
+      <div class="text">现在注册立领{{systemConfig.regPresentAmount|currency('￥', 0)}}红包</div>
+      <x-button type="primary" mini>立即注册</x-button>
+    </router-link>
     <div v-if="tags.length >= 0&&tags[0]!=='no-alias'" class="tab-selector">
       <tab
           :bar-active-color="theme"
@@ -110,7 +75,6 @@
         </tab-item>
       </tab>
     </div>
-
     <div class="game-group">
       <div
         class="game-item"
@@ -129,7 +93,6 @@
         <div>所有游戏</div>
       </div>
     </div>
-
     <div v-if="actions&&actions.length" :class="['btn-panel',{single: actions.length===1}]">
       <template v-for="(action, index) in actions">
         <a
@@ -213,9 +176,9 @@ import {
 } from 'vux'
 import { mapState } from 'vuex'
 import Marquee from '../components/Marquee'
-import GameMenu from '@/components/GameMenu'
+import GameMenu from '@/components/GameMenu.vue'
 import TopBar from '@/components/TopBar'
-import UnreadPoint from '@/components/UnreadPoint'
+import UnreadPoint from '@/components/UnreadPoint.vue'
 import WinHistory from '@/components/WinHistory'
 import AppPrompt from '@/components/AppPrompt'
 import ActivityEnvelopeDialog from '@/components/ActivityEnvelopeDialog'
@@ -274,10 +237,6 @@ export default {
     ...mapState([
       'user', 'systemConfig', 'tagTable', 'promotions', 'theme', 'banners', 'announce', 'games'
     ]),
-    ...mapState('actv2', {
-      actBoostEnabled: state => state.boost.enabled,
-      actReferralEnabled: state => state.referral.enabled
-    }),
     announcements () {
       return this.announce.homepage
     },
@@ -333,13 +292,10 @@ export default {
         })
       }
       return actions
-    },
-    showActivityArea () {
-      return (!this.user.account_type && this.systemConfig.regPresentAmount > 0) || this.actBoostEnabled || this.actReferralEnabled
     }
   },
   watch: {
-    tags: {
+    'tags': {
       immediate: true,
       handler (tags) {
         if (tags && tags.length > 0) {
@@ -347,11 +303,39 @@ export default {
         }
       }
     },
-    isEnvelopeVisible (isEnvelopeVisible) {
-      this.fixBody(isEnvelopeVisible)
+    'isEnvelopeVisible': function (isEnvelopeVisible) {
+      if (isEnvelopeVisible) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
+      }
     },
-    showDialog (showDialog) {
-      this.fixBody(showDialog)
+    'showDialog': function (showDialog) {
+      if (showDialog) {
+        // 在弹出层显示之前，记录当前的滚动位置
+        scrollTop = getScrollTop()
+
+        // 使body脱离文档流
+        document.body.classList.add('dialog-open')
+
+        // 把脱离文档流的body拉上去，否则页面会回到顶部
+        document.body.style.top = -scrollTop + 'px'
+      } else {
+        // body又回到了文档流中
+        document.body.classList.remove('dialog-open')
+
+        to(scrollTop)
+      }
     }
   },
   created () {
@@ -398,20 +382,6 @@ export default {
         category: '紅包',
         action: '查看红包活动'
       })
-    },
-    fixBody (fix) {
-      if (fix) {
-        // 在弹出层显示之前，记录当前的滚动位置
-        scrollTop = getScrollTop()
-        // 使body脱离文档流
-        document.body.classList.add('dialog-open')
-        // 把脱离文档流的body拉上去，否则页面会回到顶部
-        document.body.style.top = -scrollTop + 'px'
-      } else {
-        // body又回到了文档流中
-        document.body.classList.remove('dialog-open')
-        to(scrollTop)
-      }
     }
   }
 }
@@ -527,70 +497,112 @@ export default {
     font-size: 15px;
   }
 }
-
-.activity-area {
-  background: #FFF;
-  padding: 6px 5px;
-  box-sizing: border-box;
-
-  > .vux-flexbox-item {
-    height: 60px;
-    background: #f4f9ff;
-    padding: 6px;
-    overflow: hidden;
-    box-sizing: border-box;
-
-    > a {
-      display: block;
-      height: 100%;
-    }
+.register-money {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  width: 100%;
+  margin: 12px 0;
+  background: #fff;
+  .icon {
+    width: 40px;
+    height: 40px;
+    background: url("../assets/present.png") no-repeat;
+    background-size: contain;
+    margin-right: 4px;
   }
-  .activity-register {
-    .activity-icon,
-    ~ .vux-flexbox-item .activity-icon {
-      flex: 0 0 28px;
-      height: 28px;
-    }
-    .activity,
-    ~ .vux-flexbox-item .activity {
-      max-width: 130px;
-    }
-    ~ .vux-flexbox-item .activity-title {
-      padding-right: 8px;
-    }
+  .text {
+    color: #333;
+    font-size: 16px;
+    margin-right: 14px;
   }
-  .activity {
-    height: 100%;
-    max-width: 134px;
-    margin: 0 auto;
+  .weui-btn {
+    padding: 0px 12px;
+    margin: 0;
   }
-  .activity-icon {
-    flex: 0 0 32px;
-    height: 32px;
-
-    img {
-      max-width: 100%;
-    }
-  }
-  .activity-info {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+}
+.game-title {
+  display: flex;
+  justify-content: space-between;
+}
+.title {
+  display: inline-block;
+  font-weight: normal;
+  font-size: 16px;
+  color: #666;
+  line-height: 36px;
+  padding: 0 0 0 10px;
+}
+.activity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: #fff;
   .activity-title {
-    font-size: 13px;
-    font-weight: bold;
-    line-height: 1.2;
-    padding-right: 7px;
-    color: #314762;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    font-size: 16px;
+    color: #666;
+    &::after {
+      content: " ";
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 1px;
+      width: 100%;
+      bottom: 0;
+      border-bottom: 1px solid @grayscale3;
+      color: @grayscale3;
+      transform-origin: 100% 0;
+      transform: scaleY(0.5);
+    }
   }
-  .activity-desc {
-    font-size: 12px;
-    color: #86a0c3;
-    margin-top: 3px;
-    line-height: 1;
-    white-space: nowrap;
+  .activity-more {
+    position: relative;
+    box-sizing: border-box;
+    width: 50%;
+    height: 40px;
+    line-height: 40px;
+    padding-right: 24px;
+    font-size: 14px;
+    text-align: right;
+    color: #333;
+    &::after {
+      content: "";
+      display: inline-block;
+      height: 6px;
+      width: 6px;
+      border-width: 2px 2px 0 0;
+      border-color: #999;
+      border-style: solid;
+      transform: matrix(0.71, 0.71, -0.71, 0.71, 0, -1);
+    }
+  }
+  .activity-item {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 20px 16px 20px;
+    .activity-item-title {
+      height: 36px;
+      line-height: 36px;
+      width: 100%;
+      font-size: 16px;
+      color: #333;
+      text-align: center;
+    }
+    .activity-item-img {
+      width: calc(~"100vw" - 40px);
+      height: calc(~"25vw" - 10px);
+      text-align: center;
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
   }
 }
 
@@ -727,7 +739,7 @@ export default {
   top: 55vh;
   width: 40px;
   height: 60px;
-  background: url("../assets/envelope_btn.svg") no-repeat;
+  background: url('../assets/envelope_btn.svg') no-repeat;
   background-size: contain;
   animation-duration: 6s;
   animation-timing-function: ease;

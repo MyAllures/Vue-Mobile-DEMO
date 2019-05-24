@@ -11,24 +11,14 @@ import locales from './i18n/locales'
 import VueLazyload from 'vue-lazyload'
 import store from './store'
 import { sync } from 'vuex-router-sync'
-import {
-  axiosGhost,
-  axiosEagle,
-  axiosVenom,
-  urls,
-  gethomePage,
-  setCookie,
-  sendHeartBeat,
-  fetchJWTToken,
-  fetchServiceUnread
-} from './api'
+import { axiosGhost, axiosEagle, axiosVenom, urls, gethomePage, setCookie, sendHeartBeat, fetchJWTToken, fetchServiceUnread } from './api'
 import * as types from './store/mutations/mutation-types'
 import Vue2Filters from 'vue2-filters'
 import { ToastPlugin, ConfirmPlugin, LoadingPlugin } from 'vux'
 import qs from 'qs'
 import sign from './utils/sign'
-import { getJWTToken } from './utils'
-import { HTTP_ERROR, JS_ERROR, AUTH_ERROR, report } from './report'
+import {getJWTToken} from './utils'
+import {HTTP_ERROR, JS_ERROR, AUTH_ERROR, report} from './report'
 import GhostSocketObj from './wsObj/eider'
 
 const sendGaEvent = ({label, category, action}) => {
@@ -90,11 +80,6 @@ function initData () {
           serviceAction = null
         }
       }
-
-      store.dispatch('actv2/setActEnabled', {
-        boost: response.engagement_boost_activity_enabled,
-        referral: response.referral_activity_enabled
-      })
 
       store.dispatch('setSystemConfig',
         {
@@ -175,8 +160,7 @@ if (HTTPS && HTTPS.replace(/"/g, '') === '1') {
     window.location.replace(url.replace(/http:/, 'https:'))
   }
 }
-const search = window.location.search.slice(1, window.location.search.length)
-const params = qs.parse(search)
+let params = qs.parse(url.slice(url.indexOf('?') + 1, url.length))
 if (params.r) {
   setCookie('r=' + params.r).catch(() => {})
   axiosGhost.defaults.headers.common['x-r'] = params.r
@@ -200,19 +184,7 @@ const i18n = new VueI18n({
   messages: locales
 })
 
-if (params.f) {
-  Vue.cookie.set('referral_id', params.f)
-}
-
 axiosGhost.interceptors.request.use((config) => {
-  const fromVenom = config.url.includes(urls.venomHost)
-  const fromRaven = config.url.includes(urls.ravenHost)
-  if (fromVenom) {
-    config.headers['Authorization'] = `JWT ${getJWTToken('venom')}`
-  }
-  if (fromRaven) {
-    config.headers['Authorization'] = `JWT ${getJWTToken('raven')}`
-  }
   if (config.url.indexOf('v2') !== -1) {
     let t = new Date()
     config.headers.common['x-sign'] = sign.ink(t)

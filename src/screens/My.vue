@@ -23,7 +23,7 @@
           :title="'站内消息'"
           is-link>
           <img class="svg-icon" src="../assets/my/message.svg" slot="icon" alt="message">
-          <Badge v-if="unread" :text="unread" />
+          <span v-if="unread" :class="{'unread-alert': unread}">{{ unread }}</span>
         </cell>
       </group>
       <group>
@@ -55,30 +55,6 @@
           <img class="svg-icon" src="../assets/my/bank_card.svg" slot="icon" alt="bank-card">
           <span v-if="bankAccount">{{bankAccount}}</span>
           <span class="warn-tip" v-else>未填写</span>
-        </cell>
-      </group>
-      <group v-if="boostEnabled">
-        <cell
-          @click.native="$router.push('/my/red_envelopes')"
-          title="返利红包"
-          is-link>
-          <img class="svg-icon" src="../assets/my/red_envelope.svg" slot="icon" />
-          <Badge :text="boostCount" v-if="boostCount" />
-        </cell>
-      </group>
-      <group title="我的好友推荐" v-if="referralEnabled">
-        <cell
-          @click.native="$router.push('/my/referral_link')"
-          title="推荐好友"
-          is-link>
-          <img class="svg-icon" src="../assets/my/recommend_link.svg" slot="icon" />
-        </cell>
-        <cell
-          @click.native="$router.push('/my/referrals')"
-          title="我的推荐"
-          is-link>
-          <img class="svg-icon" src="../assets/my/my_recommend.svg" slot="icon" />
-          <Badge :text="referralCount" v-if="referralCount" />
         </cell>
       </group>
       <group>
@@ -122,7 +98,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import { Group, Cell, Confirm, Badge } from 'vux'
+import { Group, Cell, Confirm } from 'vux'
 
 export default {
   name: 'My',
@@ -143,12 +119,6 @@ export default {
     ...mapState([
       'systemConfig'
     ]),
-    ...mapState('actv2', {
-      boostEnabled: state => state.boost.enabled,
-      boostCount: state => state.boost.count,
-      referralEnabled: state => state.referral.enabled,
-      referralCount: state => state.referral.count
-    }),
     serviceAction () {
       return this.systemConfig.serviceAction
     },
@@ -181,8 +151,7 @@ export default {
   components: {
     Group,
     Cell,
-    Confirm,
-    Badge
+    Confirm
   }
 }
 </script>
@@ -211,8 +180,13 @@ export default {
   color: @red;
 }
 
-.vux-badge {
+.unread-alert {
+  border-radius: 20px;
+  font-size: 14px;
+  padding: 1px 7px;
   background: #d0021b;
+  color: #fff;
+  font-weight: 500;
 }
 
 .icon {

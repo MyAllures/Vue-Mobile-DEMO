@@ -76,12 +76,6 @@ export default {
   service_unread: venomHost + '/support/has_unread/',
   service_image_attachment: venomHost + '/chat/attachment/',
   service_comment: venomHost + '/support/member_comment/',
-  actv2_activity: host + '/v1/member/envelope/activity-v2/',
-  actv2_boost_get: host + '/v1/member/envelope/engagement_boost_details/',
-  actv2_referral_code: apiv2 + '/member/referral-code/',
-  actv2_referral_list: host + '/v1/member/envelope/referral_details/',
-  actv2_re_open: host + '/v1/member/envelope/receive-envelope/',
-  actv2_re_count: host + '/v2/remain-envelope-count/',
   eagle: {
     host: eagleHost,
     ws_host: wsEagleHost,
