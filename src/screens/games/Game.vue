@@ -241,7 +241,7 @@ export default {
       'systemConfig', 'user', 'latestResultMap', 'theme', 'games'
     ]),
     ...mapState('chatroom', {
-      isChatroomEnabled: state => state.roomList.length > 0
+      isChatroomEnabled: state => state.roomList && state.roomList.length > 0
     }),
     gameId () {
       return this.$route.params.gameId

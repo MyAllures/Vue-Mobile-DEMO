@@ -288,7 +288,7 @@ export default {
       }
     },
     firseLevelPages () {
-      if (this.roomList.length === 0) {
+      if (!this.roomList || this.roomList.length === 0) {
         return baseFirseLevelPages
       } else {
         const pages = [...baseFirseLevelPages]
