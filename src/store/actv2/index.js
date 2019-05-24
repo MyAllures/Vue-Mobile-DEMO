@@ -1,5 +1,4 @@
 import {
-  fetchActV2All,
   fetchActV2,
   fetchActReCount
 } from '@/api'
@@ -10,12 +9,12 @@ export default {
     boost: {
       enabled: false,
       count: false,
-      detail: {}
+      detail: null
     },
     referral: {
       enabled: false,
       count: false,
-      detail: {},
+      detail: null,
       list: []
     }
   },
@@ -26,8 +25,10 @@ export default {
   },
   mutations: {
     setAct: (state, { type, enabled, detail }) => {
-      if (detail) {
+      if (enabled !== undefined) {
         state[type].enabled = enabled
+      }
+      if (detail) {
         state[type].detail = detail
       }
     },
@@ -51,31 +52,25 @@ export default {
     }
   },
   actions: {
-    fetchActV2: ({ commit }) => {
-      fetchActV2All().then(response => {
-        const promises = []
-        if (response.indexOf('engagement_boost') > -1) {
-          promises.push(fetchActV2('engagement_boost'))
-        }
-        if (response.indexOf('referral') > -1) {
-          promises.push(fetchActV2('referral'))
-        }
-        Promise.all(promises).then(response => {
-          response.forEach(act => {
-            if (act.type === 'engagement_boost') {
-              commit('setAct', {
-                type: 'boost',
-                enabled: true,
-                detail: act
-              })
-            } else if (act.type === 'referral') {
-              commit('setAct', {
-                type: 'referral',
-                enabled: true,
-                detail: act
-              })
-            }
-          })
+    setActEnabled ({ commit }, { boost, referral }) {
+      commit('setAct', {
+        type: 'boost',
+        enabled: boost
+      })
+      commit('setAct', {
+        type: 'referral',
+        enabled: referral
+      })
+    },
+    getAct: ({ commit, state }, type) => {
+      const endpoints = {
+        boost: 'engagement_boost',
+        referral: 'referral'
+      }
+      fetchActV2(endpoints[type]).then(response => {
+        commit('setAct', {
+          type: type,
+          detail: response
         })
       })
     },

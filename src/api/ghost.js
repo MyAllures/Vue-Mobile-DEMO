@@ -311,10 +311,6 @@ function fetchUnreadCount () {
   return axios.get(urls.unreadMessage)
 }
 
-function fetchActV2All () {
-  return axios.get(urls.actv2_activity)
-}
-
 function fetchActV2 (type) {
   return axios.get(`${urls.actv2_activity}${type}/`)
 }
@@ -400,7 +396,6 @@ export {
   logout,
   login,
   trial,
-  fetchActV2All,
   fetchActV2,
   fetchActBoost,
   fetchActRefCode,

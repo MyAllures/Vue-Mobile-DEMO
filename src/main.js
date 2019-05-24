@@ -56,7 +56,6 @@ function initData () {
   store.dispatch('fetchGames')
   store.dispatch('fetchAnnouncements')
   store.dispatch('fetchBanner')
-  store.dispatch('actv2/fetchActV2')
 
   store.dispatch('setSystemConfig', {...store.state.systemConfig, state: 'pending'})
 
@@ -91,6 +90,11 @@ function initData () {
           serviceAction = null
         }
       }
+
+      store.dispatch('actv2/setActEnabled', {
+        boost: response.engagement_boost_activity_enabled,
+        referral: response.referral_activity_enabled
+      })
 
       store.dispatch('setSystemConfig',
         {

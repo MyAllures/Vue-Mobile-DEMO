@@ -28,9 +28,9 @@
             <span v-else>已注册</span>
           </div>
           <div class="column r">
-            <XButton text="尚未充值" mini="true" plain="true" disabled="true" v-if="!data.receivable"  />
-            <XButton text="领取完" type="primary" mini="true" disabled="true" v-else-if="data.envelope_count === 0"  />
-            <XButton :text="`拆 ${data.envelope_count} 个红包`" @click.native="openRE(data.id, i)" :show-loading="reLoading && currentIdx === i" :disabled="reLoading" type="primary" mini="true" v-else />
+            <XButton text="尚未充值" :mini="true" :plain="true" :disabled="true" v-if="!data.receivable"  />
+            <XButton text="领取完" type="primary" :mini="true" :disabled="true" v-else-if="data.envelope_count === 0"  />
+            <XButton :text="`拆 ${data.envelope_count} 个红包`" @click.native="openRE(data.id, i)" :show-loading="reLoading && currentIdx === i" :disabled="reLoading" type="primary" :mini="true" v-else />
           </div>
         </div>
       </div>
