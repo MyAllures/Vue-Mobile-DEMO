@@ -12,7 +12,7 @@ import ChatroomFooter from './ChatroomFooter'
 import { mapState } from 'vuex'
 import { EagleWebSocket } from '@/wsObj/eagle'
 import GameInfo from '@/screens/games/GameInfo'
-import { getJWTToken } from '@/utils'
+import { getJWTToken, makeCancelable } from '@/utils'
 const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 function to (scrollTop) {
   document.body.scrollTop = document.documentElement.scrollTop = scrollTop
@@ -33,7 +33,7 @@ export default {
     return {
       contentType: '',
       isGameInfoVisible: false,
-      tokenCancelablePromise: null
+      cancelablePromise: null
     }
   },
   computed: {
@@ -65,14 +65,22 @@ export default {
           if (this.ws) {
             this.ws.leaveRoom()
           }
-          if (this.roomList) {
+
+          let roomListPromise = new Promise(resolve => {
+            if (this.roomList) {
+              resolve()
+            } else {
+              const unwatch = this.$watch('roomList', function () {
+                unwatch()
+                resolve()
+              })
+            }
+          })
+
+          this.cancelablePromise = makeCancelable(roomListPromise)
+          this.cancelablePromise.promise.then(() => {
             this.createConnection()
-          } else {
-            const unwatch = this.$watch('roomList', function () {
-              this.createConnection()
-              unwatch()
-            })
-          }
+          })
 
           if (this.emojiMap === null) {
             this.$store.dispatch('chatroom/initEmoji')
@@ -134,9 +142,9 @@ export default {
     }
   },
   beforeDestroy () {
-    if (this.tokenCancelablePromise) {
+    if (this.cancelablePromise) {
       // 避免組件銷毀後異步建立連線
-      this.tokenCancelablePromise.cancel()
+      this.cancelablePromise.cancel()
     }
     if (this.ws) {
       this.ws.leaveRoom()
