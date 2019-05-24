@@ -367,6 +367,9 @@ export default {
       this.$refs['image-popup'].hide()
     },
     handleMember (member) {
+      if (!this.user.account_type) {
+        return
+      }
       this.chatManageDialogVisible = true
       this.selectedMember = {}
       eagle.fetchUserDetail(member.username, this.ws.roomId).then((res) => {
