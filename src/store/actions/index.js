@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import * as types from '../mutations/mutation-types'
-import axios from 'axios'
-import { msgFormatter } from '../../utils'
-
+import {msgFormatter} from '@/utils'
 import {
   fetchUser,
   login as userLogin,
@@ -14,13 +12,14 @@ import {
   fetchBanner,
   fetchUnreadCount,
   fetchAnnouncements,
-  trial
+  trial,
+  eagle
 } from '../../api'
 import {take, find} from 'lodash'
 const login = function ({ commit, state, dispatch }, { user }) {
   return userLogin(user).then(res => {
     if (state.user.logined) {
-      commit('RESET_USER')
+      dispatch('resetUser')
     }
     let expires = new Date(res.expires_in)
     if (res.access_token && res.refresh_token) {
@@ -31,8 +30,6 @@ const login = function ({ commit, state, dispatch }, { user }) {
       Vue.cookie.set('refresh_token', res.refresh_token, {
         expires: expires
       })
-      axios.defaults.withCredentials = true
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
       if (res.agent) {
         commit(types.SET_USER, {
           ...user,
@@ -70,8 +67,6 @@ export default {
         Vue.cookie.set('refresh_token', tokenObj.refresh_token, {
           expires: tokenObj.expires_in
         })
-        axios.defaults.withCredentials = true
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + tokenObj.access_token
         if (response.agent) {
           commit('SET_USER', {
             ...state.user,
@@ -104,21 +99,19 @@ export default {
     })
   },
   logout: ({ commit, state, dispatch }) => {
+    dispatch('resetUser')
+    dispatch('customerService/clearMessage')
+    dispatch('customerService/setServiceUnread', false)
     return logout().then(
-      res => {
-        Vue.cookie.delete('access_token')
-        Vue.cookie.delete('refresh_token')
-        commit(types.RESET_USER)
-        dispatch('customerService/clearMessage')
-        dispatch('customerService/setServiceUnread', false)
-      },
+      res => {},
       errRes => Promise.reject(errRes)
-    )
+    ).catch(() => {})
   },
   setUser: ({commit}, data) => {
     commit(types.SET_USER, data)
   },
-  resetUser: ({commit}) => {
+  resetUser: ({commit, dispatch}) => {
+    dispatch('token/clear')
     commit(types.RESET_USER)
   },
   fetchBanner: ({commit, state}) => {
@@ -197,20 +190,20 @@ export default {
       })
       commit(types.TAG_TABLE, {...tagTable, ...gameGroups})
       fetchGamesDetail().then(gamesDetail => {
+        const totalBettrackPositions = {}
         gamesDetail.forEach(({id, categories, playpositions}) => {
           if (playpositions) {
-            categories.push({
-              code: 'playpositions',
-              id: 'playpositions',
-              name: '追号',
-              playpositions
-            })
+            totalBettrackPositions[id] = {
+              max_opts: playpositions.max_opts,
+              positions: playpositions.data
+            }
           }
           commit(types.SET_CATEGORIES, {
             gameId: id,
             categories
           })
         })
+        commit(types.SET_BETTRACK_POSITIONS, totalBettrackPositions)
       })
       return Promise.resolve(res)
     })
@@ -326,13 +319,24 @@ export default {
   hideRightMenu: ({commit}) => {
     commit(types.HIDE_RIGHT_MENU)
   },
-  showHelper: ({commit}) => {
-    commit(types.SHOW_HELPER)
+  fetchChatRoomUserInfo: ({commit, state}) => {
+    Promise.all([eagle.fetchChatRoomUserInfo(state.user.username), eagle.fetchFolloweeList().catch(() => []), eagle.fetchFilters(state.user.username)]).then(([user, followeeList, filters]) => {
+      commit(types.SET_USER, {
+        followeeList,
+        followable: user.followable,
+        filters
+      })
+    }).catch(e => {
+
+    })
   },
-  hideHelper: ({commit}) => {
-    commit(types.HIDE_HELPER)
+  toggleFollowee: ({commit}, followee) => {
+    return eagle.toggleFollowee(followee.username).then(res => {
+      commit(types.TOGGLE_FOLLOWEE, followee)
+      return res
+    })
   },
-  setDataSectionStyle: ({commit}, style) => {
-    commit(types.DATA_SECTION_STYLE, style)
+  updateFilters: ({ commit }, data) => {
+    commit(types.UPDATE_FILTERS, data)
   }
 }

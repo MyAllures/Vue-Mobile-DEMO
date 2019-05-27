@@ -93,7 +93,7 @@ export default {
                 this.$router.push({name: 'Login'})
                 this.loading = false
               }).catch(() => {
-                this.$store.commit('RESET_USER')
+                this.$store.dispatch('resetUser')
                 this.$router.push({name: 'Login'})
                 this.loading = false
               })

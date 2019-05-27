@@ -25,14 +25,14 @@ export default {
       timer: null
     }
   },
-  watch: {
-    'messages': function () {
-      this.setMarquee()
-    }
-  },
   mounted () {
     if (this.messages.length > 0) {
       this.setMarquee()
+    } else {
+      const unwatch = this.$watch('messages', function () {
+        unwatch()
+        this.setMarquee()
+      })
     }
   },
   methods: {
