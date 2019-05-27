@@ -9,7 +9,8 @@
           'max-width': '95%'
         }">
         <div class="bet-content">
-          <div class="title">确认注单</div>
+          <div class="title vux-1px-b">确认注单</div>
+          <div class="game" v-if="betDialog.showGameName">{{betDialog.gameName}}</div>
           <ul class="bet-items" ref="bets" v-fix-scroll>
             <li
               class="bet-item"
@@ -27,20 +28,16 @@
             总金额：
             <span class="amount">{{totalAmount | currency('￥')}}</span>
           </div>
-          <check-icon v-if="hasPlanCheck" class="check-plan" :value.sync="hasPlan">
-            将此笔注单分享至聊天室开放跟单
-          </check-icon>
+          <cube-checkbox v-model="isShared" v-if="betDialog.hasShared">
+            分享我的注单
+          </cube-checkbox>
           <div v-if="loading" class="loading">
             <inline-loading></inline-loading>加载中
           </div>
-          <flexbox v-else class="buttons">
-            <flexbox-item>
-              <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
-            </flexbox-item>
-            <flexbox-item>
-              <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
-            </flexbox-item>
-          </flexbox>
+          <div v-else class="buttons">
+            <x-button type="default" @click.native="dialogVisible = false">{{$t('action.cancel')}}</x-button>
+            <x-button :disabled="!betDialog.bets.length||totalAmount>user.balance" @click.native="placeOrder" type="primary">{{$t('action.confirm')}}</x-button>
+          </div>
         </div>
       </x-dialog>
   </div>
@@ -68,26 +65,17 @@ export default {
     return {
       dialogVisible: false,
       loading: false,
-      hasPlan: true,
       betAmounts: null,
-      currentFocusInput: null
+      currentFocusInput: null,
+      isShared: true
     }
   },
   computed: {
     ...mapState([
-      'systemConfig', 'user'
+      'user'
     ]),
     betDialog () {
       return this.$store.state.dialog.bet
-    },
-    gameId () {
-      return this.$route.params.gameId
-    },
-    hasPlanCheck () {
-      return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
-    },
-    currentGame () {
-      return this.$store.getters.gameById(this.$route.params.gameId)
     },
     totalCount () {
       if (this.betDialog.bets.length === 0) {
@@ -127,9 +115,6 @@ export default {
       this.loading = false
       this.dialogVisible = visible
       if (visible) {
-        if (this.hasPlanCheck) {
-          this.hasPlan = false
-        }
         const betAmounts = []
         this.betDialog.bets.forEach(bet => {
           betAmounts.push(bet.bet_amount + '')
@@ -142,6 +127,7 @@ export default {
         this.$store.dispatch('updateDialog', {
           name: 'bet',
           state: {
+            gameName: '',
             visible: false,
             bets: []
           }
@@ -174,9 +160,13 @@ export default {
           bet_amount: parseFloat(this.betAmounts[i])
         }
       })
-      placeBet({send_bet_info: this.hasPlanCheck && this.hasPlan, bets: formatBet})
+      const betData = {bets: formatBet}
+      if (this.betDialog.hasShared) {
+        betData.share_bet_info = this.isShared
+      }
+      placeBet(betData)
         .then(res => {
-          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.currentGame.display_name})
+          window.gtag('event', '投注', {'event_category': '遊戲投注', 'event_label': this.betDialog.gameName})
           if (res && res[0].member) {
             this.$vux.toast.show({
               text: '成功下单',
@@ -185,6 +175,7 @@ export default {
             this.$store.dispatch('updateDialog', {
               name: 'bet',
               state: {
+                gameName: '',
                 visible: false,
                 bets: [],
                 isSuccess: true
@@ -227,6 +218,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.game {
+  text-align: center;
+  margin-top: 5px;
+}
 .bet-content {
   width: 100%;
   text-align: left;
@@ -242,7 +237,7 @@ export default {
     min-height: 150px;
     max-height: 300px;
     overflow-y: auto;
-    border-top: 1px solid #f0f0f0;
+    border-top: none;
     border-bottom: 1px solid #f0f0f0;
     color: #333;
     padding: 10px 0;
@@ -290,8 +285,7 @@ export default {
     margin-right: 10px;
     color: @red;
   }
-  .options,
-  .combinations {
+  .options {
     width: 100%;
     padding-left: 10px;
   }
@@ -310,11 +304,17 @@ export default {
     color: #666;
   }
   .buttons {
-    box-sizing: border-box;
-    height: 50px;
-    padding: 0 10px;
-    .weui-btn {
-      overflow: visible;
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    width: 270px;
+    margin: 15px auto;
+    /deep/ .weui-btn {
+      margin: 0;
+      width: 130px;
+    }
+    /deep/ .weui-btn + .weui-btn {
+      margin: 0;
     }
   }
 }

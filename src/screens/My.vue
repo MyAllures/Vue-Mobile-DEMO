@@ -10,13 +10,14 @@
       <group class="landing-info">
         <cell class="balance-info">
           <div slot="icon">
-            <p class="username">
+            <div class="user-section">
+              <div class="avatar" :style="{'background-image': `url('${user.avatar?user.avatar:defaultAvatar}')`}"></div>
               <span>{{user.username.substr(0, 20)}}{{user.username.length > 20 ? '...' : ''}}</span>
-            </p>
+            </div>
             <p class="balance-text">余额</p>
             <p class="balance">￥{{user.balance ? user.balance.toFixed(2) : '0.00'}}</p>
           </div>
-          <div class="button" @click="sendGaEvent({label: '我的帳號',category: '充值',action: '充值'});$router.push('/my/deposit')">{{$t('game.deposit')}}</div>
+          <div class="button" @click="sendGaEvent({label: '我的帳號',category: '充值',action: '充值'});$router.push('/fin/deposit')">{{$t('game.deposit')}}</div>
         </cell>
         <cell @click.native="sendGaEvent({label: '我的帳號',category: '站內消息',action: '檢視'});$router.push('/my/message')"
           :title="'站内消息'"
@@ -33,12 +34,18 @@
           <img class="svg-icon" src="../assets/my/profile.svg" slot="icon" alt="profile">
           <span v-if="isPrimaryInfoEmpty" class="warn-tip">未填写</span>
         </cell>
+        <cell
+          title="我的关注"
+          @click.native="sendGaEvent({label: '我的关注',category: '基本資料',action: '檢視'});$router.push('/my/follow')"
+          is-link>
+          <img class="svg-icon" src="../assets/my/follow.svg" slot="icon" alt="profile">
+        </cell>
       </group>
       <group>
         <cell
-          is-link
-          :title="$t('withdraw.apply')"
-          @click.native="$router.push('/my/withdraw')">
+          @click.native="$router.push('/fin/withdraw')"
+          title="申请取款"
+          is-link>
           <img class="svg-icon" src="../assets/my/withdraw.svg" slot="icon" alt="withdraw">
         </cell>
         <cell
@@ -120,8 +127,10 @@ import { Group, Cell, Confirm, Badge } from 'vux'
 export default {
   name: 'My',
   data () {
+    const defaultAvatar = require('../assets/avatar.png')
     return {
-      logoutDialogShow: false
+      logoutDialogShow: false,
+      defaultAvatar
     }
   },
   computed: {
@@ -230,12 +239,23 @@ export default {
   }
 }
 
-.username {
+.user-section {
+  display: flex;
+  align-items: center;
   color: #333;
   font-size: 22px;
   font-weight: 700;
   margin-top: 10px;
   margin-bottom: 15px;
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    margin-right: 10px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
 }
 
 .button {

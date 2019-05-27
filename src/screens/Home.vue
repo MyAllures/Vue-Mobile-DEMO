@@ -237,7 +237,8 @@ export default {
       today: this.$moment(),
       currentTag: '',
       isGameMenuVisible: false,
-      isEnvelopeVisible: false
+      isEnvelopeVisible: false,
+      betVersion: 'new'
     }
   },
   directives: {

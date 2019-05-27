@@ -1,12 +1,6 @@
 <template>
-  <div class="game">
-    <div class="data-section" id="data-section" :style="dataSectionStyle">
-      <div class="wrapper">
-        <GameResult v-if="result" :result="result"/>
-        <div class="result-skeleton-wrapper" v-else>
-          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[30,40]"></rowSkeleton>
-        </div>
-      </div>
+  <div class="game-container">
+    <div class="data-section">
       <div class="wrapper">
         <Countdown
           :schedule="schedule"
@@ -16,79 +10,131 @@
           :gameClosed="gameClosed"
           :closeCountDown="closeCountDown"
           :resultCountDown="resultCountDown"/>
-          <div class="p" v-else-if="!gameClosed">
-            <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
-          </div>
+        <div v-else-if="!gameClosed" :style="{padding: '5px'}">
+          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[20,40,60,80]"></rowSkeleton>
+        </div>
+      </div>
+      <div class="wrapper">
+        <GameResult v-if="result" :result="result" @click.native="isHistoryVisible = !isHistoryVisible"/>
+        <div class="result-skeleton-wrapper" v-else>
+          <rowSkeleton color="#f5f5f5" highlight="rgba(255,255,255,.5)" :seperatePoints="[30,40]"></rowSkeleton>
+        </div>
+        <i :class="['solid-triangle', isHistoryVisible ? 'point-top' : 'point-down']"></i>
+      </div>
+      <div :class="['history-panel', {visible: isHistoryVisible}]" v-if="historyData.length>0">
+        <div class="history-panel-content">
+          <GameResult v-for="result in historyData" :key="result.issue_number" :result="result"/>
+        </div>
       </div>
     </div>
-    <div class="bet-area">
-      <group class="aside vux-1px-r">
-        <cell-box
-          :border-intent="false"
-          :class="['category-menu-item',{'active': activeCategory === category.id + ''}]"
-          v-for="(category, index) in categories"
-          @click.native="switchCategory(category.id)"
-          :key="index">
-          <template v-if="category.id === 'playpositions'">
-            <span class="playposition-badge">{{category.name}}</span>
-          </template>
-          <template v-else>{{category.name}}</template>
-        </cell-box>
-        <div class="vux-1px-b"></div>
-      </group>
+    <div :class="['history-panel-mask', {visible: isHistoryVisible}]" @click="isHistoryVisible = false"></div>
+    <div class="mode-tab" v-if="hasBettrack(currentGame.code)">
+      <div
+        :class="['mode-tab-item', {active: mode==='bet'}]"
+        @click="switchBetMode('bet')">投注</div>
+      <div
+        :class="['mode-tab-item', {active: mode==='bettrack'}]"
+        @click="switchBetMode('bettrack')">追号</div>
+    </div>
+    <div :class="['bet-area', mode]">
+      <div class="aside" v-fix-scroll>
+        <div class="category-menu">
+          <div
+            v-for="(category, index) in categories"
+            :class="['category-menu-item',{'active': activeCategory === category.id+''}]"
+            @click="switchCategory(category.id)"
+            :key="index">
+            {{category.name}}
+          </div>
+        </div>
+      </div>
       <div class="main">
         <router-view
-          v-if="activeCategory !== 'playpositions'"
+          v-if="activeCategory"
           :activeCategory="activeCategory"
           :key="$route.params.categoryId"
+          :mode="mode"
           :game="currentGame"
           :gameClosed="gameClosed"
           :playReset="playReset"
           @updatePlays="updatePlays"
           @resetPlays="playReset = !playReset"/>
-        <router-view v-else-if="schedule.id && currentGame"
-          :schedules="schedules"
-          :game="currentGame"
-          :playReset="playReset"
-          :activeCategory="activeCategory"
-          @updateBetTrackData="updateBetTrackData"/>
+      </div>
+      <div v-if="theme && promotedGame" class="bottom-prompt" :class="{ 'hidden' : !showBottomPrompt }">
+        <div class="inner topbar" :style="{'background-color': theme}">
+          <div class="close-btn small" @click="hideBottomPromot"></div>
+          <div class="txt">开奖太慢？推荐您体验{{promotedGame.period_descroption}}的{{promotedGame.display_name}}</div>
+          <x-button type="default" mini @click.native="forwardTo(promotedGame)">前往</x-button>
+        </div>
+      </div>
+      <div class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
+        <span class="tips">常用金额</span>
+        <ul class="items">
+          <template v-for="(item, index) in user.bet_amount_count">
+            <li
+              :key="index"
+              v-if="index < 5"
+              @click="amount=item.bet_amount + ''"
+              class="vux-1px-l">{{ item.bet_amount }}</li>
+          </template>
+        </ul>
       </div>
     </div>
-    <div class="bet-input">
-      <flexbox :gutter="0">
-        <flexbox-item>
-          <div class="balance">{{user.balance||0 | currency('￥')}}</div>
-          <template>
-            <div v-if="activeCategory === 'playpositions'" class="playCount">
-              {{bettrackData.forDisplay.type}}
-              <span class="count">{{bettrackData.forDisplay.play_code_pattern}}</span>
-            </div>
-            <div v-else class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
-          </template>
-        </flexbox-item>
-        <flexbox-item>
-          <div class="amount-input-wrapper">
-            <div v-transfer-dom class="amount-shortcut vux-1px-t" :class="{'collapsed' : !showShortcut }" v-if="user.bet_amount_count.length">
-              <span class="tips">常用金额</span>
-              <ul  class="items" >
-                <li
-                  v-if="index < 5"
-                  @click="amount=item.bet_amount + ''"
-                  v-for="(item, index) in user.bet_amount_count"
-                  class="vux-1px-l">{{ item.bet_amount }}</li>
-              </ul>
-            </div>
+    <div class="footer" v-if="mode==='bet'">
+      <div class="footer-item">
+        <div class="balance">{{user.balance||0 | currency('￥')}}</div>
+        <div class="playCount">已选 <span class="count">{{validPlays.length}}</span> 注</div>
+      </div>
+      <div class="footer-item">
+        <div class="amount-input-wrapper">
             <AmountInput class="amount-input" placeholder="金额" v-model="amount" @focus.native="showShortcut=true" @blur.native="showShortcut=false"/>
           </div>
-        </flexbox-item>
-        <flexbox-item>
-          <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
-        </flexbox-item>
-        <flexbox-item>
-          <x-button type="default" @click.native="playReset = !playReset;bettrackData = {track_numbers: [],forDisplay: {}}">{{$t('action.reset')}}</x-button>
-        </flexbox-item>
-      </flexbox>
-      <div v-if="(gameClosed&&closeCountDown&& activeCategory !== 'playpositions')" class="gameclosed-mask">
+      </div>
+      <div class="footer-item">
+        <x-button type="primary" :disabled="submitBtnDisabled" @click.native="openDialog">{{$t('action.submit')}}</x-button>
+      </div>
+      <div class="footer-item">
+        <x-button type="default" @click.native="playReset = !playReset;bettrackData = {track_numbers: [],forDisplay: {}}">{{$t('action.reset')}}</x-button>
+      </div>
+      <div v-if="gameClosed&&closeCountDown" class="gameclosed-mask">
+        <div class="mask color"></div>
+        <span class="text">已封盘</span>
+      </div>
+    </div>
+    <div class="bettrack-footer" v-else>
+      <div class="row1">
+        <template v-if="validPlays.length>0">{{`${validPlays[0].group} - ${validPlays[0].display_name}`}}</template>
+        <div class="amount-input-wrapper">
+          投注金额：
+          <AmountInput class="amount-input" v-model="amount" @focus.native="showShortcut=true" @blur.native="showShortcut=false"/>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="col">
+          追&nbsp;
+          <input
+            class="period-input"
+            pattern="[0-9]*"
+            v-positive-number="{integer: true}"
+            @update="bettrack.period=$event.target.value"
+            :value="bettrack.period"
+          />&nbsp;期
+        </div>
+        <div class="col">
+          翻倍：
+          <input
+            class="time-input"
+            pattern="[0-9]*"
+            v-positive-number="{integer: true}"
+            @update="bettrack.multiple=$event.target.value"
+            :value="bettrack.multiple"
+          />
+        </div>
+        <div class="col">
+          <x-button type="primary" :disabled="submitBtnDisabled || !bettrack.multiple || !bettrack.period" @click.native="openBettrackDialog">提交</x-button>
+        </div>
+      </div>
+      <div v-if="(gameClosed&&closeCountDown)" class="gameclosed-mask">
         <div class="mask color"></div>
         <span class="text">已封盘</span>
       </div>
@@ -99,13 +145,16 @@
 <script>
 import _ from 'lodash'
 import { mapState } from 'vuex'
-import { fetchSchedule, fetchGameResult, fetchBetTrackSchedules } from '../../api'
+import { fetchSchedule, fetchGameResult, fetchBetTrackSchedules, getGameHistoryData } from '../../api'
 import { Indicator } from '../../utils'
 import Countdown from '../../components/Countdown'
 import GameResult from '../../components/GameResult'
 import rowSkeleton from '../../components/skeletonPattern/rowSkeleton'
 import AmountInput from '../../components/AmountInput'
 import { TransferDom, XInput, XButton, Group, Grid, GridItem, XDialog, Flexbox, FlexboxItem, Toast, InlineLoading, CellBox, CheckIcon } from 'vux'
+import FixScroll from '@/directive/fixscroll'
+import {hasBettrack} from '@/utils/bettrackSetting'
+import PositiveNumber from '@/directive/positiveNumber'
 
 export default {
   name: 'Game',
@@ -128,7 +177,9 @@ export default {
     AmountInput
   },
   directives: {
-    TransferDom
+    TransferDom,
+    FixScroll,
+    PositiveNumber
   },
   data () {
     return {
@@ -145,32 +196,25 @@ export default {
       validPlays: [],
       playReset: false,
       loading: false,
-      hasPlan: true,
       opts_combos_count: 1,
-      isBusy: false,
       indicator: null,
       diffBetweenServerAndClient: 0,
       hasDestroy: false,
-      bettrackData: {
-        track_numbers: [],
-        forDisplay: {}
+      bettrack: {
+        period: 1,
+        multiple: 1
       },
-      showShortcut: false
-    }
-  },
-  filters: {
-    complete (value) {
-      value = parseInt(value)
-      return value < 10 ? ('0' + value) : value
+      showShortcut: false,
+      historyData: [],
+      isHistoryVisible: false,
+      mode: 'bet',
+      showBottomPrompt: false,
+      hasBettrack
     }
   },
   computed: {
     submitBtnDisabled () {
-      if (this.activeCategory === 'playpositions') {
-        return (!this.bettrackData.track_numbers.length || !this.amount)
-      } else {
-        return !this.amount
-      }
+      return !this.amount || this.validPlays.length === 0
     },
     result () {
       if (this.currentGame) {
@@ -191,20 +235,16 @@ export default {
       return this.$store.getters.gameById(this.$route.params.gameId)
     },
     activeCategory () {
-      if (this.$route.name === 'PlayPositions') {
-        return 'playpositions'
-      } else {
-        return this.$route.params.categoryId
-      }
+      return this.$route.params.categoryId
     },
     ...mapState([
-      'systemConfig', 'user', 'latestResultMap', 'theme', 'dataSectionStyle'
+      'systemConfig', 'user', 'latestResultMap', 'theme', 'games'
     ]),
+    ...mapState('chatroom', {
+      isChatroomEnabled: state => state.roomList && state.roomList.length > 0
+    }),
     gameId () {
       return this.$route.params.gameId
-    },
-    hasPlanCheck () {
-      return this.systemConfig.chatroomEnabled && this.user.planMakerRoom && this.user.planMakerRoom.includes(parseInt(this.gameId))
     },
     categories () {
       if (!this.gameId) {
@@ -214,28 +254,50 @@ export default {
     },
     betDialog () {
       return this.$store.state.dialog.bet
+    },
+    betTrackDialog () {
+      return this.$store.state.dialog.new_bettrack
+    },
+    promotedGame () {
+      if (!this.currentGame) {
+        return null
+      }
+      let code = this.currentGame.prompt_game
+      return code ? this.games.find(game => {
+        return game.code === code
+      }) : null
     }
   },
   watch: {
-    'currentGame': {
-      handler: function (currentGame) {
-        if (currentGame) {
+    'currentGame.code': {
+      handler: function (code) {
+        if (code) {
+          const game = this.currentGame
           this.fetchScheduleAndResult()
+          if (game.prompt_game) {
+            const bottomPromoteDateFlag = window.localStorage.getItem(`bottom-promot-${game.code}`)
+            this.showBottomPrompt = bottomPromoteDateFlag ? this.$moment(bottomPromoteDateFlag).add(2, 'days').isBefore(this.$moment()) : true
+          }
         }
       },
       immediate: true
     },
-    'gameClosed': function (closed) {
+    gameClosed: function (closed) {
       if (closed) {
         this.fetchBetTrackSchedules(4)
       }
     },
-    '$route': function (to, from) {
+    $route: function (to, from) {
       if (to.path === `/game/${this.gameId}`) {
         this.chooseCategory()
       }
     },
     'betDialog.isSuccess': function (isSuccess) {
+      if (isSuccess) {
+        this.$set(this, 'playReset', !this.playReset)
+      }
+    },
+    'betTrackDialog.isSuccess': function (isSuccess) {
       if (isSuccess) {
         this.$set(this, 'playReset', !this.playReset)
       }
@@ -247,8 +309,46 @@ export default {
         this.closeCountDown = this.diffTime(closeTime)
       }
     },
-    'amount': function (amount) {
+    amount: function (amount) {
       localStorage.setItem('amount', amount)
+    },
+    result: {
+      handler: function (result) {
+        if (result) {
+          const date = this.$moment(this.date)
+          let scheduleDates = {}
+          if (this.currentGame.code === 'hkl' || this.currentGame.code === 'fc3d') {
+            scheduleDates = {
+              schedule_result_0: date.date(1).format('YYYY-MM-DD'),
+              schedule_result_1: date.add(1, 'months').date(0).format('YYYY-MM-DD')
+            }
+          } else {
+            const dateFormat = date.format('YYYY-MM-DD')
+            scheduleDates = {
+              schedule_result_0: dateFormat,
+              schedule_result_1: dateFormat
+            }
+          }
+
+          let params = {
+            offset: 1,
+            game_code: this.currentGame.code,
+            limit: 9,
+            ...scheduleDates
+          }
+          getGameHistoryData(params).then(res => {
+            this.historyData = res.results.map(d => {
+              return {
+                game_code: this.currentGame.code,
+                result_str: d.result_str,
+                issue_number: d.issue_number,
+                status: d.result_status
+              }
+            })
+          }).catch(() => {})
+        }
+      },
+      immediate: true
     }
   },
   created () {
@@ -275,6 +375,7 @@ export default {
         this.$store.dispatch('updateDialog', {
           name: 'bet',
           state: {
+            gameName: '',
             visible: false,
             bets: []
           }
@@ -283,8 +384,27 @@ export default {
     })
   },
   methods: {
-    updateBetTrackData (bettrackData) {
-      this.bettrackData = bettrackData
+    setBottomPromotFlag () {
+      window.localStorage.setItem(`bottom-promot-${this.currentGame.code}`, this.$moment().format('YYYY-MM-DD HH:mm:ss'))
+    },
+    hideBottomPromot () {
+      this.setBottomPromotFlag()
+      this.showBottomPrompt = false
+      this.sendGaEvent({
+        label: this.currentGame.display_name,
+        category: 'bottom-promot',
+        action: 'hide'
+      })
+    },
+    forwardTo (game) {
+      this.setBottomPromotFlag()
+      this.sendGaEvent({
+        label: game.name,
+        category: 'bottom-promot',
+        action: 'via-' + this.currentGame.display_name
+      })
+      this.$store.dispatch('saveLastGame', game.id)
+      this.$router.push({path: `/game/${game.id}/`})
     },
     fetchBetTrackSchedules (type) {
       if (this.schedule.id) {
@@ -408,22 +528,6 @@ export default {
       if (!this.amount) {
         return
       }
-      if (this.activeCategory === 'playpositions') {
-        if (this.bettrackData.type && this.bettrackData.play_code_pattern) {
-          this.bettrackData.bet_amount = parseFloat(this.amount)
-          this.bettrackData.game_schedule = this.schedules[0].id
-
-          this.$store.dispatch('updateDialog', {
-            name: 'bettrack',
-            state: {
-              visible: true,
-              data: this.bettrackData,
-              isSuccess: false
-            }
-          })
-        }
-        return
-      }
       const bets = this.formatBetInfo(this.validPlays)
       if (!bets.length) {
         return
@@ -449,15 +553,57 @@ export default {
           }
         })
       } else {
+        const state = {
+          gameName: this.currentGame.display_name,
+          visible: true,
+          bets: bets,
+          isSuccess: false
+        }
+        if (this.user.account_type && this.isChatroomEnabled) {
+          state.hasShared = true
+        }
         this.$store.dispatch('updateDialog', {
           name: 'bet',
-          state: {
-            visible: true,
-            bets: bets,
-            isSuccess: false
-          }
+          state
         })
       }
+    },
+    openBettrackDialog () {
+      let play = this.validPlays[0]
+      let data = {
+        amount: this.amount,
+        multiple: this.bettrack.multiple,
+        period: this.bettrack.period,
+        issue_number: this.schedule.issue_number,
+        scheduleId: this.schedule.id,
+        play: this.validPlays[0]
+      }
+      let betOptions
+      let optionDisplayNames = []
+      if (play.activedOptions) {
+        let options = []
+        _.each(play.activedOptions, option => {
+          options.push(option.num)
+          optionDisplayNames.push(option.displayName || option.num)
+        })
+        betOptions = { options: options }
+      } else if (play.combinations) {
+        optionDisplayNames = [...play.combinations]
+        betOptions = { options: play.combinations }
+      }
+
+      if (betOptions) {
+        data.betOptions = betOptions
+      }
+      data.optionDisplayNames = optionDisplayNames.join(',')
+
+      this.$store.dispatch('updateDialog', {
+        name: 'new_bettrack',
+        state: {
+          visible: true,
+          data
+        }
+      })
     },
     formatBetInfo (originPlays) {
       return originPlays.map(play => {
@@ -511,6 +657,16 @@ export default {
           }
         }
       )
+    },
+    switchBetMode (mode) {
+      this.$set(this, 'playReset', !this.playReset)
+      this.mode = mode
+    },
+    isNumberKey (e) {
+      const charCode = e.which ? e.which : e.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        e.preventDefault()
+      }
     }
   },
   beforeDestroy () {
@@ -528,76 +684,191 @@ export default {
 
 <style lang="less" scoped>
 
-.game {
+@data-section-zindex: 10;
+@amount-shortcut-zindex: 6;
+@aside-zindex: 5;
+@gameclosed-mask-zindex: 3;
+@history-panel-zindex: 6;
+
+.game-container {
+  position: relative;
   display: flex;
   overflow-x: hidden;
   flex-direction: column;
   height: 100%;
-  .wrapper {
-    width: 100%;
-  }
 }
 
 .data-section {
-  box-sizing: border-box;
+  z-index: @data-section-zindex;
   background: #fff;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.15);
-  z-index: 2; // higher than the sticky groupplay-title
-  transition-duration: .7s;
+  position: relative;
+  .wrapper {
+    position: relative;
+    .solid-triangle {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      &.point-top {
+        border-bottom: 5px solid #666;
+      }
+      &.point-down {
+        border-top: 5px solid #666;
+      }
+    }
+  }
 }
 
-.active {
-  background: @azul;
-  color: #fff;
+.history-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: @history-panel-zindex;
+  visibility: hidden;
+  &.visible {
+    visibility: visible;
+  }
+  .history-panel-content {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: #fff;
+  }
+}
+.history-panel-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  visibility: hidden;
+  z-index: @history-panel-zindex;
+  background: rgba(0, 0, 0, 0.3);
+  &.visible {
+    visibility: visible;
+  }
+}
+
+.mode-tab {
+  flex: 0 0 auto;
+  display: flex;
+  height: 35px;
+  background: #fff;
+  .mode-tab-item {
+    box-sizing: border-box;
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-bottom: 2px solid;
+    border-color: #fff;
+    color: #999999;
+    &.active {
+      color: @azul;
+      border-color: @azul;
+    }
+  }
 }
 
 .bet-area {
+  position: relative;
   overflow: auto;
-  flex: 1 1 auto;
   display: flex;
-  /deep/ .weui-cells {
-    margin: 0;
-    line-height: 18px;
-    width: 100%;
-    background: #f9f9f9;
-    overflow-y: auto;
-    &::after {
-      display: none;
-    }
+  flex: 1 1 auto;
+  &.bet {
+    height: calc(~"100%" - 90px);
+  }
+  &.bettrack {
+    height: calc(~"100%" - 130px);
   }
   .aside {
-    position: relative;
-    display: flex;
-    overflow-y: scroll;
-    justify-content: safe center;
+    flex: 0 0 auto;
     width: 90px;
-    background-color: #f4f4f4;
-    color: #9b9b9b;
-    /deep/ .weui-cells {
-      font-size: 15px;
-    }
-
-    .weui-cell {
-      padding: 8px 12px;
-    }
+    overflow-y: auto;
+    box-shadow: 6px 0 3px -3px rgba(0, 0, 0, 0.15);
+    z-index: @aside-zindex;
   }
   .main {
-    width: calc(~"100%" - 80px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    background-color: #fff;
+    flex: 1 1 auto;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+  .category-menu {
+    flex: 0 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 90px;
+    color: #333;
+    .category-menu-item {
+      position: relative;
+      display: flex;
+      line-height: 18px;
+      align-items: center;
+      padding: 8px 12px;
+      font-size: 15px;
+      &.active {
+        background: @azul;
+        color: #fff;
+      }
+    }
+  }
 }
-.bet-input {
-  flex: 0 0 auto;
+
+.bottom-prompt {
+  opacity: 0.9;
+  width: 100%;
+  position: absolute;
+  bottom: 5px;
+  transition: bottom 1s, opacity 1s;
+  z-index: 5;
+  justify-content: center;
+  align-items: center;
+  &.hidden {
+    bottom: 100%;
+    opacity: 0;
+  }
+  .inner {
+    border-radius: 4px;
+    display: flex;
+    color: #fff;
+    margin: 10px;
+    padding: 10px 5px;
+  }
+  .close-btn {
+    margin-left: 10px;
+    align-self: center;
+  }
+  .txt {
+    line-height: 1.2;
+    font-size: 13px;
+    align-self: center;
+    padding: 0 10px;
+  }
+
+  .weui-btn.weui-btn_default {
+    height: 32px;
+    width: 80px;
+    align-self: center;
+  }
+}
+
+.footer {
   box-sizing: border-box;
   position: relative;
+  flex: 0 0 auto;
+  height: 50px;
+  display: flex;
   color: #fff;
   background: rgba(0, 0, 0, 0.7);
   border: none;
-  height: 55px;
-  padding: 7px;
+  padding: 5px;
+  .footer-item {
+    flex: 1;
+  }
   .text {
     margin-right: 10px;
   }
@@ -642,8 +913,69 @@ export default {
       color: #333;
     }
   }
-
 }
+
+.bettrack-footer {
+  box-sizing: border-box;
+  position: relative;
+  flex: 0 0 auto;
+  height: 90px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 0 5px 0 10px;
+  font-size: 14px;
+  z-index: 10;
+  box-shadow: 0 0px 3px 3px rgba(0, 0, 0, 0.15);
+  .amount-input {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    height: 25px;
+    width: 60px;
+    line-height: 25px;
+    color: #333;
+  }
+  .row1 {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    .amount-input-wrapper {
+      margin-left: auto;
+      box-sizing: border-box;
+      height: 25px;
+    }
+  }
+  .row2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    .col {
+      display: flex;
+      align-items: center;
+    }
+    input {
+      box-sizing: border-box;
+      height: 25px;
+      line-height: 25px;
+      width: 60px;
+      padding: 0 5px;
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      outline: 0;
+      -webkit-appearance: none;
+      background-color: #fff;
+      font-size: inherit;
+      color: #333;
+    }
+  }
+  /deep/ .weui-btn {
+    font-size: 14px;
+    width: 80px;
+    height: 40px;
+  }
+}
+
 .amount-shortcut {
   display: flex;
   transition: max-height 0.5s ease-in; // ref: https://css-tricks.com/using-css-transitions-auto-dimensions/
@@ -655,8 +987,8 @@ export default {
   color: #666;
   width: 100%;
   position: absolute;
-  z-index: 6; //hight than play group title and bottom game prompt
-  bottom: 55px;
+  z-index: @amount-shortcut-zindex; //hight than play group title and bottom game prompt
+  bottom: 5px;
   overflow: hidden;
   align-items: center;
   &.collapsed {
@@ -687,13 +1019,11 @@ export default {
 }
 .gameclosed-mask {
   position: absolute;
-  z-index: 3;
+  z-index: @gameclosed-mask-zindex;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 55px;
-  line-height: 55px;
   .mask {
     width: 100%;
     height: 100%;
@@ -702,6 +1032,9 @@ export default {
   }
   .text {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #fff;
     width: 100%;
     height: 100%;
@@ -713,64 +1046,6 @@ export default {
   }
 }
 
-.bet-content {
-  text-align: left;
-  background-color: #fff;
-  padding: 0 0 10px;
-  .title {
-    height: 44px;
-    line-height: 44px;
-    text-align: center;
-  }
-  .total {
-    text-align: center;
-    height: 30px;
-    line-height: 30px;
-    margin-bottom: 10px;
-    .bet-num {
-      margin-right: 10px;
-    }
-  }
-  .check-plan {
-    display: block;
-    margin-bottom: 10px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-  }
-  .amount {
-    margin-right: 10px;
-    color: @red;
-  }
-  .options,
-  .combinations {
-    width: 100%;
-    padding-left: 10px;
-  }
-  .loading {
-    width: 100%;
-    height: 50px;
-    line-height: 50px;
-    font-size: 18px;
-    text-align: center;
-    .weui-loading {
-      height: 30px;
-      width: 30px;
-    }
-  }
-  .play {
-    color: #666;
-  }
-  .buttons {
-    box-sizing: border-box;
-    height: 50px;
-    padding: 0 10px;
-    .weui-btn {
-      overflow: visible;
-    }
-  }
-}
-
 .result-skeleton-wrapper {
   padding-right: 10px;
   padding-left: 10px;
@@ -778,9 +1053,6 @@ export default {
   padding-bottom: 5px;
 }
 
-.playposition-badge {
-  position: relative;
-}
 .border-shadow {
   height: 4px;
   background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%,rgba(0,0,0,0) 100%);

@@ -81,9 +81,6 @@ describe('BetDialog.vue', () => {
               }],
             'isSuccess': false
           }
-        },
-        systemConfig: {
-          chatroomEnabled: false
         }
       }
     })

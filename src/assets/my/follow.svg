@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_me_follow</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#46D66A" offset="0%"></stop>
+            <stop stop-color="#22AC38" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icon_me_follow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M8.0166,11.1835 C11.7036,11.1835 15.0326,14.9055 15.0326,19.5305 C15.0326,24.1565 0.9996,24.1565 0.9996,19.5305 C0.9996,14.9055 4.3276,11.1835 8.0166,11.1835 Z M12.8166,5.6555 C12.8166,8.1475 10.5856,10.3105 8.0166,10.3105 C5.4466,10.3105 3.2156,8.1475 3.2156,5.6555 C3.2156,3.1635 5.4466,1.0005 8.0166,1.0005 C10.5856,1.0005 12.8166,3.1635 12.8166,5.6555 Z" id="Combined-Shape" fill="url(#linearGradient-1)"></path>
+        <path d="M18,10.998 L15.1088889,10.998 C14.4955556,10.998 14,10.55 14,9.999 C14,9.448 14.4955556,9 15.1088889,9 L18,9 L18,6.11 C18,5.49666667 18.4476715,5 19.0005008,5 C19.5523285,5 20,5.49666667 20,6.11 L20,9 L22.89,9 C23.5033333,9 24,9.448 24,9.999 C24,10.55 23.5033333,10.998 22.89,10.998 L20,10.998 L20,13.89 C20,14.5033333 19.5523285,15 19.0005008,15 C18.4476715,15 18,14.5033333 18,13.89 L18,10.998 Z" id="Combined-Shape" fill-opacity="0.6" fill="url(#linearGradient-1)"></path>
+    </g>
+</svg>

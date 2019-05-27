@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="user.account_type">
-      <group v-if="payees.length" title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="payment-types">
+      <group v-if="payees.length" title="请选择支付方式" v-show="$route.path==='/fin/deposit'" class="payment-types">
         <template v-for="(payeeGroup,payeeGroupIndex) in payees">
           <div v-if="payeeGroup.detail.length>1" :class="['sub-group', payeeGroup.folded?'folded': '']" :key="payeeGroupIndex">
             <cell
@@ -31,7 +31,7 @@
           </cell>
         </template>
       </group>
-      <group v-else title="请选择支付方式" v-show="$route.path==='/my/deposit'" class="skeletons">
+      <group v-else title="请选择支付方式" v-show="$route.path==='/fin/deposit'" class="skeletons">
         <div class="row" v-for="i in 3" :key="i">
           <div class="icon">
             <rowSkeleton color="#ddd" height="100%" style="border-radius: 50%"></rowSkeleton>
@@ -190,8 +190,8 @@ export default {
     }
   },
   created () {
-    if (this.$route.path !== '/my/deposit') {
-      this.$router.replace({path: '/my/deposit'})
+    if (this.$route.path !== '/fin/deposit') {
+      this.$router.replace({path: '/fin/deposit'})
     }
     Promise.all([getOnlinepayees(), getRemitPayees()].map(r => r.catch(e => e)))
       .then(resArr => {

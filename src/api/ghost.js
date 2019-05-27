@@ -2,107 +2,133 @@ import axios from 'axios'
 import urls from './urls'
 import qs from 'qs'
 import {JWT} from '@/utils/jwtToken'
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+const axiosGhost = axios.create()
 
 function login (user) {
-  return axios.post(urls.login, qs.stringify(user))
+  return axiosGhost.post(urls.login, qs.stringify(user))
 }
 function logout () {
-  return axios.post(urls.logout)
+  return axiosGhost.post(urls.logout)
 }
 
 function fetchUser () {
-  return axios.get(urls.user)
+  return axiosGhost.get(urls.user)
 }
 
 function updateUser (user, id) {
-  return axios.put(`${urls.user}${user.id ? user.id : id}/`, user)
+  return axiosGhost.put(`${urls.user}${user.id ? user.id : id}/`, user)
 }
 
 function fetchBanner () {
-  return axios.get(`${urls.banner}?platform=mobile`)
+  return axiosGhost.get(`${urls.banner}?platform=mobile`)
 }
 
 function fetchAnnouncements () {
-  return axios.get(`${urls.announcements}?platform=0`)
+  return axiosGhost.get(`${urls.announcements}?platform=0`)
 }
 
 function gethomePage () {
-  return axios.get(`${urls.homePage}?platform=mobile`)
+  return axiosGhost.get(`${urls.homePage}?platform=mobile`)
 }
 
 function fetchGames () {
-  return axios.get(`${urls.games}?platform=1`)
+  return axiosGhost.get(`${urls.games}?platform=1`)
 }
 
 function fetchGamesDetail () {
-  return axios.get(`${urls.games}?platform=1&extras=categories,playpositions`)
+  return axiosGhost.get(`${urls.games}?platform=1&extras=categories,playpositions`)
 }
 
 function fetchCategories (gameId) {
-  return axios.get(`${urls.category}?&game=${gameId}&platform=1`)
+  return axiosGhost.get(`${urls.category}?&game=${gameId}&platform=1`)
 }
 
 function fetchPlaygroup (categoryId) {
-  return axios.get(`${urls.playgroup}?&category=${categoryId}`)
+  return axiosGhost.get(`${urls.playgroup}?&category=${categoryId}`)
 }
 
 function fetchSchedule (gameId, gameCode) {
-  return axios.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}`)
+  return axiosGhost.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}`)
 }
 
 function fetchBetTrackSchedules (gameId, gameCode, trackType, scheduleId) {
-  return axios.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}&track_type=${trackType}&schedule_id=${scheduleId}`)
+  return axiosGhost.get(`${urls.schedule}?&game=${gameId}&game_code=${gameCode}&track_type=${trackType}&schedule_id=${scheduleId}`)
 }
 
 function fetchBetTrackRecord (option) {
-  let url = `${urls.bettrack}?`
+  let url = `${urls.bettrack_record}?`
   Object.keys(option).forEach(key => {
     if (key === 'date') {
-      url += `&bet_date=${option[key]}`
+      url += `&start_date=${option[key]}&end_date=${option[key]}`
       return
     }
     url += `&${key}=${option[key]}`
   })
-  return axios.get(url)
+  return axiosGhost.get(url)
 }
 
 function betTrack (data) {
-  return axios.post(`${urls.bettrack}`, data)
+  return axiosGhost.post(`${urls.bettrack}`, data)
+}
+
+/**
+ * 新版追號
+ * @param {Number} data.type 追號期數
+ * @param {Number} data.bet_amount 追號下注金額
+ * @param {Number} data.play_ids 追號下的play(只能有一個)
+ * @param {String} data.stopping_tracking_type 遇贏則止：when_win_stop, 追好追滿：never_stop
+ * @param {Number} data.multiple 倍率
+ * @param {Number} data.game_schedule 預下注期號的id
+ */
+function newBetTrack (data) {
+  return axiosGhost.post(`${urls.new_bettrack}`, data)
+}
+
+function fetchNewBetTrackRecord (option) {
+  let params = []
+  Object.keys(option).forEach(key => {
+    if (key === 'date') {
+      params.push(`start_date=${option[key]}`)
+      params.push(`end_date=${option[key]}`)
+      return
+    }
+    params.push(`${key}=${option[key]}`)
+  })
+  return axiosGhost.get(`${urls.bettrack_record}?${params.join('&')}`)
 }
 
 function placeBet (data) {
-  return axios.post(urls.betrecord, data, {
+  return axiosGhost.post(urls.betrecord, data, {
     'Content-Type': 'application/json'
   })
 }
 
 function getPromotions () {
-  return axios.get(urls.promotions)
+  return axiosGhost.get(urls.promotions)
 }
 
 function getRemitPayees () {
-  return axios.get(urls.remitpayee + '?opt_expand=1&embed=remit_type')
+  return axiosGhost.get(urls.remitpayee + '?opt_expand=1&embed=remit_type')
 }
 
 function postRemit (remit) {
-  return axios.post(urls.remit, remit)
+  return axiosGhost.post(urls.remit, remit)
 }
 
 function getCaptcha () {
-  return axios.get(urls.agent_captcha)
+  return axiosGhost.get(urls.agent_captcha)
 }
 
 function fetchTransactionRecord (option) {
-  return axios.get(`${urls.transaction_record}?transaction_type=${option.transaction_type}&limit=${option.limit}&offset=${option.offset}`)
+  return axiosGhost.get(`${urls.transaction_record}?transaction_type=${option.transaction_type}&limit=${option.limit}&offset=${option.offset}`)
 }
 
 function postWithdraw (option) {
-  return axios.post(urls.withdraw, qs.stringify(option))
+  return axiosGhost.post(urls.withdraw, qs.stringify(option))
 }
 
 function register (user) {
-  return axios.post(urls.register, qs.stringify(user), {withCredentials: true})
+  return axiosGhost.post(urls.register, qs.stringify(user), {withCredentials: true})
 }
 
 function trial (data) {
@@ -111,15 +137,15 @@ function trial (data) {
     payload.verification_code_0 = data.verification_code_0
     payload.verification_code_1 = data.verification_code_1
   }
-  return axios.post(`${urls.register}trial/`, qs.stringify(payload))
+  return axiosGhost.post(`${urls.register}trial/`, qs.stringify(payload))
 }
 
 function checkUserName (username) {
-  return axios.get(urls.check_username, { params: { username: username } })
+  return axiosGhost.get(urls.check_username, { params: { username: username } })
 }
 
 function fetchCaptcha () {
-  return axios.get(urls.verification).then(data => {
+  return axiosGhost.get(urls.verification).then(data => {
     data.captcha_src = urls.domain + data.captcha_src
     return data
   })
@@ -132,7 +158,7 @@ function fetchBetHistory (option) {
       url += `&${key}=${option[key]}`
     }
   })
-  return axios.get(url)
+  return axiosGhost.get(url)
 }
 
 function fetchReturnRecord (option) {
@@ -146,7 +172,7 @@ function fetchReturnRecord (option) {
       }
     }
   })
-  return axios.get(url)
+  return axiosGhost.get(url)
 }
 
 function fetchPersonalReport (option) {
@@ -163,129 +189,127 @@ function fetchPersonalReport (option) {
 
     url += `&${key}=${option[key]}`
   })
-  return axios.get(url)
+  return axiosGhost.get(url)
 }
 
 function fetchDateBetRecords (option) {
-  return axios.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
+  return axiosGhost.get(`${urls.betrecord_byday}?limit=${option.limit}&offset=${option.offset}&status=${option.status}`)
 }
 
 function fetchBetTotal (date) {
-  return axios.get(`${urls.betrecord_byday}?bet_date=${date}&status=win,lose,tie,ongoing`).then(res => res.results[0])
+  return axiosGhost.get(`${urls.betrecord_byday}?bet_date=${date}&status=win,lose,tie,ongoing`).then(res => res.results[0])
 }
 
 function fetchGameResult (gameId) {
-  return axios.get(`${urls.game_result}?game=${gameId}&opt_expand=next`)
+  return axiosGhost.get(`${urls.game_result}?game=${gameId}&opt_expand=next`)
 }
 
 function getOnlinepayees () {
-  return axios.get(urls.paymentType)
+  return axiosGhost.get(urls.paymentType)
 }
 
 function addUserBank (user, member) {
-  return axios.put(urls.user + user.id + '/', member)
+  return axiosGhost.put(urls.user + user.id + '/', member)
 }
 
 function fetchBank (onlyEnabled) {
   if (onlyEnabled) {
-    return axios.get(urls.bank + '?status=1')
+    return axiosGhost.get(urls.bank + '?status=1')
   }
-  return axios.get(urls.bank)
+  return axiosGhost.get(urls.bank)
 }
 
 function changePassword (password) {
-  return axios.post(urls.password, password, {emulateJSON: true})
+  return axiosGhost.post(urls.password, password, {emulateJSON: true})
 }
 
 function changeWpassword (password) {
-  return axios.post(urls.withdraw_password, password)
+  return axiosGhost.post(urls.withdraw_password, password)
 }
 
 function changeUserInformation (id, member) {
-  return axios.put(urls.user + id + '/', member)
+  return axiosGhost.put(urls.user + id + '/', member)
 }
 
 function fetchMessages (limit, offset) {
-  return axios.get(urls.messages + `?limit=${limit}&offset=${offset}`)
+  return axiosGhost.get(urls.messages + `?limit=${limit}&offset=${offset}`)
 }
 
 function readMessage (messageId) {
-  return axios.post(urls.readMessage, {ids: [messageId]})
+  return axiosGhost.post(urls.readMessage, {ids: [messageId]})
 }
 
 function onlinepaySuccess (transactionId) {
-  return axios.get(urls.payment + '?transaction_ids=' + transactionId)
+  return axiosGhost.get(urls.payment + '?transaction_ids=' + transactionId)
 }
 
 function getGameHistoryData (option) {
-  let url = `${urls.gamehistory}?limit=30`
+  let url = `${urls.gamehistory}?limit=${option.limit || 30}`
   Object.keys(option).forEach(key => {
     if (option[key]) {
       url += `&${key}=${option[key]}`
     }
   })
-  return axios.get(url)
+  return axiosGhost.get(url)
 }
 
 function fetchStatistic (code) {
-  return axios.get(`${urls.statistic}?game_code=${code}`)
+  return axiosGhost.get(`${urls.statistic}?game_code=${code}`)
 }
 
 function getToken (oldToken) {
   if (!oldToken) {
     return
   }
-  return axios.post(urls.refresh_token, {
+  return axiosGhost.post(urls.refresh_token, {
     refresh_token: oldToken
-  }).then(
-    res => {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.access_token
-      return res
-    })
+  })
 }
 
 function sendImgToChat (data) {
-  return axios.post(urls.sendImgToChat, data)
+  return axiosGhost.post(urls.sendImgToChat, data)
 }
 
 function fetchPlaySetting (id) {
-  return axios.get(`${urls.playSetting}?game=${id}`)
+  return axiosGhost.get(`${urls.playSetting}?game=${id}`)
 }
 
 function setCookie (cookie) {
-  return axios.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
+  return axiosGhost.post(urls.setCookie, {cookie}, { 'Content-Type': 'application/json', withCredentials: true })
 }
 
-function sendEnvelope (data) {
-  return axios.post(urls.envelope, data, {
+function sendRedEnvelope (data) {
+  return axiosGhost.post(urls.red_envelope, data, {
     'Content-Type': 'application/json'
   })
 }
 
-function takeEnvelope (envelopId, userId) {
-  return axios.put(`${urls.envelope}${envelopId}/`, {
-    receiver_id: userId
-  }, {
+function takeRedEnvelope (envelopId) {
+  return axiosGhost.put(`${urls.red_envelope}${envelopId}/`, {
     'Content-Type': 'application/json'
   })
+}
+
+function fetchRedEnvelopeDetail (id) {
+  return axiosGhost.get(`${urls.red_envelope}${id}/`)
 }
 
 function sendSMSCode (phoneNumber) {
-  return axios.put(urls.smscode, {phone_number: phoneNumber}, {
+  return axiosGhost.put(urls.smscode, {phone_number: phoneNumber}, {
     'Content-Type': 'application/json'
   })
 }
 
 function sendHeartBeat () {
-  return axios.get(urls.onine_heartbeat)
+  return axiosGhost.get(urls.onine_heartbeat)
 }
 
 function fetchTrendChart (params) {
-  return axios.get(urls.trend_chart, {params})
+  return axiosGhost.get(urls.trend_chart, {params})
 }
 
 function fetchJWTToken (type) {
-  return axios.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
+  return axiosGhost.post(urls.get_jwt_token, {service_type: JWT[type]}).then((res) => {
     return {
       expire: res.expire,
       token: res[JWT[type] + '_token']
@@ -294,61 +318,94 @@ function fetchJWTToken (type) {
 }
 
 function fetchActivityEnvelope (envelopId) {
-  return axios.get(`${urls.envelope_activity}${envelopId}/?platform=mobile`)
+  return axiosGhost.get(`${urls.envelope_activity}${envelopId}/?platform=mobile`)
 }
 
 function takeActivityEnvelope (data) {
-  return axios.post(urls.take_envelope_activity, data, {
+  return axiosGhost.post(urls.take_envelope_activity, data, {
     'Content-Type': 'application/json'
   })
 }
 
+/**
+ * 專家計畫
+ * @param {number} params.game - game_code
+ * @param {number} params.scheme_type
+    - FIVE_NUM_FOR_SINGLE: 單期5碼
+    - SIX_NUM_FOR_SINGLE: 單期6碼
+    - FIVE_NUM_FOR_TRIPLE: 3期5碼
+    - SIX_NUM_FOR_DOUBLE: 2期6碼
+ * @param {number} params.position
+    - PK10: 1~10 (冠,亞,三,...,十)，預設應為 1
+    - 時時彩: 1~5 (萬,千,百,十,個)，預設應為 1
+ * @param {String} params.expert - 專家id，如果有傳此參數指定專家，則回傳資料中的cur_expert及cur_plans篩選出的內容會不同; 如未指定則以勝率最高的專家做為條件
+ */
+function fetchExpertPlan (params) {
+  return axiosGhost.get(urls.expert_plan, {params})
+}
+
+/**
+ * 專家計劃多期下注
+ * @param {string} data.game - 下注遊戲game_code ex. bcr
+ * @param {number[]} data.issue_numbers - 期號
+ * @param {number} data.position - 第n名
+ * @param {number[]} data.bet_numbers - 下注號碼
+ * @param {number} data.bet_amount - 下注金額
+ */
+function expertBetTrack (data) {
+  return axiosGhost.post(urls.expert_bettrack, data)
+}
+
 function fetchWinHistory () {
-  return axios.get(urls.win_history)
+  return axiosGhost.get(urls.win_history)
 }
 
 function fetchUnreadCount () {
-  return axios.get(urls.unreadMessage)
+  return axiosGhost.get(urls.unreadMessage)
 }
 
 function fetchActV2 (type) {
-  return axios.get(`${urls.actv2_activity}${type}/`)
+  return axiosGhost.get(`${urls.actv2_activity}${type}/`)
 }
 
 function fetchActBoost () {
-  return axios.get(urls.actv2_boost_get)
+  return axiosGhost.get(urls.actv2_boost_get)
 }
 
 function fetchActRefCode () {
-  return axios.get(urls.actv2_referral_code)
+  return axiosGhost.get(urls.actv2_referral_code)
 }
 
 function fetchActRefList () {
-  return axios.get(urls.actv2_referral_list)
+  return axiosGhost.get(urls.actv2_referral_list)
 }
 
 function openActRe (type, id = '') {
-  return axios.post(urls.actv2_re_open, {
+  return axiosGhost.post(urls.actv2_re_open, {
     type: type,
     referral_detail_id: id
   })
 }
 
 function fetchActReCount () {
-  return axios.get(urls.actv2_re_count)
+  return axiosGhost.get(urls.actv2_re_count)
 }
 
 export {
+  axiosGhost,
   fetchUnreadCount,
   fetchActivityEnvelope,
   takeActivityEnvelope,
+  fetchExpertPlan,
+  expertBetTrack,
   fetchWinHistory,
   fetchJWTToken,
   fetchTrendChart,
   sendHeartBeat,
   sendSMSCode,
-  takeEnvelope,
-  sendEnvelope,
+  takeRedEnvelope,
+  sendRedEnvelope,
+  fetchRedEnvelopeDetail,
   setCookie,
   fetchPlaySetting,
   sendImgToChat,
@@ -381,6 +438,8 @@ export {
   getPromotions,
   placeBet,
   betTrack,
+  newBetTrack,
+  fetchNewBetTrackRecord,
   fetchBetTrackRecord,
   fetchBetTrackSchedules,
   fetchSchedule,

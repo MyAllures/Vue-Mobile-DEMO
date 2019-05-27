@@ -3,7 +3,7 @@ import Vue from 'vue'
 
 export const JWT = {
   venom: 'customer_service',
-  raven: 'chat',
+  eagle: 'chatroom_betting',
   eider: 'message_broker'
 }
 function wsDebug (...args) {

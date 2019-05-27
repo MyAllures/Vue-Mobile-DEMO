@@ -45,10 +45,7 @@
     <toast v-model="error.isExist" type="text" :width="error.msg.length > 10 ? '80vh' : '8em'">{{error.msg}}</toast>
     <loading :show="loading" :text="$t('misc.loading')"></loading>
   </div>
-  <div v-else class="tip">
-    <p>请注册会员后访问</p>
-    <x-button type="primary" link="/register">立即注册</x-button>
-  </div>
+  <register-tips v-else></register-tips>
 </template>
 
 <script>
@@ -57,6 +54,8 @@ import { XTable, XButton, Box, Toast, Loading, Divider } from 'vux'
 import { msgFormatter } from '../../utils'
 import Vue from 'vue'
 import infiniteScroll from 'vue-infinite-scroll'
+import RegisterTips from '../../components/RegisterTips'
+
 const DateFormat = Vue.extend({
   render: function (createElement) {
     const timeFormat = this.$moment(this.time).format('YYYY-MM-DD HH:mm:ss').split(' ')
@@ -78,7 +77,8 @@ export default {
     Toast,
     Loading,
     XButton,
-    Divider
+    Divider,
+    RegisterTips
   },
   directives: {
     infiniteScroll
@@ -162,7 +162,7 @@ export default {
   computed: {
     transactionType () {
       const routeName = this.$route.name
-      if (routeName === 'PaymentRecord') {
+      if (routeName === 'DepositRecord') {
         return 'online_pay,remit'
       } else if (routeName === 'WithdrawRecord') {
         return 'withdraw'

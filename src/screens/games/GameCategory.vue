@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="game-category-container">
     <div v-if="tabKeys.length >= 0&&tabKeys[0]!=='no-alias'" class="tab-selector lower-tab">
       <tab :style="{width: tabKeys.length > 4 ? `${tabKeys.length * 75}px` : ''}"
           bar-active-color="theme"
@@ -25,49 +25,52 @@
           >{{ option.name }}</check-icon>
       </div>
     </div>
-    <div
-      :class="['gameplays', !group.name ? 'no-title' : '']"
-      v-if="!customPlayGroupsSetting"
-      v-for="(group, index) in groups"
-      :key="'group' + index">
-      <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
-      <grid :key="index" :cols="group.col_num">
-        <grid-item
-          :class="['play', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
-          v-for="play in group.plays"
-          :key="play.id + 'play'"
-          @on-item-click="toggleActive(plays[play.id], $event)">
-          <div class="play-area">
-            <template v-if="play.display_name.indexOf(',')!== -1 && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3' || game.code === 'gzk3')">
-              <div class="dice-container">
-                <span :class="`play result-${game.code} resultnum-${dice}`"
-                  v-for="(dice, index) in play.display_name.split(',')"
-                  :key="index">
-                </span>
-              </div>
-              <span class="play-odds">{{play.odds}}</span>
-            </template>
-            <template v-else-if="zodiacMap">
-              <span class="play-name">
-                <span :class="getPlayClass(play)">{{play.display_name}}</span>
+    <template v-if="!customPlayGroupsSetting">
+      <div
+        :class="['gameplays', !group.name ? 'no-title' : '']"
+        v-for="(group, index) in groups"
+        :key="'group' + index">
+        <div v-if="group.name" class="playgroup-title">{{group.name}}</div>
+        <div class="playgroup-content" :key="index" :cols="group.col_num">
+          <div
+            :class="['play-wrapper', {active: plays[play.id] ? plays[play.id].active && !gameClosed : false}]"
+            :style="{width: `calc(${100/group.col_num}%)`, 'padding-bottom': playIndex>=group.plays.length-group.col_num?0:null}"
+            v-for="(play, playIndex) in group.plays"
+            :key="playIndex"
+            @click="toggleActive(plays[play.id], $event)">
+            <div class="play-area">
+              <template v-if="play.display_name.indexOf(',')!== -1 && game && k3Games.includes(game.code)">
+                <div class="dice-container">
+                  <span :class="`play result-${game.code} resultnum-${dice}`"
+                    v-for="(dice, index) in play.display_name.split(',')"
+                    :key="index">
+                  </span>
+                </div>
                 <span class="play-odds">{{play.odds}}</span>
-              </span>
-              <span class="play-nums">
-                <span :class="`play-num result-${game.code} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[play.display_name]" :key="num"></span>
-              </span>
-            </template>
-            <template v-else>
-              <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
-                <span class="num">{{play.display_name}}</span>
-              </span>
-              <span :class="['play-odds', {'right': play.display_name.split(',').length && game && (game.code === 'jsk3' || game.code === 'msk3'|| game.code === 'bjk3'|| game.code ==='gxk3'|| game.code ==='shk3' || game.code ==='hubk3' || game.code === 'gzk3')}]">{{play.odds}}</span>
-            </template>
+              </template>
+              <template v-else-if="zodiacMap">
+                <span class="play-name">
+                  <span :class="getPlayClass(play)">{{play.display_name}}</span>
+                  <span class="play-odds">{{play.odds}}</span>
+                </span>
+                <span class="play-nums">
+                  <span :class="`play-num result-${game.code} resultnum-${num}`" v-for="num in zodiacMap&&zodiacMap[play.display_name]" :key="num"></span>
+                </span>
+              </template>
+              <template v-else>
+                <span :class="[getPlayClass(play), {'small': group.col_num>2}]">
+                  <span class="num">{{play.display_name}}</span>
+                </span>
+                <span :class="['play-odds', {'right': game && k3Games.includes(game.code) && play.display_name.split(',').length>1 }]">{{play.odds}}</span>
+              </template>
+            </div>
           </div>
-        </grid-item>
-      </grid>
-    </div>
-
+        </div>
+      </div>
+    </template>
     <component v-else
+      :key="currentCategory.id"
+      :mode="mode"
       :is="customPlayGroupsSetting.component"
       :gameCode="game.code"
       :playReset="playReset"
@@ -83,7 +86,7 @@
 
 <script>
 import _ from 'lodash'
-import { Grid, GridItem, Tab, TabItem, CheckIcon } from 'vux'
+import { Tab, TabItem, CheckIcon } from 'vux'
 import { customPlayGroups } from '../../config'
 const WithCode = (resolve) => require(['../../components/playGroup/WithCode'], resolve)
 const gd11x5Seq = (resolve) => require(['../../components/playGroup/gd11x5Seq'], resolve)
@@ -100,9 +103,6 @@ export default {
       type: Boolean,
       default: false
     },
-    scheduleId: {
-      type: Number
-    },
     game: {
       type: Object
     },
@@ -110,13 +110,9 @@ export default {
       type: Boolean,
       default: false
     },
-    activeCategory: {
-      type: String
-    }
+    mode: String
   },
   components: {
-    Grid,
-    GridItem,
     Tab,
     TabItem,
     CheckIcon,
@@ -139,7 +135,8 @@ export default {
       tabKeys: [],
       currentTab: '',
       showCombinationDetails: false,
-      shawOptions: []
+      shawOptions: [],
+      k3Games: ['jsk3', 'msk3', 'bjk3', 'gxk3', 'shk3', 'hubk3', 'gzk3']
     }
   },
   computed: {
@@ -147,6 +144,9 @@ export default {
       return _.filter(this.plays, play => play.active)
     },
     customPlayGroupsSetting () {
+      if (this.categories.length === 0) {
+        return undefined
+      }
       let currentPlayGroup = _.find(this.categories, item => item.id + '' === this.$route.params.categoryId)
       let playGroupCode = currentPlayGroup.code
       return _.find(customPlayGroups, item => item.code.includes(playGroupCode))
@@ -353,7 +353,18 @@ export default {
       if (this.gameClosed) {
         return
       }
-      this.$set(play, 'active', !play.active)
+      if (play.active) {
+        this.$set(play, 'active', false)
+      } else {
+        if (this.mode === 'bettrack') {
+          _.each(this.plays, play => {
+            if (play.active) {
+              this.$set(play, 'active', false)
+            }
+          })
+        }
+        this.$set(play, 'active', true)
+      }
     },
     switchTab (key) {
       this.groups = this.tabs[key]
@@ -372,6 +383,7 @@ export default {
 
 <style lang="less" scoped>
 .shaw-options {
+  background: #fff;
   overflow-x: scroll;
   .wrapper {
     width: 600px;

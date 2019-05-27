@@ -275,6 +275,24 @@ export function getLastGameData () {
   return lastGameData
 }
 
+export function makeCancelable (promise) {
+  let hasCanceled_ = false
+
+  const wrappedPromise = new Promise((resolve, reject) => {
+    promise.then(
+      val => hasCanceled_ ? reject(new Error({isCanceled: true})) : resolve(val),
+      error => hasCanceled_ ? reject(new Error({isCanceled: true})) : reject(error)
+    )
+  })
+
+  return {
+    promise: wrappedPromise,
+    cancel () {
+      hasCanceled_ = true
+    }
+  }
+}
+
 export function getJWTToken (type) {
   let setting = localStorage.getItem(type + '_setting')
   if (setting) {

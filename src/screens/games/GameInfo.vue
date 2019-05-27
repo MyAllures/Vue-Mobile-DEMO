@@ -9,7 +9,7 @@
       <div :class="['info-content', type]">
         <component :is="showing" :game="game"></component>
         <div class="btn-wrapper vux-1px-t">
-          <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回游戏</x-button>
+          <x-button class="button-close" type="primary" @click.native="$emit('update:visible', false)">返回{{type==='chatmanage'?'聊天室':'游戏'}}</x-button>
         </div>
       </div>
   </popup>
@@ -22,6 +22,8 @@ const RoadBeads = (resolve) => require(['@/screens/games/RoadBeads'], resolve)
 const Leaderboards = (resolve) => require(['@/screens/games/Leaderboards'], resolve)
 const LotterRecord = (resolve) => require(['@/screens/LotterRecord'], resolve)
 const TrendDiagram = (resolve) => require(['@/screens/TrendDiagram'], resolve)
+const ExpertPlan = (resolve) => require(['@/screens/ExpertPlan'], resolve)
+const ChatManage = (resolve) => require(['@/screens/ChatManage'], resolve)
 
 export default {
   name: 'GameInfo',
@@ -64,6 +66,10 @@ export default {
           return LotterRecord
         case 'intro':
           return GameIntro
+        case 'expertplan':
+          return ExpertPlan
+        case 'chatmanage':
+          return ChatManage
       }
     }
   },
