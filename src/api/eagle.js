@@ -33,6 +33,7 @@ const eagle = {
    * @returns {array} elements in the array are `room_id`
    */
   fetchGlobalData () {
+    delete axios.defaults.headers.common['x-r']
     return axiosEagle.get(urls.eagle.global_data)
   },
   /**
