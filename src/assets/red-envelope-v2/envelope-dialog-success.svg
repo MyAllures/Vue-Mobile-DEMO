@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="55px" height="55px" viewBox="0 0 55 55" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>彈窗-紅包-success</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="25" cy="25" r="25"></circle>
+    </defs>
+    <g id="彈窗-紅包-success" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="-g-Path-2" transform="translate(2.500000, 2.500000)">
+            <g id="Group-9">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" stroke="#FDEBC5" stroke-width="3" xlink:href="#path-1"></use>
+                <polygon id="Path-2" fill="#FDEBC5" mask="url(#mask-2)" points="12.6582278 26.3384106 14.7448939 24.0157987 21.0956082 30.0545897 36.9723941 15.1898734 39.2405063 17.0479629 21.0956082 35.443038"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
