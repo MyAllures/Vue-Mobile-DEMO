@@ -86,7 +86,10 @@
       </transition>
     </div>
     <transition name="fade">
-      <div class="global-loading" v-if="isLoading">
+      <SafariQuickGuide></SafariQuickGuide>
+    </transition>
+    <transition name="fade">
+      <div class="global-mask white" v-if="isLoading">
         <cube-loading :size="50"></cube-loading>
       </div>
     </transition>
@@ -107,6 +110,7 @@ import BetTrackDialog from './components/BetTrackDialog'
 import NewBetTrackDialog from './dialog/NewBetTrackDialog'
 import ExpertBetTrackDialog from './dialog/ExpertBetTrackDialog'
 import Notification from './components/Notification'
+import SafariQuickGuide from './components/SafariQuickGuide'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
 import { Indicator } from './utils'
@@ -216,6 +220,7 @@ export default {
     ExpertBetTrackDialog,
     Notification,
     DetailNotification,
+    SafariQuickGuide,
     TopBar,
     ViewArea
   },
@@ -482,16 +487,4 @@ export default {
   color: #fff;
 }
 
-.global-loading {
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255,255,255, .7);
-  z-index: @global-loading-mask-zindex;
-}
 </style>
