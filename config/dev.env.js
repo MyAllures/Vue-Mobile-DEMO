@@ -3,8 +3,8 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  HOST: '"https://staging-dev-1-api.h9339.com"',
-  // HOST: '"/api-ghost"',
+  // HOST: '"https://staging-dev-1-api.h9339.com"',
+  HOST: '"/api-ghost"',
   eiderHost: '"wss://staging-eider.h9339.com"',
   eagleHost: '"https://staging-eagle.h9339.com"',
   // eagleHost: '"/api-eagle"',
