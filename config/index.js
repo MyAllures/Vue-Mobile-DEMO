@@ -9,14 +9,14 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api-ghost': {
-        target: 'http://refactor-api.h9339.com',
+        target: 'https://staging-dev-1-api.h9339.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api-ghost': ''
         }
       },
       '/api-eagle': {
-        target: 'http://refactor-eagle.h9339.com',
+        target: 'http://staging-eagle.h9339.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api-eagle': ''

@@ -133,19 +133,12 @@ export default {
 <style lang="scss" scoped>
 #re-promotion {
   background: #d23f34;
-  height: calc(100vh - 46px);
-}
-.header {
-  height: 46px;
-
-  a {
-    color: #FFF;
-    line-height: 46px;
-  }
-  svg {
-    fill: #FFF;
-    vertical-align: middle;
-  }
+  height: calc(100% - 46px);
+  position: fixed;
+  width: 100%;
+  top: 46px;
+  bottom: 90px;
+  overflow-y: hidden;
 }
 .content-wrap {
   width: 324px;
@@ -153,7 +146,7 @@ export default {
   margin: auto;
   padding: 12px;
   position: absolute;
-  top: 56px;
+  top: 10px;
   left: 0;
   right: 0;
   bottom: 90px;
