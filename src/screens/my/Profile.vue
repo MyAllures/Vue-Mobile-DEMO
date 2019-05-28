@@ -74,6 +74,7 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import VForm from '@/components/Form'
 import VFormItem from '@/components/FormItem'
 import VInput from '@/components/Input'
+import lrz from 'lrz'
 const inputs = ['phone', 'email', 'qq', 'wechat', 'nickname', 'avatar']
 const originUser = {}
 export default {
@@ -181,15 +182,13 @@ export default {
     ]),
     setAvatar (e) {
       let file = e.target.files[0]
-      this.previewImage = URL.createObjectURL(file)
-      if (file.size > 1024 * 1024) {
-        this.$vux.toast.show({
-          text: '图片尺寸太大，请选择较小尺寸的图片',
-          type: 'warn'
-        })
-      } else {
-        this.member.avatar = file
-      }
+      lrz(file, { width: 96 }).then(rst => {
+        this.previewImage = URL.createObjectURL(rst.file)
+        this.member.avatar = {
+          file: rst.file,
+          filename: `image${new Date().getTime()}.jpg`
+        }
+      })
     },
     init () {
       inputs.forEach(input => {
@@ -213,7 +212,11 @@ export default {
             let value = this.member[key]
             if (key !== 'phone' || !this.user.phone) {
               if (value !== '') {
-                sendData.append(key, value)
+                if (key === 'avatar') {
+                  sendData.append(key, value.file, value.filename)
+                } else {
+                  sendData.append(key, value)
+                }
               }
             }
           })

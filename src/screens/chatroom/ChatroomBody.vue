@@ -480,7 +480,6 @@ export default {
     }
   }
   .message-group {
-    padding-bottom: 40px;
     .message-group-item {
       display: flex;
       margin-bottom: 10px;
