@@ -109,3 +109,18 @@ exports.createNotifierCallback = () => {
     })
   }
 }
+
+exports.getFormattedConfig = (rawConfig) => {
+  if (!rawConfig.NODE_ENV) {
+    return {}
+  }
+  let config = {}
+
+  Object.entries(rawConfig).forEach((arr) => {
+    let key = arr[0]
+    let val = arr[1].replace(/"/g, '')
+    config[key] = val
+  })
+
+  return config
+}

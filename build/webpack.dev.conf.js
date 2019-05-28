@@ -9,12 +9,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 const skeletons = require('./skeletons')
 const launchScreen = require('./launch')
-
-const HOST = process.env.HOST
-const PORT = process.env.PORT && Number(process.env.PORT)
+const devConfig = utils.getFormattedConfig(config.dev.env)
 
 let companyMap = {
   'hg9q_1': {
@@ -38,6 +35,7 @@ let companyMap = {
     name: '6j'
   }
 }
+
 let companyInfo = companyMap[process.env.company] || {id: 0, name: 'staging'}
 
 
@@ -55,8 +53,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     historyApiFallback: true,
     hot: true,
     compress: true,
-    host: HOST || config.dev.host,
-    port: PORT || config.dev.port,
+    host: config.dev.host,
+    port: config.dev.port,
     open: config.dev.autoOpenBrowser,
     overlay: config.dev.errorOverlay
       ? { warnings: false, errors: true }
@@ -70,9 +68,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.LoaderOptionsPlugin({ options: {} }),
-    new webpack.DefinePlugin({
-    'process.env': require('../config/dev.env')
-    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
     new webpack.NoEmitOnErrorsPlugin(),
@@ -80,7 +75,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      host: process.env.HOST || '',
+      title: devConfig.SITE_TITLE,
+      host: devConfig.HOST || '',
       companyId: companyInfo.id,
       companyName: companyInfo.name,
       homeSkeleton: skeletons.homeSkeleton,
@@ -90,7 +86,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'app.html',
       template: 'app.html',
-      host: process.env.HOST || '',
+      title: devConfig.SITE_TITLE,
+      host: devConfig.HOST || '',
       companyId: companyInfo.id,
       companyName: companyInfo.name,
       homeSkeleton: skeletons.homeSkeleton,
@@ -110,7 +107,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 })
 
 module.exports = new Promise((resolve, reject) => {
-  portfinder.basePort = process.env.PORT || config.dev.port
+  portfinder.basePort = config.dev.port
   portfinder.getPort((err, port) => {
     if (err) {
       reject(err)

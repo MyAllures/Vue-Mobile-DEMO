@@ -11,5 +11,6 @@ module.exports = merge(prodEnv, {
   wsEagleHost: '"wss://staging-eagle.h9339.com"',
   venomHost: '"https://staging-venom.h9339.com"',
   venomSocket: '"ws://staging-venom.h9339.com"',
+  SITE_TITLE: '"STAGING"',
   company: '"staging"'
 })
