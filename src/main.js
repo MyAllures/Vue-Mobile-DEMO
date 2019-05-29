@@ -121,7 +121,8 @@ function initData () {
           appIcon: response.app_icon,
           envelopeActivityId: response.envelope_activity_id,
           serviceAction,
-          enableBuiltInCustomerService: pref.enable_built_in_customer_service === 'true'
+          enableBuiltInCustomerService: pref.enable_built_in_customer_service === 'true',
+          safariQuickGuideEnabled: pref.safari_quick_guide_enabled === 'true'
         })
 
       const themeId = response.theme || 1

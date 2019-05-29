@@ -7,7 +7,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api-ghost': {
-        target: 'https://staging-dev-1-api.h9339.com',
+        target: 'https://staging-api.h9339.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api-ghost': ''
