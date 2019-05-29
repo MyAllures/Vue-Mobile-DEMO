@@ -85,9 +85,7 @@
         </div>
       </transition>
     </div>
-    <transition name="fade">
-      <SafariQuickGuide v-if="safariQuickGuideVisible" @handleSafariQuickGuideClose="handleSafariQuickGuideClose"></SafariQuickGuide>
-    </transition>
+    <SafariQuickGuide v-if="safariQuickGuideVisible" @handleSafariQuickGuideClose="handleSafariQuickGuideClose"></SafariQuickGuide>
     <transition name="fade">
       <div class="global-mask white" v-if="isLoading">
         <cube-loading :size="50"></cube-loading>
