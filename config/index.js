@@ -1,15 +1,13 @@
 const path = require('path')
-const config = process.env.NODE_ENV !== 'production' ? require('./dev.env.js') : require('./prod.env.js')
 
 module.exports = {
-  chatHost: config.chatHost.replace(/"/g, ''),
   dev: {
     env: require('./dev.env'),
     assetsSubDirectory: 'mobile/static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api-ghost': {
-        target: 'https://staging-dev-1-api.h9339.com',
+        target: 'https://staging-api.h9339.com',
         changeOrigin: true,
         pathRewrite: {
           '^/api-ghost': ''

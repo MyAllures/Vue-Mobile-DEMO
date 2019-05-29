@@ -86,7 +86,10 @@
       </transition>
     </div>
     <transition name="fade">
-      <div class="global-loading" v-if="isLoading">
+      <SafariQuickGuide v-if="safariQuickGuideVisible" @handleSafariQuickGuideClose="handleSafariQuickGuideClose"></SafariQuickGuide>
+    </transition>
+    <transition name="fade">
+      <div class="global-mask white" v-if="isLoading">
         <cube-loading :size="50"></cube-loading>
       </div>
     </transition>
@@ -107,6 +110,7 @@ import BetTrackDialog from './components/BetTrackDialog'
 import NewBetTrackDialog from './dialog/NewBetTrackDialog'
 import ExpertBetTrackDialog from './dialog/ExpertBetTrackDialog'
 import Notification from './components/Notification'
+import SafariQuickGuide from './components/SafariQuickGuide'
 import TopBar from '@/components/TopBar'
 import DetailNotification from './components/DetailNotification'
 import { Indicator } from './utils'
@@ -216,6 +220,7 @@ export default {
     ExpertBetTrackDialog,
     Notification,
     DetailNotification,
+    SafariQuickGuide,
     TopBar,
     ViewArea
   },
@@ -238,7 +243,8 @@ export default {
       noBackRoute: !window.history.state,
       indicator: null,
       tabbarHidden: true,
-      isHelperVisible: false
+      isHelperVisible: false,
+      safariQuickGuideVisible: false
     }
   },
   computed: {
@@ -304,7 +310,15 @@ export default {
         this.$store.dispatch('actv2/clearCount')
       }
     },
-    $route (to, from) {
+    'systemConfig.safariQuickGuideEnabled': {
+      handler (enabled) {
+        const hasClosed = sessionStorage.getItem('hasClosedQuickGuide') === 'true'
+        const issafariBrowser = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
+        this.safariQuickGuideVisible = enabled && !hasClosed && issafariBrowser
+      },
+      immediate: true
+    },
+    '$route' (to, from) {
       this.tabbarHidden = to.meta.tabbarHidden
       this.noBackRoute = !window.history.state
 
@@ -320,6 +334,9 @@ export default {
     }
   },
   methods: {
+    handleSafariQuickGuideClose () {
+      this.safariQuickGuideVisible = false
+    },
     trial () {
       this.$store.dispatch('trial')
     },
@@ -383,6 +400,8 @@ export default {
     }, () => {
 
     })
+  },
+  mounted () {
   },
   beforeDestroy () {
     window.clearTimeout(this.refreshTokenTimer)
@@ -482,16 +501,4 @@ export default {
   color: #fff;
 }
 
-.global-loading {
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255,255,255, .7);
-  z-index: @global-loading-mask-zindex;
-}
 </style>
