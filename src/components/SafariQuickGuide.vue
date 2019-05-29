@@ -10,7 +10,7 @@
         </li>
         <li class="step" data-count="3">
           点击右上角「添加」
-          <img class="confirm-add-img" src="../assets/safariguide/confirm_add.png" alt="confirm"/>
+          <img class="confirm-add-img" src="../assets/safariguide/confirm_toadd.jpg" alt="confirm"/>
         </li>
         <li class="step" data-count="4">
           下次可直接从主屏幕的图标一键启动网站
