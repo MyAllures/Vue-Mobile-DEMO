@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="content-wrap">
-      <template v-if="isLoading">
+      <template v-if="isLoading || !act">
         <cube-loading />
       </template>
       <template v-else>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { Group, Cell, XButton } from 'vux'
 import RedEnvDialog from '@/components/actV2/RedEnvDialog'
 import {
@@ -67,9 +67,15 @@ export default {
     showReDialog: false
   }),
   mounted () {
+    if (!this.act) {
+      this.getAct('boost')
+    }
     this.fetchActBoost()
   },
   methods: {
+    ...mapActions('actv2', [
+      'getAct'
+    ]),
     fetchActBoost () {
       fetchActBoost().then(response => {
         this.myData = response

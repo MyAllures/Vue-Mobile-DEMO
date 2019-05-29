@@ -9,38 +9,41 @@
       </div>
     </div>
     <div class="content-wrap">
-      <div class="help">
-        1. 使用以下二维码或推荐链结邀请好友注册<br />
-        2. 好友需充值金额达到 {{ act.check_referral_deposit && act.check_referral_deposit.required_deposit || 0 }} 元以上<br />
-        3. 可在我的推荐中查看，了解推荐人数
-      </div>
-      <div class="title">
-        <img src="@/assets/red-envelope-v2/blue-point.svg" />
-        我的推荐二维码
-      </div>
-      <div class="content">
-        <div class="qrcode">
-          <cube-loading v-if="codeLoading" />
-          <qrcode ref="qr" :value="refLink" :options="{ width: 200, margin: 2 }" v-else />
+      <template v-if="act">
+        <div class="help">
+          1. 使用以下二维码或推荐链结邀请好友注册<br />
+          2. 好友需充值金额达到 {{ act.check_referral_deposit && act.check_referral_deposit.required_deposit || 0 }} 元以上<br />
+          3. 可在我的推荐中查看，了解推荐人数
         </div>
-        <XButton class="download-qr" text="保存至手机" :mini="true" @click.native="saveQRCode" />
-      </div>
-      <div class="title">
-        <img src="@/assets/red-envelope-v2/blue-point.svg" />
-        我的推荐链结
-      </div>
-      <div class="content">
-        <div class="link">
-          <input type="text" :value="refLink" @click="$event.target.select()" readonly :disabled="codeLoading" />
-          <button :data-clipboard-text="refLink" :disabled="codeLoading">复制</button>
+        <div class="title">
+          <img src="@/assets/red-envelope-v2/blue-point.svg" />
+          我的推荐二维码
         </div>
-      </div>
+        <div class="content">
+          <div class="qrcode">
+            <cube-loading v-if="codeLoading" />
+            <qrcode ref="qr" :value="refLink" :options="{ width: 200, margin: 2 }" v-else />
+          </div>
+          <XButton class="download-qr" text="保存至手机" :mini="true" @click.native="saveQRCode" />
+        </div>
+        <div class="title">
+          <img src="@/assets/red-envelope-v2/blue-point.svg" />
+          我的推荐链结
+        </div>
+        <div class="content">
+          <div class="link">
+            <input type="text" :value="refLink" @click="$event.target.select()" readonly :disabled="codeLoading" />
+            <button :data-clipboard-text="refLink" :disabled="codeLoading">复制</button>
+          </div>
+        </div>
+      </template>
+      <div class="loading" v-else><cube-loading /></div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { XButton } from 'vux'
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import ClipboardJS from 'clipboard'
@@ -60,10 +63,16 @@ export default {
     code: ''
   }),
   mounted () {
+    if (!this.act) {
+      this.getAct('referral')
+    }
     this.getRefCode()
     this.setClipboard()
   },
   methods: {
+    ...mapActions('actv2', [
+      'getAct'
+    ]),
     getRefCode () {
       fetchActRefCode().then(res => {
         this.code = res.referral_code
@@ -192,5 +201,9 @@ export default {
     color: #166fd8;
     border-radius: 0 2px 2px 0;
   }
+}
+.loading {
+  display: flex;
+  justify-content: center;
 }
 </style>
