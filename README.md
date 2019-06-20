@@ -1,4 +1,4 @@
-# bison
+# NOT FOR COMMERCIAL USE
 
 > A Vue.js project
 
