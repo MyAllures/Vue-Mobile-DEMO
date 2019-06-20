@@ -1,4 +1,4 @@
-# NOT FOR COMMERCIAL USE
+# KAYNE
 
 > A Vue.js project
 
